@@ -105,5 +105,74 @@
     }
     requestAnimationFrame(sync);
     sync();
+
+    /* ------------------------------------------------------------ *
+     *  Ziehen mit der Maus
+     *  Mit Finger und Trackpad laesst sich die Leiste ohnehin
+     *  schieben. Mit einer Maus ohne Querrad ging bisher nur der
+     *  Pfeil - deshalb hier zusaetzlich Greifen und Ziehen.
+     * ------------------------------------------------------------ */
+    var feineZeiger = window.matchMedia("(hover: hover) and (pointer: fine)");
+    var startX = 0, startScroll = 0, gedrueckt = false, gezogen = false;
+    var SCHWELLE = 4; /* px, damit ein Klick kein Ziehen ausloest */
+
+    var beginne = function () {
+      gezogen = true;
+      track.classList.add("zieht");
+      track.style.scrollSnapType = "none";
+      track.style.scrollBehavior = "auto";
+      track.style.userSelect = "none";
+    };
+
+    var beende = function () {
+      gedrueckt = false;
+      track.classList.remove("zieht");
+      track.style.userSelect = "";
+      /* Erst im naechsten Frame zurueckstellen, sonst springt die
+         Leiste noch waehrend des Loslassens auf den alten Punkt. */
+      requestAnimationFrame(function () {
+        track.style.scrollSnapType = "";
+        track.style.scrollBehavior = "";
+        sync();
+      });
+    };
+
+    track.addEventListener("pointerdown", function (e) {
+      if (!feineZeiger.matches || e.button !== 0) return;
+      if (e.target.closest("a, button")) return;
+      gedrueckt = true;
+      gezogen = false;
+      startX = e.clientX;
+      startScroll = track.scrollLeft;
+    });
+
+    track.addEventListener("pointermove", function (e) {
+      if (!gedrueckt) return;
+      var weg = e.clientX - startX;
+      if (!gezogen) {
+        if (Math.abs(weg) < SCHWELLE) return;
+        beginne();
+        if (track.setPointerCapture) track.setPointerCapture(e.pointerId);
+      }
+      e.preventDefault();
+      track.scrollLeft = startScroll - weg;
+    });
+
+    track.addEventListener("pointerup", function () { if (gedrueckt) beende(); });
+    track.addEventListener("pointercancel", function () { if (gedrueckt) beende(); });
+
+    /* Nach einem Ziehen den folgenden Klick verschlucken, damit ein
+       Link unter dem Zeiger nicht ungewollt ausgeloest wird. */
+    track.addEventListener("click", function (e) {
+      if (!gezogen) return;
+      e.preventDefault();
+      e.stopPropagation();
+      gezogen = false;
+    }, true);
+
+    /* Ein Bild ist von Haus aus ziehbar - das wuerde das Greifen stoeren. */
+    track.addEventListener("dragstart", function (e) {
+      if (feineZeiger.matches) e.preventDefault();
+    });
   }
 })();

@@ -285,6 +285,14 @@
 }
 .snap-track::-webkit-scrollbar { display: none; }
 
+/* Mit einer Maus laesst sich die Leiste greifen und ziehen.
+   Fuer Finger und Trackpad ist das unnoetig, deshalb nur hier. */
+@media (hover: hover) and (pointer: fine) {
+  .snap-track { cursor: grab; }
+  .snap-track.zieht { cursor: grabbing; }
+  .snap-track.zieht * { pointer-events: none; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after {
