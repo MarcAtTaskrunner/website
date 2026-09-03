@@ -3,6 +3,7 @@
 /* Nur diese HTML-Datei wird nach Klassen durchsucht.
    Kommen Unterseiten dazu, hier ergaenzen: @source "../unterseite.html"; */
 @source "../index.html";
+@source "../startseite-b.html";
 @source "../dienstleistungen.html";
 @source "../foerderungen.html";
 @source "../impressum.html";
