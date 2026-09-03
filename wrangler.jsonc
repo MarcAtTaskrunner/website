@@ -1,0 +1,12 @@
+{
+  // Statische Website. Kein Worker-Skript noetig - Cloudflare liefert
+  // einfach die Dateien aus dist/ aus. _redirects und _headers dort
+  // werden nativ unterstuetzt.
+  //
+  // "name" muss dem Worker entsprechen, der in Cloudflare angelegt ist.
+  "name": "taskrunner",
+  "compatibility_date": "2026-09-03",
+  "assets": {
+    "directory": "./dist"
+  }
+}

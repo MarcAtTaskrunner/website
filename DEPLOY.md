@@ -30,6 +30,13 @@ Ich committe die Aenderungen hier; hochgeladen wird von dir im Terminal:
     cd ~/Desktop/"Website Taskrunner"/website
     git push          # beim ersten Mal: git push -u origin main
 
-Ist das Repo in Cloudflare Pages als Git-Quelle hinterlegt, loest der Push
-direkt ein Deployment aus. Build-Befehl dort: `npm run build`,
-Ausgabeverzeichnis: `dist`.
+Das Repo haengt in Cloudflare an einem Worker mit statischen Assets
+(Workers Builds). Ein Push loest Build und Deployment aus:
+
+    Build-Befehl:   npm run build
+    Deploy-Befehl:  npx wrangler deploy
+    Root directory: /
+
+Was deployt wird, steht in `wrangler.jsonc`: der Ordner `dist`. Der Wert
+`name` dort muss mit dem Namen des Workers in Cloudflare uebereinstimmen -
+sonst legt wrangler beim Deployen einen zweiten Worker an.
