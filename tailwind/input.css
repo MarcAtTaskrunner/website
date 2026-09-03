@@ -1,0 +1,304 @@
+@import "tailwindcss";
+
+/* Nur diese HTML-Datei wird nach Klassen durchsucht.
+   Kommen Unterseiten dazu, hier ergaenzen: @source "../unterseite.html"; */
+@source "../index.html";
+@source "../dienstleistungen.html";
+@source "../foerderungen.html";
+
+/* ------------------------------------------------------------------ *
+ *  Hausschrift DIN Pro – selbst gehostet, kein externer Request.
+ *  Quelle: Font/DINPro-*.ttf aus dem Projektordner, nach woff2 konvertiert.
+ * ------------------------------------------------------------------ */
+@font-face {
+  font-family: "DIN Pro";
+  src: url("../assets/fonts/dinpro-light.woff2") format("woff2");
+  font-weight: 300; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "DIN Pro";
+  src: url("../assets/fonts/dinpro-regular.woff2") format("woff2");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "DIN Pro";
+  src: url("../assets/fonts/dinpro-medium.woff2") format("woff2");
+  font-weight: 500; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "DIN Pro";
+  src: url("../assets/fonts/dinpro-bold.woff2") format("woff2");
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "DIN Pro";
+  src: url("../assets/fonts/dinpro-black.woff2") format("woff2");
+  font-weight: 900; font-style: normal; font-display: swap;
+}
+
+/* ------------------------------------------------------------------ *
+ *  Design Tokens
+ *  Quelle der Markenfarben: website/assets/css/styles.css und die
+ *  Logo-SVGs aus "Images/Logo Taskrunner". Zwei Werte sind aus dem
+ *  Figma-Frame abgelesen und unten als solche gekennzeichnet.
+ * ------------------------------------------------------------------ */
+@theme {
+  /* ---------------- Markenfarben (verbindlich) ---------------- */
+  --color-blue-darker: #000031;   /* Darker Blue  */
+  --color-blue-dark:   #00016b;   /* Dark Blue    */
+  --color-blue-base:   #004689;   /* Blue         */
+  --color-blue-medium: #1155cc;   /* Medium Blue  */
+  --color-blue-light:  #4285f4;   /* Light Blue   */
+  --color-orange:      #fbba00;   /* Bright Orange */
+  --color-orange-dark: #eb6c08;   /* Dark Orange  */
+  --color-grey:        #f0f1f5;   /* Grey         */
+  --color-grey-dark:   #4a4e57;   /* Dark Grey    */
+  --color-grey-darker: #3a3d45;   /* Abdunklung von Dark Grey, SLA-Kachel */
+
+  /* Aus #4285f4 abgeleitet: gleiche Helligkeit und Saettigung in OKLCH,
+     nur der Farbwinkel gedreht - dadurch gleichwertig neben dem Hellblau. */
+  --color-pink:        #d55298;   /* auf dunklem Grund   */
+  --color-pink-deep:   #8c005a;   /* auf hellem Blau     */
+
+  /* ---------------- Monochrome Ableitung ---------------- */
+  /* 12 % Light Blue auf Weiss – heller Sektionsgrund */
+  --color-ice:         #e8f0fe;
+
+  /* ---------------- Semantische Rollen ---------------- */
+  /* Im Markup werden diese benutzt, nicht die Markennamen direkt. */
+  --color-navy:      var(--color-blue-dark);     /* Hero-Band, Footer, dunkle Kachel */
+  --color-navy-deep: var(--color-blue-darker);   /* Abstufung / Hover                */
+  --color-blue:      var(--color-blue-light);    /* Headline, Buttons, Bedienelemente */
+  --color-blue-600:  var(--color-blue-medium);   /* Button-Hover                     */
+  --color-blue-300:  var(--color-blue-light);    /* helle Kachel im Bento-Grid       */
+  --color-ink:       var(--color-blue-base);     /* Fliesstext auf hellem Grund      */
+  --color-stone:     var(--color-grey);          /* graue Kachel                     */
+  --color-yellow:    var(--color-orange);        /* Akzentkachel                     */
+
+  --font-display: "DIN Pro", ui-sans-serif, system-ui, sans-serif;
+  --font-sans:    "DIN Pro", ui-sans-serif, system-ui, sans-serif;
+
+  /* Hoehe des Headers inkl. 1 px Trennlinie - der Hero rechnet damit */
+  --header-h: 65px;
+
+  --radius-card: 1.25rem;
+  --radius-tile: 1.5rem;
+}
+
+/* Container-Breiten: der Prototyp nutzt zwei Rasterbreiten */
+@utility container-wide {
+  width: 100%;
+  max-width: 1240px;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+@utility container-narrow {
+  width: 100%;
+  max-width: 1040px;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    font-family: var(--font-sans);
+    font-weight: 500;          /* DIN Pro Medium */
+    font-size: 17px;
+    line-height: 1.47059;
+    letter-spacing: -0.022em;
+    color: var(--color-ink);
+    background: #ffffff;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4, .font-display {
+    font-family: var(--font-display);
+    font-weight: 700;
+  }
+  :focus-visible {
+    outline: 3px solid var(--color-blue);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+}
+
+@layer components {
+  /* Pill-Buttons aus dem Design */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 9999px;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 17px;
+    line-height: 1;
+    letter-spacing: -0.022em;
+    padding: 0.82rem 1.7rem;
+    transition: background-color .18s ease, color .18s ease,
+                border-color .18s ease, transform .18s ease;
+    white-space: nowrap;
+  }
+  .btn:hover { transform: translateY(-1px); }
+
+  .btn-primary   { background: var(--color-blue); color: #fff; }
+  .btn-primary:hover { background: var(--color-blue-600); }
+
+  .btn-white     { background: #fff; color: var(--color-blue-600); }
+  .btn-white:hover { background: var(--color-ice); }
+
+  .btn-ghost     { background: transparent; color: #fff;
+                   border: 1.5px solid rgba(255,255,255,.85); }
+  .btn-ghost:hover { background: rgba(255,255,255,.12); }
+}
+
+
+/* ------------------------------------------------------------------ *
+ *  Typografie-Skala
+ *  Groessen nach Vorgabe (h1 80 / h2 56 / h3 40 / h4 28, Body 17).
+ *  Zeilenhoehen, Laufweiten und Breakpoints an apple.com orientiert.
+ *  Dokumentiert in TYPOGRAFIE.md.
+ *
+ *  h1..h4 tragen ihre Stufe als Standard. Eine .t-*-Klasse am Element
+ *  schlaegt den Standard (Klasse > Element), die Semantik bleibt davon
+ *  unberuehrt: <h3 class="t-h4"> ist Ebene 3, gesetzt wie Ebene 4.
+ * ------------------------------------------------------------------ */
+@layer components {
+  h1, .t-h1, h2, .t-h2, h3, .t-h3, h4, .t-h4 {
+    font-family: var(--font-display);
+    font-weight: 700;
+  }
+
+  /* --- bis 734 px --- */
+  h1, .t-h1 { font-size: 48px; line-height: 1.05;    letter-spacing: -0.015em; }
+  h2, .t-h2 { font-size: 40px; line-height: 1.07143; letter-spacing: -0.016em; }
+  h3, .t-h3 { font-size: 28px; line-height: 1.1;     letter-spacing: -0.012em; }
+  h4, .t-h4 { font-size: 21px; line-height: 1.14286; letter-spacing: -0.014em; }
+
+  .t-intro   { font-size: 19px; line-height: 1.19048; letter-spacing:  0.011em; font-weight: 500; }
+  .t-body    { font-size: 17px; line-height: 1.47059; letter-spacing: -0.022em; font-weight: 500; }
+  .t-caption { font-size: 14px; line-height: 1.42857; letter-spacing: -0.016em; font-weight: 500; }
+
+  /* In Karten setzt Apple den Fliesstext enger als im Lauftext (1.235 statt
+     1.471) und die Kategorie darueber in Regular statt Medium. */
+  .t-body-tight { font-size: 17px; line-height: 1.23529; letter-spacing: -0.022em; font-weight: 500; }
+  .t-eyebrow    { font-size: 17px; line-height: 1.23529; letter-spacing: -0.022em; font-weight: 400; }
+
+  /* --- 735 bis 1068 px --- */
+  @media (min-width: 735px) {
+    h1, .t-h1 { font-size: 64px; }
+    h2, .t-h2 { font-size: 48px; }
+    h3, .t-h3 { font-size: 32px; }
+    h4, .t-h4 { font-size: 24px; }
+    .t-intro  { font-size: 21px; }
+  }
+
+  /* --- ab 1069 px: die vorgegebenen Zielgroessen --- */
+  @media (min-width: 1069px) {
+    h1, .t-h1 { font-size: 80px; }
+    h2, .t-h2 { font-size: 56px; }
+    h3, .t-h3 { font-size: 40px; }
+    h4, .t-h4 { font-size: 28px; }
+  }
+}
+
+
+/* ------------------------------------------------------------------ *
+ *  Abstaende
+ *  Gemessen an apple.com/de/iphone (Screenshot, 1710 px Viewport):
+ *    Karten-Innenabstand 36 · Eyebrow->Titel 20 · Titel->Text 20
+ *    Headline->Karten 48 · Karten->Pfeile 40 · Pfeil 36 px
+ *    Inhaltsbreite ~1260 px
+ *  Das Sektions-Padding war im Screenshot nicht messbar (Ausschnitt),
+ *  120/90/60 px ist Apples ueblicher Rhythmus fuer Marketing-Sektionen.
+ * ------------------------------------------------------------------ */
+@layer components {
+  .section-y { padding-block: 60px; }
+  @media (min-width: 735px)  { .section-y { padding-block: 90px; } }
+  @media (min-width: 1069px) { .section-y { padding-block: 120px; } }
+
+  /* Hero fuellt den sichtbaren Bereich unter dem 64 px hohen Header.
+     Zwei Deklarationen: dvh beruecksichtigt die Browserleisten auf dem
+     Handy, vh ist der Rueckfall fuer aeltere Browser. */
+  /* Feste Bildschirmhoehe. min-height ist nur die Notbremse fuer sehr
+     flache Fenster, damit der Inhalt nicht aus der Sektion laeuft. */
+  .hero-viewport {
+    height: calc(100vh - var(--header-h));
+    height: calc(100dvh - var(--header-h));
+    /* Waechst nur dann ueber den Bildschirm hinaus, wenn der Inhalt sonst
+       aus der Sektion in die naechste laufen wuerde (sehr flache Fenster). */
+    min-height: fit-content;
+  }
+}
+
+
+/* ------------------------------------------------------------------ *
+ *  Kundenlogo-Laufband
+ *  Die Spur enthaelt jeden Logosatz zweimal. Verschiebt man sie um 50 %,
+ *  steht wieder exakt der Anfang - dadurch laeuft es nahtlos endlos.
+ * ------------------------------------------------------------------ */
+@layer components {
+  @keyframes logo-lauf {
+    from { transform: translateX(-50%); }
+    to   { transform: translateX(0); }
+  }
+  .logo-spur {
+    display: flex;
+    width: max-content;
+    animation: logo-lauf var(--dauer, 42s) linear infinite;
+    /* Negativer Verzug: jede Reihe startet an einer anderen Stelle der
+       Schleife, sonst stehen beim Laden dieselben Logos uebereinander. */
+    animation-delay: var(--verzug, 0s);
+  }
+  /* Die Dauer ist je Breakpoint aus der tatsaechlichen Spurbreite berechnet,
+     damit die Geschwindigkeit ueberall exakt gleich ist (Pixel pro Sekunde). */
+  @media (min-width: 735px)  { .logo-spur { animation-duration: var(--dauer-sm); } }
+  @media (min-width: 1069px) { .logo-spur { animation-duration: var(--dauer-lg); } }
+  /* Am linken und rechten Rand ausblenden, damit die Logos nicht
+     abgeschnitten aus der Kachel treten */
+  /* Links weiter eingeblendet als rechts: die Kennzahl unten links soll auf
+     reinem Blau stehen, ohne Logos dahinter. */
+  /* Jedes Logo bringt seine drei Hoehen als Variablen mit – optisch
+     ausgeglichen, damit breite Marken nicht groesser wirken als schmale. */
+  .logo-spur img { height: var(--h); }
+  @media (min-width: 735px)  { .logo-spur img { height: var(--h-sm); } }
+  @media (min-width: 1069px) { .logo-spur img { height: var(--h-lg); } }
+
+  .logo-band {
+    -webkit-mask-image: linear-gradient(to right, transparent 12%, #000 30%, #000 94%, transparent);
+            mask-image: linear-gradient(to right, transparent 12%, #000 30%, #000 94%, transparent);
+  }
+}
+
+/* Karussell: native Scroll-Snap, kein JS noetig damit es funktioniert */
+.snap-track {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.snap-track::-webkit-scrollbar { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ *  Kopfleiste
+ * ------------------------------------------------------------------ */
+@layer components {
+  /* Sichtbarer Fokusring fuer Tastaturbedienung */
+  header a:focus-visible,
+  #nav-toggle:focus-visible {
+    outline: 2px solid var(--color-blue-medium);
+    outline-offset: 3px;
+    border-radius: 8px;
+  }
+}

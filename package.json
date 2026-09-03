@@ -1,0 +1,15 @@
+{
+  "name": "taskrunner-static",
+  "private": true,
+  "description": "Statische taskrunner-Startseite. Fuer die Seite selbst wird nichts davon gebraucht - nur zum Neuerzeugen von assets/style.css.",
+  "scripts": {
+    "css": "tailwindcss -i tailwind/input.css -o assets/style.css --minify",
+    "css:watch": "tailwindcss -i tailwind/input.css -o assets/style.css --watch",
+    "build": "npm run css && node build.mjs",
+    "deploy": "npm run build && npx --yes wrangler@4 pages deploy dist --project-name=taskrunnernew"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.3.3",
+    "tailwindcss": "^4.3.3"
+  }
+}
