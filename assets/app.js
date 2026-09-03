@@ -175,4 +175,27 @@
       if (feineZeiger.matches) e.preventDefault();
     });
   }
+  /* ---------------------------------------------------------------- *
+   *  Hintergrundvideo der Technikerkachel
+   *  Wer im Betriebssystem weniger Bewegung eingestellt hat, bekommt
+   *  das Standbild statt der Schleife.
+   * ---------------------------------------------------------------- */
+  var ruhig = window.matchMedia("(prefers-reduced-motion: reduce)");
+  var video = document.querySelector("video[poster]");
+  if (video) {
+    var richteVideo = function () {
+      if (ruhig.matches) {
+        video.removeAttribute("autoplay");
+        video.pause();
+        video.load();          /* stellt das Standbild wieder her */
+      } else if (video.paused) {
+        var lauf = video.play();
+        if (lauf && lauf.catch) lauf.catch(function () {});
+      }
+    };
+    richteVideo();
+    if (ruhig.addEventListener) ruhig.addEventListener("change", richteVideo);
+    else if (ruhig.addListener) ruhig.addListener(richteVideo);
+  }
+
 })();
