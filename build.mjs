@@ -1,11 +1,13 @@
 // Stellt aus den Quelldateien den auslieferbaren Ordner dist/ zusammen.
 // Voraussetzung: assets/style.css wurde vorher von Tailwind erzeugt (npm run css).
-import { cp, rm, mkdir, access } from 'node:fs/promises';
+import { cp, rm, mkdir, access, readdir } from 'node:fs/promises';
 import path from 'node:path';
 
 const AUS = 'dist';
+// Alle HTML-Seiten im Wurzelverzeichnis werden automatisch mitgenommen -
+// eine neue Seite muss hier also nicht eingetragen werden.
 const DATEIEN = [
-  'index.html', 'dienstleistungen.html', 'foerderungen.html',
+  ...(await readdir('.')).filter((d) => d.endsWith('.html')).sort(),
   'favicon.svg', 'favicon-96.png', 'apple-touch-icon.png',
   '_redirects', '_headers',
 ];
