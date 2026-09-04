@@ -32,6 +32,7 @@
     this.messen();
     this.saeen();
     this.binden();
+    this.zeichnen();
   }
 
   Schaubild.prototype.messen = function () {
@@ -58,6 +59,7 @@
     var woelbung = this.h * 0.055;
     var n = this.anzahl;
     this.punkte = [];
+    this.impulse = [];
     for (var i = 0; i < n; i++) {
       var t = n === 1 ? 0.5 : i / (n - 1);
       var d = (t - 0.5) * 2;
@@ -109,8 +111,9 @@
   };
 
   Schaubild.prototype.start = function () {
+    this.zeichnen();                 /* immer sofort ein Bild, nie eine leere Flaeche */
     if (this.laeuft) return;
-    if (ruhig.matches) { this.zeichnen(); return; }   /* weniger Bewegung: Standbild */
+    if (ruhig.matches) return;       /* weniger Bewegung: es bleibt beim Standbild */
     this.laeuft = true;
     var s = this;
     var schritt = function () {
@@ -127,8 +130,26 @@
     if (this.anfrage) cancelAnimationFrame(this.anfrage);
   };
 
+  /* Von Zeit zu Zeit laeuft ein Impuls von der Karte zu einem Punkt -
+     der Auftrag, der beim Gewerk ankommt. */
+  Schaubild.prototype.impulsePflegen = function () {
+    var i;
+    if (!ruhig.matches && this.impulse.length < 3 && Math.random() < 0.012) {
+      this.impulse.push({ ziel: Math.floor(Math.random() * this.punkte.length), s: 0 });
+    }
+    for (i = this.impulse.length - 1; i >= 0; i--) {
+      this.impulse[i].s += 0.011;
+      if (this.impulse[i].s >= 1) {
+        var p = this.punkte[this.impulse[i].ziel];
+        if (p) p.blitz = 1;                      /* Punkt leuchtet kurz auf */
+        this.impulse.splice(i, 1);
+      }
+    }
+  };
+
   Schaubild.prototype.zeichnen = function () {
     var g = this.stift, b = this.b, h = this.h, i, p;
+    this.impulsePflegen();
 
     g.clearRect(0, 0, b, h);
 
@@ -145,8 +166,8 @@
     for (i = 0; i < this.punkte.length; i++) {
       p = this.punkte[i];
       var drift = ruhig.matches ? 0 : 1;
-      p.x = p.rx + Math.sin(this.t * 0.5 + p.phase) * 2.4 * drift;
-      p.y = p.ry + Math.cos(this.t * 0.42 + p.phase * 1.3) * 1.8 * drift;
+      p.x = p.rx + Math.sin(this.t * 0.5 + p.phase) * 3.6 * drift;
+      p.y = p.ry + Math.cos(this.t * 0.42 + p.phase * 1.3) * 2.6 * drift;
 
       var ziel = 0;
       if (this.zeiger) {
@@ -159,6 +180,7 @@
         p.y += dy * 0.10 * ziel;
       }
       p.naehe += (ziel - p.naehe) * 0.14;
+      p.blitz = (p.blitz || 0) * 0.94;
     }
 
     /* Strahlen von der Karte zu den Punkten */
@@ -176,12 +198,30 @@
       g.stroke();
     }
 
+    /* laufende Impulse auf den Strahlen */
+    for (i = 0; i < this.impulse.length; i++) {
+      var im = this.impulse[i];
+      var zp = this.punkte[im.ziel];
+      if (!zp) continue;
+      var e = im.s < 0.5 ? 2 * im.s * im.s : 1 - Math.pow(-2 * im.s + 2, 2) / 2;   /* weich an und ab */
+      var ix = zp.ax + (zp.x - zp.ax) * e;
+      var iy = this.kunten + (zp.y - this.kunten) * e;
+      var staerke = Math.sin(im.s * Math.PI);
+      var kopf = g.createRadialGradient(ix, iy, 0, ix, iy, 9);
+      kopf.addColorStop(0, farbe(BLAU_H, 0.95 * staerke));
+      kopf.addColorStop(1, farbe(BLAU_H, 0));
+      g.fillStyle = kopf;
+      g.beginPath(); g.arc(ix, iy, 9, 0, Math.PI * 2); g.fill();
+      g.fillStyle = farbe(BLAU_M, 0.9 * staerke);
+      g.beginPath(); g.arc(ix, iy, 2.2, 0, Math.PI * 2); g.fill();
+    }
+
     this.karteZeichnen();
 
     /* Punkte als Kugeln, mit Aufsetzschatten */
     for (i = 0; i < this.punkte.length; i++) {
       p = this.punkte[i];
-      var r = (4.4 + 2.2 * p.tiefe) * (1 + 0.42 * p.naehe);
+      var r = (4.4 + 2.2 * p.tiefe) * (1 + 0.42 * p.naehe + 0.30 * (p.blitz || 0));
 
       g.fillStyle = farbe(BLAU_D, 0.13);
       g.beginPath();
@@ -197,7 +237,7 @@
       g.arc(p.x, p.y, r, 0, Math.PI * 2);
       g.fill();
 
-      g.fillStyle = "rgba(255,255,255," + (0.42 + 0.3 * p.naehe) + ")";
+      g.fillStyle = "rgba(255,255,255," + Math.min(0.95, 0.42 + 0.3 * p.naehe + 0.5 * (p.blitz || 0)) + ")";
       g.beginPath();
       g.arc(p.x - r * 0.3, p.y - r * 0.34, r * 0.32, 0, Math.PI * 2);
       g.fill();
