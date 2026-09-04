@@ -50,7 +50,7 @@
     this.kb = Math.min(190, this.b * 0.44);
     this.kh = this.kb * 0.54;
     this.kx = (this.b - this.kb) / 2;
-    this.ky = this.h * 0.09;
+    this.ky = this.h * 0.06;
     this.kunten = this.ky + this.kh;
 
     /* Der Verlauf laeuft von oben links nach unten rechts ueber alles */
@@ -69,7 +69,7 @@
 
     /* zusaetzlicher Lichtkern dort, wo der Faecher am dichtesten ist */
     var k = this.stift.createRadialGradient(
-      this.b / 2, this.h * 0.80, 0, this.b / 2, this.h * 0.80, this.b * 0.72);
+      this.b / 2, this.h * 0.72, 0, this.b / 2, this.h * 0.72, this.b * 0.80);
     k.addColorStop(0.00, "rgba(" + HELL + ",0.16)");
     k.addColorStop(0.55, "rgba(" + HELL + ",0.05)");
     k.addColorStop(1.00, "rgba(" + HELL + ",0)");
@@ -85,9 +85,9 @@
   };
 
   Schaubild.prototype.saeen = function () {
-    var rand = Math.max(24, this.b * 0.08);
-    var boden = this.h * 0.86;
-    var woelbung = this.h * 0.05;
+    var rand = Math.max(14, this.b * 0.055);   /* Punkte weit aussen, aber nicht angeschnitten */
+    var boden = this.h * 0.78;                 /* Reihe rueckt naeher heran   */
+    var woelbung = this.h * 0.075;             /* staerker gewoelbt           */
     var n = this.anzahl, i, t, dd;
 
     this.punkte = [];
@@ -120,8 +120,8 @@
       /* Die feinen Strahlen enden auf derselben Bogenlinie wie die Punkte,
          nur unterschiedlich weit - so bleibt der untere Rand sauber. */
       var laenge = 0.80 + wuerfel() * 0.20;
-      var ezx = rand * 0.4 + t * (this.b - rand * 0.8) + (wuerfel() - 0.5) * this.b * 0.04;
-      var ezy = boden - woelbung * 1.4 * (1 - dd * dd);
+      var ezx = -this.b * 0.06 + t * (this.b * 1.12) + (wuerfel() - 0.5) * this.b * 0.05;
+      var ezy = boden - woelbung * 1.5 * (1 - dd * dd) + (wuerfel() - 0.5) * this.h * 0.05;
       var sax = this.kx + 8 + t * (this.kb - 16);
       this.fein.push({
         ax: sax,
