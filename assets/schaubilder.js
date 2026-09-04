@@ -209,7 +209,7 @@
       var atem = ruhig.matches ? 0 : Math.sin(this.t * 0.5 + f.phase) * 0.35 + 0.65;
       g.globalAlpha = f.deck * (ruhig.matches ? 1 : atem);
       g.beginPath();
-      g.moveTo(f.ax, this.ky + this.kh * 0.42);
+      g.moveTo(f.ax, this.kunten);
       g.lineTo(f.zx, f.zy);
       g.stroke();
       if (f.kopf) {
@@ -226,7 +226,7 @@
       g.globalAlpha = 0.16 + 0.14 * p.tiefe + 0.40 * p.naehe + 0.30 * p.blitz;
       g.lineWidth = 0.9 + 0.5 * p.naehe;
       g.beginPath();
-      g.moveTo(p.ax, this.ky + this.kh * 0.52);
+      g.moveTo(p.ax, this.kunten);
       g.lineTo(p.x, p.y);
       g.stroke();
     }
@@ -307,17 +307,40 @@
     g.globalAlpha = 1;
 
     if (this.glasMoeglich) {
+      /* Untergrund einmal leicht weichzeichnen ... */
       var pg = this.glas.getContext("2d");
       pg.setTransform(1, 0, 0, 1, 0, 0);
       pg.clearRect(0, 0, this.glas.width, this.glas.height);
-      pg.filter = "blur(" + (9 * d) + "px)";
+      pg.filter = "blur(" + (2.5 * d) + "px)";
       pg.drawImage(this.flaeche, 0, 0);
       pg.filter = "none";
+
+      /* ... und dann streifenweise verzerrt zurueckzeichnen. Jeder Streifen
+         holt sein Bild etwas weiter aussen und leicht vergroessert - zum
+         Rand hin staerker. Das ergibt die Lichtbrechung einer Linse. */
+      var streifen = 96;
+      var cy = y + h / 2, cx = x + b / 2;
+      var LUPE = 0.055;        /* Grundvergroesserung   */
+      var RAND = 0.13;         /* Zunahme zum Rand hin  */
 
       g.save();
       this.pfadKarte(x, y, b, h, r);
       g.clip();
-      g.drawImage(this.glas, 0, 0, this.b, this.h);
+      for (i = 0; i < streifen; i++) {
+        var y0 = y + (h / streifen) * i;
+        var hs = h / streifen + 1.5;   /* Ueberlappung gegen sichtbare Kanten */
+        var v = (y0 + hs / 2 - cy) / (h / 2);        /* -1 oben ... +1 unten */
+        var k = 1 + LUPE + RAND * v * v;             /* Verzerrung */
+
+        var qy = cy + (y0 - cy) * k;                 /* Quelle: weiter aussen */
+        var qh = hs * k;
+        var qx = cx - (b / 2) * k;
+        var qb = b * k;
+
+        g.drawImage(this.glas,
+          qx * d, qy * d, qb * d, qh * d,            /* Quelle in Geraetepixeln */
+          x, y0, b, hs);                             /* Ziel  in CSS-Pixeln     */
+      }
       g.restore();
     }
 
