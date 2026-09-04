@@ -48,7 +48,7 @@
     this.stift.setTransform(d, 0, 0, d, 0, 0);
 
     this.kb = Math.min(190, this.b * 0.44);
-    this.kh = this.kb * 0.5;
+    this.kh = this.kb * 0.54;
     this.kx = (this.b - this.kb) / 2;
     this.ky = this.h * 0.09;
     this.kunten = this.ky + this.kh;
@@ -59,6 +59,29 @@
     v.addColorStop(0.45, "rgba(" + HELL + ",0.85)");
     v.addColorStop(1.00, "rgba(" + TIEF + ",1)");
     this.verlauf = v;
+
+    /* Flaechenverlauf: liegt hinter allem und faerbt die ganze Karte */
+    var f = this.stift.createLinearGradient(0, 0, this.b * 0.35, this.h);
+    f.addColorStop(0.00, "rgba(255,255,255,0)");
+    f.addColorStop(0.42, "rgba(" + HELL + ",0.05)");
+    f.addColorStop(1.00, "rgba(" + HELL + ",0.17)");
+    this.flaechenverlauf = f;
+
+    /* zusaetzlicher Lichtkern dort, wo der Faecher am dichtesten ist */
+    var k = this.stift.createRadialGradient(
+      this.b / 2, this.h * 0.80, 0, this.b / 2, this.h * 0.80, this.b * 0.72);
+    k.addColorStop(0.00, "rgba(" + HELL + ",0.16)");
+    k.addColorStop(0.55, "rgba(" + HELL + ",0.05)");
+    k.addColorStop(1.00, "rgba(" + HELL + ",0)");
+    this.lichtkern = k;
+
+    /* Zwischenflaeche fuer das Weichzeichnen hinter der Glaskarte */
+    this.tiefe_ = d;
+    if (!this.glas) this.glas = document.createElement("canvas");
+    this.glas.width = this.flaeche.width;
+    this.glas.height = this.flaeche.height;
+    var pg = this.glas.getContext("2d");
+    this.glasMoeglich = !!pg && typeof pg.filter === "string";
   };
 
   Schaubild.prototype.saeen = function () {
@@ -164,6 +187,14 @@
     var g = this.stift, i, p, im;
 
     g.clearRect(0, 0, this.b, this.h);
+
+    /* Flaechenverlauf und Lichtkern hinter allem */
+    g.globalAlpha = 1;
+    g.fillStyle = this.flaechenverlauf;
+    g.fillRect(0, 0, this.b, this.h);
+    g.fillStyle = this.lichtkern;
+    g.fillRect(0, 0, this.b, this.h);
+
     g.strokeStyle = this.verlauf;
     g.fillStyle = this.verlauf;
     g.lineCap = "round";
@@ -178,7 +209,7 @@
       var atem = ruhig.matches ? 0 : Math.sin(this.t * 0.5 + f.phase) * 0.35 + 0.65;
       g.globalAlpha = f.deck * (ruhig.matches ? 1 : atem);
       g.beginPath();
-      g.moveTo(f.ax, this.kunten);
+      g.moveTo(f.ax, this.ky + this.kh * 0.42);
       g.lineTo(f.zx, f.zy);
       g.stroke();
       if (f.kopf) {
@@ -195,7 +226,7 @@
       g.globalAlpha = 0.16 + 0.14 * p.tiefe + 0.40 * p.naehe + 0.30 * p.blitz;
       g.lineWidth = 0.9 + 0.5 * p.naehe;
       g.beginPath();
-      g.moveTo(p.ax, this.kunten);
+      g.moveTo(p.ax, this.ky + this.kh * 0.52);
       g.lineTo(p.x, p.y);
       g.stroke();
     }
@@ -218,6 +249,7 @@
     this.karteZeichnen();
 
     /* 5 - die Taskrunner, flache Punkte */
+    g.fillStyle = this.verlauf;          /* Fuellfarbe nach der Glaskarte zuruecksetzen */
     for (i = 0; i < this.punkte.length; i++) {
       p = this.punkte[i];
       g.globalAlpha = 0.72 + 0.22 * p.tiefe + 0.06 * p.naehe;
@@ -265,33 +297,72 @@
     }
   };
 
-  /* Flache Karte: weisse Fuellung, damit keine Strahlen durchscheinen,
-     darauf eine Kontur und drei angedeutete Zeilen - kein Schatten. */
+  /* Die Auftragskarte als Glas: der Untergrund wird weichgezeichnet,
+     darauf eine helle Tönung, ein Lichtsaum an der oberen Kante und ein
+     Rand, der von hell nach blau kippt. Kein Schlagschatten. */
   Schaubild.prototype.karteZeichnen = function () {
-    var g = this.stift, x = this.kx, y = this.ky, b = this.kb, h = this.kh, r = 6, i;
+    var g = this.stift, x = this.kx, y = this.ky, b = this.kb, h = this.kh, r = 12, i;
+    var d = this.tiefe_ || 1;
 
-    this.pfadKarte(x, y, b, h, r);
     g.globalAlpha = 1;
-    g.fillStyle = "#ffffff";
+
+    if (this.glasMoeglich) {
+      var pg = this.glas.getContext("2d");
+      pg.setTransform(1, 0, 0, 1, 0, 0);
+      pg.clearRect(0, 0, this.glas.width, this.glas.height);
+      pg.filter = "blur(" + (9 * d) + "px)";
+      pg.drawImage(this.flaeche, 0, 0);
+      pg.filter = "none";
+
+      g.save();
+      this.pfadKarte(x, y, b, h, r);
+      g.clip();
+      g.drawImage(this.glas, 0, 0, this.b, this.h);
+      g.restore();
+    }
+
+    /* helle Toenung, oben dichter - das laesst das Glas gewoelbt wirken */
+    var ton = g.createLinearGradient(x, y, x + b * 0.4, y + h);
+    ton.addColorStop(0.00, "rgba(255,255,255,0.78)");
+    ton.addColorStop(0.55, "rgba(255,255,255,0.60)");
+    ton.addColorStop(1.00, "rgba(255,255,255,0.44)");
+    this.pfadKarte(x, y, b, h, r);
+    g.fillStyle = ton;
     g.fill();
 
-    g.fillStyle = this.verlauf;
-    g.strokeStyle = this.verlauf;
-
-    g.globalAlpha = 0.55;
-    g.lineWidth = 1;
+    /* Rand: oben links heller Lichtsaum, unten rechts blau */
+    var saum = g.createLinearGradient(x, y, x + b, y + h);
+    saum.addColorStop(0.00, "rgba(255,255,255,0.95)");
+    saum.addColorStop(0.38, "rgba(" + HELL + ",0.45)");
+    saum.addColorStop(1.00, "rgba(" + TIEF + ",0.38)");
+    g.strokeStyle = saum;
+    g.lineWidth = 1.2;
     this.pfadKarte(x, y, b, h, r);
     g.stroke();
 
-    var zeilen = [[0.30, 0.62], [0.50, 0.78], [0.70, 0.44]];
+    /* innerer Lichtstreifen direkt unter der Oberkante */
+    g.save();
+    this.pfadKarte(x, y, b, h, r);
+    g.clip();
+    var glanz = g.createLinearGradient(0, y, 0, y + h * 0.42);
+    glanz.addColorStop(0, "rgba(255,255,255,0.85)");
+    glanz.addColorStop(1, "rgba(255,255,255,0)");
+    g.fillStyle = glanz;
+    g.fillRect(x, y, b, h * 0.42);
+    g.restore();
+
+    /* angedeutete Zeilen im Auftrag */
+    g.strokeStyle = this.verlauf;
     g.lineWidth = 3;
+    var zeilen = [[0.32, 0.62], [0.52, 0.78], [0.72, 0.44]];
     for (i = 0; i < zeilen.length; i++) {
-      g.globalAlpha = 0.16;
+      g.globalAlpha = 0.22;
       g.beginPath();
       g.moveTo(x + b * 0.13, y + h * zeilen[i][0]);
       g.lineTo(x + b * 0.13 + (b * 0.74) * zeilen[i][1], y + h * zeilen[i][0]);
       g.stroke();
     }
+    g.globalAlpha = 1;
   };
 
   Schaubild.prototype.pfadKarte = function (x, y, b, h, r) {
