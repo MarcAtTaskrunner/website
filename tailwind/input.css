@@ -90,6 +90,17 @@
   --radius-tile: 1.5rem;
 }
 
+
+/* ------------------------------------------------------------------ *
+ *  Variante B - kleinere Radien
+ *  Gilt nur unter .variante-b am body, die Startseite bleibt unberuehrt.
+ * ------------------------------------------------------------------ */
+.variante-b {
+  --radius-card: 0.5rem;    /* war 1.25rem */
+  --radius-tile: 0.625rem;  /* war 1.5rem  */
+  --radius-xl:   0.375rem;  /* rounded-xl, war 0.75rem */
+}
+
 /* Container-Breiten: der Prototyp nutzt zwei Rasterbreiten */
 @utility container-wide {
   width: 100%;
