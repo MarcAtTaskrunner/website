@@ -1,40 +1,43 @@
 /* taskrunner - Punkt-Schaubilder der Sektion "Schnell, einfach und Transparent".
-   Alles gerechnet, keine Bilder. Ein Punkt ist ein Taskrunner, der Auftrag ist
-   die Karte oben - deshalb nie ein Punkt.
+   Alles gerechnet, keine Bilder.
 
-   Einbau:  <canvas data-schaubild="gewerke" data-punkte="9"></canvas>
-   Die Datei sucht sich alle so ausgezeichneten Flaechen selbst.            */
+   Gestaltung: flach, kein 3D. Ein einziger Verlauf spannt sich ueber die
+   gesamte Flaeche und faerbt jedes Element - Strahlen, Punkte, Auftragskarte.
+   Tiefe entsteht allein dadurch, dass sich durchscheinende Linien ueberlagern,
+   nicht durch Schatten oder Glanzlichter.
+
+   Ein Punkt ist ein Taskrunner. Der Auftrag ist die Karte oben, also nie ein Punkt.
+
+   Einbau:  <canvas data-schaubild="gewerke" data-punkte="9"></canvas>          */
 (function () {
   "use strict";
 
-  var BLAU_H = [66, 133, 244];   /* Light Blue  */
-  var BLAU_M = [17, 85, 204];    /* Medium Blue */
-  var BLAU_D = [0, 1, 107];      /* Dark Blue   */
+  var HELL = "66,133,244";      /* Light Blue  #4285f4 */
+  var TIEF = "17,85,204";       /* Medium Blue #1155cc */
+
+  var FEIN = 130;               /* Anzahl der feinen Hintergrundstrahlen */
 
   var ruhig = window.matchMedia("(prefers-reduced-motion: reduce)");
   var grob  = window.matchMedia("(pointer: coarse)");
 
-  function farbe(c, a) {
-    return "rgba(" + c[0] + "," + c[1] + "," + c[2] + "," + a + ")";
-  }
-
-  /* ---------------------------------------------------------------- *
-   *  Ein Schaubild
-   * ---------------------------------------------------------------- */
   function Schaubild(flaeche) {
     this.flaeche = flaeche;
     this.stift = flaeche.getContext("2d");
     this.anzahl = parseInt(flaeche.dataset.punkte, 10) || 9;
-    this.zeiger = null;          /* Position des Mauszeigers, null = draussen */
+    this.zeiger = null;
     this.laeuft = false;
     this.t = 0;
     this.punkte = [];
+    this.impulse = [];
     this.messen();
     this.saeen();
     this.binden();
     this.zeichnen();
   }
 
+  /* ---------------------------------------------------------------- *
+   *  Masse und der eine Verlauf ueber die ganze Flaeche
+   * ---------------------------------------------------------------- */
   Schaubild.prototype.messen = function () {
     var r = this.flaeche.getBoundingClientRect();
     var d = Math.min(window.devicePixelRatio || 1, 2);
@@ -44,66 +47,92 @@
     this.flaeche.height = this.h * d;
     this.stift.setTransform(d, 0, 0, d, 0, 0);
 
-    /* Auftragskarte: mittig oben, Groesse an der Flaeche ausgerichtet */
     this.kb = Math.min(190, this.b * 0.44);
-    this.kh = this.kb * 0.56;
+    this.kh = this.kb * 0.5;
     this.kx = (this.b - this.kb) / 2;
-    this.ky = this.h * 0.10;
+    this.ky = this.h * 0.09;
     this.kunten = this.ky + this.kh;
+
+    /* Der Verlauf laeuft von oben links nach unten rechts ueber alles */
+    var v = this.stift.createLinearGradient(0, 0, this.b, this.h);
+    v.addColorStop(0.00, "rgba(" + HELL + ",0.62)");
+    v.addColorStop(0.45, "rgba(" + HELL + ",0.85)");
+    v.addColorStop(1.00, "rgba(" + TIEF + ",1)");
+    this.verlauf = v;
   };
 
-  /* Ruhelage der Punkte: gleichmaessig verteilt, Reihe leicht gewoelbt */
   Schaubild.prototype.saeen = function () {
-    var rand = Math.max(26, this.b * 0.09);
-    var boden = this.h * 0.84;
-    var woelbung = this.h * 0.055;
-    var n = this.anzahl;
+    var rand = Math.max(24, this.b * 0.08);
+    var boden = this.h * 0.86;
+    var woelbung = this.h * 0.05;
+    var n = this.anzahl, i, t, dd;
+
     this.punkte = [];
-    this.impulse = [];
-    for (var i = 0; i < n; i++) {
-      var t = n === 1 ? 0.5 : i / (n - 1);
-      var d = (t - 0.5) * 2;
+    for (i = 0; i < n; i++) {
+      t = n === 1 ? 0.5 : i / (n - 1);
+      dd = (t - 0.5) * 2;
       this.punkte.push({
-        rx: rand + t * (this.b - 2 * rand),          /* Ruhelage x */
-        ry: boden - woelbung * (1 - d * d),          /* Ruhelage y */
+        rx: rand + t * (this.b - 2 * rand),
+        ry: boden - woelbung * (1 - dd * dd),
+        ax: this.kx + 12 + t * (this.kb - 24),
         x: 0, y: 0,
-        tiefe: 1 - Math.abs(d),                      /* Mitte = vorn */
+        tiefe: 1 - Math.abs(dd),
         phase: i * 0.9,
-        naehe: 0                                     /* 0..1, Naehe zum Zeiger */
+        naehe: 0,
+        blitz: 0
       });
-      /* Ansatz an der Unterkante der Karte, ebenfalls gleichmaessig */
-      this.punkte[i].ax = this.kx + 14 + t * (this.kb - 28);
+    }
+
+    /* Feine Strahlen dahinter - sie erzeugen die Dichte, jeder fuer sich
+       kaum sichtbar. Fest gestreut, damit das Bild nicht flimmert. */
+    this.fein = [];
+    var zufall = 987654321;
+    var wuerfel = function () {           /* immer dieselbe Streuung */
+      zufall = (zufall * 1103515245 + 12345) % 2147483648;
+      return zufall / 2147483648;
+    };
+    for (i = 0; i < FEIN; i++) {
+      t = i / (FEIN - 1);
+      dd = (t - 0.5) * 2;
+      /* Die feinen Strahlen enden auf derselben Bogenlinie wie die Punkte,
+         nur unterschiedlich weit - so bleibt der untere Rand sauber. */
+      var laenge = 0.80 + wuerfel() * 0.20;
+      var ezx = rand * 0.4 + t * (this.b - rand * 0.8) + (wuerfel() - 0.5) * this.b * 0.04;
+      var ezy = boden - woelbung * 1.4 * (1 - dd * dd);
+      var sax = this.kx + 8 + t * (this.kb - 16);
+      this.fein.push({
+        ax: sax,
+        zx: sax + (ezx - sax) * laenge,
+        zy: this.kunten + (ezy - this.kunten) * laenge,
+        deck: 0.05 + wuerfel() * 0.07,
+        kopf: wuerfel() < 0.30,          /* manche enden in einem winzigen Punkt */
+        phase: wuerfel() * 6.283
+      });
     }
   };
 
   Schaubild.prototype.binden = function () {
     var s = this;
 
-    this.beiZeiger = function (e) {
-      var r = s.flaeche.getBoundingClientRect();
-      s.zeiger = { x: e.clientX - r.left, y: e.clientY - r.top };
-    };
-    this.beiVerlassen = function () { s.zeiger = null; };
-
     if (!grob.matches) {
-      this.flaeche.addEventListener("pointermove", this.beiZeiger, { passive: true });
-      this.flaeche.addEventListener("pointerleave", this.beiVerlassen, { passive: true });
+      this.flaeche.addEventListener("pointermove", function (e) {
+        var r = s.flaeche.getBoundingClientRect();
+        s.zeiger = { x: e.clientX - r.left, y: e.clientY - r.top };
+      }, { passive: true });
+      this.flaeche.addEventListener("pointerleave", function () { s.zeiger = null; }, { passive: true });
     }
 
-    /* nur rechnen, solange die Flaeche wirklich zu sehen ist */
     if ("IntersectionObserver" in window) {
-      new IntersectionObserver(function (eintraege) {
-        eintraege.forEach(function (e) { e.isIntersecting ? s.start() : s.stopp(); });
+      new IntersectionObserver(function (e) {
+        e.forEach(function (x) { x.isIntersecting ? s.start() : s.stopp(); });
       }, { rootMargin: "120px" }).observe(this.flaeche);
     } else {
       this.start();
     }
 
-    if ("ResizeObserver" in window) {
-      new ResizeObserver(function () { s.messen(); s.saeen(); s.zeichnen(); }).observe(this.flaeche);
-    } else {
-      window.addEventListener("resize", function () { s.messen(); s.saeen(); s.zeichnen(); });
-    }
+    var neu = function () { s.messen(); s.saeen(); s.zeichnen(); };
+    if ("ResizeObserver" in window) new ResizeObserver(neu).observe(this.flaeche);
+    else window.addEventListener("resize", neu);
 
     var aufRuhe = function () { ruhig.matches ? (s.stopp(), s.zeichnen()) : s.start(); };
     if (ruhig.addEventListener) ruhig.addEventListener("change", aufRuhe);
@@ -111,18 +140,16 @@
   };
 
   Schaubild.prototype.start = function () {
-    this.zeichnen();                 /* immer sofort ein Bild, nie eine leere Flaeche */
-    if (this.laeuft) return;
-    if (ruhig.matches) return;       /* weniger Bewegung: es bleibt beim Standbild */
+    this.zeichnen();                       /* nie eine leere Flaeche */
+    if (this.laeuft || ruhig.matches) return;
     this.laeuft = true;
     var s = this;
-    var schritt = function () {
+    (function schritt() {
       if (!s.laeuft) return;
       s.t += 1 / 60;
       s.zeichnen();
       s.anfrage = requestAnimationFrame(schritt);
-    };
-    this.anfrage = requestAnimationFrame(schritt);
+    })();
   };
 
   Schaubild.prototype.stopp = function () {
@@ -130,151 +157,139 @@
     if (this.anfrage) cancelAnimationFrame(this.anfrage);
   };
 
-  /* Von Zeit zu Zeit laeuft ein Impuls von der Karte zu einem Punkt -
-     der Auftrag, der beim Gewerk ankommt. */
-  Schaubild.prototype.impulsePflegen = function () {
-    var i;
-    if (!ruhig.matches && this.impulse.length < 3 && Math.random() < 0.012) {
-      this.impulse.push({ ziel: Math.floor(Math.random() * this.punkte.length), s: 0 });
-    }
-    for (i = this.impulse.length - 1; i >= 0; i--) {
-      this.impulse[i].s += 0.011;
-      if (this.impulse[i].s >= 1) {
-        var p = this.punkte[this.impulse[i].ziel];
-        if (p) p.blitz = 1;                      /* Punkt leuchtet kurz auf */
-        this.impulse.splice(i, 1);
-      }
-    }
-  };
-
+  /* ---------------------------------------------------------------- *
+   *  Zeichnen
+   * ---------------------------------------------------------------- */
   Schaubild.prototype.zeichnen = function () {
-    var g = this.stift, b = this.b, h = this.h, i, p;
+    var g = this.stift, i, p, im;
+
+    g.clearRect(0, 0, this.b, this.h);
+    g.strokeStyle = this.verlauf;
+    g.fillStyle = this.verlauf;
+    g.lineCap = "round";
+
     this.impulsePflegen();
+    this.punkteBewegen();
 
-    g.clearRect(0, 0, b, h);
-
-    /* Lichtschein hinter dem Faecher */
-    var mitte = { x: b / 2, y: h * 0.62 };
-    var schein = g.createRadialGradient(mitte.x, mitte.y, 0, mitte.x, mitte.y, Math.max(b, h) * 0.52);
-    schein.addColorStop(0, farbe(BLAU_H, 0.20));
-    schein.addColorStop(0.5, farbe(BLAU_H, 0.07));
-    schein.addColorStop(1, farbe(BLAU_H, 0));
-    g.fillStyle = schein;
-    g.fillRect(0, 0, b, h);
-
-    /* Punkte in ihre aktuelle Lage bringen */
-    for (i = 0; i < this.punkte.length; i++) {
-      p = this.punkte[i];
-      var drift = ruhig.matches ? 0 : 1;
-      p.x = p.rx + Math.sin(this.t * 0.5 + p.phase) * 3.6 * drift;
-      p.y = p.ry + Math.cos(this.t * 0.42 + p.phase * 1.3) * 2.6 * drift;
-
-      var ziel = 0;
-      if (this.zeiger) {
-        var dx = this.zeiger.x - p.x, dy = this.zeiger.y - p.y;
-        var abstand = Math.sqrt(dx * dx + dy * dy);
-        ziel = Math.max(0, 1 - abstand / (b * 0.28));
-        ziel *= ziel;
-        /* leichtes Anziehen des Punktes zum Zeiger */
-        p.x += dx * 0.10 * ziel;
-        p.y += dy * 0.10 * ziel;
+    /* 1 - feine Strahlen: die Dichte */
+    g.lineWidth = 0.6;
+    for (i = 0; i < this.fein.length; i++) {
+      var f = this.fein[i];
+      var atem = ruhig.matches ? 0 : Math.sin(this.t * 0.5 + f.phase) * 0.35 + 0.65;
+      g.globalAlpha = f.deck * (ruhig.matches ? 1 : atem);
+      g.beginPath();
+      g.moveTo(f.ax, this.kunten);
+      g.lineTo(f.zx, f.zy);
+      g.stroke();
+      if (f.kopf) {
+        g.globalAlpha = f.deck * 2.6;
+        g.beginPath();
+        g.arc(f.zx, f.zy, 1.15, 0, 6.283);
+        g.fill();
       }
-      p.naehe += (ziel - p.naehe) * 0.14;
-      p.blitz = (p.blitz || 0) * 0.94;
     }
 
-    /* Strahlen von der Karte zu den Punkten */
+    /* 2 - die neun Strahlen zu den Taskrunnern */
     for (i = 0; i < this.punkte.length; i++) {
       p = this.punkte[i];
-      var deck = 0.16 + 0.20 * p.tiefe + 0.42 * p.naehe;
-      var lauf = g.createLinearGradient(p.ax, this.kunten, p.x, p.y);
-      lauf.addColorStop(0, farbe(BLAU_M, deck));
-      lauf.addColorStop(1, farbe(BLAU_M, deck * 0.42));
-      g.strokeStyle = lauf;
-      g.lineWidth = 1 + 0.7 * p.tiefe + 0.9 * p.naehe;
+      g.globalAlpha = 0.16 + 0.14 * p.tiefe + 0.40 * p.naehe + 0.30 * p.blitz;
+      g.lineWidth = 0.9 + 0.5 * p.naehe;
       g.beginPath();
       g.moveTo(p.ax, this.kunten);
       g.lineTo(p.x, p.y);
       g.stroke();
     }
 
-    /* laufende Impulse auf den Strahlen */
+    /* 3 - laufende Impulse */
     for (i = 0; i < this.impulse.length; i++) {
-      var im = this.impulse[i];
-      var zp = this.punkte[im.ziel];
-      if (!zp) continue;
-      var e = im.s < 0.5 ? 2 * im.s * im.s : 1 - Math.pow(-2 * im.s + 2, 2) / 2;   /* weich an und ab */
-      var ix = zp.ax + (zp.x - zp.ax) * e;
-      var iy = this.kunten + (zp.y - this.kunten) * e;
-      var staerke = Math.sin(im.s * Math.PI);
-      var kopf = g.createRadialGradient(ix, iy, 0, ix, iy, 9);
-      kopf.addColorStop(0, farbe(BLAU_H, 0.95 * staerke));
-      kopf.addColorStop(1, farbe(BLAU_H, 0));
-      g.fillStyle = kopf;
-      g.beginPath(); g.arc(ix, iy, 9, 0, Math.PI * 2); g.fill();
-      g.fillStyle = farbe(BLAU_M, 0.9 * staerke);
-      g.beginPath(); g.arc(ix, iy, 2.2, 0, Math.PI * 2); g.fill();
+      im = this.impulse[i];
+      p = this.punkte[im.ziel];
+      if (!p) continue;
+      var e = im.s < 0.5 ? 2 * im.s * im.s : 1 - Math.pow(-2 * im.s + 2, 2) / 2;
+      var ix = p.ax + (p.x - p.ax) * e;
+      var iy = this.kunten + (p.y - this.kunten) * e;
+      g.globalAlpha = Math.sin(im.s * Math.PI) * 0.9;
+      g.beginPath();
+      g.arc(ix, iy, 2.4, 0, 6.283);
+      g.fill();
     }
 
+    /* 4 - die Auftragskarte, flach */
     this.karteZeichnen();
 
-    /* Punkte als Kugeln, mit Aufsetzschatten */
+    /* 5 - die Taskrunner, flache Punkte */
     for (i = 0; i < this.punkte.length; i++) {
       p = this.punkte[i];
-      var r = (4.4 + 2.2 * p.tiefe) * (1 + 0.42 * p.naehe + 0.30 * (p.blitz || 0));
-
-      g.fillStyle = farbe(BLAU_D, 0.13);
+      g.globalAlpha = 0.72 + 0.22 * p.tiefe + 0.06 * p.naehe;
       g.beginPath();
-      g.ellipse(p.x, p.y + r * 1.3, r * 1.15, r * 0.34, 0, 0, Math.PI * 2);
+      g.arc(p.x, p.y, (2.6 + 1.5 * p.tiefe) * (1 + 0.30 * p.naehe + 0.22 * p.blitz), 0, 6.283);
       g.fill();
+    }
 
-      var kugel = g.createRadialGradient(p.x - r * 0.32, p.y - r * 0.36, r * 0.12, p.x, p.y, r);
-      kugel.addColorStop(0, farbe(BLAU_H, 1));
-      kugel.addColorStop(0.55, farbe(BLAU_M, 1));
-      kugel.addColorStop(1, farbe(BLAU_D, 1));
-      g.fillStyle = kugel;
-      g.beginPath();
-      g.arc(p.x, p.y, r, 0, Math.PI * 2);
-      g.fill();
+    g.globalAlpha = 1;
+  };
 
-      g.fillStyle = "rgba(255,255,255," + Math.min(0.95, 0.42 + 0.3 * p.naehe + 0.5 * (p.blitz || 0)) + ")";
-      g.beginPath();
-      g.arc(p.x - r * 0.3, p.y - r * 0.34, r * 0.32, 0, Math.PI * 2);
-      g.fill();
+  Schaubild.prototype.punkteBewegen = function () {
+    var i, p, drift = ruhig.matches ? 0 : 1;
+    for (i = 0; i < this.punkte.length; i++) {
+      p = this.punkte[i];
+      p.x = p.rx + Math.sin(this.t * 0.5 + p.phase) * 3.2 * drift;
+      p.y = p.ry + Math.cos(this.t * 0.42 + p.phase * 1.3) * 2.2 * drift;
+
+      var ziel = 0;
+      if (this.zeiger) {
+        var dx = this.zeiger.x - p.x, dy = this.zeiger.y - p.y;
+        var w = Math.sqrt(dx * dx + dy * dy);
+        ziel = Math.max(0, 1 - w / (this.b * 0.28));
+        ziel *= ziel;
+        p.x += dx * 0.10 * ziel;
+        p.y += dy * 0.10 * ziel;
+      }
+      p.naehe += (ziel - p.naehe) * 0.14;
+      p.blitz *= 0.94;
     }
   };
 
+  Schaubild.prototype.impulsePflegen = function () {
+    var i;
+    if (!ruhig.matches && this.impulse.length < 3 && Math.random() < 0.013) {
+      this.impulse.push({ ziel: Math.floor(Math.random() * this.punkte.length), s: 0 });
+    }
+    for (i = this.impulse.length - 1; i >= 0; i--) {
+      this.impulse[i].s += 0.011;
+      if (this.impulse[i].s >= 1) {
+        var p = this.punkte[this.impulse[i].ziel];
+        if (p) p.blitz = 1;
+        this.impulse.splice(i, 1);
+      }
+    }
+  };
+
+  /* Flache Karte: weisse Fuellung, damit keine Strahlen durchscheinen,
+     darauf eine Kontur und drei angedeutete Zeilen - kein Schatten. */
   Schaubild.prototype.karteZeichnen = function () {
-    var g = this.stift, x = this.kx, y = this.ky, b = this.kb, h = this.kh, r = 8;
+    var g = this.stift, x = this.kx, y = this.ky, b = this.kb, h = this.kh, r = 6, i;
 
-    g.save();
-    g.shadowColor = farbe(BLAU_D, 0.16);
-    g.shadowBlur = 16;
-    g.shadowOffsetY = 6;
-
-    var flaeche = g.createLinearGradient(0, y, 0, y + h);
-    flaeche.addColorStop(0, "#ffffff");
-    flaeche.addColorStop(1, "#f4f8ff");
-    g.fillStyle = flaeche;
     this.pfadKarte(x, y, b, h, r);
+    g.globalAlpha = 1;
+    g.fillStyle = "#ffffff";
     g.fill();
-    g.restore();
 
-    g.strokeStyle = farbe(BLAU_M, 0.38);
-    g.lineWidth = 1.3;
+    g.fillStyle = this.verlauf;
+    g.strokeStyle = this.verlauf;
+
+    g.globalAlpha = 0.55;
+    g.lineWidth = 1;
     this.pfadKarte(x, y, b, h, r);
     g.stroke();
 
-    /* angedeutete Zeilen im Auftrag */
-    var zeilen = [[0.30, 0.62, 5, 0.22], [0.48, 0.78, 4, 0.13], [0.63, 0.44, 4, 0.13]];
-    g.lineCap = "round";
-    for (var i = 0; i < zeilen.length; i++) {
-      var z = zeilen[i];
-      g.strokeStyle = farbe(BLAU_M, z[3]);
-      g.lineWidth = z[2];
+    var zeilen = [[0.30, 0.62], [0.50, 0.78], [0.70, 0.44]];
+    g.lineWidth = 3;
+    for (i = 0; i < zeilen.length; i++) {
+      g.globalAlpha = 0.16;
       g.beginPath();
-      g.moveTo(x + b * 0.13, y + h * z[0]);
-      g.lineTo(x + b * 0.13 + (b * 0.74) * z[1], y + h * z[0]);
+      g.moveTo(x + b * 0.13, y + h * zeilen[i][0]);
+      g.lineTo(x + b * 0.13 + (b * 0.74) * zeilen[i][1], y + h * zeilen[i][0]);
       g.stroke();
     }
   };
@@ -290,15 +305,11 @@
     g.closePath();
   };
 
-  /* ---------------------------------------------------------------- */
   function starten() {
-    var flaechen = document.querySelectorAll("canvas[data-schaubild]");
-    for (var i = 0; i < flaechen.length; i++) new Schaubild(flaechen[i]);
+    var f = document.querySelectorAll("canvas[data-schaubild]");
+    for (var i = 0; i < f.length; i++) new Schaubild(f[i]);
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", starten);
-  } else {
-    starten();
-  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", starten);
+  else starten();
 })();
