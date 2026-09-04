@@ -1,0 +1,13 @@
+<!DOCTYPE html><html lang="de"><head><meta charset="utf-8"><style>
+ @font-face{font-family:"DIN Pro";src:url("assets/fonts/dinpro-bold.woff2") format("woff2");font-weight:700}
+ @font-face{font-family:"DIN Pro";src:url("assets/fonts/dinpro-regular.woff2") format("woff2");font-weight:400}
+ *{box-sizing:border-box} body{margin:0;background:#fff;font-family:"DIN Pro",system-ui,sans-serif;padding:36px 24px 90px}
+ .reihe{display:flex;gap:20px}
+ .spalte{width:340px;flex:0 0 340px}
+ .karte{background:#fff;border:1px solid #e3e8f2;border-radius:8px;overflow:hidden;display:flex;flex-direction:column;height:470px}
+ .karte h3{font-size:24px;line-height:1.15;color:#004689;margin:0;padding:30px 30px 0;font-weight:700;letter-spacing:-.01em}
+ canvas{display:block;width:100%;flex:1;min-height:330px}
+ .l{margin:14px 0 0;font-size:13px;line-height:1.45;color:#5b6577;font-weight:400}
+ .l b{color:#004689;font-weight:700}
+</style></head><body><div class="reihe"><div class="spalte"><div class="karte"><h3>Ein Auftrag, alle Gewerke.</h3><canvas data-art="welle"></canvas></div><p class="l"><b>A — Welle</b><br>Der Auftrag schlägt Wellen. Punktfeld = alle Taskrunner, die Front läuft durch und aktiviert sie.</p></div><div class="spalte"><div class="karte"><h3>Ein Auftrag, alle Gewerke.</h3><canvas data-art="orbit"></canvas></div><p class="l"><b>B — Orbit</b><br>Alles kreist um den Auftrag. Drei Bahnen, Punkte vorn heller als hinten.</p></div><div class="spalte"><div class="karte"><h3>Ein Auftrag, alle Gewerke.</h3><canvas data-art="strom"></canvas></div><p class="l"><b>C — Strom</b><br>Ein Zulauf, ein Knoten, sechs Äste. Teilchen fließen sichtbar hindurch.</p></div><div class="spalte"><div class="karte"><h3>Ein Auftrag, alle Gewerke.</h3><canvas data-art="faecher"></canvas></div><p class="l"><b>D — Fächer</b><br>Der bisherige Stand, zum Vergleich.</p></div></div>
+<script src="assets/entwuerfe.js" defer></script></body></html>
