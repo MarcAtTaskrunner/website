@@ -44,8 +44,8 @@
     this.stift.setTransform(d, 0, 0, d, 0, 0);
 
     this.cx = this.b / 2;
-    this.cy = this.h * 0.52;
-    this.kb = Math.min(168, this.b * 0.44);
+    this.cy = this.h * 0.54;
+    this.kb = Math.min(150, this.b * 0.40);
     this.kh = this.kb * 0.52;
 
     var v = this.stift.createLinearGradient(0, 0, this.b, this.h);
@@ -81,19 +81,21 @@
       return zufall / 2147483648;
     };
 
-    /* Die innerste Bahn liegt knapp ausserhalb der Karte, damit sie oben
-       sichtbar bleibt und unten davor vorbeizieht. */
-    var bahnen = [
-      { rx: this.kb * 0.70, ry: this.kh * 0.86, n: 6,  tempo:  0.150 },
-      { rx: this.kb * 1.02, ry: this.kh * 1.42, n: 9,  tempo: -0.105 },
-      { rx: this.kb * 1.34, ry: this.kh * 2.05, n: 12, tempo:  0.072 }
-    ];
+    /* Die Bahnen richten sich nach der Breite der Flaeche, nicht nach der
+       Karte, und behalten ein festes flaches Verhaeltnis von 0,41. Erst
+       dadurch liest man sie als Bahnen in Aufsicht statt als Kreise. */
+    var FLACH = 0.41;
+    var bahnen = [];
+    for (i = 0; i < 3; i++) {
+      var rx = this.b * (0.21 + i * 0.145);
+      bahnen.push({ rx: rx, ry: rx * FLACH, n: [6, 9, 12][i], tempo: [0.150, -0.105, 0.072][i] });
+    }
     this.bahnen = [];
     this.punkte = [];
     for (i = 0; i < bahnen.length; i++) {
       var bn = bahnen[i];
-      bn.rx = Math.min(bn.rx, this.b * 0.46);
-      bn.ry = Math.min(bn.ry, this.h * 0.42);
+      bn.rx = Math.min(bn.rx, this.b * 0.50);
+      bn.ry = Math.min(bn.ry, this.h * 0.44);
       var liste = [];
       for (k = 0; k < bn.n; k++) {
         var p = {
@@ -185,14 +187,28 @@
       g.stroke();
     }
 
-    /* 2 - was hinter der Karte liegt */
+    /* 2 - schwache Verbindungen vom Kartenrand zu jedem Punkt */
+    g.lineWidth = 0.7;
+    for (i = 0; i < this.punkte.length; i++) {
+      var q = this.punkte[i];
+      var qdx = q.x - this.cx, qdy = q.y - this.cy;
+      var qm = Math.max(Math.abs((this.kb / 2) / (qdx || 1e-6)), Math.abs((this.kh / 2) / (qdy || 1e-6)));
+      if (qm >= 1) continue;                       /* Punkt liegt hinter der Karte */
+      g.globalAlpha = 0.07 + 0.09 * q.vorn + 0.22 * q.naehe;
+      g.beginPath();
+      g.moveTo(this.cx + qdx * qm, this.cy + qdy * qm);
+      g.lineTo(q.x, q.y);
+      g.stroke();
+    }
+
+    /* 3 - was hinter der Karte liegt */
     this.punkteZeichnen(false);
     this.impulseZeichnen(false);
 
-    /* 3 - die Auftragskarte */
+    /* 4 - die Auftragskarte */
     this.karteZeichnen();
 
-    /* 4 - was davor liegt */
+    /* 5 - was davor liegt */
     this.impulseZeichnen(true);
     this.punkteZeichnen(true);
 
