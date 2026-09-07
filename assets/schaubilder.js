@@ -649,20 +649,21 @@
 
   /* ---------------------------------------------------------------- *
    *  Motiv Rad - interaktive Grafik im Hero
-   *  80 Punkte auf einem Kreis, jeder mit einer Linie bis in die Mitte.
-   *  Nichts dreht sich: die Grafik steht still und antwortet nur auf den
-   *  Zeiger. Was in seiner Naehe liegt, wird groesser und heller.
+   *  80 Punkte auf einem Ring, jeder mit einer Linie bis in die Mitte.
+   *  Nichts dreht sich, nichts leuchtet auf: die Punkte stehen von
+   *  Anfang an voll deckend da. Kommt der Zeiger nahe, weichen sie ein
+   *  Stueck aus und bekommen einen weichen Schein nach aussen.
    *
-   *  Der Punktdurchmesser wird aus dem Abstand auf dem Kreis gerechnet,
-   *  nicht fest gesetzt - so bleibt der Spalt zwischen zwei Punkten in
-   *  jeder Fenstergroesse gleich schmal.
+   *  Der Ring ist kein exakter Kreis. Radius und Winkel bekommen eine
+   *  weiche Stoerung aus drei ueberlagerten Sinuskurven - das wellt den
+   *  Ring, statt ihn wie reiner Zufall auszufransen.
    * ---------------------------------------------------------------- */
   Schaubild.prototype.saeenRad = function () {
     var w = wuerfelAb(20261002), i;
     var n = parseInt(this.flaeche.dataset.punkte, 10) || 80;
 
     /* Schmale Fenster: der Text nimmt die ganze Breite ein, deshalb sitzt
-       der Kreis unten rechts und laeuft ueber den Rand - so wie vorher das
+       der Ring unten rechts und laeuft ueber den Rand - so wie vorher das
        Foto. Ab 700 px steht er frei neben dem Text. */
     if (this.b < 700) {
       this.cx = this.b * 0.82;
@@ -675,15 +676,40 @@
     }
 
     var abstand = (6.283 * this.radius) / n;
-    this.pr = Math.max(2.2, abstand * 0.36);   /* Punktradius, schmaler Spalt */
+    this.pr = Math.max(2.2, abstand * 0.33);
+
+    /* Phasen der drei Wellen, einmal ausgewuerfelt */
+    var a1 = w() * 6.283, a2 = w() * 6.283, a3 = w() * 6.283;
+    var b1 = w() * 6.283, b2 = w() * 6.283;
 
     this.speichen = [];
     for (i = 0; i < n; i++) {
-      var wk = (i / n) * 6.283 - 1.5708;       /* oben beginnen */
+      var g0 = (i / n) * 6.283 - 1.5708;
+      /* Winkel leicht verzogen, damit die Abstaende nicht gleich sind */
+      var wk = g0
+        + 0.020 * Math.sin(2 * g0 + b1)
+        + 0.013 * Math.sin(5 * g0 + b2)
+        + (w() - 0.5) * 0.012;
+      /* Radius wellt zwischen etwa 0,88 und 1,10 */
+      var f = 1
+        + 0.062 * Math.sin(3 * g0 + a1)
+        + 0.040 * Math.sin(5 * g0 + a2)
+        + 0.026 * Math.sin(8 * g0 + a3)
+        + (w() - 0.5) * 0.030;
+      var r = this.radius * f;
+
+      /* Die Speichen enden nicht alle exakt im selben Pixel, sondern
+         leicht gestreut um die Mitte. Sonst entsteht dort durch die
+         Ueberlagerung von 80 Linien wieder ein heller Punkt. */
+      var iw = w() * 6.283, ir = this.pr * (0.5 + w() * 1.5);
+
       this.speichen.push({
-        x: this.cx + Math.cos(wk) * this.radius,
-        y: this.cy + Math.sin(wk) * this.radius,
-        gr: 0.92 + w() * 0.16,
+        rx: this.cx + Math.cos(wk) * r,     /* Ruhelage */
+        ry: this.cy + Math.sin(wk) * r,
+        ix: this.cx + Math.cos(iw) * ir,    /* Innenende der Speiche */
+        iy: this.cy + Math.sin(iw) * ir,
+        x: 0, y: 0,
+        gr: 0.90 + w() * 0.20,
         naehe: 0
       });
     }
@@ -691,66 +717,62 @@
   };
 
   /* Steht die Grafik still, wird nicht neu gezeichnet. Nach dem Verlassen
-     laeuft sie noch eine halbe Sekunde weiter, damit das Abklingen zu
-     Ende gespielt wird. */
+     laeuft sie noch eine halbe Sekunde weiter, damit das Ausweichen
+     zurueckfedern kann. */
   Schaubild.prototype.radRuht = function () {
-    if (this.zeiger) { this.wachBis = this.t + 0.6; return false; }
+    if (this.zeiger) { this.wachBis = this.t + 0.8; return false; }
     return this.t > this.wachBis;
   };
 
   Schaubild.prototype.zeichnenRad = function () {
     var g = this.stift, i, s, dx, dy, ab, ziel;
-    var grenze = this.radius * 0.58;
+    var grenze = this.radius * 0.60;
+    var hub = this.pr * 3.4;             /* wie weit ein Punkt ausweicht */
 
     for (i = 0; i < this.speichen.length; i++) {
       s = this.speichen[i];
-      ziel = 0;
+      ziel = 0; dx = 0; dy = 0;
       if (this.zeiger) {
-        dx = this.zeiger.x - s.x; dy = this.zeiger.y - s.y;
-        ab = Math.sqrt(dx * dx + dy * dy);
+        dx = s.rx - this.zeiger.x; dy = s.ry - this.zeiger.y;
+        ab = Math.sqrt(dx * dx + dy * dy) || 1;
         ziel = Math.max(0, 1 - ab / grenze);
         ziel *= ziel;
+        dx /= ab; dy /= ab;
       }
-      s.naehe += (ziel - s.naehe) * 0.16;
+      s.naehe += (ziel - s.naehe) * 0.14;
+      s.x = s.rx + dx * hub * s.naehe;
+      s.y = s.ry + dy * hub * s.naehe;
     }
 
     /* Speichen, durchgehend bis in die Mitte */
     for (i = 0; i < this.speichen.length; i++) {
       s = this.speichen[i];
-      g.globalAlpha = 0.20 + 0.55 * s.naehe;
-      g.lineWidth = 1 + 1.4 * s.naehe;
+      g.globalAlpha = 0.20 + 0.14 * s.naehe;
+      g.lineWidth = 1 + 0.5 * s.naehe;
       g.beginPath();
-      g.moveTo(this.cx, this.cy);
+      g.moveTo(s.ix, s.iy);
       g.lineTo(s.x, s.y);
       g.stroke();
     }
 
-    /* Punkte */
+    /* Schein nach aussen, nur in der Naehe des Zeigers */
     for (i = 0; i < this.speichen.length; i++) {
       s = this.speichen[i];
-      if (s.naehe > 0.02) {
-        g.globalAlpha = 0.22 * s.naehe;
-        g.beginPath();
-        g.arc(s.x, s.y, this.pr * s.gr * (2.0 + 1.8 * s.naehe), 0, 6.283);
-        g.fill();
-      }
-      g.globalAlpha = 0.52 + 0.48 * s.naehe;
+      if (s.naehe < 0.02) continue;
+      g.globalAlpha = 0.20 * s.naehe;
       g.beginPath();
-      g.arc(s.x, s.y, this.pr * s.gr * (1 + 0.65 * s.naehe), 0, 6.283);
+      g.arc(s.x, s.y, this.pr * s.gr * (2.1 + 1.7 * s.naehe), 0, 6.283);
       g.fill();
     }
 
-    /* Knotenpunkt */
-    g.globalAlpha = 0.14;
-    g.beginPath();
-    g.arc(this.cx, this.cy, this.pr * 3.2, 0, 6.283);
-    g.fill();
-    g.globalAlpha = 0.95;
-    g.beginPath();
-    g.arc(this.cx, this.cy, this.pr * 1.15, 0, 6.283);
-    g.fill();
-
+    /* Punkte - durchgehend voll deckend */
     g.globalAlpha = 1;
+    for (i = 0; i < this.speichen.length; i++) {
+      s = this.speichen[i];
+      g.beginPath();
+      g.arc(s.x, s.y, this.pr * s.gr, 0, 6.283);
+      g.fill();
+    }
   };
 
   function starten() {
