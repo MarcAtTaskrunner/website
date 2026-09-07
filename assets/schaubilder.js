@@ -271,6 +271,39 @@
     g.strokeStyle = this.verlauf;
   };
 
+  /* Name und Gewerk stehen als HTML neben dem Punkt, nicht auf der
+     Flaeche. Der Hero-Text ist ebenfalls HTML und liegt ueber dem
+     Canvas - dort gezeichnet waere die Beschriftung darunter
+     verschwunden, weiss auf weiss. */
+  Schaubild.prototype.beschriften = function (akt) {
+    var el = this.label;
+    if (!el) return;
+
+    if (!akt || akt.gr < 0.2 || !this.leute.length) {
+      if (!el.hidden) { el.hidden = true; el.style.opacity = 0; }
+      return;
+    }
+
+    var e = this.leute[this.aktiv % this.leute.length];
+    if (el.dataset.wer !== e.name) {
+      el.dataset.wer = e.name;
+      el.querySelector("[data-radname]").textContent = e.name;
+      el.querySelector("[data-radgewerk]").textContent = e.gewerk;
+    }
+    el.hidden = false;
+
+    var bb = el.offsetWidth, bh = el.offsetHeight;
+    var luft = akt.r + 16;
+    /* nach aussen, ausser es passt dort nicht mehr in die Flaeche */
+    var rechts = akt.x >= this.cx;
+    if (rechts && akt.x + luft + bb > this.b - 12) rechts = false;
+    else if (!rechts && akt.x - luft - bb < 12) rechts = true;
+
+    el.style.left = Math.round(rechts ? akt.x + luft : akt.x - luft - bb) + "px";
+    el.style.top = Math.round(akt.y - bh / 2) + "px";
+    el.style.opacity = Math.min(1, (akt.gr - 0.2) / 0.45);
+  };
+
   Schaubild.prototype.pfadKarte = function (x, y, b, h, r) {
     var g = this.stift;
     g.beginPath();
@@ -705,6 +738,32 @@
     }
     this.aktiv = -1;
 
+    /* Wer steckt hinter einem Punkt. Platzhalter, bis echte Profile da
+       sind - ueber data-leute="Name|Gewerk,Name|Gewerk" ersetzbar. */
+    var LEUTE = [
+      "Marek Nowak|Elektrotechnik",
+      "Sina Brandt|Sanitär & Heizung",
+      "Tobias Reinhardt|Kältetechnik",
+      "Aylin Demir|Gebäudereinigung",
+      "Jonas Weidner|Brandschutz",
+      "Lena Hoffmann|Aufzugstechnik",
+      "Dimitri Kraus|Schließanlagen",
+      "Miriam Sadowski|Grünpflege",
+      "Erik Baumgart|Malerarbeiten",
+      "Nadja Ferreira|Trockenbau",
+      "Kai Lindemann|Winterdienst",
+      "Ruth Anselm|Lüftungstechnik"
+    ];
+    var buehne0 = this.flaeche.closest("section");
+    this.label = buehne0 ? buehne0.querySelector("[data-radlabel]") : null;
+
+    this.leute = ((this.flaeche.dataset.leute || LEUTE.join(","))).split(",")
+      .map(function (z) {
+        var teil = z.split("|");
+        return { name: (teil[0] || "").trim(), gewerk: (teil[1] || "").trim() };
+      })
+      .filter(function (e) { return e.name; });
+
     /* Bilder fuer die geoeffneten Punkte, aus data-bild bzw. data-bilder */
     var quellen = (this.flaeche.dataset.bilder || this.flaeche.dataset.bild || "")
       .split(",").map(function (q) { return q.trim(); }).filter(Boolean);
@@ -887,6 +946,8 @@
       g.arc(rp.x, rp.y, rp.r, 0, 6.283);
       g.stroke();
     }
+
+    this.beschriften(akt);
 
     /* Beschriftungen */
     if (this.marken.length) {
