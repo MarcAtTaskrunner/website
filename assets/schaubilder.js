@@ -20,7 +20,7 @@
     this.flaeche = flaeche;
     this.stift = flaeche.getContext("2d");
     var m = flaeche.dataset.schaubild;
-    this.motiv = /^(welle|posten|standorte|pruefung|hero|rad)$/.test(m) ? m : "orbit";
+    this.motiv = /^(welle|posten|standorte|pruefung|hero|rad|gewerke)$/.test(m) ? m : "orbit";
     this.kInhalt = true;          /* Zeilen in der Glaskarte zeichnen? */
     this.laeuft = false;
     this.t = 0;
@@ -70,6 +70,7 @@
   Schaubild.prototype.saeen = function () {
     if (this.motiv === "hero")      return this.saeenHero();
     if (this.motiv === "rad")       return this.saeenRad();
+    if (this.motiv === "gewerke")   return this.saeenGewerke();
     if (this.motiv === "welle")     return this.saeenWelle();
     if (this.motiv === "posten")    return this.saeenPosten();
     if (this.motiv === "standorte") return this.saeenStandorte();
@@ -98,8 +99,10 @@
        schneller. Fuer Finger und Trackpad ergibt das keinen Sinn. */
     var fein = window.matchMedia("(hover: hover) and (pointer: fine)");
 
-    if (this.motiv === "rad" && fein.matches) {
-      var buehne = this.flaeche.closest("section") || this.flaeche;
+    if ((this.motiv === "rad" || this.motiv === "gewerke") && fein.matches) {
+      var buehne = this.motiv === "gewerke"
+        ? (this.flaeche.closest("li") || this.flaeche)
+        : (this.flaeche.closest("section") || this.flaeche);
       buehne.addEventListener("pointermove", function (e) {
         var r = s.flaeche.getBoundingClientRect();
         s.zeiger = { x: e.clientX - r.left, y: e.clientY - r.top };
@@ -139,7 +142,7 @@
       if (!s.laeuft) return;
       s.tempo += (s.zielTempo - s.tempo) * 0.07;
       s.t += (1 / 60) * s.tempo;
-      if (!(s.motiv === "rad" && s.radRuht())) s.zeichnen();
+      if (!(s.ruht && s.ruht())) s.zeichnen();
       s.anfrage = requestAnimationFrame(schritt);
     })();
   };
@@ -151,6 +154,13 @@
 
   Schaubild.prototype.zeichnen = function () {
     var g = this.stift, i, k;
+
+    if (this.motiv === "gewerke") {
+      g.clearRect(0, 0, this.b, this.h);
+      g.globalAlpha = 1;
+      g.lineCap = "round";
+      return this.zeichnenGewerke();
+    }
 
     if (this.motiv === "hero" || this.motiv === "rad") {
       g.clearRect(0, 0, this.b, this.h);
@@ -803,6 +813,7 @@
         this.marken.push({ txt: txt + "...", w: mw });
       }
     }
+    this.ruht = this.radRuht;
     this.wachBis = 0;
   };
 
@@ -973,6 +984,188 @@
         g.fillText(m.txt, tx, ty);
       }
       try { g.letterSpacing = "0px"; } catch (e) {}
+    }
+
+    g.globalAlpha = 1;
+  };
+
+
+  /* ---------------------------------------------------------------- *
+   *  Motiv Gewerke - Kachel "Ein Task, alle Gewerke."
+   *  In der Mitte der Auftrag als Squircle, darum sechs Handwerker,
+   *  verbunden durch weiche Bogen. Naehert sich der Zeiger, weichen
+   *  die Kreise aus und federn zurueck; die Bogen folgen ihnen.
+   *
+   *  Der Squircle ist keine abgerundete Box, sondern eine Superellipse
+   *  (|x/a|^n + |y/b|^n = 1, n = 5). Nur so laeuft die Kante stetig in
+   *  die Ecke, statt an der Nahtstelle zwischen Gerade und Viertelkreis
+   *  zu knicken - das ist der Unterschied, den man bei grossen Radien
+   *  sieht.
+   *
+   *  Schatten nach Material/Apple: zwei Lagen, eine enge fuer die Kante
+   *  und eine weite fuer die Hoehe. Die Farbe ist #000031 statt Schwarz.
+   * ---------------------------------------------------------------- */
+  var SCHATTEN = "0,0,49";        /* #000031 */
+
+  Schaubild.prototype.saeenGewerke = function () {
+    var s = this, i;
+    this.ruht = this.radRuht;
+    this.wachBis = 0;
+
+    /* Lage in Anteilen der Flaeche, uebernommen aus dem Entwurf */
+    var lage = [
+      [0.235, 0.175, 0.053],
+      [0.095, 0.505, 0.047],
+      [0.295, 0.855, 0.052],
+      [0.795, 0.160, 0.052],
+      [0.878, 0.545, 0.050],
+      [0.757, 0.805, 0.052]
+    ];
+    var mass = Math.min(this.b, this.h * 1.9);   /* damit flache Kacheln nicht ausufern */
+
+    this.knoten = [];
+    for (i = 0; i < lage.length; i++) {
+      this.knoten.push({
+        rx: this.b * lage[i][0],
+        ry: this.h * lage[i][1],
+        r: Math.max(16, mass * lage[i][2]),
+        x: 0, y: 0, dx: 0, dy: 0, vx: 0, vy: 0
+      });
+    }
+
+    this.cx = this.b * 0.5;
+    this.cy = this.h * 0.5;
+    this.sq = Math.max(46, mass * 0.145);        /* halbe Kantenlaenge x 2 */
+
+    var nachLaden = function () { s.zeichnen(); };
+    this.avatar = new Image();
+    this.avatar.decoding = "async";
+    this.avatar.onload = nachLaden;
+    this.avatar.src = this.flaeche.dataset.bild || "images/headshot.webp";
+
+    this.icon = new Image();
+    this.icon.decoding = "async";
+    this.icon.onload = nachLaden;
+    this.icon.src = this.flaeche.dataset.icon || "images/icons/dokument.svg";
+  };
+
+  /* Superellipse. n = 5 kommt der stetigen Ecke von iOS sehr nahe. */
+  Schaubild.prototype.pfadSquircle = function (cx, cy, a, bb, n) {
+    var g = this.stift, i, t, ct, st, x, y;
+    var schritte = 160;
+    g.beginPath();
+    for (i = 0; i <= schritte; i++) {
+      t = (i / schritte) * 6.283185;
+      ct = Math.cos(t); st = Math.sin(t);
+      x = cx + a * (ct < 0 ? -1 : 1) * Math.pow(Math.abs(ct), 2 / n);
+      y = cy + bb * (st < 0 ? -1 : 1) * Math.pow(Math.abs(st), 2 / n);
+      if (i === 0) g.moveTo(x, y); else g.lineTo(x, y);
+    }
+    g.closePath();
+  };
+
+  Schaubild.prototype.zeichnenGewerke = function () {
+    var g = this.stift, i, k;
+    var wirk = Math.min(this.b, this.h) * 0.42;
+    /* Ruhelage bei etwa KRAFT/STEIF Pixeln - hier rund 28 px. */
+    var KRAFT = 2.8, STEIF = 0.10, DAEMPF = 0.86;
+    var halb = this.sq / 2;
+
+    /* Federn */
+    for (i = 0; i < this.knoten.length; i++) {
+      k = this.knoten[i];
+      if (this.zeiger) {
+        var qx = k.rx + k.dx - this.zeiger.x;
+        var qy = k.ry + k.dy - this.zeiger.y;
+        var ab = Math.sqrt(qx * qx + qy * qy);
+        if (ab < wirk && ab > 0.01) {
+          var f = (1 - ab / wirk) * (1 - ab / wirk) * KRAFT;
+          k.vx += (qx / ab) * f;
+          k.vy += (qy / ab) * f;
+        }
+      }
+      k.vx = (k.vx - STEIF * k.dx) * DAEMPF;
+      k.vy = (k.vy - STEIF * k.dy) * DAEMPF;
+      k.dx += k.vx;
+      k.dy += k.vy;
+      k.x = k.rx + k.dx;
+      k.y = k.ry + k.dy;
+    }
+
+    /* Bogen vom Auftrag zu jedem Handwerker */
+    g.strokeStyle = "rgba(66,133,244,0.55)";
+    g.lineWidth = 1.2;
+    for (i = 0; i < this.knoten.length; i++) {
+      k = this.knoten[i];
+      var vx = k.x - this.cx, vy = k.y - this.cy;
+      var vl = Math.sqrt(vx * vx + vy * vy) || 1;
+      /* Start auf der Squircle-Kante, Ende auf dem Kreisrand */
+      var sx = this.cx + (vx / vl) * halb * 1.02;
+      var sy = this.cy + (vy / vl) * halb * 1.02;
+      var ex = k.x - (vx / vl) * k.r;
+      var ey = k.y - (vy / vl) * k.r;
+      var ddx = ex - sx, ddy = ey - sy;
+      var waag = Math.abs(ddx) >= Math.abs(ddy);
+      var z = 0.55;
+      g.beginPath();
+      g.moveTo(sx, sy);
+      if (waag) g.bezierCurveTo(sx + ddx * z, sy, ex - ddx * z, ey, ex, ey);
+      else      g.bezierCurveTo(sx, sy + ddy * z, ex, ey - ddy * z, ex, ey);
+      g.stroke();
+    }
+
+    /* Auftrag: Squircle mit zweilagigem Schatten */
+    g.save();
+    g.shadowColor = "rgba(" + SCHATTEN + ",0.13)";
+    g.shadowBlur = 30;
+    g.shadowOffsetY = 14;
+    g.fillStyle = "#ffffff";
+    this.pfadSquircle(this.cx, this.cy, halb, halb, 5);
+    g.fill();
+    g.shadowColor = "rgba(" + SCHATTEN + ",0.10)";
+    g.shadowBlur = 9;
+    g.shadowOffsetY = 3;
+    this.pfadSquircle(this.cx, this.cy, halb, halb, 5);
+    g.fill();
+    g.restore();
+
+    if (this.icon.complete && this.icon.naturalWidth) {
+      var ih = this.sq * 0.56;
+      var iw = ih * (this.icon.naturalWidth / this.icon.naturalHeight);
+      g.drawImage(this.icon, this.cx - iw / 2, this.cy - ih / 2, iw, ih);
+    }
+
+    /* Handwerker */
+    for (i = 0; i < this.knoten.length; i++) {
+      k = this.knoten[i];
+
+      g.save();
+      g.shadowColor = "rgba(" + SCHATTEN + ",0.16)";
+      g.shadowBlur = 18;
+      g.shadowOffsetY = 6;
+      g.fillStyle = "#ffffff";
+      g.beginPath();
+      g.arc(k.x, k.y, k.r + 3, 0, 6.283);
+      g.fill();
+      g.shadowColor = "rgba(" + SCHATTEN + ",0.08)";
+      g.shadowBlur = 5;
+      g.shadowOffsetY = 1;
+      g.beginPath();
+      g.arc(k.x, k.y, k.r + 3, 0, 6.283);
+      g.fill();
+      g.restore();
+
+      if (this.avatar.complete && this.avatar.naturalWidth) {
+        g.save();
+        g.beginPath();
+        g.arc(k.x, k.y, k.r, 0, 6.283);
+        g.clip();
+        var sk = Math.max((k.r * 2) / this.avatar.naturalWidth,
+                          (k.r * 2) / this.avatar.naturalHeight);
+        var bw = this.avatar.naturalWidth * sk, bh = this.avatar.naturalHeight * sk;
+        g.drawImage(this.avatar, k.x - bw / 2, k.y - bh / 2, bw, bh);
+        g.restore();
+      }
     }
 
     g.globalAlpha = 1;
