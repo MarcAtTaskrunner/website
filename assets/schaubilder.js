@@ -672,9 +672,19 @@
       this.cy = this.h * 0.88;
       this.radius = Math.min(this.b * 0.52, this.h * 0.30);
     } else {
-      this.cx = this.b * 0.62;
-      this.cy = this.h * 0.5;
-      this.radius = Math.min(this.b * 0.28, this.h * 0.40);
+      /* Der Text steht mittig darueber, also steht der Kreis auch mittig
+         und etwas hoeher als die halbe Hoehe. */
+      /* Die Flaeche liegt auch hinter der Kopfleiste. Fuer die Mitte
+         zaehlt aber nur, was darunter frei ist - sonst laeuft der Ring
+         in die Navigation. (Ein CSS-Versatz am Canvas geht nicht: ein
+         Canvas ist ein ersetztes Element, left:0 + right:0 dehnt es
+         nicht, es behaelt seine 300x150.) */
+      var kopf = document.querySelector("header");
+      var oben = kopf ? kopf.offsetHeight : 0;
+      var frei = Math.max(1, this.h - oben);
+      this.cx = this.b * 0.5;
+      this.cy = oben + frei * 0.46;
+      this.radius = Math.min(this.b * 0.25, frei * 0.44);
     }
     this.prand = Math.max(1.6, this.radius * 0.0085);
     this.pgross = this.radius * 0.155;        /* Radius des geoeffneten Punktes */
