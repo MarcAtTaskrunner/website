@@ -677,14 +677,31 @@
       this.radius = Math.min(this.b * 0.28, this.h * 0.40);
     }
     this.prand = Math.max(1.6, this.radius * 0.0085);
+    this.pgross = this.radius * 0.155;        /* Radius des geoeffneten Punktes */
 
-    /* Ring aus feinen Punkten */
+    /* Ring aus feinen Punkten. Die Lage wird ueber den Winkel gefuehrt,
+       nicht ueber x/y - nur so lassen sich die Nachbarn sauber auf dem
+       Kreis zur Seite schieben, ohne ihn zu verlassen. */
     this.rand = [];
     for (i = 0; i < nRand; i++) {
-      var g0 = (i / nRand) * 6.283 - 1.5708;
-      this.rand.push({ x: this.cx + Math.cos(g0) * this.radius,
-                       y: this.cy + Math.sin(g0) * this.radius });
+      this.rand.push({
+        w0: (i / nRand) * 6.283 - 1.5708,
+        dw: 0,        /* Winkelversatz durch den geoeffneten Nachbarn */
+        gr: 0,        /* 0 = Punkt, 1 = geoeffnet mit Bild */
+        x: 0, y: 0, r: this.prand
+      });
     }
+    this.aktiv = -1;
+
+    /* Bilder fuer die geoeffneten Punkte, aus data-bild bzw. data-bilder */
+    var quellen = (this.flaeche.dataset.bilder || this.flaeche.dataset.bild || "")
+      .split(",").map(function (q) { return q.trim(); }).filter(Boolean);
+    this.bilder = quellen.map(function (q) {
+      var im = new Image();
+      im.decoding = "async";
+      im.src = q;
+      return im;
+    });
 
     /* Saiten */
     var a1 = w() * 6.283, a2 = w() * 6.283, a3 = w() * 6.283;
@@ -775,12 +792,88 @@
       g.stroke();
     }
 
-    /* Ring */
+    /* --- Randpunkte: Hover, Verdraengung, Bild --- */
+    var rp, j, dlt;
+
+    /* 1. Welcher Punkt ist getroffen? Immer nur einer. Der bereits
+       geoeffnete behaelt den Zuschlag, solange der Zeiger in ihm liegt -
+       sonst flackert es, weil der Punkt unter dem Zeiger waechst. */
+    var neu = -1, kurz = 1e9;
+    if (this.zeiger) {
+      for (i = 0; i < this.rand.length; i++) {
+        rp = this.rand[i];
+        var qx = rp.x - this.zeiger.x, qy = rp.y - this.zeiger.y;
+        var q = Math.sqrt(qx * qx + qy * qy);
+        var fang = Math.max(22, rp.r + 8);
+        if (q < fang && q < kurz) { kurz = q; neu = i; }
+      }
+    }
+    this.aktiv = neu;
+
+    /* 2. Groesse und Verdraengung */
+    var akt = this.aktiv >= 0 ? this.rand[this.aktiv] : null;
+    var noetig = 0, breite = 0;
+    if (akt) {
+      var rg = this.prand + (this.pgross - this.prand) * akt.gr;
+      noetig = (rg + this.prand * 3) / this.radius;   /* freizuhaltender Winkel */
+      breite = noetig * 2.4;                          /* darueber laeuft es aus */
+    }
+
+    for (i = 0; i < this.rand.length; i++) {
+      rp = this.rand[i];
+      rp.gr += ((i === this.aktiv ? 1 : 0) - rp.gr) * 0.16;
+
+      var zielDw = 0;
+      if (akt && i !== this.aktiv && breite > 0) {
+        dlt = rp.w0 - akt.w0;
+        while (dlt >  3.1416) dlt -= 6.2832;
+        while (dlt < -3.1416) dlt += 6.2832;
+        var a = Math.abs(dlt);
+        if (a < breite) {
+          /* Die Punkte im Band werden neu verteilt: aus [0, breite] wird
+             [noetig, breite]. Monoton, deshalb ueberholt keiner den anderen. */
+          zielDw = (dlt < 0 ? -1 : 1) * ((noetig + (breite - noetig) * (a / breite)) - a);
+        }
+      }
+      rp.dw += (zielDw - rp.dw) * 0.18;
+
+      var wk2 = rp.w0 + rp.dw;
+      rp.x = this.cx + Math.cos(wk2) * this.radius;
+      rp.y = this.cy + Math.sin(wk2) * this.radius;
+      rp.r = this.prand + (this.pgross - this.prand) * rp.gr;
+    }
+
+    /* 3. Zeichnen */
     g.globalAlpha = 0.88;
     for (i = 0; i < this.rand.length; i++) {
+      rp = this.rand[i];
       g.beginPath();
-      g.arc(this.rand[i].x, this.rand[i].y, this.prand, 0, 6.283);
+      g.arc(rp.x, rp.y, rp.r, 0, 6.283);
       g.fill();
+    }
+
+    for (i = 0; i < this.rand.length; i++) {
+      rp = this.rand[i];
+      if (rp.gr < 0.02 || !this.bilder.length) continue;
+      var bild = this.bilder[i % this.bilder.length];
+      if (!bild.complete || !bild.naturalWidth) continue;
+
+      g.save();
+      g.globalAlpha = rp.gr;
+      g.beginPath();
+      g.arc(rp.x, rp.y, rp.r, 0, 6.283);
+      g.clip();
+      /* formatfuellend, mittig beschnitten */
+      var sk = Math.max((rp.r * 2) / bild.naturalWidth, (rp.r * 2) / bild.naturalHeight);
+      var bw = bild.naturalWidth * sk, bh = bild.naturalHeight * sk;
+      g.drawImage(bild, rp.x - bw / 2, rp.y - bh / 2, bw, bh);
+      g.restore();
+
+      g.globalAlpha = 0.85 * rp.gr;
+      g.lineWidth = 1.4;
+      g.beginPath();
+      g.arc(rp.x, rp.y, rp.r, 0, 6.283);
+      g.stroke();
     }
 
     /* Beschriftungen */
@@ -789,12 +882,20 @@
       g.font = "500 11px ui-monospace, SFMono-Regular, Menlo, monospace";
       try { g.letterSpacing = "0.09em"; } catch (e) {}
       g.textBaseline = "middle";
-      var ab2 = this.radius * 1.10;
+      var ab2 = this.radius * 1.13;
       for (i = 0; i < this.marken.length; i++) {
         var m = this.marken[i];
         var tx = this.cx + Math.cos(m.w) * ab2;
         var ty = this.cy + Math.sin(m.w) * ab2;
         if (tx < this.b * 0.55) continue;   /* nicht in die Textspalte */
+        /* Ein geoeffneter Punkt haette sonst die Beschriftung unter sich */
+        if (akt && akt.gr > 0.02) {
+          var lx2 = tx - akt.x, ly2 = ty - akt.y;
+          var frei = Math.sqrt(lx2 * lx2 + ly2 * ly2) / (akt.r + 60);
+          g.globalAlpha = 0.60 * Math.min(1, Math.max(0, frei - 0.15));
+        } else {
+          g.globalAlpha = 0.60;
+        }
         g.textAlign = Math.cos(m.w) < -0.15 ? "right" : (Math.cos(m.w) > 0.15 ? "left" : "center");
         g.fillText(m.txt, tx, ty);
       }
