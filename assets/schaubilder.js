@@ -1346,8 +1346,8 @@
 
     var vl = g.createLinearGradient(0, 0, this.b, 0);
     vl.addColorStop(0.000, "rgba(66,133,244,0)");
-    vl.addColorStop(0.030, "rgba(66,133,244,0.85)");
-    vl.addColorStop(0.970, "rgba(66,133,244,0.85)");
+    vl.addColorStop(0.022, "rgba(66,133,244,0.85)");
+    vl.addColorStop(0.978, "rgba(66,133,244,0.85)");
     vl.addColorStop(1.000, "rgba(66,133,244,0)");
     g.strokeStyle = vl;
     g.lineWidth = 1.8;
