@@ -678,13 +678,13 @@
       /* Schmal: Text nimmt die ganze Breite, der Kreis steht mittig
          darueber. */
       this.cx = this.b * 0.5;
-      this.cy = oben + frei * 0.27;
-      this.radius = Math.min(this.b * 0.42, frei * 0.26);
+      this.cy = oben + frei * 0.26;
+      this.radius = Math.min(this.b * 0.38, frei * 0.24);
     } else {
       /* Breit: Text steht unten links, der Kreis rueckt nach rechts. */
-      this.cx = this.b * 0.60;
-      this.cy = oben + frei * 0.46;
-      this.radius = Math.min(this.b * 0.27, frei * 0.46);
+      this.cx = this.b * 0.62;
+      this.cy = oben + frei * 0.42;
+      this.radius = Math.min(this.b * 0.22, frei * 0.36);
     }
 
     this.prand = Math.max(3, this.radius * 0.020);
