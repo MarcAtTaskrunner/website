@@ -185,6 +185,90 @@
 .variante-b .border-ink\/10, .variante-b .border-ink\/20 { border-color: var(--vb-linie); }
 
 
+/* ------------------------------------------------------------------ *
+ *  Variante B - Bewegung
+ *  Dezent gehalten: kurze Wege (10 px), kurze Dauern, eine gemeinsame
+ *  Kurve. Alles haengt an .variante-b, Startseite A bleibt unberuehrt.
+ *  Die Einblendung greift nur, wenn JavaScript laeuft (html.js-auf) -
+ *  sonst bliebe die Seite ohne JS leer.
+ * ------------------------------------------------------------------ */
+.variante-b {
+  --kurve:      cubic-bezier(.22, .61, .36, 1);
+  --dauer-kurz: .18s;
+  --dauer-lang: .5s;
+}
+
+/* Bewusst "translate" statt "transform": so bleibt transform fuer das
+   Hover-Anheben frei und beide ueberlagern sich, statt sich zu schlagen. */
+html.js-auf .variante-b [data-auf] {
+  opacity: 0;
+  translate: 0 10px;
+  transition: opacity var(--dauer-lang) var(--kurve),
+              translate var(--dauer-lang) var(--kurve);
+  transition-delay: var(--verzug, 0s);
+}
+html.js-auf .variante-b [data-auf].da { opacity: 1; translate: none; }
+
+/* Kopfleiste bekommt beim Scrollen eine feine Kante */
+.variante-b header { transition: box-shadow .22s var(--kurve), border-color .22s var(--kurve); }
+.variante-b header.gescrollt {
+  border-color: transparent;
+  box-shadow: 0 1px 0 rgba(0, 1, 107, .06), 0 6px 18px -10px rgba(0, 1, 107, .26);
+}
+
+/* Zeigergeraete: alles Weitere ist reines Hover-Verhalten */
+@media (hover: hover) and (pointer: fine) {
+  .variante-b .karte {
+    transition: border-color var(--dauer-kurz) var(--kurve),
+                box-shadow .28s var(--kurve),
+                transform .28s var(--kurve);
+  }
+  .variante-b .karte:hover {
+    transform: translateY(-2px);
+    border-color: rgba(66, 133, 244, .55);
+    box-shadow: 0 1px 2px rgba(0, 1, 107, .04), 0 10px 22px -10px rgba(0, 1, 107, .18);
+  }
+
+  .variante-b .kachel {
+    transition: box-shadow .28s var(--kurve), transform .28s var(--kurve);
+  }
+  .variante-b .kachel:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px -12px rgba(0, 1, 107, .20);
+  }
+
+  .variante-b .zahl-zelle { transition: background-color var(--dauer-kurz) var(--kurve); }
+  .variante-b .zahl-zelle:hover { background-color: #f6f9fe; }
+
+  .variante-b .logo-reihe img { transition: opacity var(--dauer-kurz) var(--kurve); }
+  .variante-b .logo-reihe img:hover { opacity: .9; }
+
+  /* Hauptnavigation: Unterstrich waechst von links */
+  .variante-b header nav[aria-label="Hauptnavigation"] a { position: relative; }
+  .variante-b header nav[aria-label="Hauptnavigation"] a::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: -5px;
+    height: 1.5px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform var(--dauer-kurz) var(--kurve);
+  }
+  .variante-b header nav[aria-label="Hauptnavigation"] a:hover::after { transform: scaleX(1); }
+
+  /* Video-Band: sehr leichter Zoom */
+  .variante-b .band-video video,
+  .variante-b .band-video img { transition: transform .6s var(--kurve); }
+  .variante-b .band-video:hover video,
+  .variante-b .band-video:hover img { transform: scale(1.02); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.js-auf .variante-b [data-auf] { opacity: 1; translate: none; }
+}
+
+
 /* Container-Breiten: der Prototyp nutzt zwei Rasterbreiten */
 @utility container-wide {
   width: 100%;

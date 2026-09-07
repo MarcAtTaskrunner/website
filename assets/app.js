@@ -198,4 +198,70 @@
     else if (ruhig.addListener) ruhig.addListener(richteVideo);
   }
 
+  /* ------------------------------------------------------------------ *
+   *  Einblenden beim Hereinscrollen
+   *  Jedes [data-auf] blendet einmal ein. Der Verzug wird nicht im HTML
+   *  gepflegt, sondern hier aus der Reihenfolge innerhalb der Sektion
+   *  berechnet - so staffelt sich eine Gruppe von selbst.
+   * ------------------------------------------------------------------ */
+  (function () {
+    var teile = document.querySelectorAll("[data-auf]");
+    if (!teile.length) return;
+
+    var sanft = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    var zeige = function (el) { el.classList.add("da"); };
+
+    if (sanft.matches || !("IntersectionObserver" in window)) {
+      Array.prototype.forEach.call(teile, zeige);
+      return;
+    }
+
+    /* Verzug je Sektion: 0, 70, 140 ... hoechstens 350 ms */
+    var zaehler = new Map();
+    Array.prototype.forEach.call(teile, function (el) {
+      var sektion = el.closest("section") || document.body;
+      var i = zaehler.get(sektion) || 0;
+      zaehler.set(sektion, i + 1);
+      el.style.setProperty("--verzug", Math.min(i * 70, 350) + "ms");
+    });
+
+    var beobachter = new IntersectionObserver(function (eintraege) {
+      eintraege.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        zeige(e.target);
+        beobachter.unobserve(e.target);
+      });
+    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.01 });
+
+    Array.prototype.forEach.call(teile, function (el) { beobachter.observe(el); });
+
+    /* Notbremse: was nach 2 s noch verborgen ist, wird sichtbar gemacht */
+    window.setTimeout(function () {
+      Array.prototype.forEach.call(teile, function (el) {
+        if (!el.classList.contains("da") && el.getBoundingClientRect().top < window.innerHeight) zeige(el);
+      });
+    }, 2000);
+  })();
+
+  /* ------------------------------------------------------------------ *
+   *  Kopfleiste: feine Kante, sobald die Seite gescrollt ist
+   * ------------------------------------------------------------------ */
+  (function () {
+    var kopf = document.querySelector("header");
+    if (!kopf) return;
+    var offen = false;
+    var pruefe = function () {
+      offen = false;
+      var soll = window.scrollY > 8;
+      if (soll !== kopf.classList.contains("gescrollt")) kopf.classList.toggle("gescrollt", soll);
+    };
+    window.addEventListener("scroll", function () {
+      if (offen) return;
+      offen = true;
+      requestAnimationFrame(pruefe);
+    }, { passive: true });
+    pruefe();
+  })();
+
 })();
