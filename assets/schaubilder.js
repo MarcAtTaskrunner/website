@@ -1014,12 +1014,12 @@
 
     /* Lage in Anteilen der Flaeche, uebernommen aus dem Entwurf */
     var lage = [
-      [0.235, 0.175, 0.053],
-      [0.095, 0.505, 0.047],
-      [0.295, 0.855, 0.052],
-      [0.795, 0.160, 0.052],
-      [0.878, 0.545, 0.050],
-      [0.757, 0.805, 0.052]
+      [0.235, 0.175, 0.068],
+      [0.095, 0.505, 0.060],
+      [0.295, 0.855, 0.067],
+      [0.795, 0.160, 0.067],
+      [0.878, 0.545, 0.064],
+      [0.757, 0.805, 0.067]
     ];
     var mass = Math.min(this.b, this.h * 1.9);   /* damit flache Kacheln nicht ausufern */
 
@@ -1035,7 +1035,7 @@
 
     this.cx = this.b * 0.5;
     this.cy = this.h * 0.5;
-    this.sq = Math.max(46, mass * 0.145);        /* halbe Kantenlaenge x 2 */
+    this.sq = Math.max(64, mass * 0.205);        /* Kantenlaenge */
 
     var nachLaden = function () { s.zeichnen(); };
     this.avatar = new Image();
@@ -1045,7 +1045,7 @@
 
     this.icon = new Image();
     this.icon.decoding = "async";
-    this.icon.onload = nachLaden;
+    this.icon.onload = function () { s.ikoMitteMessen(); nachLaden(); };
     this.icon.src = this.flaeche.dataset.icon || "images/icons/dokument.svg";
   };
 
@@ -1062,6 +1062,43 @@
       if (i === 0) g.moveTo(x, y); else g.lineTo(x, y);
     }
     g.closePath();
+  };
+
+  /* Optische Mitte des Icons, einmal nach dem Laden gemessen.
+     Zwei Groessen: der Kasten der Deckung (wo die Zeichnung ueberhaupt
+     liegt) und ihr Schwerpunkt (wo das Gewicht liegt). Der reine
+     Schwerpunkt ueberzieht, wenn ein Teil vollflaechig und der Rest
+     Strichzeichnung ist - bei diesem Icon zieht die Hand ihn deutlich
+     nach links unten. Deshalb 65 Prozent des Wegs vom Kasten zum
+     Schwerpunkt. */
+  Schaubild.prototype.ikoMitteMessen = function () {
+    try {
+      var n = 128;
+      var h = document.createElement("canvas");
+      h.width = n; h.height = n;
+      var q = h.getContext("2d");
+      q.drawImage(this.icon, 0, 0, n, n);
+      var d = q.getImageData(0, 0, n, n).data;
+      var sx = 0, sy = 0, sm = 0, i, x, y, a;
+      var lx = n, rx = 0, oy = n, uy = 0;
+      for (y = 0; y < n; y++) {
+        for (x = 0; x < n; x++) {
+          i = (y * n + x) * 4;
+          a = d[i + 3];
+          if (a < 8) continue;
+          sx += x * a; sy += y * a; sm += a;
+          if (x < lx) lx = x;
+          if (x > rx) rx = x;
+          if (y < oy) oy = y;
+          if (y > uy) uy = y;
+        }
+      }
+      if (sm <= 0) return;
+      var kx = ((lx + rx) / 2) / n, ky = ((oy + uy) / 2) / n;
+      var px = (sx / sm) / n, py = (sy / sm) / n;
+      var w = 0.65;
+      this.ikoMitte = { x: kx + (px - kx) * w, y: ky + (py - ky) * w };
+    } catch (e) { /* getImageData kann bei fremden Quellen scheitern */ }
   };
 
   Schaubild.prototype.zeichnenGewerke = function () {
@@ -1116,23 +1153,27 @@
 
     /* Auftrag: Squircle mit zweilagigem Schatten */
     g.save();
-    g.shadowColor = "rgba(" + SCHATTEN + ",0.13)";
-    g.shadowBlur = 30;
-    g.shadowOffsetY = 14;
+    g.shadowColor = "rgba(" + SCHATTEN + ",0.20)";
+    g.shadowBlur = 42;
+    g.shadowOffsetY = 18;
     g.fillStyle = "#ffffff";
     this.pfadSquircle(this.cx, this.cy, halb, halb, 5);
     g.fill();
-    g.shadowColor = "rgba(" + SCHATTEN + ",0.10)";
-    g.shadowBlur = 9;
-    g.shadowOffsetY = 3;
+    g.shadowColor = "rgba(" + SCHATTEN + ",0.15)";
+    g.shadowBlur = 12;
+    g.shadowOffsetY = 4;
     this.pfadSquircle(this.cx, this.cy, halb, halb, 5);
     g.fill();
     g.restore();
 
     if (this.icon.complete && this.icon.naturalWidth) {
-      var ih = this.sq * 0.56;
+      var ih = this.sq * 0.58;
       var iw = ih * (this.icon.naturalWidth / this.icon.naturalHeight);
-      g.drawImage(this.icon, this.cx - iw / 2, this.cy - ih / 2, iw, ih);
+      /* Nicht die Bildmitte auf die Squircle-Mitte legen, sondern den
+         Schwerpunkt der Deckung - das ist die optische Mitte. */
+      var mx = this.ikoMitte ? this.ikoMitte.x : 0.5;
+      var my = this.ikoMitte ? this.ikoMitte.y : 0.5;
+      g.drawImage(this.icon, this.cx - iw * mx, this.cy - ih * my, iw, ih);
     }
 
     /* Handwerker */
@@ -1140,16 +1181,16 @@
       k = this.knoten[i];
 
       g.save();
-      g.shadowColor = "rgba(" + SCHATTEN + ",0.16)";
-      g.shadowBlur = 18;
-      g.shadowOffsetY = 6;
+      g.shadowColor = "rgba(" + SCHATTEN + ",0.24)";
+      g.shadowBlur = 26;
+      g.shadowOffsetY = 9;
       g.fillStyle = "#ffffff";
       g.beginPath();
       g.arc(k.x, k.y, k.r + 3, 0, 6.283);
       g.fill();
-      g.shadowColor = "rgba(" + SCHATTEN + ",0.08)";
-      g.shadowBlur = 5;
-      g.shadowOffsetY = 1;
+      g.shadowColor = "rgba(" + SCHATTEN + ",0.13)";
+      g.shadowBlur = 7;
+      g.shadowOffsetY = 2;
       g.beginPath();
       g.arc(k.x, k.y, k.r + 3, 0, 6.283);
       g.fill();
