@@ -648,23 +648,25 @@
 
 
   /* ---------------------------------------------------------------- *
-   *  Motiv Rad - interaktive Grafik im Hero
-   *  80 Punkte auf einem Ring, jeder mit einer Linie zum Mittelpunkt.
-   *  Nichts dreht sich. Die Punkte stehen von Anfang an voll deckend da
-   *  und werden nicht heller: es weicht immer genau ein Punkt aus - der
-   *  dem Zeiger naechste - und bekommt einen weichen Schein nach aussen.
+   *  Motiv Rad - Saiten im Hero
+   *  Ein Ring aus feinen Punkten, dazwischen gespannte Saiten von der
+   *  Mitte zum Rand. Die Saiten sind keine Geraden: jede hat eine feste
+   *  Grundwoelbung, dadurch der ruhige Wirbel im Standbild.
    *
-   *  Der Ring ist kein exakter Kreis, aber nur leicht verzogen: Radius
-   *  und Winkel tragen eine weiche Stoerung aus drei ueberlagerten
-   *  Sinuskurven. Der Radius schwankt um hoechstens rund 5 Prozent.
+   *  Der Zeiger streift die Saiten wie eine Hand ueber Gitarrensaiten:
+   *  jede bekommt einen Stoss von ihm weg, gewichtet nach der Stelle,
+   *  an der sie getroffen wird (an den beiden Enden kann sie sich nicht
+   *  bewegen). Danach schwingt sie ueber eine Feder zurueck.
+   *
+   *  Gezeichnet wird je Saite eine quadratische Bezierkurve. Deren
+   *  Kontrollpunkt liegt nicht auf der Kurve, deshalb wird er aus dem
+   *  gewuenschten Scheitel zurueckgerechnet: C = 2M - (P0 + P2) / 2.
    * ---------------------------------------------------------------- */
   Schaubild.prototype.saeenRad = function () {
     var w = wuerfelAb(20261002), i;
-    var n = parseInt(this.flaeche.dataset.punkte, 10) || 80;
+    var nSaiten = parseInt(this.flaeche.dataset.punkte, 10) || 76;
+    var nRand = Math.round(nSaiten * 1.7);      /* mehr Randpunkte als Saiten */
 
-    /* Schmale Fenster: der Text nimmt die ganze Breite ein, deshalb sitzt
-       der Ring unten rechts und laeuft ueber den Rand - so wie vorher das
-       Foto. Ab 700 px steht er frei neben dem Text. */
     if (this.b < 700) {
       this.cx = this.b * 0.82;
       this.cy = this.h * 0.88;
@@ -672,105 +674,132 @@
     } else {
       this.cx = this.b * 0.62;
       this.cy = this.h * 0.5;
-      this.radius = Math.min(this.b * 0.32, this.h * 0.42);
+      this.radius = Math.min(this.b * 0.28, this.h * 0.40);
+    }
+    this.prand = Math.max(1.6, this.radius * 0.0085);
+
+    /* Ring aus feinen Punkten */
+    this.rand = [];
+    for (i = 0; i < nRand; i++) {
+      var g0 = (i / nRand) * 6.283 - 1.5708;
+      this.rand.push({ x: this.cx + Math.cos(g0) * this.radius,
+                       y: this.cy + Math.sin(g0) * this.radius });
     }
 
-    var abstand = (6.283 * this.radius) / n;
-    this.pr = Math.max(2.6, abstand * 0.42);   /* schmaler Spalt bleibt */
-
+    /* Saiten */
     var a1 = w() * 6.283, a2 = w() * 6.283, a3 = w() * 6.283;
-    var b1 = w() * 6.283, b2 = w() * 6.283;
-
-    this.speichen = [];
-    for (i = 0; i < n; i++) {
-      var g0 = (i / n) * 6.283 - 1.5708;
-      var wk = g0
-        + 0.008 * Math.sin(2 * g0 + b1)
-        + 0.005 * Math.sin(5 * g0 + b2)
-        + (w() - 0.5) * 0.005;
-      var f = 1
-        + 0.024 * Math.sin(3 * g0 + a1)
-        + 0.016 * Math.sin(5 * g0 + a2)
-        + 0.009 * Math.sin(8 * g0 + a3)
-        + (w() - 0.5) * 0.010;
-      var r = this.radius * f;
-
-      this.speichen.push({
-        rx: this.cx + Math.cos(wk) * r,     /* Ruhelage */
-        ry: this.cy + Math.sin(wk) * r,
-        x: 0, y: 0,
-        gr: 0.94 + w() * 0.12,
-        naehe: 0
+    this.saiten = [];
+    for (i = 0; i < nSaiten; i++) {
+      var wk = (i / nSaiten) * 6.283 - 1.5708 + (w() - 0.5) * 0.02;
+      /* Mittelwert null: die Woelbung kippt das Vorzeichen, dadurch
+         kreuzen sich die Saiten und es entsteht das Geflecht. */
+      var bo = this.radius * (0.150 * Math.sin(2 * wk + a1)
+        + 0.105 * Math.sin(3 * wk + a2)
+        + 0.055 * Math.sin(5 * wk + a3));
+      this.saiten.push({
+        ex: this.cx + Math.cos(wk) * this.radius,
+        ey: this.cy + Math.sin(wk) * this.radius,
+        bogen: bo,
+        dx: 0, dy: 0, vx: 0, vy: 0      /* Auslenkung und Geschwindigkeit */
       });
+    }
+
+    /* Beschriftungen aus dem HTML, z. B. data-marken="ELEKTRO,SANITAER" */
+    var roh = (this.flaeche.dataset.marken || "").split(",");
+    this.marken = [];
+    if (this.b >= 700) {
+      for (i = 0; i < roh.length; i++) {
+        var txt = roh[i].trim();
+        if (!txt) continue;
+        var mw = -1.5708 + ((i + 0.5) / roh.length) * 6.283 + 0.35;
+        this.marken.push({ txt: txt + "...", w: mw });
+      }
     }
     this.wachBis = 0;
   };
 
-  /* Steht die Grafik still, wird nicht neu gezeichnet. Nach dem Verlassen
-     laeuft sie noch kurz weiter, damit der Punkt zurueckfedern kann. */
+  /* Im Ruhezustand wird nicht neu gezeichnet. Nach dem Verlassen laeuft
+     es weiter, bis die Saiten ausgeschwungen sind. */
   Schaubild.prototype.radRuht = function () {
-    if (this.zeiger) { this.wachBis = this.t + 0.8; return false; }
+    if (this.zeiger) { this.wachBis = this.t + 2.2; return false; }
     return this.t > this.wachBis;
   };
 
   Schaubild.prototype.zeichnenRad = function () {
-    var g = this.stift, i, s, dx, dy, ab;
-    var reichweite = this.radius * 0.55;   /* weiter weg reagiert nichts */
-    var hub = this.pr * 1.8;               /* wie weit der Punkt ausweicht */
+    var g = this.stift, i, s;
+    var wirk = this.radius * 0.58;      /* Greifweite des Zeigers */
+    var KRAFT = 9.0, STEIF = 0.055, DAEMPF = 0.90;
 
-    /* genau ein Punkt ist an der Reihe: der dem Zeiger naechste */
-    var dran = -1, beste = reichweite;
-    if (this.zeiger) {
-      for (i = 0; i < this.speichen.length; i++) {
-        s = this.speichen[i];
-        dx = s.rx - this.zeiger.x; dy = s.ry - this.zeiger.y;
-        ab = Math.sqrt(dx * dx + dy * dy);
-        if (ab < beste) { beste = ab; dran = i; }
+    for (i = 0; i < this.saiten.length; i++) {
+      s = this.saiten[i];
+
+      if (this.zeiger) {
+        /* naechster Punkt auf der Saite (als Strecke gerechnet) */
+        var vx = s.ex - this.cx, vy = s.ey - this.cy;
+        var l2 = vx * vx + vy * vy;
+        var t = ((this.zeiger.x - this.cx) * vx + (this.zeiger.y - this.cy) * vy) / l2;
+        t = t < 0 ? 0 : (t > 1 ? 1 : t);
+        var qx = this.cx + vx * t - this.zeiger.x;
+        var qy = this.cy + vy * t - this.zeiger.y;
+        var ab = Math.sqrt(qx * qx + qy * qy);
+        if (ab < wirk && ab > 0.01) {
+          /* sin(pi t): an den Enden ist die Saite eingespannt */
+          var f = (1 - ab / wirk) * (1 - ab / wirk) * KRAFT * Math.sin(3.1416 * t);
+          s.vx += (qx / ab) * f;
+          s.vy += (qy / ab) * f;
+        }
       }
+
+      s.vx = (s.vx - STEIF * s.dx) * DAEMPF;
+      s.vy = (s.vy - STEIF * s.dy) * DAEMPF;
+      s.dx += s.vx;
+      s.dy += s.vy;
     }
 
-    for (i = 0; i < this.speichen.length; i++) {
-      s = this.speichen[i];
-      s.naehe += ((i === dran ? 1 : 0) - s.naehe) * 0.16;
-      dx = 0; dy = 0;
-      if (s.naehe > 0.002 && this.zeiger) {
-        dx = s.rx - this.zeiger.x; dy = s.ry - this.zeiger.y;
-        ab = Math.sqrt(dx * dx + dy * dy) || 1;
-        dx /= ab; dy /= ab;
-      }
-      s.x = s.rx + dx * hub * s.naehe;
-      s.y = s.ry + dy * hub * s.naehe;
-    }
-
-    /* Speichen, alle zum Mittelpunkt */
-    for (i = 0; i < this.speichen.length; i++) {
-      s = this.speichen[i];
-      g.globalAlpha = 0.20 + 0.20 * s.naehe;
-      g.lineWidth = 1 + 0.6 * s.naehe;
+    /* Saiten */
+    g.lineWidth = 0.75;
+    g.globalAlpha = 0.30;
+    for (i = 0; i < this.saiten.length; i++) {
+      s = this.saiten[i];
+      var mx = (this.cx + s.ex) / 2, my = (this.cy + s.ey) / 2;
+      var lx = s.ex - this.cx, ly = s.ey - this.cy;
+      var ln = Math.sqrt(lx * lx + ly * ly) || 1;
+      /* Scheitel: Grundwoelbung quer zur Saite plus Auslenkung */
+      var sx = mx + (-ly / ln) * s.bogen + s.dx;
+      var sy = my + ( lx / ln) * s.bogen + s.dy;
       g.beginPath();
       g.moveTo(this.cx, this.cy);
-      g.lineTo(s.x, s.y);
+      g.quadraticCurveTo(2 * sx - mx, 2 * sy - my, s.ex, s.ey);
       g.stroke();
     }
 
-    /* Schein nach aussen am aktiven Punkt */
-    for (i = 0; i < this.speichen.length; i++) {
-      s = this.speichen[i];
-      if (s.naehe < 0.02) continue;
-      g.globalAlpha = 0.22 * s.naehe;
+    /* Ring */
+    g.globalAlpha = 0.88;
+    for (i = 0; i < this.rand.length; i++) {
       g.beginPath();
-      g.arc(s.x, s.y, this.pr * s.gr * (2.0 + 1.6 * s.naehe), 0, 6.283);
+      g.arc(this.rand[i].x, this.rand[i].y, this.prand, 0, 6.283);
       g.fill();
     }
 
-    /* Punkte - durchgehend voll deckend */
-    g.globalAlpha = 1;
-    for (i = 0; i < this.speichen.length; i++) {
-      s = this.speichen[i];
-      g.beginPath();
-      g.arc(s.x, s.y, this.pr * s.gr, 0, 6.283);
-      g.fill();
+    /* Beschriftungen */
+    if (this.marken.length) {
+      g.globalAlpha = 0.60;
+      g.font = "500 11px ui-monospace, SFMono-Regular, Menlo, monospace";
+      try { g.letterSpacing = "0.09em"; } catch (e) {}
+      g.textBaseline = "middle";
+      var ab2 = this.radius * 1.10;
+      for (i = 0; i < this.marken.length; i++) {
+        var m = this.marken[i];
+        var tx = this.cx + Math.cos(m.w) * ab2;
+        var ty = this.cy + Math.sin(m.w) * ab2;
+        if (tx < this.b * 0.55) continue;   /* nicht in die Textspalte */
+        g.textAlign = Math.cos(m.w) < -0.15 ? "right" : (Math.cos(m.w) > 0.15 ? "left" : "center");
+        g.fillText(m.txt, tx, ty);
+      }
+      try { g.letterSpacing = "0px"; } catch (e) {}
     }
+
+    g.globalAlpha = 1;
   };
 
   function starten() {
