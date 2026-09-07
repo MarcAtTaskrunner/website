@@ -20,7 +20,7 @@
     this.flaeche = flaeche;
     this.stift = flaeche.getContext("2d");
     var m = flaeche.dataset.schaubild;
-    this.motiv = /^(welle|posten|standorte|pruefung|hero|rad|gewerke)$/.test(m) ? m : "orbit";
+    this.motiv = /^(welle|posten|standorte|pruefung|hero|rad|gewerke|kosten)$/.test(m) ? m : "orbit";
     this.kInhalt = true;          /* Zeilen in der Glaskarte zeichnen? */
     this.laeuft = false;
     this.t = 0;
@@ -71,6 +71,7 @@
     if (this.motiv === "hero")      return this.saeenHero();
     if (this.motiv === "rad")       return this.saeenRad();
     if (this.motiv === "gewerke")   return this.saeenGewerke();
+    if (this.motiv === "kosten")    return this.saeenKosten();
     if (this.motiv === "welle")     return this.saeenWelle();
     if (this.motiv === "posten")    return this.saeenPosten();
     if (this.motiv === "standorte") return this.saeenStandorte();
@@ -99,8 +100,8 @@
        schneller. Fuer Finger und Trackpad ergibt das keinen Sinn. */
     var fein = window.matchMedia("(hover: hover) and (pointer: fine)");
 
-    if ((this.motiv === "rad" || this.motiv === "gewerke") && fein.matches) {
-      var buehne = this.motiv === "gewerke"
+    if (/^(rad|gewerke|kosten)$/.test(this.motiv) && fein.matches) {
+      var buehne = this.motiv !== "rad"
         ? (this.flaeche.closest("li") || this.flaeche)
         : (this.flaeche.closest("section") || this.flaeche);
       buehne.addEventListener("pointermove", function (e) {
@@ -134,6 +135,7 @@
   };
 
   Schaubild.prototype.start = function () {
+    if (this.beginn) this.beginn();
     this.zeichnen();                       /* nie eine leere Flaeche */
     if (this.laeuft || ruhig.matches) return;
     this.laeuft = true;
@@ -155,11 +157,11 @@
   Schaubild.prototype.zeichnen = function () {
     var g = this.stift, i, k;
 
-    if (this.motiv === "gewerke") {
+    if (this.motiv === "gewerke" || this.motiv === "kosten") {
       g.clearRect(0, 0, this.b, this.h);
       g.globalAlpha = 1;
       g.lineCap = "round";
-      return this.zeichnenGewerke();
+      return this.motiv === "kosten" ? this.zeichnenKosten() : this.zeichnenGewerke();
     }
 
     if (this.motiv === "hero" || this.motiv === "rad") {
@@ -1007,6 +1009,15 @@
    * ---------------------------------------------------------------- */
   var SCHATTEN = "0,0,49";        /* #000031 */
 
+  /* Catmull-Rom: laeuft durch p1 und p2, p0 und p3 geben nur die
+     Steigung an den Enden. */
+  function kr(p0, p1, p2, p3, t) {
+    var t2 = t * t, t3 = t2 * t;
+    return 0.5 * ((2 * p1) + (-p0 + p2) * t +
+      (2 * p0 - 5 * p1 + 4 * p2 - p3) * t2 +
+      (-p0 + 3 * p1 - 3 * p2 + p3) * t3);
+  }
+
   Schaubild.prototype.saeenGewerke = function () {
     var s = this, i;
     this.ruht = this.radRuht;
@@ -1210,6 +1221,201 @@
     }
 
     g.globalAlpha = 1;
+  };
+
+
+  /* ---------------------------------------------------------------- *
+   *  Motiv Kosten - Kachel "Nachvollziehbar abgerechnet."
+   *  Eine Kurve laeuft beim Sichtbarwerden von links nach rechts ein
+   *  (Trim Path), danach tauchen die Kostenpunkte nacheinander auf.
+   *  Zeigt man auf einen, wird er blau und nennt daneben seinen Posten.
+   *
+   *  Die Kurve ist ein Catmull-Rom-Spline durch feste Stuetzstellen.
+   *  Die Kostenpunkte gehoeren selbst zu den Stuetzstellen - dadurch
+   *  liegen sie exakt auf der Linie, statt danebengesetzt zu werden.
+   *
+   *  Der Verlauf an den Raendern steckt im Strichmuster selbst: der
+   *  Strich ist ein Farbverlauf, der aussen auf null geht. Eine Maske
+   *  darueber waere teurer und wuerde die Punkte mit ausblenden.
+   * ---------------------------------------------------------------- */
+  Schaubild.prototype.saeenKosten = function () {
+    var i;
+    this.ruht = this.kostenRuht;
+    this.wachBis = 0;
+
+    /* Stuetzstellen (Anteil der Breite, Anteil der Hoehe). Die ersten
+       und letzten liegen ausserhalb - sie geben dem Spline nur die
+       Steigung am Rand. */
+    var stuetz = [
+      [-0.10, 0.62], [0.00, 0.532], [0.111, 0.371], [0.219, 0.306],
+      [0.354, 0.540], [0.510, 0.738], [0.678, 0.630], [0.887, 0.338],
+      [1.00, 0.159], [1.10, 0.080]
+    ];
+
+    /* Catmull-Rom abtasten */
+    var n = 420, punkte = [];
+    var vonBis = stuetz.length - 3;          /* Segmente zwischen p1..p2 */
+    for (i = 0; i <= n; i++) {
+      var u = (i / n) * vonBis;
+      var seg = Math.min(Math.floor(u), vonBis - 1);
+      var f = u - seg;
+      var p0 = stuetz[seg], p1 = stuetz[seg + 1], p2 = stuetz[seg + 2], p3 = stuetz[seg + 3];
+      punkte.push({
+        x: this.b * kr(p0[0], p1[0], p2[0], p3[0], f),
+        y: this.h * kr(p0[1], p1[1], p2[1], p3[1], f)
+      });
+    }
+    var ges = 0;
+    for (i = 1; i < punkte.length; i++) {
+      var dx = punkte[i].x - punkte[i - 1].x, dy = punkte[i].y - punkte[i - 1].y;
+      punkte[i].l = Math.sqrt(dx * dx + dy * dy);
+      ges += punkte[i].l;
+    }
+    this.linie = punkte;
+    this.gesamt = ges;
+
+    /* Kostenpunkte: an der Stuetzstelle, y von der abgetasteten Kurve */
+    var namen = (this.flaeche.dataset.posten ||
+      "Anfahrt,Materialkosten,Arbeitszeit,Handlingfee").split(",");
+    var stellen = [0.111, 0.354, 0.678, 0.887];
+    var mass = Math.min(this.b, this.h * 1.9);
+    this.posten = [];
+    for (i = 0; i < stellen.length && i < namen.length; i++) {
+      var zx = this.b * stellen[i];
+      this.posten.push({
+        x: zx,
+        y: this.yAuf(zx),
+        r: Math.max(9, mass * 0.028),
+        name: namen[i].trim(),
+        an: 0
+      });
+    }
+
+    this.einlauf = 1.15;                     /* Sekunden fuer den Strich */
+    this.einlaufBis = this.einlauf + 0.14 * this.posten.length + 0.6;
+    this.startZeit = null;
+    this.beginn = this.kostenBeginn;
+  };
+
+  /* Der Einlauf haengt an der echten Uhr, nicht am Bildzaehler: sonst
+     liefe er auf 120-Hz-Schirmen doppelt so schnell. Gestartet wird er
+     beim ersten Sichtbarwerden, danach nie wieder. */
+  Schaubild.prototype.kostenBeginn = function () {
+    if (this.startZeit == null) this.startZeit = Schaubild.uhr();
+  };
+  Schaubild.prototype.kostenSek = function () {
+    return this.startZeit == null ? 0 : (Schaubild.uhr() - this.startZeit) / 1000;
+  };
+  Schaubild.uhr = function () {
+    return (window.performance && performance.now) ? performance.now() : Date.now();
+  };
+
+  /* y der abgetasteten Kurve an der Stelle x */
+  Schaubild.prototype.yAuf = function (x) {
+    var l = this.linie, i;
+    for (i = 1; i < l.length; i++) {
+      if (l[i].x >= x) {
+        var f = (x - l[i - 1].x) / ((l[i].x - l[i - 1].x) || 1);
+        return l[i - 1].y + (l[i].y - l[i - 1].y) * f;
+      }
+    }
+    return l[l.length - 1].y;
+  };
+
+  Schaubild.prototype.kostenRuht = function () {
+    if (this.zeiger) { this.wachBis = this.t + 1.2; return false; }
+    if (this.kostenSek() < this.einlaufBis) return false;
+    return this.t > this.wachBis;
+  };
+
+  Schaubild.prototype.zeichnenKosten = function () {
+    var g = this.stift, i, p;
+
+    /* Strich einlaufen lassen */
+    var sek = this.kostenSek();
+    var e = Math.min(1, sek / this.einlauf);
+    e = e < 0.5 ? 4 * e * e * e : 1 - Math.pow(-2 * e + 2, 3) / 2;   /* easeInOutCubic */
+
+    var vl = g.createLinearGradient(0, 0, this.b, 0);
+    vl.addColorStop(0.00, "rgba(66,133,244,0)");
+    vl.addColorStop(0.07, "rgba(66,133,244,0.85)");
+    vl.addColorStop(0.93, "rgba(66,133,244,0.85)");
+    vl.addColorStop(1.00, "rgba(66,133,244,0)");
+    g.strokeStyle = vl;
+    g.lineWidth = 1.8;
+    g.lineJoin = "round";
+
+    var ziel = e * this.gesamt, acc = 0, l = this.linie;
+    g.beginPath();
+    g.moveTo(l[0].x, l[0].y);
+    for (i = 1; i < l.length; i++) {
+      if (acc + l[i].l <= ziel) { g.lineTo(l[i].x, l[i].y); acc += l[i].l; }
+      else {
+        var f = (ziel - acc) / (l[i].l || 1);
+        g.lineTo(l[i - 1].x + (l[i].x - l[i - 1].x) * f,
+                 l[i - 1].y + (l[i].y - l[i - 1].y) * f);
+        break;
+      }
+    }
+    g.stroke();
+
+    /* Kostenpunkte */
+    for (i = 0; i < this.posten.length; i++) {
+      p = this.posten[i];
+
+      var ab = sek - (this.einlauf + 0.14 * i);
+      var auf = Math.max(0, Math.min(1, ab / 0.3));
+      auf = 1 - Math.pow(1 - auf, 3);                                /* easeOutCubic */
+      if (auf <= 0.001) continue;
+
+      var ziel2 = 0;
+      if (this.zeiger) {
+        var qx = this.zeiger.x - p.x, qy = this.zeiger.y - p.y;
+        if (Math.sqrt(qx * qx + qy * qy) < p.r + 14) ziel2 = 1;
+      }
+      p.an += (ziel2 - p.an) * 0.2;
+
+      var r = p.r * (0.6 + 0.4 * auf) * (1 + 0.10 * p.an);
+
+      g.save();
+      g.globalAlpha = auf;
+      g.shadowColor = "rgba(" + SCHATTEN + ",0.22)";
+      g.shadowBlur = 18;
+      g.shadowOffsetY = 6;
+      g.fillStyle = p.an > 0.5 ? "#1155cc" : "#ffffff";
+      g.beginPath();
+      g.arc(p.x, p.y, r, 0, 6.283);
+      g.fill();
+      g.shadowColor = "rgba(" + SCHATTEN + ",0.12)";
+      g.shadowBlur = 6;
+      g.shadowOffsetY = 2;
+      g.beginPath();
+      g.arc(p.x, p.y, r, 0, 6.283);
+      g.fill();
+      g.restore();
+
+      /* Farbwechsel weich ueberblenden */
+      if (p.an > 0.01) {
+        g.globalAlpha = auf * p.an;
+        g.fillStyle = "#1155cc";
+        g.beginPath();
+        g.arc(p.x, p.y, r, 0, 6.283);
+        g.fill();
+      }
+
+      /* Beschriftung nur bei Beruehrung */
+      if (p.an > 0.02) {
+        g.globalAlpha = auf * Math.min(1, p.an * 1.4);
+        g.fillStyle = "#1155cc";
+        g.font = '700 13px "DIN Pro", ui-sans-serif, system-ui, sans-serif';
+        g.textBaseline = "middle";
+        var br = g.measureText(p.name).width;
+        var rechts = p.x + r + 12 + br < this.b - 6;
+        g.textAlign = rechts ? "left" : "right";
+        g.fillText(p.name, p.x + (rechts ? r + 12 : -(r + 12)), p.y);
+      }
+      g.globalAlpha = 1;
+    }
   };
 
   function starten() {
