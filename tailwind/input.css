@@ -41,6 +41,14 @@
   font-weight: 900; font-style: normal; font-display: swap;
 }
 
+/* Schmale Auszeichnung fuer kurze Labels in Versalien - dieselbe Datei,
+   die schon die alte Kopfzeile benutzt hat. */
+@font-face {
+  font-family: "DIN Pro Cond";
+  src: url("../assets/fonts/dinpro-cond-black.woff2") format("woff2");
+  font-weight: 900; font-style: normal; font-display: swap;
+}
+
 /* ------------------------------------------------------------------ *
  *  Design Tokens
  *  Quelle der Markenfarben: website/assets/css/styles.css und die

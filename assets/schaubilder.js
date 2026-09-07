@@ -1243,28 +1243,28 @@
     this.ruht = this.kostenRuht;
     this.wachBis = 0;
 
-    /* Stuetzstellen (Anteil der Breite, Anteil der Hoehe). Die ersten
-       und letzten liegen ausserhalb - sie geben dem Spline nur die
-       Steigung am Rand. */
-    var stuetz = [
-      [-0.10, 0.62], [0.00, 0.532], [0.111, 0.371], [0.219, 0.306],
-      [0.354, 0.540], [0.510, 0.738], [0.678, 0.630], [0.887, 0.338],
-      [1.00, 0.159], [1.10, 0.080]
+    /* Die Kurve besteht aus drei kubischen Bezier-Stuecken. An Hoch-
+       und Tiefpunkt liegen die Kontrollpunkte waagerecht - dadurch
+       laeuft die Kurve dort glatt durch, statt einen Knick zu machen.
+       Genau so zeichnet ein Vektorprogramm eine solche Welle. */
+    var seg = [
+      [[-0.14, 0.740], [0.000, 0.500], [0.100, 0.306], [0.220, 0.306]],
+      [[0.220, 0.306], [0.365, 0.306], [0.365, 0.738], [0.510, 0.738]],
+      [[0.510, 0.738], [0.660, 0.738], [0.860, 0.400], [1.140, 0.000]]
     ];
 
-    /* Catmull-Rom abtasten */
-    var n = 420, punkte = [];
-    var vonBis = stuetz.length - 3;          /* Segmente zwischen p1..p2 */
-    for (i = 0; i <= n; i++) {
-      var u = (i / n) * vonBis;
-      var seg = Math.min(Math.floor(u), vonBis - 1);
-      var f = u - seg;
-      var p0 = stuetz[seg], p1 = stuetz[seg + 1], p2 = stuetz[seg + 2], p3 = stuetz[seg + 3];
-      punkte.push({
-        x: this.b * kr(p0[0], p1[0], p2[0], p3[0], f),
-        y: this.h * kr(p0[1], p1[1], p2[1], p3[1], f)
-      });
+    var n = 200, punkte = [], k, u, mu, a0, a1, a2, a3;
+    for (k = 0; k < seg.length; k++) {
+      for (i = (k ? 1 : 0); i <= n; i++) {
+        u = i / n; mu = 1 - u;
+        a0 = mu * mu * mu; a1 = 3 * mu * mu * u; a2 = 3 * mu * u * u; a3 = u * u * u;
+        punkte.push({
+          x: this.b * (a0 * seg[k][0][0] + a1 * seg[k][1][0] + a2 * seg[k][2][0] + a3 * seg[k][3][0]),
+          y: this.h * (a0 * seg[k][0][1] + a1 * seg[k][1][1] + a2 * seg[k][2][1] + a3 * seg[k][3][1])
+        });
+      }
     }
+
     var ges = 0;
     for (i = 1; i < punkte.length; i++) {
       var dx = punkte[i].x - punkte[i - 1].x, dy = punkte[i].y - punkte[i - 1].y;
@@ -1295,6 +1295,14 @@
     this.einlaufBis = this.einlauf + 0.14 * this.posten.length + 0.6;
     this.startZeit = null;
     this.beginn = this.kostenBeginn;
+
+    /* Canvas nimmt keine Ruecksicht auf noch ladende Schriften: es misst
+       und zeichnet dann den Rueckfall. Deshalb einmal anfordern. */
+    var s2 = this;
+    if (document.fonts && document.fonts.load) {
+      document.fonts.load('900 15px "DIN Pro Cond"').then(function () { s2.zeichnen(); },
+                                                          function () {});
+    }
   };
 
   /* Der Einlauf haengt an der echten Uhr, nicht am Bildzaehler: sonst
@@ -1337,10 +1345,10 @@
     e = e < 0.5 ? 4 * e * e * e : 1 - Math.pow(-2 * e + 2, 3) / 2;   /* easeInOutCubic */
 
     var vl = g.createLinearGradient(0, 0, this.b, 0);
-    vl.addColorStop(0.00, "rgba(66,133,244,0)");
-    vl.addColorStop(0.07, "rgba(66,133,244,0.85)");
-    vl.addColorStop(0.93, "rgba(66,133,244,0.85)");
-    vl.addColorStop(1.00, "rgba(66,133,244,0)");
+    vl.addColorStop(0.000, "rgba(66,133,244,0)");
+    vl.addColorStop(0.030, "rgba(66,133,244,0.85)");
+    vl.addColorStop(0.970, "rgba(66,133,244,0.85)");
+    vl.addColorStop(1.000, "rgba(66,133,244,0)");
     g.strokeStyle = vl;
     g.lineWidth = 1.8;
     g.lineJoin = "round";
@@ -1407,12 +1415,15 @@
       if (p.an > 0.02) {
         g.globalAlpha = auf * Math.min(1, p.an * 1.4);
         g.fillStyle = "#1155cc";
-        g.font = '700 13px "DIN Pro", ui-sans-serif, system-ui, sans-serif';
+        g.font = '900 15px "DIN Pro Cond", "DIN Pro", ui-sans-serif, sans-serif';
+        try { g.letterSpacing = "0.06em"; } catch (e3) {}
         g.textBaseline = "middle";
-        var br = g.measureText(p.name).width;
+        var txt = p.name.toUpperCase();
+        var br = g.measureText(txt).width;
         var rechts = p.x + r + 12 + br < this.b - 6;
         g.textAlign = rechts ? "left" : "right";
-        g.fillText(p.name, p.x + (rechts ? r + 12 : -(r + 12)), p.y);
+        g.fillText(txt, p.x + (rechts ? r + 12 : -(r + 12)), p.y);
+        try { g.letterSpacing = "0px"; } catch (e3) {}
       }
       g.globalAlpha = 1;
     }
