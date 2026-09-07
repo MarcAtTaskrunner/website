@@ -139,7 +139,7 @@
       if (!s.laeuft) return;
       s.tempo += (s.zielTempo - s.tempo) * 0.07;
       s.t += (1 / 60) * s.tempo;
-      s.zeichnen();
+      if (!(s.motiv === "rad" && s.radRuht())) s.zeichnen();
       s.anfrage = requestAnimationFrame(schritt);
     })();
   };
@@ -649,22 +649,21 @@
 
   /* ---------------------------------------------------------------- *
    *  Motiv Rad - interaktive Grafik im Hero
-   *  80 Punkte auf einem Kreis, jeder mit einer Linie zur Mitte. Der
-   *  Kreis dreht sich langsam. Was in der Naehe des Zeigers liegt,
-   *  wird groesser und heller; der Rest bleibt ruhig.
+   *  80 Punkte auf einem Kreis, jeder mit einer Linie bis in die Mitte.
+   *  Nichts dreht sich: die Grafik steht still und antwortet nur auf den
+   *  Zeiger. Was in seiner Naehe liegt, wird groesser und heller.
    *
-   *  Die Linien werden zur Mitte hin ausradiert (destination-out mit
-   *  einem Radialverlauf) statt mit der Hintergrundfarbe uebermalt -
-   *  so bleibt es unabhaengig davon, welches Blau die Sektion hat,
-   *  und der Text in der Mitte behaelt seinen ruhigen Grund.
+   *  Der Punktdurchmesser wird aus dem Abstand auf dem Kreis gerechnet,
+   *  nicht fest gesetzt - so bleibt der Spalt zwischen zwei Punkten in
+   *  jeder Fenstergroesse gleich schmal.
    * ---------------------------------------------------------------- */
   Schaubild.prototype.saeenRad = function () {
     var w = wuerfelAb(20261002), i;
     var n = parseInt(this.flaeche.dataset.punkte, 10) || 80;
 
-    /* Schmale Fenster: der Text nimmt die ganze Breite ein, deshalb
-       sitzt der Kreis unten rechts und laeuft ueber den Rand hinaus -
-       so wie vorher das Foto. Ab 700 px steht er frei neben dem Text. */
+    /* Schmale Fenster: der Text nimmt die ganze Breite ein, deshalb sitzt
+       der Kreis unten rechts und laeuft ueber den Rand - so wie vorher das
+       Foto. Ab 700 px steht er frei neben dem Text. */
     if (this.b < 700) {
       this.cx = this.b * 0.82;
       this.cy = this.h * 0.88;
@@ -674,38 +673,37 @@
       this.cy = this.h * 0.5;
       this.radius = Math.min(this.b * 0.32, this.h * 0.42);
     }
-    this.loch = this.radius * 0.30;      /* freier Kern in der Mitte */
+
+    var abstand = (6.283 * this.radius) / n;
+    this.pr = Math.max(2.2, abstand * 0.36);   /* Punktradius, schmaler Spalt */
 
     this.speichen = [];
     for (i = 0; i < n; i++) {
+      var wk = (i / n) * 6.283 - 1.5708;       /* oben beginnen */
       this.speichen.push({
-        w0: (i / n) * 6.283,
-        ph: w() * 6.283,
-        gr: 0.82 + w() * 0.36,           /* leichte Groessenstreuung */
+        x: this.cx + Math.cos(wk) * this.radius,
+        y: this.cy + Math.sin(wk) * this.radius,
+        gr: 0.92 + w() * 0.16,
         naehe: 0
       });
     }
+    this.wachBis = 0;
+  };
 
-    /* Radierer fuer den Kern - haengt nur an cx/cy/radius */
-    var r = this.stift.createRadialGradient(this.cx, this.cy, 0, this.cx, this.cy, this.loch * 2.1);
-    r.addColorStop(0.00, "rgba(0,0,0,1)");
-    r.addColorStop(0.55, "rgba(0,0,0,0.92)");
-    r.addColorStop(1.00, "rgba(0,0,0,0)");
-    this.radierer = r;
+  /* Steht die Grafik still, wird nicht neu gezeichnet. Nach dem Verlassen
+     laeuft sie noch eine halbe Sekunde weiter, damit das Abklingen zu
+     Ende gespielt wird. */
+  Schaubild.prototype.radRuht = function () {
+    if (this.zeiger) { this.wachBis = this.t + 0.6; return false; }
+    return this.t > this.wachBis;
   };
 
   Schaubild.prototype.zeichnenRad = function () {
-    var g = this.stift, i, s, wk, px, py, dx, dy, ab, ziel;
-    var grenze = this.radius * 0.55;
-    var dreh = this.t * 0.045;
+    var g = this.stift, i, s, dx, dy, ab, ziel;
+    var grenze = this.radius * 0.58;
 
     for (i = 0; i < this.speichen.length; i++) {
       s = this.speichen[i];
-      wk = s.w0 + dreh;
-      var rr = this.radius * (1 + 0.035 * Math.sin(this.t * 0.5 + s.ph));
-      s.x = this.cx + Math.cos(wk) * rr;
-      s.y = this.cy + Math.sin(wk) * rr * 0.92;
-
       ziel = 0;
       if (this.zeiger) {
         dx = this.zeiger.x - s.x; dy = this.zeiger.y - s.y;
@@ -716,48 +714,40 @@
       s.naehe += (ziel - s.naehe) * 0.16;
     }
 
-    /* Speichen */
-    g.lineWidth = 0.9;
+    /* Speichen, durchgehend bis in die Mitte */
     for (i = 0; i < this.speichen.length; i++) {
       s = this.speichen[i];
-      g.globalAlpha = 0.17 + 0.45 * s.naehe;
+      g.globalAlpha = 0.20 + 0.55 * s.naehe;
+      g.lineWidth = 1 + 1.4 * s.naehe;
       g.beginPath();
       g.moveTo(this.cx, this.cy);
       g.lineTo(s.x, s.y);
       g.stroke();
     }
 
-    /* Kern freiraeumen, damit die Headline ruhigen Grund behaelt */
-    g.globalAlpha = 1;
-    g.globalCompositeOperation = "destination-out";
-    g.fillStyle = this.radierer;
-    g.fillRect(this.cx - this.loch * 2.2, this.cy - this.loch * 2.2, this.loch * 4.4, this.loch * 4.4);
-    g.globalCompositeOperation = "source-over";
-    g.fillStyle = "#ffffff";
-
     /* Punkte */
     for (i = 0; i < this.speichen.length; i++) {
       s = this.speichen[i];
       if (s.naehe > 0.02) {
-        g.globalAlpha = 0.18 * s.naehe;
+        g.globalAlpha = 0.22 * s.naehe;
         g.beginPath();
-        g.arc(s.x, s.y, (3 + 9 * s.naehe) * s.gr, 0, 6.283);
+        g.arc(s.x, s.y, this.pr * s.gr * (2.0 + 1.8 * s.naehe), 0, 6.283);
         g.fill();
       }
-      g.globalAlpha = 0.42 + 0.52 * s.naehe;
+      g.globalAlpha = 0.52 + 0.48 * s.naehe;
       g.beginPath();
-      g.arc(s.x, s.y, (1.7 + 2.4 * s.naehe) * s.gr, 0, 6.283);
+      g.arc(s.x, s.y, this.pr * s.gr * (1 + 0.65 * s.naehe), 0, 6.283);
       g.fill();
     }
 
     /* Knotenpunkt */
-    g.globalAlpha = 0.16;
+    g.globalAlpha = 0.14;
     g.beginPath();
-    g.arc(this.cx, this.cy, 13, 0, 6.283);
+    g.arc(this.cx, this.cy, this.pr * 3.2, 0, 6.283);
     g.fill();
-    g.globalAlpha = 0.9;
+    g.globalAlpha = 0.95;
     g.beginPath();
-    g.arc(this.cx, this.cy, 4.2, 0, 6.283);
+    g.arc(this.cx, this.cy, this.pr * 1.15, 0, 6.283);
     g.fill();
 
     g.globalAlpha = 1;
