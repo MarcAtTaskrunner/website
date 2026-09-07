@@ -665,7 +665,9 @@
   Schaubild.prototype.saeenRad = function () {
     var w = wuerfelAb(20261002), i;
     var nSaiten = parseInt(this.flaeche.dataset.punkte, 10) || 76;
-    var nRand = Math.round(nSaiten * 1.7);      /* mehr Randpunkte als Saiten */
+    /* Weniger, dafuer groessere Randpunkte. Ueber data-randpunkte am
+       Canvas einstellbar. */
+    var nRand = parseInt(this.flaeche.dataset.randpunkte, 10) || Math.round(nSaiten * 0.95);
 
     /* Das Canvas ist eine eigene Flaeche unter dem Text, nicht mehr
        hinter ihm. Der Kreis sitzt darin mittig. */
@@ -673,7 +675,7 @@
     this.cy = this.h * 0.5;
     this.radius = Math.min(this.b * 0.42, this.h * 0.47);
 
-    this.prand = Math.max(2.2, this.radius * 0.013);
+    this.prand = Math.max(3, this.radius * 0.020);
     this.pgross = this.radius * 0.155;        /* Radius des geoeffneten Punktes */
 
     /* Ring aus feinen Punkten. Die Lage wird ueber den Winkel gefuehrt,
