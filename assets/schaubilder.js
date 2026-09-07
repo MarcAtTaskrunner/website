@@ -20,10 +20,11 @@
     this.flaeche = flaeche;
     this.stift = flaeche.getContext("2d");
     var m = flaeche.dataset.schaubild;
-    this.motiv = /^(welle|posten|standorte|pruefung|hero)$/.test(m) ? m : "orbit";
+    this.motiv = /^(welle|posten|standorte|pruefung|hero|rad)$/.test(m) ? m : "orbit";
     this.kInhalt = true;          /* Zeilen in der Glaskarte zeichnen? */
     this.laeuft = false;
     this.t = 0;
+    this.zeiger = null;        /* Zeigerlage, null = ausserhalb */
     this.tempo = 1;            /* laeuft bei Hover kurz schneller */
     this.zielTempo = 1;
     this.messen();
@@ -68,6 +69,7 @@
 
   Schaubild.prototype.saeen = function () {
     if (this.motiv === "hero")      return this.saeenHero();
+    if (this.motiv === "rad")       return this.saeenRad();
     if (this.motiv === "welle")     return this.saeenWelle();
     if (this.motiv === "posten")    return this.saeenPosten();
     if (this.motiv === "standorte") return this.saeenStandorte();
@@ -95,6 +97,16 @@
     /* Zeigt jemand mit der Maus auf die Karte, laeuft das Schaubild kurz
        schneller. Fuer Finger und Trackpad ergibt das keinen Sinn. */
     var fein = window.matchMedia("(hover: hover) and (pointer: fine)");
+
+    if (this.motiv === "rad" && fein.matches) {
+      var buehne = this.flaeche.closest("section") || this.flaeche;
+      buehne.addEventListener("pointermove", function (e) {
+        var r = s.flaeche.getBoundingClientRect();
+        s.zeiger = { x: e.clientX - r.left, y: e.clientY - r.top };
+      }, { passive: true });
+      buehne.addEventListener("pointerleave", function () { s.zeiger = null; }, { passive: true });
+    }
+
     var wirt = this.flaeche.closest("li");
     if (wirt && fein.matches) {
       wirt.addEventListener("pointerenter", function () { s.zielTempo = 2.1; }, { passive: true });
@@ -140,13 +152,13 @@
   Schaubild.prototype.zeichnen = function () {
     var g = this.stift, i, k;
 
-    if (this.motiv === "hero") {
+    if (this.motiv === "hero" || this.motiv === "rad") {
       g.clearRect(0, 0, this.b, this.h);
       g.globalAlpha = 1;
       g.lineCap = "round";
       g.strokeStyle = "#ffffff";
       g.fillStyle = "#ffffff";
-      return this.zeichnenHero();
+      return this.motiv === "rad" ? this.zeichnenRad() : this.zeichnenHero();
     }
 
     g.clearRect(0, 0, this.b, this.h);
@@ -630,6 +642,123 @@
       g.arc(p.x, p.y, 1.5 + 1.0 * p.an, 0, 6.283);
       g.fill();
     }
+
+    g.globalAlpha = 1;
+  };
+
+
+  /* ---------------------------------------------------------------- *
+   *  Motiv Rad - interaktive Grafik im Hero
+   *  80 Punkte auf einem Kreis, jeder mit einer Linie zur Mitte. Der
+   *  Kreis dreht sich langsam. Was in der Naehe des Zeigers liegt,
+   *  wird groesser und heller; der Rest bleibt ruhig.
+   *
+   *  Die Linien werden zur Mitte hin ausradiert (destination-out mit
+   *  einem Radialverlauf) statt mit der Hintergrundfarbe uebermalt -
+   *  so bleibt es unabhaengig davon, welches Blau die Sektion hat,
+   *  und der Text in der Mitte behaelt seinen ruhigen Grund.
+   * ---------------------------------------------------------------- */
+  Schaubild.prototype.saeenRad = function () {
+    var w = wuerfelAb(20261002), i;
+    var n = parseInt(this.flaeche.dataset.punkte, 10) || 80;
+
+    /* Schmale Fenster: der Text nimmt die ganze Breite ein, deshalb
+       sitzt der Kreis unten rechts und laeuft ueber den Rand hinaus -
+       so wie vorher das Foto. Ab 700 px steht er frei neben dem Text. */
+    if (this.b < 700) {
+      this.cx = this.b * 0.82;
+      this.cy = this.h * 0.88;
+      this.radius = Math.min(this.b * 0.52, this.h * 0.30);
+    } else {
+      this.cx = this.b * 0.62;
+      this.cy = this.h * 0.5;
+      this.radius = Math.min(this.b * 0.32, this.h * 0.42);
+    }
+    this.loch = this.radius * 0.30;      /* freier Kern in der Mitte */
+
+    this.speichen = [];
+    for (i = 0; i < n; i++) {
+      this.speichen.push({
+        w0: (i / n) * 6.283,
+        ph: w() * 6.283,
+        gr: 0.82 + w() * 0.36,           /* leichte Groessenstreuung */
+        naehe: 0
+      });
+    }
+
+    /* Radierer fuer den Kern - haengt nur an cx/cy/radius */
+    var r = this.stift.createRadialGradient(this.cx, this.cy, 0, this.cx, this.cy, this.loch * 2.1);
+    r.addColorStop(0.00, "rgba(0,0,0,1)");
+    r.addColorStop(0.55, "rgba(0,0,0,0.92)");
+    r.addColorStop(1.00, "rgba(0,0,0,0)");
+    this.radierer = r;
+  };
+
+  Schaubild.prototype.zeichnenRad = function () {
+    var g = this.stift, i, s, wk, px, py, dx, dy, ab, ziel;
+    var grenze = this.radius * 0.55;
+    var dreh = this.t * 0.045;
+
+    for (i = 0; i < this.speichen.length; i++) {
+      s = this.speichen[i];
+      wk = s.w0 + dreh;
+      var rr = this.radius * (1 + 0.035 * Math.sin(this.t * 0.5 + s.ph));
+      s.x = this.cx + Math.cos(wk) * rr;
+      s.y = this.cy + Math.sin(wk) * rr * 0.92;
+
+      ziel = 0;
+      if (this.zeiger) {
+        dx = this.zeiger.x - s.x; dy = this.zeiger.y - s.y;
+        ab = Math.sqrt(dx * dx + dy * dy);
+        ziel = Math.max(0, 1 - ab / grenze);
+        ziel *= ziel;
+      }
+      s.naehe += (ziel - s.naehe) * 0.16;
+    }
+
+    /* Speichen */
+    g.lineWidth = 0.9;
+    for (i = 0; i < this.speichen.length; i++) {
+      s = this.speichen[i];
+      g.globalAlpha = 0.17 + 0.45 * s.naehe;
+      g.beginPath();
+      g.moveTo(this.cx, this.cy);
+      g.lineTo(s.x, s.y);
+      g.stroke();
+    }
+
+    /* Kern freiraeumen, damit die Headline ruhigen Grund behaelt */
+    g.globalAlpha = 1;
+    g.globalCompositeOperation = "destination-out";
+    g.fillStyle = this.radierer;
+    g.fillRect(this.cx - this.loch * 2.2, this.cy - this.loch * 2.2, this.loch * 4.4, this.loch * 4.4);
+    g.globalCompositeOperation = "source-over";
+    g.fillStyle = "#ffffff";
+
+    /* Punkte */
+    for (i = 0; i < this.speichen.length; i++) {
+      s = this.speichen[i];
+      if (s.naehe > 0.02) {
+        g.globalAlpha = 0.18 * s.naehe;
+        g.beginPath();
+        g.arc(s.x, s.y, (3 + 9 * s.naehe) * s.gr, 0, 6.283);
+        g.fill();
+      }
+      g.globalAlpha = 0.42 + 0.52 * s.naehe;
+      g.beginPath();
+      g.arc(s.x, s.y, (1.7 + 2.4 * s.naehe) * s.gr, 0, 6.283);
+      g.fill();
+    }
+
+    /* Knotenpunkt */
+    g.globalAlpha = 0.16;
+    g.beginPath();
+    g.arc(this.cx, this.cy, 13, 0, 6.283);
+    g.fill();
+    g.globalAlpha = 0.9;
+    g.beginPath();
+    g.arc(this.cx, this.cy, 4.2, 0, 6.283);
+    g.fill();
 
     g.globalAlpha = 1;
   };
