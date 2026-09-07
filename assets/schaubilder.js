@@ -727,8 +727,10 @@
 
   Schaubild.prototype.zeichnenRad = function () {
     var g = this.stift, i, s;
-    var wirk = this.radius * 0.58;      /* Greifweite des Zeigers */
-    var KRAFT = 9.0, STEIF = 0.055, DAEMPF = 0.90;
+    var wirk = this.radius * 0.46;      /* Greifweite des Zeigers */
+    /* Die Ruhelage stellt sich bei etwa KRAFT/STEIF Pixeln ein.
+       2.4 / 0.055 sind rund 44 px Auslenkung im Maximum. */
+    var KRAFT = 2.4, STEIF = 0.055, DAEMPF = 0.90;
 
     for (i = 0; i < this.saiten.length; i++) {
       s = this.saiten[i];
