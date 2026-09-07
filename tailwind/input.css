@@ -171,11 +171,10 @@
 .variante-b .bg-grey-darker p, .variante-b .text-white p { color: inherit; }
 
 /* --- Buttons: Rechteck mit 4px statt Pille --- */
+/* Rechteck mit 4 px statt Pille. Schriftgroesse, -schnitt und Laufweite
+   bleiben wie auf der Startseite (DIN Pro Medium, 17 px). */
 .variante-b .btn {
   border-radius: 4px;
-  font-weight: 400;
-  font-size: 16px;
-  letter-spacing: -0.004em;
   padding: 0.94rem 1.5rem;
 }
 .variante-b .btn:hover { transform: none; }
