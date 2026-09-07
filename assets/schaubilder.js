@@ -20,7 +20,7 @@
     this.flaeche = flaeche;
     this.stift = flaeche.getContext("2d");
     var m = flaeche.dataset.schaubild;
-    this.motiv = /^(welle|posten|standorte|pruefung|hero|rad|gewerke|kosten|dashboard)$/.test(m) ? m : "orbit";
+    this.motiv = /^(welle|posten|standorte|pruefung|hero|rad|gewerke|kosten|dashboard|team)$/.test(m) ? m : "orbit";
     this.kInhalt = true;          /* Zeilen in der Glaskarte zeichnen? */
     this.laeuft = false;
     this.t = 0;
@@ -73,6 +73,7 @@
     if (this.motiv === "gewerke")   return this.saeenGewerke();
     if (this.motiv === "kosten")    return this.saeenKosten();
     if (this.motiv === "dashboard") return this.saeenDashboard();
+    if (this.motiv === "team")      return this.saeenTeam();
     if (this.motiv === "welle")     return this.saeenWelle();
     if (this.motiv === "posten")    return this.saeenPosten();
     if (this.motiv === "standorte") return this.saeenStandorte();
@@ -158,12 +159,13 @@
   Schaubild.prototype.zeichnen = function () {
     var g = this.stift, i, k;
 
-    if (/^(gewerke|kosten|dashboard)$/.test(this.motiv)) {
+    if (/^(gewerke|kosten|dashboard|team)$/.test(this.motiv)) {
       g.clearRect(0, 0, this.b, this.h);
       g.globalAlpha = 1;
       g.lineCap = "round";
       if (this.motiv === "kosten")    return this.zeichnenKosten();
       if (this.motiv === "dashboard") return this.zeichnenDashboard();
+      if (this.motiv === "team")      return this.zeichnenTeam();
       return this.zeichnenGewerke();
     }
 
@@ -1538,6 +1540,88 @@
       var mx = this.ikoMitte ? this.ikoMitte.x : 0.5;
       var my = this.ikoMitte ? this.ikoMitte.y : 0.5;
       g.drawImage(this.icon, this.cx - iw * mx, this.cy - ih * my, iw, ih);
+    }
+  };
+
+
+  /* ---------------------------------------------------------------- *
+   *  Motiv Team - Kachel "Eine feste Ansprechperson."
+   *  Drei ueberlappende Kreise, sonst nichts.
+   *
+   *  Der Kniff steckt in der Reihenfolge: erst alle Schatten, dann alle
+   *  Kreise. Zeichnete man Kreis fuer Kreis samt Schatten, laege der
+   *  Schatten des rechten Nachbarn auf dem linken Kreis. So liegt er
+   *  hinter allen dreien.
+   * ---------------------------------------------------------------- */
+  Schaubild.prototype.saeenTeam = function () {
+    var s = this, i;
+    this.ruht = this.teamRuht;
+
+    var mass = Math.min(this.b, this.h * 1.9);
+    this.rFoto = mass * 0.080;
+    this.rRing = this.rFoto * 1.16;
+    var abstand = this.rRing * 1.88;          /* Ringe ueberlappen leicht */
+
+    this.kreise = [];
+    for (i = 0; i < 3; i++) {
+      this.kreise.push({
+        x: this.b * 0.5 + (i - 1) * abstand,
+        y: this.h * 0.5
+      });
+    }
+
+    this.bild = new Image();
+    this.bild.decoding = "async";
+    this.bild.onload = function () { s.zeichnen(); };
+    this.bild.src = this.flaeche.dataset.bild || "images/ansprechperson-portrait.webp";
+  };
+
+  /* Nichts bewegt sich - nach dem ersten Bild ist Schluss. */
+  Schaubild.prototype.teamRuht = function () { return true; };
+
+  Schaubild.prototype.zeichnenTeam = function () {
+    var g = this.stift, i, k;
+
+    /* 1. alle Schatten */
+    g.save();
+    g.fillStyle = "#ffffff";
+    for (i = 0; i < this.kreise.length; i++) {
+      k = this.kreise[i];
+      g.shadowColor = "rgba(" + SCHATTEN + ",0.26)";
+      g.shadowBlur = 34;
+      g.shadowOffsetY = 12;
+      g.beginPath();
+      g.arc(k.x, k.y, this.rRing, 0, 6.283);
+      g.fill();
+      g.shadowColor = "rgba(" + SCHATTEN + ",0.14)";
+      g.shadowBlur = 9;
+      g.shadowOffsetY = 3;
+      g.beginPath();
+      g.arc(k.x, k.y, this.rRing, 0, 6.283);
+      g.fill();
+    }
+    g.restore();
+
+    /* 2. alle Kreise darueber */
+    for (i = 0; i < this.kreise.length; i++) {
+      k = this.kreise[i];
+
+      g.fillStyle = "#ffffff";
+      g.beginPath();
+      g.arc(k.x, k.y, this.rRing, 0, 6.283);
+      g.fill();
+
+      if (this.bild.complete && this.bild.naturalWidth) {
+        g.save();
+        g.beginPath();
+        g.arc(k.x, k.y, this.rFoto, 0, 6.283);
+        g.clip();
+        var sk = Math.max((this.rFoto * 2) / this.bild.naturalWidth,
+                          (this.rFoto * 2) / this.bild.naturalHeight);
+        var bw = this.bild.naturalWidth * sk, bh = this.bild.naturalHeight * sk;
+        g.drawImage(this.bild, k.x - bw / 2, k.y - bh / 2, bw, bh);
+        g.restore();
+      }
     }
   };
 
