@@ -671,9 +671,9 @@
        hinter ihm. Der Kreis sitzt darin mittig. */
     this.cx = this.b * 0.5;
     this.cy = this.h * 0.5;
-    this.radius = Math.min(this.b * 0.40, this.h * 0.46);
+    this.radius = Math.min(this.b * 0.42, this.h * 0.47);
 
-    this.prand = Math.max(1.6, this.radius * 0.0085);
+    this.prand = Math.max(2.2, this.radius * 0.013);
     this.pgross = this.radius * 0.155;        /* Radius des geoeffneten Punktes */
 
     /* Ring aus feinen Punkten. Die Lage wird ueber den Winkel gefuehrt,
