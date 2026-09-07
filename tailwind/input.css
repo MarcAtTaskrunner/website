@@ -209,12 +209,54 @@ html.js-auf .variante-b [data-auf] {
 }
 html.js-auf .variante-b [data-auf].da { opacity: 1; translate: none; }
 
-/* Kopfleiste bekommt beim Scrollen eine feine Kante */
-.variante-b header { transition: box-shadow .22s var(--kurve), border-color .22s var(--kurve); }
+/* ------------------------------------------------------------------ *
+ *  Kopfleiste ueber dem Hero
+ *  Ganz oben liegt sie durchsichtig ueber dem dunklen Hero, die Schrift
+ *  ist weiss. Sobald gescrollt wird, faehrt der weisse Grund hoch und
+ *  die Schrift wird wieder dunkel.
+ *
+ *  Dafuer muss sie "fixed" sein statt "sticky": eine sticky Leiste nimmt
+ *  Platz im Fluss ein, der Hero begaenne also erst darunter. Den Platz
+ *  holt sich der Hero ueber sein eigenes padding-top zurueck.
+ * ------------------------------------------------------------------ */
+.variante-b header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  background: transparent;
+  border-color: transparent;
+  -webkit-backdrop-filter: none;
+          backdrop-filter: none;
+  transition: background-color .22s var(--kurve), box-shadow .22s var(--kurve);
+}
+.variante-b .hero-b { padding-top: var(--header-h); }
+
+.variante-b header .logo-dunkel,
+.variante-b header .logo-hell { transition: opacity .22s var(--kurve); }
+.variante-b header .logo-dunkel { opacity: 0; }
+.variante-b header .logo-hell   { opacity: 1; }
+
+/* Durchsichtiger Zustand: alles in der oberen Leiste wird weiss.
+   Der Umweg ueber "> div" laesst die mobile Klappe aussen vor - die hat
+   weissen Grund und braucht ihre dunkle Schrift. */
+.variante-b header:not(.gescrollt) > div a:not(.btn),
+.variante-b header:not(.gescrollt) > div #nav-toggle { color: #fff; }
+.variante-b header:not(.gescrollt) > div a:not(.btn):hover { color: rgba(255, 255, 255, .72); }
+.variante-b header:not(.gescrollt) > div .btn-primary {
+  background: #fff;
+  color: var(--color-navy);
+}
+.variante-b header:not(.gescrollt) > div .btn-primary:hover { background: var(--color-ice); }
+
+/* Gescrollt: weisser Grund, dunkle Schrift, feine Kante */
 .variante-b header.gescrollt {
+  background: rgba(255, 255, 255, .95);
+  -webkit-backdrop-filter: blur(12px);
+          backdrop-filter: blur(12px);
   border-color: transparent;
   box-shadow: 0 1px 0 rgba(0, 1, 107, .06), 0 6px 18px -10px rgba(0, 1, 107, .26);
 }
+.variante-b header.gescrollt .logo-dunkel { opacity: 1; }
+.variante-b header.gescrollt .logo-hell   { opacity: 0; }
 
 /* Zeigergeraete: alles Weitere ist reines Hover-Verhalten */
 @media (hover: hover) and (pointer: fine) {

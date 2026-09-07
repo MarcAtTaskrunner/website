@@ -10,10 +10,16 @@
   var menu = document.getElementById("mobile-nav");
 
   if (toggle && menu) {
+    var kopf = document.querySelector("header");
+
     var setzeMenue = function (offen) {
       toggle.setAttribute("aria-expanded", String(offen));
       toggle.querySelector(".sr-only").textContent = offen ? "Menü schließen" : "Menü öffnen";
       menu.hidden = !offen;
+      /* Die Kopfleiste ist ganz oben durchsichtig. Waehrend die Klappe
+         offen ist, braucht sie festen Grund - sonst steht die weisse
+         Schrift der Leiste ueber dem weissen Feld der Klappe. */
+      if (kopf) kopf.classList.toggle("gescrollt", offen || window.scrollY > 8);
     };
 
     var schliesse = function (fokusZurueck) {
