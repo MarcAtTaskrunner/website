@@ -20,7 +20,7 @@
     this.flaeche = flaeche;
     this.stift = flaeche.getContext("2d");
     var m = flaeche.dataset.schaubild;
-    this.motiv = /^(welle|posten|standorte|pruefung|hero|rad|gewerke|kosten)$/.test(m) ? m : "orbit";
+    this.motiv = /^(welle|posten|standorte|pruefung|hero|rad|gewerke|kosten|dashboard)$/.test(m) ? m : "orbit";
     this.kInhalt = true;          /* Zeilen in der Glaskarte zeichnen? */
     this.laeuft = false;
     this.t = 0;
@@ -72,6 +72,7 @@
     if (this.motiv === "rad")       return this.saeenRad();
     if (this.motiv === "gewerke")   return this.saeenGewerke();
     if (this.motiv === "kosten")    return this.saeenKosten();
+    if (this.motiv === "dashboard") return this.saeenDashboard();
     if (this.motiv === "welle")     return this.saeenWelle();
     if (this.motiv === "posten")    return this.saeenPosten();
     if (this.motiv === "standorte") return this.saeenStandorte();
@@ -157,11 +158,13 @@
   Schaubild.prototype.zeichnen = function () {
     var g = this.stift, i, k;
 
-    if (this.motiv === "gewerke" || this.motiv === "kosten") {
+    if (/^(gewerke|kosten|dashboard)$/.test(this.motiv)) {
       g.clearRect(0, 0, this.b, this.h);
       g.globalAlpha = 1;
       g.lineCap = "round";
-      return this.motiv === "kosten" ? this.zeichnenKosten() : this.zeichnenGewerke();
+      if (this.motiv === "kosten")    return this.zeichnenKosten();
+      if (this.motiv === "dashboard") return this.zeichnenDashboard();
+      return this.zeichnenGewerke();
     }
 
     if (this.motiv === "hero" || this.motiv === "rad") {
@@ -1426,6 +1429,79 @@
         try { g.letterSpacing = "0px"; } catch (e3) {}
       }
       g.globalAlpha = 1;
+    }
+  };
+
+
+  /* ---------------------------------------------------------------- *
+   *  Motiv Dashboard - Kachel "Alle Standorte auf einem Dashboard."
+   *  Das Tablet in der Mitte, davon laufen Wellen nach aussen. Oben und
+   *  unten blenden sie aus, sodass nur die seitlichen Boegen stehen.
+   *
+   *  Die Radien wachsen nicht linear, sondern geometrisch. Bei linearem
+   *  Wachstum stehen die Ringe gleich weit auseinander und das Bild
+   *  wirkt wie eine Zielscheibe; geometrisch werden die Abstaende nach
+   *  aussen groesser - so sehen Wellen aus.
+   * ---------------------------------------------------------------- */
+  Schaubild.prototype.saeenDashboard = function () {
+    var s = this;
+    this.cx = this.b * 0.5;
+    this.cy = this.h * 0.5;
+
+    var mass = Math.min(this.b, this.h * 1.9);
+    this.iko = mass * 0.18;
+    this.rMin = this.b * 0.155;
+    this.rMax = this.b * 0.95;
+    this.wellen = 6;
+    this.dauer = 12;                       /* Sekunden je Umlauf */
+
+    this.startZeit = null;
+    this.beginn = this.kostenBeginn;       /* dieselbe Uhr wie Kachel 2 */
+    this.ruht = null;                      /* laeuft dauerhaft */
+
+    this.icon = new Image();
+    this.icon.decoding = "async";
+    this.icon.onload = function () { s.ikoMitteMessen(); s.zeichnen(); };
+    this.icon.src = this.flaeche.dataset.icon || "images/icons/tablet.svg";
+  };
+
+  Schaubild.prototype.zeichnenDashboard = function () {
+    var g = this.stift, i;
+    var sek = this.kostenSek();
+    var v = this.rMax / this.rMin;
+
+    g.strokeStyle = "rgba(0,0,49,1)";
+    g.lineWidth = 1;
+    for (i = 0; i < this.wellen; i++) {
+      var u = ((sek / this.dauer) + i / this.wellen) % 1;
+      var r = this.rMin * Math.pow(v, u);
+      /* am Anfang auf-, am Ende abblenden */
+      var a = Math.min(1, u / 0.10) * Math.min(1, (1 - u) / 0.28);
+      g.globalAlpha = 0.26 * a;
+      g.beginPath();
+      g.arc(this.cx, this.cy, r, 0, 6.283);
+      g.stroke();
+    }
+
+    /* oben und unten ausblenden - danach kommt erst das Icon, sonst
+       wuerde der Radierer es mit wegnehmen */
+    g.globalAlpha = 1;
+    g.globalCompositeOperation = "destination-out";
+    var vv = g.createLinearGradient(0, 0, 0, this.h);
+    vv.addColorStop(0.00, "rgba(0,0,0,1)");
+    vv.addColorStop(0.26, "rgba(0,0,0,0)");
+    vv.addColorStop(0.74, "rgba(0,0,0,0)");
+    vv.addColorStop(1.00, "rgba(0,0,0,1)");
+    g.fillStyle = vv;
+    g.fillRect(0, 0, this.b, this.h);
+    g.globalCompositeOperation = "source-over";
+
+    if (this.icon.complete && this.icon.naturalWidth) {
+      var ih = this.iko;
+      var iw = ih * (this.icon.naturalWidth / this.icon.naturalHeight);
+      var mx = this.ikoMitte ? this.ikoMitte.x : 0.5;
+      var my = this.ikoMitte ? this.ikoMitte.y : 0.5;
+      g.drawImage(this.icon, this.cx - iw * mx, this.cy - ih * my, iw, ih);
     }
   };
 
