@@ -1558,9 +1558,12 @@
     this.ruht = this.teamRuht;
 
     var mass = Math.min(this.b, this.h * 1.9);
-    this.rFoto = mass * 0.080;
-    this.rRing = this.rFoto * 1.16;
-    var abstand = this.rRing * 1.88;          /* Ringe ueberlappen leicht */
+    this.rFoto = mass * 0.135;
+    this.rRing = this.rFoto * 1.15;
+    /* Abstand kleiner als zwei Ringradien: die Ringe schieben sich
+       uebereinander. 1.62 laesst rund 38 Prozent eines Radius
+       ueberlappen. */
+    var abstand = this.rRing * 1.62;
 
     this.kreise = [];
     for (i = 0; i < 3; i++) {
