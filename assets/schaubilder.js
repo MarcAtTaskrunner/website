@@ -681,9 +681,10 @@
       this.cy = oben + frei * 0.26;
       this.radius = Math.min(this.b * 0.38, frei * 0.24);
     } else {
-      /* Breit: Text steht unten links, der Kreis rueckt nach rechts. */
-      this.cx = this.b * 0.62;
-      this.cy = oben + frei * 0.42;
+      /* Breit: der Kreis steht genau mittig in der freien Flaeche unter
+         der Kopfleiste, der Text liegt unten links darueber. */
+      this.cx = this.b * 0.5;
+      this.cy = oben + frei * 0.5;
       this.radius = Math.min(this.b * 0.22, frei * 0.36);
     }
 
