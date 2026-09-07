@@ -669,11 +669,23 @@
        Canvas einstellbar. */
     var nRand = parseInt(this.flaeche.dataset.randpunkte, 10) || Math.round(nSaiten * 0.95);
 
-    /* Das Canvas ist eine eigene Flaeche unter dem Text, nicht mehr
-       hinter ihm. Der Kreis sitzt darin mittig. */
-    this.cx = this.b * 0.5;
-    this.cy = this.h * 0.5;
-    this.radius = Math.min(this.b * 0.42, this.h * 0.47);
+    /* Die Flaeche liegt hinter dem ganzen Hero, also auch hinter der
+       Kopfleiste. Fuer die Lage zaehlt nur, was darunter frei ist. */
+    var kopf = document.querySelector("header");
+    var oben = kopf ? kopf.offsetHeight : 0;
+    var frei = Math.max(1, this.h - oben);
+    if (this.b < 700) {
+      /* Schmal: Text nimmt die ganze Breite, der Kreis steht mittig
+         darueber. */
+      this.cx = this.b * 0.5;
+      this.cy = oben + frei * 0.27;
+      this.radius = Math.min(this.b * 0.42, frei * 0.26);
+    } else {
+      /* Breit: Text steht unten links, der Kreis rueckt nach rechts. */
+      this.cx = this.b * 0.60;
+      this.cy = oben + frei * 0.46;
+      this.radius = Math.min(this.b * 0.27, frei * 0.46);
+    }
 
     this.prand = Math.max(3, this.radius * 0.020);
     this.pgross = this.radius * 0.155;        /* Radius des geoeffneten Punktes */

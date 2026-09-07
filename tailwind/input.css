@@ -229,6 +229,14 @@ html.js-auf .variante-b [data-auf].da { opacity: 1; translate: none; }
   transition: background-color .22s var(--kurve), box-shadow .22s var(--kurve);
 }
 .variante-b .hero-b { padding-top: var(--header-h); }
+/* Hero fuellt den Bildschirm. dvh beruecksichtigt die Browserleisten auf
+   dem Handy, vh ist der Rueckfall. Die Kopfleiste liegt darueber, also
+   wird ihre Hoehe nicht abgezogen. */
+.variante-b .hero-voll {
+  height: 100vh;
+  height: 100dvh;
+  min-height: 620px;
+}
 
 .variante-b header .logo-dunkel,
 .variante-b header .logo-hell { transition: opacity .22s var(--kurve); }
