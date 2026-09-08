@@ -279,9 +279,12 @@ html.js-auf .variante-b [data-auf].da { opacity: 1; translate: none; }
 
 /* Grobe Koernung ueber dem Verlauf. Das Muster ist gerechnet, kein Bild:
    feTurbulence als SVG im data-URI, entsaettigt und kachelbar. Eine
-   niedrige baseFrequency macht die Koerner gross - 0.22 ergibt rund
-   fuenf Pixel. Die Deckung wird auf 1 festgesetzt: sonst ist auch der
-   Alphakanal verrauscht und das Korn hellt den Verlauf im Mittel auf.
+   hohe baseFrequency macht die Koerner klein - 0.85 ergibt gut einen
+   Pixel, also Filmkorn und keine Flecken. Vier Oktaven legen mehrere
+   Korngroessen uebereinander, das laesst es organisch wirken statt
+   gleichmaessig gerastert. Die Deckung wird auf 1 festgesetzt: sonst
+   ist auch der Alphakanal verrauscht und das Korn hellt den Verlauf
+   im Mittel auf.
    color-interpolation-filters='sRGB' gehoert dazu: ohne das rechnet
    der Filter in linearem RGB und das Korn liegt im Mittel bei Grau 187
    statt 128 - es wuerde den ganzen Verlauf aufhellen. So bleibt es
@@ -297,9 +300,9 @@ html.js-auf .variante-b [data-auf].da { opacity: 1; translate: none; }
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='240'%20height='240'%3E%3Cfilter%20id='k'%20color-interpolation-filters='sRGB'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='0.22'%20numOctaves='2'%20stitchTiles='stitch'/%3E%3CfeColorMatrix%20type='saturate'%20values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA%20type='discrete'%20tableValues='1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect%20width='240'%20height='240'%20filter='url%28%23k%29'/%3E%3C/svg%3E");
-  background-size: 240px 240px;
-  opacity: 0.5;
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='200'%20height='200'%3E%3Cfilter%20id='k'%20color-interpolation-filters='sRGB'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='0.85'%20numOctaves='4'%20stitchTiles='stitch'/%3E%3CfeColorMatrix%20type='saturate'%20values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA%20type='discrete'%20tableValues='1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect%20width='200'%20height='200'%20filter='url%28%23k%29'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  opacity: 0.6;
   mix-blend-mode: overlay;
 }
 .variante-b .hero-voll > * { z-index: 1; }
