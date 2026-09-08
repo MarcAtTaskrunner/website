@@ -78,8 +78,11 @@ Klassenlisten dort eintragen, sonst nichts.
 `Schaubild.ruhig`, `Schaubild.SCHATTEN`, Markenfarben). `start.js` läuft
 zuletzt und startet alle Canvas-Elemente.
 
-Nicht mehr eingebaute Motive: `hero`, `posten`, `standorte`, `pruefung` –
-liegen als Dateien bereit, kosten aber Ladezeit. Löschen ist gefahrlos.
+Eingebaut sind `rad`, `gewerke`, `kosten`, `dashboard`, `team`, `notdienst`
+(alle auf der Startseite). `orbit` ist der Rückfall im Kern, falls ein Canvas
+einen unbekannten Namen trägt. Frühere Motive (`hero`, `welle`, `posten`,
+`standorte`, `pruefung`) sind entfernt und stehen bei Bedarf in der Historie:
+`git show 06d2228:quellen/schaubilder/welle.js`.
 
 ## Kontrolle vor dem Ausliefern
 

@@ -28,7 +28,7 @@
     this.flaeche = flaeche;
     this.stift = flaeche.getContext("2d");
     var m = flaeche.dataset.schaubild;
-    this.motiv = /^(welle|posten|standorte|pruefung|hero|rad|gewerke|kosten|dashboard|team|notdienst)$/.test(m) ? m : "orbit";
+    this.motiv = /^(rad|gewerke|kosten|dashboard|team|notdienst)$/.test(m) ? m : "orbit";
     this.kInhalt = true;          /* Zeilen in der Glaskarte zeichnen? */
     this.laeuft = false;
     this.t = 0;
@@ -76,17 +76,12 @@
   };
 
   Schaubild.prototype.saeen = function () {
-    if (this.motiv === "hero")      return this.saeenHero();
     if (this.motiv === "rad")       return this.saeenRad();
     if (this.motiv === "gewerke")   return this.saeenGewerke();
     if (this.motiv === "kosten")    return this.saeenKosten();
     if (this.motiv === "dashboard") return this.saeenDashboard();
     if (this.motiv === "team")      return this.saeenTeam();
     if (this.motiv === "notdienst") return this.saeenNotdienst();
-    if (this.motiv === "welle")     return this.saeenWelle();
-    if (this.motiv === "posten")    return this.saeenPosten();
-    if (this.motiv === "standorte") return this.saeenStandorte();
-    if (this.motiv === "pruefung")  return this.saeenPruefung();
     var i, k, zufall = 20260904;
     var wuerfel = function () {
       zufall = (zufall * 1103515245 + 12345) % 2147483648;
@@ -179,13 +174,13 @@
       return this.zeichnenGewerke();
     }
 
-    if (this.motiv === "hero" || this.motiv === "rad") {
+    if (this.motiv === "rad") {
       g.clearRect(0, 0, this.b, this.h);
       g.globalAlpha = 1;
       g.lineCap = "round";
       g.strokeStyle = "#ffffff";
       g.fillStyle = "#ffffff";
-      return this.motiv === "rad" ? this.zeichnenRad() : this.zeichnenHero();
+      return this.zeichnenRad();
     }
 
     g.clearRect(0, 0, this.b, this.h);
@@ -197,10 +192,6 @@
     g.fillStyle = this.verlauf;
     g.lineCap = "round";
 
-    if (this.motiv === "welle")     return this.zeichnenWelle();
-    if (this.motiv === "posten")    return this.zeichnenPosten();
-    if (this.motiv === "standorte") return this.zeichnenStandorte();
-    if (this.motiv === "pruefung")  return this.zeichnenPruefung();
 
     for (i = 0; i < this.bahnen.length; i++) {
       var bn = this.bahnen[i];
