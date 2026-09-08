@@ -1,20 +1,39 @@
-# taskrunner – Startseite (statisch, ohne Build)
+# taskrunner – Website (statisch)
 
 Umsetzung des Figma-Frames `151-1502` aus *Website Taskrunner*.
-**`index.html` doppelklicken genügt** – kein Node, kein npm, kein Build.
-Zum Veröffentlichen den kompletten Ordnerinhalt hochladen.
+Kein Framework, keine Laufzeitabhängigkeit. Zum Anschauen genügt die fertige
+HTML-Datei im Wurzelverzeichnis; bearbeitet wird `quellen/`.
 
 ```
-index.html            die ganze Seite
+quellen/              HIER wird gearbeitet
+  bausteine/          Kopfzeile, Fußzeile, Meta-Tags – einmal für alle Seiten
+  <seite>.html        der eigene Inhalt je Seite
+  schaubilder/        je Canvas-Motiv eine Datei
+werkzeuge/bauen.py    setzt daraus die Seiten zusammen
+werkzeuge/htmlformat.py
+
+index.html, agb.html …  Bauergebnis, nicht von Hand ändern
 assets/style.css      fertig kompiliertes CSS (Tailwind)
+assets/schaubilder.js Bauergebnis aus quellen/schaubilder/
 assets/app.js         Mobile-Menü + Karussell, lesbares Vanilla-JS
 assets/fonts/         DIN Pro als woff2, Light bis Black
 images/               Hero, Werkzeuge, Kontaktfoto, Karte, Logo
-favicon.svg
 tailwind/input.css    Quelle für style.css – Farben und Typografie stehen hier
 TYPOGRAFIE.md         die verbindlichen Schriftregeln
-package.json          nur für den optionalen CSS-Befehl
+CLAUDE.md             Kurzanleitung: was liegt wo, wie wird gebaut
 ```
+
+## Wie gebaut wird
+
+```bash
+python3 werkzeuge/bauen.py     # quellen/ -> Seiten im Wurzelverzeichnis
+```
+
+Kopfzeile und Fußzeile stehen dadurch genau einmal im Projekt statt neunmal.
+Was `bauen.py` an Vorlagensyntax versteht – drei Dinge – steht in `CLAUDE.md`.
+Node ist auf diesem Rechner nicht installiert; `npm run build` (Tailwind +
+`dist/`) läuft nur in der Cloudflare-CI. Deshalb liegen die gebauten Seiten
+mit im Git.
 
 ## Herkunft der Assets
 
@@ -66,23 +85,23 @@ h3 40 / h4 28 px ab 1069 px Breite, darunter zwei Abstufungen.
 
 ## Texte ändern
 
-Direkt in `index.html`. Normales HTML, keine Template-Syntax.
+In `quellen/<seite>.html`, danach `python3 werkzeuge/bauen.py`. Normales HTML;
+die einzige Vorlagensyntax sind `<!--einbau: …-->`, `{{werte}}` und der
+`<!--werte …-->`-Kopfblock.
 
 ## Arbeitsablauf
 
-Dieser Ordner ist der Arbeitsstand. Tailwind ist hier lokal installiert, es
-wird nichts mehr hin- und hergeschoben:
-
 ```bash
-npm run css          # einmal bauen
-npm run css:watch    # beim Arbeiten mitlaufen lassen
+python3 werkzeuge/bauen.py     # nach jeder Änderung in quellen/
+python3 -m http.server 8765    # Vorschau unter http://localhost:8765
 ```
 
-`index.html` in Chrome offen lassen (Doppelklick reicht, `file://` funktioniert
-inklusive Schriften) und nach jeder Änderung Cmd+R drücken.
+Seite im Browser offen lassen und nach jeder Änderung Cmd+R drücken. Der
+lokale Server ist dem Doppelklick vorzuziehen, weil absolute Links wie
+`/kontakt` sonst ins Leere laufen.
 
-> Reihenfolge: erst HTML speichern, dann CSS bauen. Tailwind liest die
-> benutzten Klassen aus `index.html`.
+> Reihenfolge: erst `bauen.py`, dann das CSS. Tailwind liest die benutzten
+> Klassen aus den gebauten Seiten im Wurzelverzeichnis.
 
 ## CSS neu bauen
 

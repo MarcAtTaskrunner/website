@@ -5,6 +5,10 @@
 set -e
 cd "$(dirname "$0")"
 
+# Erst bauen: sonst wandert ein alter Stand der Seiten hoch, wenn in
+# quellen/ etwas geaendert und der Bau vergessen wurde.
+python3 werkzeuge/bauen.py
+
 if [ -n "$(git status --porcelain)" ]; then
   git add -A
   git commit -m "${1:-Aktualisierung}"

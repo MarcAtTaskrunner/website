@@ -1,15 +1,18 @@
 @import "tailwindcss";
 
-/* Nur diese HTML-Datei wird nach Klassen durchsucht.
-   Kommen Unterseiten dazu, hier ergaenzen: @source "../unterseite.html"; */
-@source "../index.html";
-@source "../startseite-b.html";
+/* Diese Seiten durchsucht Tailwind nach Klassen. Die Liste schreibt
+   werkzeuge/bauen.py bei jedem Lauf neu - hier nichts von Hand aendern. */
+/* seiten:anfang */
+@source "../agb.html";
+@source "../datenschutz.html";
 @source "../dienstleistungen.html";
 @source "../foerderungen.html";
 @source "../impressum.html";
-@source "../datenschutz.html";
-@source "../agb.html";
+@source "../index.html";
 @source "../nutzungsbedingungen.html";
+@source "../startseite-b.html";
+@source "../vergleich.html";
+/* seiten:ende */
 
 /* ------------------------------------------------------------------ *
  *  Hausschrift DIN Pro – selbst gehostet, kein externer Request.

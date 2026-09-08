@@ -1,12 +1,24 @@
-/* taskrunner - Punkt-Schaubild der Karte "Ein Auftrag, alle Gewerke".
-   Alles gerechnet, keine Bilder.
+/* Erzeugt aus quellen/schaubilder/ - Aenderungen bitte dort.
+   Reihenfolge: kern.js, dashboard.js, gewerke.js, hero.js, kosten.js, notdienst.js, posten.js, pruefung.js, rad.js, standorte.js, team.js, welle.js, start.js */
 
-   Motiv: Orbit. Der Auftrag liegt als Glaskarte in der Mitte, die Taskrunner
-   ziehen auf drei flachen Bahnen darum herum. Punkte auf der vorderen
-   Bahnhaelfte sind groesser und kraeftiger als auf der hinteren - daher die
-   Tiefe, ganz ohne 3D. Sonst nichts: keine Impulse, keine Zeigerreaktion.
+/* == kern.js ============================================================= */
+/* taskrunner - Grundgeruest der Schaubilder auf Canvas. Alles gerechnet,
+   keine Bilder.
 
-   Einbau:  <canvas data-schaubild="orbit"></canvas>                          */
+   Hier steht, was jedes Schaubild braucht: Aufbau, Messen, Ereignisse,
+   Laufwerk, die Glaskarte in der Mitte - und das Standardmotiv "orbit",
+   bei dem die Taskrunner auf drei flachen Bahnen um den Auftrag ziehen.
+
+   Jedes weitere Motiv liegt als eigene Datei daneben und haengt seine
+   beiden Methoden saeenX/zeichnenX an Schaubild.prototype.
+
+   Einbau:  <canvas data-schaubild="orbit"></canvas>
+
+   Ein neues Motiv anlegen - drei Handgriffe:
+     1. quellen/schaubilder/<name>.js nach dem Muster der anderen anlegen
+     2. hier unten in saeen() und zeichnen() je eine Zeile ergaenzen
+     3. den Namen in die Liste im Konstruktor aufnehmen                     */
+
 (function () {
   "use strict";
 
@@ -334,92 +346,6 @@
     g.closePath();
   };
 
-
-  /* ---------------------------------------------------------------- *
-   *  Motiv Welle
-   *  Der Auftrag schlaegt Wellen durch ein Feld aus Taskrunnern. Die Front
-   *  laeuft hindurch, die erreichten Punkte leuchten auf und verbinden sich
-   *  kurz mit ihren Nachbarn.
-   * ---------------------------------------------------------------- */
-  Schaubild.prototype.saeenWelle = function () {
-    var zufall = 20260904;
-    var wuerfel = function () {
-      zufall = (zufall * 1103515245 + 12345) % 2147483648;
-      return zufall / 2147483648;
-    };
-    this.cx = this.b / 2;
-    this.cy = this.h * 0.17;
-    this.kb = Math.min(150, this.b * 0.42);
-    this.kh = this.kb * 0.50;
-
-    this.feld = [];
-    var sp = 22, reihe = 0, x, y;
-    for (y = this.h * 0.30; y < this.h * 0.94; y += sp * 0.86) {
-      for (x = (reihe % 2 ? sp / 2 : 0) + sp * 0.5; x < this.b; x += sp) {
-        this.feld.push({ x: x + (wuerfel() - 0.5) * 4, y: y + (wuerfel() - 0.5) * 4, an: 0 });
-      }
-      reihe++;
-    }
-    this.wellen = [{ r: this.b * 0.30 }, { r: this.b * 0.70 }, { r: this.b * 1.05 }];
-  };
-
-  Schaubild.prototype.zeichnenWelle = function () {
-    var g = this.stift, i, j, p, q;
-    var grenze = this.b * 1.25;
-
-    if (!ruhig.matches) {
-      if (this.wellen.length < 3 && Math.random() < 0.014) this.wellen.push({ r: 0 });
-      for (i = this.wellen.length - 1; i >= 0; i--) {
-        this.wellen[i].r += 1.5;
-        if (this.wellen[i].r > grenze) this.wellen.splice(i, 1);
-      }
-    }
-
-    for (i = 0; i < this.feld.length; i++) {
-      p = this.feld[i];
-      var e = Math.sqrt((p.x - this.cx) * (p.x - this.cx) + (p.y - this.cy) * (p.y - this.cy));
-      for (j = 0; j < this.wellen.length; j++) {
-        if (Math.abs(e - this.wellen[j].r) < 16) p.an = 1;
-      }
-      p.an *= 0.975;
-    }
-
-    for (i = 0; i < this.wellen.length; i++) {
-      g.globalAlpha = 0.22 * (1 - this.wellen[i].r / grenze);
-      g.lineWidth = 1;
-      g.beginPath();
-      g.arc(this.cx, this.cy, this.wellen[i].r, 0.06 * Math.PI, 0.94 * Math.PI);
-      g.stroke();
-    }
-
-    g.lineWidth = 0.7;
-    for (i = 0; i < this.feld.length; i++) {
-      p = this.feld[i];
-      if (p.an < 0.12) continue;
-      for (j = i + 1; j < this.feld.length; j++) {
-        q = this.feld[j];
-        if (q.an < 0.12) continue;
-        var dd = Math.sqrt((p.x - q.x) * (p.x - q.x) + (p.y - q.y) * (p.y - q.y));
-        if (dd < 30) {
-          g.globalAlpha = 0.30 * Math.min(p.an, q.an) * (1 - dd / 30);
-          g.beginPath(); g.moveTo(p.x, p.y); g.lineTo(q.x, q.y); g.stroke();
-        }
-      }
-    }
-
-    for (i = 0; i < this.feld.length; i++) {
-      p = this.feld[i];
-      g.globalAlpha = 0.16 + 0.74 * p.an;
-      g.beginPath();
-      g.arc(p.x, p.y, 1.7 + 2.2 * p.an, 0, 6.283);
-      g.fill();
-    }
-
-    g.globalAlpha = 1;
-    this.karteZeichnen();
-  };
-
-
   /* ---------------------------------------------------------------- *
    *  Deterministischer Wuerfel - gleicher Aufbau bei jedem Aufruf
    * ---------------------------------------------------------------- */
@@ -431,202 +357,385 @@
     };
   }
 
-  /* ---------------------------------------------------------------- *
-   *  Motiv Posten - "Nachvollziehbar abgerechnet."
-   *  Jede Punktreihe ist ein Posten. Eine Pruefwelle laeuft von oben
-   *  nach unten durch, und jeder erfasste Posten laeuft als Linie in
-   *  die Rechnung - die Glaskarte am Fuss.
-   * ---------------------------------------------------------------- */
-  Schaubild.prototype.saeenPosten = function () {
-    this.kb = Math.min(190, this.b * 0.58);
-    this.kh = this.kb * 0.40;
-    this.cx = this.b / 2;
-    this.cy = this.h - this.kh / 2 - this.h * 0.11;
+  /* Farbe der Schatten - #000031 statt Schwarz, sonst wirkt es grau. */
+  var SCHATTEN = "0,0,49";
 
-    var laengen = [0.88, 0.60, 0.96, 0.46, 0.74];
-    var rand = Math.max(20, this.b * 0.09);
-    var oben = this.h * 0.12, unten = this.h * 0.49;
-    this.zeilen = [];
-    for (var i = 0; i < laengen.length; i++) {
-      var y = oben + (unten - oben) * (i / (laengen.length - 1));
-      var breite = (this.b - 2 * rand) * laengen[i];
-      var n = Math.max(3, Math.round(breite / 15));
-      var pkte = [];
-      for (var k = 0; k < n; k++) pkte.push({ x: rand + (breite * k) / (n - 1), y: y });
-      this.zeilen.push({ y: y, punkte: pkte, ende: rand + breite, an: 0, platz: 0 });
-    }
-    /* Anschluss an der Rechnung nach der x-Lage der Zeilenenden vergeben,
-       damit sich die Linien nicht kreuzen */
-    var sortiert = this.zeilen.slice().sort(function (p, q) { return p.ende - q.ende; });
-    for (i = 0; i < sortiert.length; i++) sortiert[i].platz = i;
-  };
+  /* Die Motiv-Dateien haengen ihre Methoden an diese Klasse; alles, was
+     sie darueber hinaus brauchen, steht hier. */
+  Schaubild.HELL = HELL;
+  Schaubild.TIEF = TIEF;
+  Schaubild.FLACH = FLACH;
+  Schaubild.SCHATTEN = SCHATTEN;
+  Schaubild.ruhig = ruhig;
+  Schaubild.wuerfelAb = wuerfelAb;
+  window.Schaubild = Schaubild;
+})();
 
-  Schaubild.prototype.zeichnenPosten = function () {
-    var g = this.stift, i, k, z;
-    var n = this.zeilen.length;
-    var lauf = ruhig.matches ? 1.4 : (this.t * 0.42) % (n + 2.4);
-    var kx = this.cx - this.kb / 2, koben = this.cy - this.kh / 2;
+/* == dashboard.js ======================================================== */
+/* taskrunner - Schaubild "dashboard": Ringe auf der Deutschlandkarte.
+   Einbau:  <canvas data-schaubild="dashboard"></canvas>                                           */
+(function () {
+  "use strict";
 
-    for (i = 0; i < n; i++) {
-      z = this.zeilen[i];
-      var ziel = Math.max(0, 1 - Math.abs(lauf - i) * 1.15);
-      z.an += (ziel - z.an) * 0.16;
-    }
-
-    for (i = 0; i < n; i++) {
-      z = this.zeilen[i];
-      var zx = kx + this.kb * ((z.platz + 0.5) / n);
-      var mitte = z.y + (koben - z.y) * 0.55;
-      g.globalAlpha = 0.09 + 0.40 * z.an;
-      g.lineWidth = 0.8 + 0.7 * z.an;
-      g.beginPath();
-      g.moveTo(z.ende, z.y);
-      g.bezierCurveTo(z.ende, mitte, zx, mitte, zx, koben);
-      g.stroke();
-    }
-
-    for (i = 0; i < n; i++) {
-      z = this.zeilen[i];
-      g.globalAlpha = 0.16 + 0.70 * z.an;
-      for (k = 0; k < z.punkte.length; k++) {
-        g.beginPath();
-        g.arc(z.punkte[k].x, z.punkte[k].y, 1.7 + 1.7 * z.an, 0, 6.283);
-        g.fill();
-      }
-    }
-
-    g.globalAlpha = 1;
-    this.karteZeichnen();
-  };
+  var Schaubild = window.Schaubild;
+  var wuerfelAb = Schaubild.wuerfelAb;
 
   /* ---------------------------------------------------------------- *
-   *  Motiv Standorte - "Alle Standorte auf einem Dashboard."
-   *  Verstreute Punkte melden nach oben ins Dashboard. Die Meldung
-   *  laeuft als kleiner Punkt die Linie entlang.
+   *  Motiv Dashboard - Kachel "Alle Standorte auf einem Dashboard."
+   *  Das Tablet in der Mitte, davon laufen Wellen nach aussen. Oben und
+   *  unten blenden sie aus, sodass nur die seitlichen Boegen stehen.
+   *
+   *  Die Radien wachsen nicht linear, sondern geometrisch. Bei linearem
+   *  Wachstum stehen die Ringe gleich weit auseinander und das Bild
+   *  wirkt wie eine Zielscheibe; geometrisch werden die Abstaende nach
+   *  aussen groesser - so sehen Wellen aus.
    * ---------------------------------------------------------------- */
-  Schaubild.prototype.saeenStandorte = function () {
-    this.kb = Math.min(158, this.b * 0.46);
-    this.kh = this.kb * 0.46;
-    this.cx = this.b / 2;
-    this.cy = this.h * 0.17;
-
-    var w = wuerfelAb(20260911), i;
-    this.orte = [];
-    var versuche = 0;
-    while (this.orte.length < 15 && versuche < 600) {
-      versuche++;
-      var x = this.b * (0.07 + 0.86 * w());
-      var y = this.h * (0.44 + 0.50 * w());
-      var frei = true;
-      for (i = 0; i < this.orte.length; i++) {
-        var dx = this.orte[i].x - x, dy = this.orte[i].y - y;
-        if (dx * dx + dy * dy < 1050) { frei = false; break; }
-      }
-      if (frei) this.orte.push({ x: x, y: y, phase: w(), an: 0, u: 0, ax: 0 });
-    }
-    this.orte.sort(function (a, b) { return a.x - b.x; });
-  };
-
-  Schaubild.prototype.zeichnenStandorte = function () {
-    var g = this.stift, i, o, ziel;
-    var n = this.orte.length;
-    var kx = this.cx - this.kb / 2, kunten = this.cy + this.kh / 2;
-
-    for (i = 0; i < n; i++) {
-      o = this.orte[i];
-      o.ax = kx + this.kb * ((i + 0.5) / n);
-      o.u = ruhig.matches ? 0.55 : (this.t * 0.15 + o.phase) % 1;
-      ziel = Math.max(0, 1 - o.u * 4.5);
-      o.an += (ziel - o.an) * 0.16;
-
-      g.globalAlpha = 0.10 + 0.22 * o.an;
-      g.lineWidth = 0.8;
-      g.beginPath();
-      g.moveTo(o.x, o.y);
-      g.lineTo(o.ax, kunten);
-      g.stroke();
-    }
-
-    if (!ruhig.matches) {
-      for (i = 0; i < n; i++) {
-        o = this.orte[i];
-        g.globalAlpha = 0.70 * Math.sin(o.u * Math.PI);
-        g.beginPath();
-        g.arc(o.x + (o.ax - o.x) * o.u, o.y + (kunten - o.y) * o.u, 1.6, 0, 6.283);
-        g.fill();
-      }
-    }
-
-    for (i = 0; i < n; i++) {
-      o = this.orte[i];
-      if (o.an > 0.04) {
-        g.globalAlpha = 0.20 * o.an;
-        g.lineWidth = 1;
-        g.beginPath();
-        g.arc(o.x, o.y, 5 + 13 * (1 - o.an), 0, 6.283);
-        g.stroke();
-      }
-      g.globalAlpha = 0.30 + 0.58 * o.an;
-      g.beginPath();
-      g.arc(o.x, o.y, 2.2 + 1.7 * o.an, 0, 6.283);
-      g.fill();
-    }
-
-    g.globalAlpha = 1;
-    this.karteZeichnen();
-  };
-
-  /* ---------------------------------------------------------------- *
-   *  Motiv Pruefung - "Wir pruefen Qualitaet und Abrechnung."
-   *  Eine Glaslupe faehrt ueber das Feld. Was sie erfasst hat, bleibt
-   *  kraeftiger stehen - geprueft.
-   * ---------------------------------------------------------------- */
-  Schaubild.prototype.saeenPruefung = function () {
-    this.kInhalt = false;
-    this.glasWeich = 0.6;      /* Punkte sollen im Glas Punkte bleiben */
-    this.lupe = 0.16;
-    this.rand = 0.04;
-    this.kb = this.b * 1.2;          /* Pruefleiste laeuft ueber die volle Breite */
-    this.kh = Math.max(46, this.h * 0.15);
-    this.cx = this.b / 2;
+  Schaubild.prototype.saeenDashboard = function () {
+    var s = this;
+    this.cx = this.b * 0.5;
     this.cy = this.h * 0.5;
 
-    var w = wuerfelAb(20260918);
-    this.raster = [];
-    var sp = 21, reihe = 0, x, y;
-    for (y = this.h * 0.09; y < this.h * 0.95; y += sp * 0.88) {
-      for (x = (reihe % 2 ? sp / 2 : 0) + sp * 0.55; x < this.b; x += sp) {
-        this.raster.push({ x: x + (w() - 0.5) * 3, y: y + (w() - 0.5) * 3, an: 0, g: 0 });
-      }
-      reihe++;
+    var mass = Math.min(this.b, this.h * 1.9);
+    this.iko = mass * 0.18;
+    this.rMin = this.b * 0.155;
+    this.rMax = this.b * 0.95;
+    this.wellen = 6;
+    /* Bewusst langsam: bei 26 s je Umlauf und sechs Ringen loest sich
+       etwa alle 4,3 s ein Ring von der Mitte - das laeuft nebenher,
+       statt den Blick vom Text zu ziehen. */
+    this.dauer = 26;                       /* Sekunden je Umlauf */
+
+    this.startZeit = null;
+    this.beginn = this.kostenBeginn;       /* dieselbe Uhr wie Kachel 2 */
+    this.ruht = null;                      /* laeuft dauerhaft */
+
+    this.icon = new Image();
+    this.icon.decoding = "async";
+    this.icon.onload = function () { s.ikoMitteMessen(); s.zeichnen(); };
+    this.icon.src = this.flaeche.dataset.icon || "images/icons/tablet.svg";
+
+    /* Standorte um das Tablet herum. Die Lage folgt dem Entwurf, ein
+       kleiner ausgewuerfelter Versatz nimmt ihr das Mechanische. Der
+       Wuerfel hat eine feste Saat, damit das Bild bei jedem Aufruf
+       gleich aussteht. */
+    var w = wuerfelAb(20261114), i;
+    var lage = [
+      [0.139, 0.204], [0.315, 0.345], [0.127, 0.697],
+      [0.820, 0.322], [0.917, 0.500], [0.721, 0.704]
+    ];
+    this.orte = [];
+    for (i = 0; i < lage.length; i++) {
+      this.orte.push({
+        x: this.b * (lage[i][0] + (w() - 0.5) * 0.035),
+        y: this.h * (lage[i][1] + (w() - 0.5) * 0.055)
+      });
     }
+    this.ortHoehe = mass * 0.088;
+
+    this.ort = new Image();
+    this.ort.decoding = "async";
+    this.ort.onload = function () { s.zeichnen(); };
+    this.ort.src = this.flaeche.dataset.ort || "images/icons/standort.svg";
   };
 
-  Schaubild.prototype.zeichnenPruefung = function () {
-    var g = this.stift, i, p;
-    /* ein Durchgang von oben nach unten, danach faengt die Pruefung von vorn an */
-    var u = ruhig.matches ? 0.42 : (this.t * 0.085) % 1;
-    if (this.u0 != null && u < this.u0) {
-      for (i = 0; i < this.raster.length; i++) { this.raster[i].g = 0; this.raster[i].an = 0; }
-    }
-    this.u0 = u;
-    this.cy = -this.kh * 0.5 + u * (this.h + this.kh);
-    var oben = this.cy - this.kh / 2, unten = this.cy + this.kh / 2;
+  Schaubild.prototype.zeichnenDashboard = function () {
+    var g = this.stift, i;
+    var sek = this.kostenSek();
+    var v = this.rMax / this.rMin;
 
-    for (i = 0; i < this.raster.length; i++) {
-      p = this.raster[i];
-      if (p.y > oben && p.y < unten) { p.an = 1; p.g = 1; }
-      else p.an = Math.max(p.g ? 0.52 : 0, p.an * 0.99);
-      g.globalAlpha = 0.12 + 0.64 * p.an;
+    g.strokeStyle = "rgba(0,0,49,1)";
+    g.lineWidth = 1;
+    for (i = 0; i < this.wellen; i++) {
+      var u = ((sek / this.dauer) + i / this.wellen) % 1;
+      var r = this.rMin * Math.pow(v, u);
+      /* am Anfang auf-, am Ende abblenden */
+      var a = Math.min(1, u / 0.10) * Math.min(1, (1 - u) / 0.28);
+      g.globalAlpha = 0.26 * a;
       g.beginPath();
-      g.arc(p.x, p.y, 1.6 + 1.8 * p.an, 0, 6.283);
+      g.arc(this.cx, this.cy, r, 0, 6.283);
+      g.stroke();
+    }
+
+    /* oben und unten ausblenden - danach kommt erst das Icon, sonst
+       wuerde der Radierer es mit wegnehmen */
+    g.globalAlpha = 1;
+    g.globalCompositeOperation = "destination-out";
+    var vv = g.createLinearGradient(0, 0, 0, this.h);
+    vv.addColorStop(0.00, "rgba(0,0,0,1)");
+    vv.addColorStop(0.26, "rgba(0,0,0,0)");
+    vv.addColorStop(0.74, "rgba(0,0,0,0)");
+    vv.addColorStop(1.00, "rgba(0,0,0,1)");
+    g.fillStyle = vv;
+    g.fillRect(0, 0, this.b, this.h);
+    g.globalCompositeOperation = "source-over";
+
+    /* Standorte nach dem Radierer, damit sie nicht mit ausgeblendet
+       werden - genau wie das Tablet. */
+    if (this.ort.complete && this.ort.naturalWidth) {
+      var oh = this.ortHoehe;
+      var ow = oh * (this.ort.naturalWidth / this.ort.naturalHeight);
+      for (i = 0; i < this.orte.length; i++) {
+        g.drawImage(this.ort, this.orte[i].x - ow / 2, this.orte[i].y - oh / 2, ow, oh);
+      }
+    }
+
+    if (this.icon.complete && this.icon.naturalWidth) {
+      var ih = this.iko;
+      var iw = ih * (this.icon.naturalWidth / this.icon.naturalHeight);
+      var mx = this.ikoMitte ? this.ikoMitte.x : 0.5;
+      var my = this.ikoMitte ? this.ikoMitte.y : 0.5;
+      g.drawImage(this.icon, this.cx - iw * mx, this.cy - ih * my, iw, ih);
+    }
+  };
+})();
+
+/* == gewerke.js ========================================================== */
+/* taskrunner - Schaubild "gewerke": Gewerke-Symbole um die Auftragskarte.
+   Einbau:  <canvas data-schaubild="gewerke"></canvas>                                             */
+(function () {
+  "use strict";
+
+  var Schaubild = window.Schaubild;
+  var SCHATTEN = Schaubild.SCHATTEN;
+
+  /* ---------------------------------------------------------------- *
+   *  Motiv Gewerke - Kachel "Ein Task, alle Gewerke."
+   *  In der Mitte der Auftrag als Squircle, darum sechs Handwerker,
+   *  verbunden durch weiche Bogen. Naehert sich der Zeiger, weichen
+   *  die Kreise aus und federn zurueck; die Bogen folgen ihnen.
+   *
+   *  Der Squircle ist keine abgerundete Box, sondern eine Superellipse
+   *  (|x/a|^n + |y/b|^n = 1, n = 5). Nur so laeuft die Kante stetig in
+   *  die Ecke, statt an der Nahtstelle zwischen Gerade und Viertelkreis
+   *  zu knicken - das ist der Unterschied, den man bei grossen Radien
+   *  sieht.
+   *
+   *  Schatten nach Material/Apple: zwei Lagen, eine enge fuer die Kante
+   *  und eine weite fuer die Hoehe. Die Farbe ist #000031 statt Schwarz.
+   * ---------------------------------------------------------------- */
+  /* Catmull-Rom: laeuft durch p1 und p2, p0 und p3 geben nur die
+     Steigung an den Enden. */
+  function kr(p0, p1, p2, p3, t) {
+    var t2 = t * t, t3 = t2 * t;
+    return 0.5 * ((2 * p1) + (-p0 + p2) * t +
+      (2 * p0 - 5 * p1 + 4 * p2 - p3) * t2 +
+      (-p0 + 3 * p1 - 3 * p2 + p3) * t3);
+  }
+
+  Schaubild.prototype.saeenGewerke = function () {
+    var s = this, i;
+    this.ruht = this.radRuht;
+    this.wachBis = 0;
+
+    /* Lage in Anteilen der Flaeche, uebernommen aus dem Entwurf */
+    var lage = [
+      [0.235, 0.175, 0.068],
+      [0.095, 0.505, 0.060],
+      [0.295, 0.855, 0.067],
+      [0.795, 0.160, 0.067],
+      [0.878, 0.545, 0.064],
+      [0.757, 0.805, 0.067]
+    ];
+    var mass = Math.min(this.b, this.h * 1.9);   /* damit flache Kacheln nicht ausufern */
+
+    this.knoten = [];
+    for (i = 0; i < lage.length; i++) {
+      this.knoten.push({
+        rx: this.b * lage[i][0],
+        ry: this.h * lage[i][1],
+        r: Math.max(16, mass * lage[i][2]),
+        x: 0, y: 0, dx: 0, dy: 0, vx: 0, vy: 0
+      });
+    }
+
+    this.cx = this.b * 0.5;
+    this.cy = this.h * 0.5;
+    this.sq = Math.max(64, mass * 0.205);        /* Kantenlaenge */
+
+    var nachLaden = function () { s.zeichnen(); };
+    this.avatar = new Image();
+    this.avatar.decoding = "async";
+    this.avatar.onload = nachLaden;
+    this.avatar.src = this.flaeche.dataset.bild || "images/headshot.webp";
+
+    this.icon = new Image();
+    this.icon.decoding = "async";
+    this.icon.onload = function () { s.ikoMitteMessen(); nachLaden(); };
+    this.icon.src = this.flaeche.dataset.icon || "images/icons/dokument.svg";
+  };
+
+  /* Superellipse. n = 5 kommt der stetigen Ecke von iOS sehr nahe. */
+  Schaubild.prototype.pfadSquircle = function (cx, cy, a, bb, n) {
+    var g = this.stift, i, t, ct, st, x, y;
+    var schritte = 160;
+    g.beginPath();
+    for (i = 0; i <= schritte; i++) {
+      t = (i / schritte) * 6.283185;
+      ct = Math.cos(t); st = Math.sin(t);
+      x = cx + a * (ct < 0 ? -1 : 1) * Math.pow(Math.abs(ct), 2 / n);
+      y = cy + bb * (st < 0 ? -1 : 1) * Math.pow(Math.abs(st), 2 / n);
+      if (i === 0) g.moveTo(x, y); else g.lineTo(x, y);
+    }
+    g.closePath();
+  };
+
+  /* Optische Mitte des Icons, einmal nach dem Laden gemessen.
+     Zwei Groessen: der Kasten der Deckung (wo die Zeichnung ueberhaupt
+     liegt) und ihr Schwerpunkt (wo das Gewicht liegt). Der reine
+     Schwerpunkt ueberzieht, wenn ein Teil vollflaechig und der Rest
+     Strichzeichnung ist - bei diesem Icon zieht die Hand ihn deutlich
+     nach links unten. Deshalb 65 Prozent des Wegs vom Kasten zum
+     Schwerpunkt. */
+  Schaubild.prototype.ikoMitteMessen = function () {
+    try {
+      var n = 128;
+      var h = document.createElement("canvas");
+      h.width = n; h.height = n;
+      var q = h.getContext("2d");
+      q.drawImage(this.icon, 0, 0, n, n);
+      var d = q.getImageData(0, 0, n, n).data;
+      var sx = 0, sy = 0, sm = 0, i, x, y, a;
+      var lx = n, rx = 0, oy = n, uy = 0;
+      for (y = 0; y < n; y++) {
+        for (x = 0; x < n; x++) {
+          i = (y * n + x) * 4;
+          a = d[i + 3];
+          if (a < 8) continue;
+          sx += x * a; sy += y * a; sm += a;
+          if (x < lx) lx = x;
+          if (x > rx) rx = x;
+          if (y < oy) oy = y;
+          if (y > uy) uy = y;
+        }
+      }
+      if (sm <= 0) return;
+      var kx = ((lx + rx) / 2) / n, ky = ((oy + uy) / 2) / n;
+      var px = (sx / sm) / n, py = (sy / sm) / n;
+      var w = 0.65;
+      this.ikoMitte = { x: kx + (px - kx) * w, y: ky + (py - ky) * w };
+    } catch (e) { /* getImageData kann bei fremden Quellen scheitern */ }
+  };
+
+  Schaubild.prototype.zeichnenGewerke = function () {
+    var g = this.stift, i, k;
+    var wirk = Math.min(this.b, this.h) * 0.42;
+    /* Ruhelage bei etwa KRAFT/STEIF Pixeln - hier rund 28 px. */
+    var KRAFT = 2.8, STEIF = 0.10, DAEMPF = 0.86;
+    var halb = this.sq / 2;
+
+    /* Federn */
+    for (i = 0; i < this.knoten.length; i++) {
+      k = this.knoten[i];
+      if (this.zeiger) {
+        var qx = k.rx + k.dx - this.zeiger.x;
+        var qy = k.ry + k.dy - this.zeiger.y;
+        var ab = Math.sqrt(qx * qx + qy * qy);
+        if (ab < wirk && ab > 0.01) {
+          var f = (1 - ab / wirk) * (1 - ab / wirk) * KRAFT;
+          k.vx += (qx / ab) * f;
+          k.vy += (qy / ab) * f;
+        }
+      }
+      k.vx = (k.vx - STEIF * k.dx) * DAEMPF;
+      k.vy = (k.vy - STEIF * k.dy) * DAEMPF;
+      k.dx += k.vx;
+      k.dy += k.vy;
+      k.x = k.rx + k.dx;
+      k.y = k.ry + k.dy;
+    }
+
+    /* Bogen vom Auftrag zu jedem Handwerker */
+    g.strokeStyle = "rgba(66,133,244,0.55)";
+    g.lineWidth = 1.2;
+    for (i = 0; i < this.knoten.length; i++) {
+      k = this.knoten[i];
+      var vx = k.x - this.cx, vy = k.y - this.cy;
+      var vl = Math.sqrt(vx * vx + vy * vy) || 1;
+      /* Start auf der Squircle-Kante, Ende auf dem Kreisrand */
+      var sx = this.cx + (vx / vl) * halb * 1.02;
+      var sy = this.cy + (vy / vl) * halb * 1.02;
+      var ex = k.x - (vx / vl) * k.r;
+      var ey = k.y - (vy / vl) * k.r;
+      var ddx = ex - sx, ddy = ey - sy;
+      var waag = Math.abs(ddx) >= Math.abs(ddy);
+      var z = 0.55;
+      g.beginPath();
+      g.moveTo(sx, sy);
+      if (waag) g.bezierCurveTo(sx + ddx * z, sy, ex - ddx * z, ey, ex, ey);
+      else      g.bezierCurveTo(sx, sy + ddy * z, ex, ey - ddy * z, ex, ey);
+      g.stroke();
+    }
+
+    /* Auftrag: Squircle mit zweilagigem Schatten */
+    g.save();
+    g.shadowColor = "rgba(" + SCHATTEN + ",0.20)";
+    g.shadowBlur = 42;
+    g.shadowOffsetY = 18;
+    g.fillStyle = "#ffffff";
+    this.pfadSquircle(this.cx, this.cy, halb, halb, 5);
+    g.fill();
+    g.shadowColor = "rgba(" + SCHATTEN + ",0.15)";
+    g.shadowBlur = 12;
+    g.shadowOffsetY = 4;
+    this.pfadSquircle(this.cx, this.cy, halb, halb, 5);
+    g.fill();
+    g.restore();
+
+    if (this.icon.complete && this.icon.naturalWidth) {
+      var ih = this.sq * 0.58;
+      var iw = ih * (this.icon.naturalWidth / this.icon.naturalHeight);
+      /* Nicht die Bildmitte auf die Squircle-Mitte legen, sondern den
+         Schwerpunkt der Deckung - das ist die optische Mitte. */
+      var mx = this.ikoMitte ? this.ikoMitte.x : 0.5;
+      var my = this.ikoMitte ? this.ikoMitte.y : 0.5;
+      g.drawImage(this.icon, this.cx - iw * mx, this.cy - ih * my, iw, ih);
+    }
+
+    /* Handwerker */
+    for (i = 0; i < this.knoten.length; i++) {
+      k = this.knoten[i];
+
+      g.save();
+      g.shadowColor = "rgba(" + SCHATTEN + ",0.24)";
+      g.shadowBlur = 26;
+      g.shadowOffsetY = 9;
+      g.fillStyle = "#ffffff";
+      g.beginPath();
+      g.arc(k.x, k.y, k.r + 3, 0, 6.283);
       g.fill();
+      g.shadowColor = "rgba(" + SCHATTEN + ",0.13)";
+      g.shadowBlur = 7;
+      g.shadowOffsetY = 2;
+      g.beginPath();
+      g.arc(k.x, k.y, k.r + 3, 0, 6.283);
+      g.fill();
+      g.restore();
+
+      if (this.avatar.complete && this.avatar.naturalWidth) {
+        g.save();
+        g.beginPath();
+        g.arc(k.x, k.y, k.r, 0, 6.283);
+        g.clip();
+        var sk = Math.max((k.r * 2) / this.avatar.naturalWidth,
+                          (k.r * 2) / this.avatar.naturalHeight);
+        var bw = this.avatar.naturalWidth * sk, bh = this.avatar.naturalHeight * sk;
+        g.drawImage(this.avatar, k.x - bw / 2, k.y - bh / 2, bw, bh);
+        g.restore();
+      }
     }
 
     g.globalAlpha = 1;
-    this.karteZeichnen();
   };
+})();
 
+/* == hero.js ============================================================= */
+/* taskrunner - Schaubild "hero": Punktfeld hinter der Startseiten-Ueberschrift.
+   Einbau:  <canvas data-schaubild="hero"></canvas>                                                */
+(function () {
+  "use strict";
+
+  var Schaubild = window.Schaubild;
+  var wuerfelAb = Schaubild.wuerfelAb;
 
   /* ---------------------------------------------------------------- *
    *  Motiv Hero - ruhiges Punktfeld hinter der Headline
@@ -697,7 +806,445 @@
 
     g.globalAlpha = 1;
   };
+})();
 
+/* == kosten.js =========================================================== */
+/* taskrunner - Schaubild "kosten": Kostenkurve mit Flaeche.
+   Einbau:  <canvas data-schaubild="kosten"></canvas>                                              */
+(function () {
+  "use strict";
+
+  var Schaubild = window.Schaubild;
+  var SCHATTEN = Schaubild.SCHATTEN;
+
+  /* ---------------------------------------------------------------- *
+   *  Motiv Kosten - Kachel "Nachvollziehbar abgerechnet."
+   *  Eine Kurve laeuft beim Sichtbarwerden von links nach rechts ein
+   *  (Trim Path), danach tauchen die Kostenpunkte nacheinander auf.
+   *  Zeigt man auf einen, wird er blau und nennt daneben seinen Posten.
+   *
+   *  Die Kurve ist ein Catmull-Rom-Spline durch feste Stuetzstellen.
+   *  Die Kostenpunkte gehoeren selbst zu den Stuetzstellen - dadurch
+   *  liegen sie exakt auf der Linie, statt danebengesetzt zu werden.
+   *
+   *  Der Verlauf an den Raendern steckt im Strichmuster selbst: der
+   *  Strich ist ein Farbverlauf, der aussen auf null geht. Eine Maske
+   *  darueber waere teurer und wuerde die Punkte mit ausblenden.
+   * ---------------------------------------------------------------- */
+  Schaubild.prototype.saeenKosten = function () {
+    var i;
+    this.ruht = this.kostenRuht;
+    this.wachBis = 0;
+
+    /* Die Kurve besteht aus drei kubischen Bezier-Stuecken. An Hoch-
+       und Tiefpunkt liegen die Kontrollpunkte waagerecht - dadurch
+       laeuft die Kurve dort glatt durch, statt einen Knick zu machen.
+       Genau so zeichnet ein Vektorprogramm eine solche Welle. */
+    var seg = [
+      [[-0.14, 0.740], [0.000, 0.500], [0.100, 0.306], [0.220, 0.306]],
+      [[0.220, 0.306], [0.365, 0.306], [0.365, 0.738], [0.510, 0.738]],
+      [[0.510, 0.738], [0.660, 0.738], [0.860, 0.400], [1.140, 0.000]]
+    ];
+
+    var n = 200, punkte = [], k, u, mu, a0, a1, a2, a3;
+    for (k = 0; k < seg.length; k++) {
+      for (i = (k ? 1 : 0); i <= n; i++) {
+        u = i / n; mu = 1 - u;
+        a0 = mu * mu * mu; a1 = 3 * mu * mu * u; a2 = 3 * mu * u * u; a3 = u * u * u;
+        punkte.push({
+          x: this.b * (a0 * seg[k][0][0] + a1 * seg[k][1][0] + a2 * seg[k][2][0] + a3 * seg[k][3][0]),
+          y: this.h * (a0 * seg[k][0][1] + a1 * seg[k][1][1] + a2 * seg[k][2][1] + a3 * seg[k][3][1])
+        });
+      }
+    }
+
+    var ges = 0;
+    for (i = 1; i < punkte.length; i++) {
+      var dx = punkte[i].x - punkte[i - 1].x, dy = punkte[i].y - punkte[i - 1].y;
+      punkte[i].l = Math.sqrt(dx * dx + dy * dy);
+      ges += punkte[i].l;
+    }
+    this.linie = punkte;
+    this.gesamt = ges;
+
+    /* Kostenpunkte: an der Stuetzstelle, y von der abgetasteten Kurve */
+    var namen = (this.flaeche.dataset.posten ||
+      "Anfahrt,Materialkosten,Arbeitszeit,Handlingfee").split(",");
+    var stellen = [0.111, 0.354, 0.678, 0.887];
+    var mass = Math.min(this.b, this.h * 1.9);
+    this.posten = [];
+    for (i = 0; i < stellen.length && i < namen.length; i++) {
+      var zx = this.b * stellen[i];
+      this.posten.push({
+        x: zx,
+        y: this.yAuf(zx),
+        r: Math.max(9, mass * 0.028),
+        name: namen[i].trim(),
+        an: 0
+      });
+    }
+
+    this.einlauf = 1.15;                     /* Sekunden fuer den Strich */
+    this.einlaufBis = this.einlauf + 0.14 * this.posten.length + 0.6;
+    this.startZeit = null;
+    this.beginn = this.kostenBeginn;
+
+    /* Canvas nimmt keine Ruecksicht auf noch ladende Schriften: es misst
+       und zeichnet dann den Rueckfall. Deshalb einmal anfordern. */
+    var s2 = this;
+    if (document.fonts && document.fonts.load) {
+      document.fonts.load('900 15px "DIN Pro Cond"').then(function () { s2.zeichnen(); },
+                                                          function () {});
+    }
+  };
+
+  /* Der Einlauf haengt an der echten Uhr, nicht am Bildzaehler: sonst
+     liefe er auf 120-Hz-Schirmen doppelt so schnell. Gestartet wird er
+     beim ersten Sichtbarwerden, danach nie wieder. */
+  Schaubild.prototype.kostenBeginn = function () {
+    if (this.startZeit == null) this.startZeit = Schaubild.uhr();
+  };
+  Schaubild.prototype.kostenSek = function () {
+    return this.startZeit == null ? 0 : (Schaubild.uhr() - this.startZeit) / 1000;
+  };
+  Schaubild.uhr = function () {
+    return (window.performance && performance.now) ? performance.now() : Date.now();
+  };
+
+  /* y der abgetasteten Kurve an der Stelle x */
+  Schaubild.prototype.yAuf = function (x) {
+    var l = this.linie, i;
+    for (i = 1; i < l.length; i++) {
+      if (l[i].x >= x) {
+        var f = (x - l[i - 1].x) / ((l[i].x - l[i - 1].x) || 1);
+        return l[i - 1].y + (l[i].y - l[i - 1].y) * f;
+      }
+    }
+    return l[l.length - 1].y;
+  };
+
+  Schaubild.prototype.kostenRuht = function () {
+    if (this.zeiger) { this.wachBis = this.t + 1.2; return false; }
+    if (this.kostenSek() < this.einlaufBis) return false;
+    return this.t > this.wachBis;
+  };
+
+  Schaubild.prototype.zeichnenKosten = function () {
+    var g = this.stift, i, p;
+
+    /* Strich einlaufen lassen */
+    var sek = this.kostenSek();
+    var e = Math.min(1, sek / this.einlauf);
+    e = e < 0.5 ? 4 * e * e * e : 1 - Math.pow(-2 * e + 2, 3) / 2;   /* easeInOutCubic */
+
+    var vl = g.createLinearGradient(0, 0, this.b, 0);
+    vl.addColorStop(0.000, "rgba(66,133,244,0)");
+    vl.addColorStop(0.022, "rgba(66,133,244,0.85)");
+    vl.addColorStop(0.978, "rgba(66,133,244,0.85)");
+    vl.addColorStop(1.000, "rgba(66,133,244,0)");
+    g.strokeStyle = vl;
+    g.lineWidth = 1.8;
+    g.lineJoin = "round";
+
+    var ziel = e * this.gesamt, acc = 0, l = this.linie;
+    g.beginPath();
+    g.moveTo(l[0].x, l[0].y);
+    for (i = 1; i < l.length; i++) {
+      if (acc + l[i].l <= ziel) { g.lineTo(l[i].x, l[i].y); acc += l[i].l; }
+      else {
+        var f = (ziel - acc) / (l[i].l || 1);
+        g.lineTo(l[i - 1].x + (l[i].x - l[i - 1].x) * f,
+                 l[i - 1].y + (l[i].y - l[i - 1].y) * f);
+        break;
+      }
+    }
+    g.stroke();
+
+    /* Kostenpunkte */
+    for (i = 0; i < this.posten.length; i++) {
+      p = this.posten[i];
+
+      var ab = sek - (this.einlauf + 0.14 * i);
+      var auf = Math.max(0, Math.min(1, ab / 0.3));
+      auf = 1 - Math.pow(1 - auf, 3);                                /* easeOutCubic */
+      if (auf <= 0.001) continue;
+
+      var ziel2 = 0;
+      if (this.zeiger) {
+        var qx = this.zeiger.x - p.x, qy = this.zeiger.y - p.y;
+        if (Math.sqrt(qx * qx + qy * qy) < p.r + 14) ziel2 = 1;
+      }
+      p.an += (ziel2 - p.an) * 0.2;
+
+      var r = p.r * (0.6 + 0.4 * auf) * (1 + 0.10 * p.an);
+
+      g.save();
+      g.globalAlpha = auf;
+      g.shadowColor = "rgba(" + SCHATTEN + ",0.22)";
+      g.shadowBlur = 18;
+      g.shadowOffsetY = 6;
+      g.fillStyle = p.an > 0.5 ? "#1155cc" : "#ffffff";
+      g.beginPath();
+      g.arc(p.x, p.y, r, 0, 6.283);
+      g.fill();
+      g.shadowColor = "rgba(" + SCHATTEN + ",0.12)";
+      g.shadowBlur = 6;
+      g.shadowOffsetY = 2;
+      g.beginPath();
+      g.arc(p.x, p.y, r, 0, 6.283);
+      g.fill();
+      g.restore();
+
+      /* Farbwechsel weich ueberblenden */
+      if (p.an > 0.01) {
+        g.globalAlpha = auf * p.an;
+        g.fillStyle = "#1155cc";
+        g.beginPath();
+        g.arc(p.x, p.y, r, 0, 6.283);
+        g.fill();
+      }
+
+      /* Beschriftung nur bei Beruehrung */
+      if (p.an > 0.02) {
+        g.globalAlpha = auf * Math.min(1, p.an * 1.4);
+        g.fillStyle = "#1155cc";
+        g.font = '900 15px "DIN Pro Cond", "DIN Pro", ui-sans-serif, sans-serif';
+        try { g.letterSpacing = "0.06em"; } catch (e3) {}
+        g.textBaseline = "middle";
+        var txt = p.name.toUpperCase();
+        var br = g.measureText(txt).width;
+        var rechts = p.x + r + 12 + br < this.b - 6;
+        g.textAlign = rechts ? "left" : "right";
+        g.fillText(txt, p.x + (rechts ? r + 12 : -(r + 12)), p.y);
+        try { g.letterSpacing = "0px"; } catch (e3) {}
+      }
+      g.globalAlpha = 1;
+    }
+  };
+})();
+
+/* == notdienst.js ======================================================== */
+/* taskrunner - Schaubild "notdienst": Pulsierendes Kreuz fuer den Notdienst.
+   Einbau:  <canvas data-schaubild="notdienst"></canvas>                                           */
+(function () {
+  "use strict";
+
+  var Schaubild = window.Schaubild;
+
+  /* ---------------------------------------------------------------- *
+   *  Motiv Notdienst - Kachel "Notdienst innerhalb von 4 Stunden."
+   *  Ein rotes Kreuz auf dunklem Grund, dahinter ein Schein, der
+   *  pulsiert. Sonst nichts.
+   *
+   *  Der Schein besteht aus zwei Teilen: einem weiten Radialverlauf
+   *  hinter dem Kreuz und einem engen Schlagschatten am Kreuz selbst.
+   *  Der weite Verlauf traegt die Flaeche, der enge die Kante - eine
+   *  Lage allein wirkt entweder wie Nebel oder wie eine Kontur.
+   * ---------------------------------------------------------------- */
+  var NOTROT = "255,59,42";       /* #ff3b2a */
+
+  Schaubild.prototype.saeenNotdienst = function () {
+    var mass = Math.min(this.b, this.h * 1.9);
+    this.cx = this.b * 0.5;
+    this.cy = this.h * 0.5;
+    this.kreuz = mass * 0.26;               /* Kantenlaenge des Kreuzes */
+    this.takt = 2.6;                        /* Sekunden je Pulsschlag */
+    this.startZeit = null;
+    this.beginn = this.kostenBeginn;
+    this.ruht = null;                       /* laeuft dauerhaft */
+  };
+
+  Schaubild.prototype.zeichnenNotdienst = function () {
+    var g = this.stift;
+    var sek = this.kostenSek();
+    var p = 0.5 + 0.5 * Math.sin(6.2832 * sek / this.takt);
+
+    var k = this.kreuz, s2 = k / 2, a = k * 0.17;
+
+    /* weiter Schein */
+    var r = k * (0.92 + 0.22 * p);
+    var vv = g.createRadialGradient(this.cx, this.cy, k * 0.30, this.cx, this.cy, r);
+    vv.addColorStop(0.00, "rgba(" + NOTROT + "," + (0.26 + 0.20 * p).toFixed(3) + ")");
+    vv.addColorStop(0.45, "rgba(" + NOTROT + "," + (0.08 + 0.08 * p).toFixed(3) + ")");
+    vv.addColorStop(1.00, "rgba(" + NOTROT + ",0)");
+    g.fillStyle = vv;
+    g.beginPath();
+    g.arc(this.cx, this.cy, r, 0, 6.283);
+    g.fill();
+
+    /* Kreuz mit engem Schein an der Kante */
+    g.save();
+    g.shadowColor = "rgba(" + NOTROT + "," + (0.55 + 0.30 * p).toFixed(3) + ")";
+    g.shadowBlur = k * (0.22 + 0.14 * p);
+    g.fillStyle = "rgb(" + NOTROT + ")";
+    g.beginPath();
+    g.moveTo(this.cx - a, this.cy - s2);
+    g.lineTo(this.cx + a, this.cy - s2);
+    g.lineTo(this.cx + a, this.cy - a);
+    g.lineTo(this.cx + s2, this.cy - a);
+    g.lineTo(this.cx + s2, this.cy + a);
+    g.lineTo(this.cx + a, this.cy + a);
+    g.lineTo(this.cx + a, this.cy + s2);
+    g.lineTo(this.cx - a, this.cy + s2);
+    g.lineTo(this.cx - a, this.cy + a);
+    g.lineTo(this.cx - s2, this.cy + a);
+    g.lineTo(this.cx - s2, this.cy - a);
+    g.lineTo(this.cx - a, this.cy - a);
+    g.closePath();
+    g.fill();
+    g.fill();                                /* zweimal: Schein verdichten */
+    g.restore();
+  };
+})();
+
+/* == posten.js =========================================================== */
+/* taskrunner - Schaubild "posten": Posten laufen in die Rechnung.
+   Einbau:  <canvas data-schaubild="posten"></canvas>                                              */
+(function () {
+  "use strict";
+
+  var Schaubild = window.Schaubild;
+  var ruhig = Schaubild.ruhig;
+
+  /* ---------------------------------------------------------------- *
+   *  Motiv Posten - "Nachvollziehbar abgerechnet."
+   *  Jede Punktreihe ist ein Posten. Eine Pruefwelle laeuft von oben
+   *  nach unten durch, und jeder erfasste Posten laeuft als Linie in
+   *  die Rechnung - die Glaskarte am Fuss.
+   * ---------------------------------------------------------------- */
+  Schaubild.prototype.saeenPosten = function () {
+    this.kb = Math.min(190, this.b * 0.58);
+    this.kh = this.kb * 0.40;
+    this.cx = this.b / 2;
+    this.cy = this.h - this.kh / 2 - this.h * 0.11;
+
+    var laengen = [0.88, 0.60, 0.96, 0.46, 0.74];
+    var rand = Math.max(20, this.b * 0.09);
+    var oben = this.h * 0.12, unten = this.h * 0.49;
+    this.zeilen = [];
+    for (var i = 0; i < laengen.length; i++) {
+      var y = oben + (unten - oben) * (i / (laengen.length - 1));
+      var breite = (this.b - 2 * rand) * laengen[i];
+      var n = Math.max(3, Math.round(breite / 15));
+      var pkte = [];
+      for (var k = 0; k < n; k++) pkte.push({ x: rand + (breite * k) / (n - 1), y: y });
+      this.zeilen.push({ y: y, punkte: pkte, ende: rand + breite, an: 0, platz: 0 });
+    }
+    /* Anschluss an der Rechnung nach der x-Lage der Zeilenenden vergeben,
+       damit sich die Linien nicht kreuzen */
+    var sortiert = this.zeilen.slice().sort(function (p, q) { return p.ende - q.ende; });
+    for (i = 0; i < sortiert.length; i++) sortiert[i].platz = i;
+  };
+
+  Schaubild.prototype.zeichnenPosten = function () {
+    var g = this.stift, i, k, z;
+    var n = this.zeilen.length;
+    var lauf = ruhig.matches ? 1.4 : (this.t * 0.42) % (n + 2.4);
+    var kx = this.cx - this.kb / 2, koben = this.cy - this.kh / 2;
+
+    for (i = 0; i < n; i++) {
+      z = this.zeilen[i];
+      var ziel = Math.max(0, 1 - Math.abs(lauf - i) * 1.15);
+      z.an += (ziel - z.an) * 0.16;
+    }
+
+    for (i = 0; i < n; i++) {
+      z = this.zeilen[i];
+      var zx = kx + this.kb * ((z.platz + 0.5) / n);
+      var mitte = z.y + (koben - z.y) * 0.55;
+      g.globalAlpha = 0.09 + 0.40 * z.an;
+      g.lineWidth = 0.8 + 0.7 * z.an;
+      g.beginPath();
+      g.moveTo(z.ende, z.y);
+      g.bezierCurveTo(z.ende, mitte, zx, mitte, zx, koben);
+      g.stroke();
+    }
+
+    for (i = 0; i < n; i++) {
+      z = this.zeilen[i];
+      g.globalAlpha = 0.16 + 0.70 * z.an;
+      for (k = 0; k < z.punkte.length; k++) {
+        g.beginPath();
+        g.arc(z.punkte[k].x, z.punkte[k].y, 1.7 + 1.7 * z.an, 0, 6.283);
+        g.fill();
+      }
+    }
+
+    g.globalAlpha = 1;
+    this.karteZeichnen();
+  };
+})();
+
+/* == pruefung.js ========================================================= */
+/* taskrunner - Schaubild "pruefung": Lupe faehrt ueber das Feld.
+   Einbau:  <canvas data-schaubild="pruefung"></canvas>                                            */
+(function () {
+  "use strict";
+
+  var Schaubild = window.Schaubild;
+  var ruhig = Schaubild.ruhig;
+  var wuerfelAb = Schaubild.wuerfelAb;
+
+  /* ---------------------------------------------------------------- *
+   *  Motiv Pruefung - "Wir pruefen Qualitaet und Abrechnung."
+   *  Eine Glaslupe faehrt ueber das Feld. Was sie erfasst hat, bleibt
+   *  kraeftiger stehen - geprueft.
+   * ---------------------------------------------------------------- */
+  Schaubild.prototype.saeenPruefung = function () {
+    this.kInhalt = false;
+    this.glasWeich = 0.6;      /* Punkte sollen im Glas Punkte bleiben */
+    this.lupe = 0.16;
+    this.rand = 0.04;
+    this.kb = this.b * 1.2;          /* Pruefleiste laeuft ueber die volle Breite */
+    this.kh = Math.max(46, this.h * 0.15);
+    this.cx = this.b / 2;
+    this.cy = this.h * 0.5;
+
+    var w = wuerfelAb(20260918);
+    this.raster = [];
+    var sp = 21, reihe = 0, x, y;
+    for (y = this.h * 0.09; y < this.h * 0.95; y += sp * 0.88) {
+      for (x = (reihe % 2 ? sp / 2 : 0) + sp * 0.55; x < this.b; x += sp) {
+        this.raster.push({ x: x + (w() - 0.5) * 3, y: y + (w() - 0.5) * 3, an: 0, g: 0 });
+      }
+      reihe++;
+    }
+  };
+
+  Schaubild.prototype.zeichnenPruefung = function () {
+    var g = this.stift, i, p;
+    /* ein Durchgang von oben nach unten, danach faengt die Pruefung von vorn an */
+    var u = ruhig.matches ? 0.42 : (this.t * 0.085) % 1;
+    if (this.u0 != null && u < this.u0) {
+      for (i = 0; i < this.raster.length; i++) { this.raster[i].g = 0; this.raster[i].an = 0; }
+    }
+    this.u0 = u;
+    this.cy = -this.kh * 0.5 + u * (this.h + this.kh);
+    var oben = this.cy - this.kh / 2, unten = this.cy + this.kh / 2;
+
+    for (i = 0; i < this.raster.length; i++) {
+      p = this.raster[i];
+      if (p.y > oben && p.y < unten) { p.an = 1; p.g = 1; }
+      else p.an = Math.max(p.g ? 0.52 : 0, p.an * 0.99);
+      g.globalAlpha = 0.12 + 0.64 * p.an;
+      g.beginPath();
+      g.arc(p.x, p.y, 1.6 + 1.8 * p.an, 0, 6.283);
+      g.fill();
+    }
+
+    g.globalAlpha = 1;
+    this.karteZeichnen();
+  };
+})();
+
+/* == rad.js ============================================================== */
+/* taskrunner - Schaubild "rad": Rad aus Saiten mit Portraits.
+   Einbau:  <canvas data-schaubild="rad"></canvas>                                                 */
+(function () {
+  "use strict";
+
+  var Schaubild = window.Schaubild;
+  var wuerfelAb = Schaubild.wuerfelAb;
 
   /* ---------------------------------------------------------------- *
    *  Motiv Rad - Saiten im Hero
@@ -1016,554 +1563,104 @@
 
     g.globalAlpha = 1;
   };
+})();
 
+/* == standorte.js ======================================================== */
+/* taskrunner - Schaubild "standorte": Standorte melden ins Dashboard.
+   Einbau:  <canvas data-schaubild="standorte"></canvas>                                           */
+(function () {
+  "use strict";
+
+  var Schaubild = window.Schaubild;
+  var ruhig = Schaubild.ruhig;
+  var wuerfelAb = Schaubild.wuerfelAb;
 
   /* ---------------------------------------------------------------- *
-   *  Motiv Gewerke - Kachel "Ein Task, alle Gewerke."
-   *  In der Mitte der Auftrag als Squircle, darum sechs Handwerker,
-   *  verbunden durch weiche Bogen. Naehert sich der Zeiger, weichen
-   *  die Kreise aus und federn zurueck; die Bogen folgen ihnen.
-   *
-   *  Der Squircle ist keine abgerundete Box, sondern eine Superellipse
-   *  (|x/a|^n + |y/b|^n = 1, n = 5). Nur so laeuft die Kante stetig in
-   *  die Ecke, statt an der Nahtstelle zwischen Gerade und Viertelkreis
-   *  zu knicken - das ist der Unterschied, den man bei grossen Radien
-   *  sieht.
-   *
-   *  Schatten nach Material/Apple: zwei Lagen, eine enge fuer die Kante
-   *  und eine weite fuer die Hoehe. Die Farbe ist #000031 statt Schwarz.
+   *  Motiv Standorte - "Alle Standorte auf einem Dashboard."
+   *  Verstreute Punkte melden nach oben ins Dashboard. Die Meldung
+   *  laeuft als kleiner Punkt die Linie entlang.
    * ---------------------------------------------------------------- */
-  var SCHATTEN = "0,0,49";        /* #000031 */
+  Schaubild.prototype.saeenStandorte = function () {
+    this.kb = Math.min(158, this.b * 0.46);
+    this.kh = this.kb * 0.46;
+    this.cx = this.b / 2;
+    this.cy = this.h * 0.17;
 
-  /* Catmull-Rom: laeuft durch p1 und p2, p0 und p3 geben nur die
-     Steigung an den Enden. */
-  function kr(p0, p1, p2, p3, t) {
-    var t2 = t * t, t3 = t2 * t;
-    return 0.5 * ((2 * p1) + (-p0 + p2) * t +
-      (2 * p0 - 5 * p1 + 4 * p2 - p3) * t2 +
-      (-p0 + 3 * p1 - 3 * p2 + p3) * t3);
-  }
-
-  Schaubild.prototype.saeenGewerke = function () {
-    var s = this, i;
-    this.ruht = this.radRuht;
-    this.wachBis = 0;
-
-    /* Lage in Anteilen der Flaeche, uebernommen aus dem Entwurf */
-    var lage = [
-      [0.235, 0.175, 0.068],
-      [0.095, 0.505, 0.060],
-      [0.295, 0.855, 0.067],
-      [0.795, 0.160, 0.067],
-      [0.878, 0.545, 0.064],
-      [0.757, 0.805, 0.067]
-    ];
-    var mass = Math.min(this.b, this.h * 1.9);   /* damit flache Kacheln nicht ausufern */
-
-    this.knoten = [];
-    for (i = 0; i < lage.length; i++) {
-      this.knoten.push({
-        rx: this.b * lage[i][0],
-        ry: this.h * lage[i][1],
-        r: Math.max(16, mass * lage[i][2]),
-        x: 0, y: 0, dx: 0, dy: 0, vx: 0, vy: 0
-      });
-    }
-
-    this.cx = this.b * 0.5;
-    this.cy = this.h * 0.5;
-    this.sq = Math.max(64, mass * 0.205);        /* Kantenlaenge */
-
-    var nachLaden = function () { s.zeichnen(); };
-    this.avatar = new Image();
-    this.avatar.decoding = "async";
-    this.avatar.onload = nachLaden;
-    this.avatar.src = this.flaeche.dataset.bild || "images/headshot.webp";
-
-    this.icon = new Image();
-    this.icon.decoding = "async";
-    this.icon.onload = function () { s.ikoMitteMessen(); nachLaden(); };
-    this.icon.src = this.flaeche.dataset.icon || "images/icons/dokument.svg";
-  };
-
-  /* Superellipse. n = 5 kommt der stetigen Ecke von iOS sehr nahe. */
-  Schaubild.prototype.pfadSquircle = function (cx, cy, a, bb, n) {
-    var g = this.stift, i, t, ct, st, x, y;
-    var schritte = 160;
-    g.beginPath();
-    for (i = 0; i <= schritte; i++) {
-      t = (i / schritte) * 6.283185;
-      ct = Math.cos(t); st = Math.sin(t);
-      x = cx + a * (ct < 0 ? -1 : 1) * Math.pow(Math.abs(ct), 2 / n);
-      y = cy + bb * (st < 0 ? -1 : 1) * Math.pow(Math.abs(st), 2 / n);
-      if (i === 0) g.moveTo(x, y); else g.lineTo(x, y);
-    }
-    g.closePath();
-  };
-
-  /* Optische Mitte des Icons, einmal nach dem Laden gemessen.
-     Zwei Groessen: der Kasten der Deckung (wo die Zeichnung ueberhaupt
-     liegt) und ihr Schwerpunkt (wo das Gewicht liegt). Der reine
-     Schwerpunkt ueberzieht, wenn ein Teil vollflaechig und der Rest
-     Strichzeichnung ist - bei diesem Icon zieht die Hand ihn deutlich
-     nach links unten. Deshalb 65 Prozent des Wegs vom Kasten zum
-     Schwerpunkt. */
-  Schaubild.prototype.ikoMitteMessen = function () {
-    try {
-      var n = 128;
-      var h = document.createElement("canvas");
-      h.width = n; h.height = n;
-      var q = h.getContext("2d");
-      q.drawImage(this.icon, 0, 0, n, n);
-      var d = q.getImageData(0, 0, n, n).data;
-      var sx = 0, sy = 0, sm = 0, i, x, y, a;
-      var lx = n, rx = 0, oy = n, uy = 0;
-      for (y = 0; y < n; y++) {
-        for (x = 0; x < n; x++) {
-          i = (y * n + x) * 4;
-          a = d[i + 3];
-          if (a < 8) continue;
-          sx += x * a; sy += y * a; sm += a;
-          if (x < lx) lx = x;
-          if (x > rx) rx = x;
-          if (y < oy) oy = y;
-          if (y > uy) uy = y;
-        }
+    var w = wuerfelAb(20260911), i;
+    this.orte = [];
+    var versuche = 0;
+    while (this.orte.length < 15 && versuche < 600) {
+      versuche++;
+      var x = this.b * (0.07 + 0.86 * w());
+      var y = this.h * (0.44 + 0.50 * w());
+      var frei = true;
+      for (i = 0; i < this.orte.length; i++) {
+        var dx = this.orte[i].x - x, dy = this.orte[i].y - y;
+        if (dx * dx + dy * dy < 1050) { frei = false; break; }
       }
-      if (sm <= 0) return;
-      var kx = ((lx + rx) / 2) / n, ky = ((oy + uy) / 2) / n;
-      var px = (sx / sm) / n, py = (sy / sm) / n;
-      var w = 0.65;
-      this.ikoMitte = { x: kx + (px - kx) * w, y: ky + (py - ky) * w };
-    } catch (e) { /* getImageData kann bei fremden Quellen scheitern */ }
+      if (frei) this.orte.push({ x: x, y: y, phase: w(), an: 0, u: 0, ax: 0 });
+    }
+    this.orte.sort(function (a, b) { return a.x - b.x; });
   };
 
-  Schaubild.prototype.zeichnenGewerke = function () {
-    var g = this.stift, i, k;
-    var wirk = Math.min(this.b, this.h) * 0.42;
-    /* Ruhelage bei etwa KRAFT/STEIF Pixeln - hier rund 28 px. */
-    var KRAFT = 2.8, STEIF = 0.10, DAEMPF = 0.86;
-    var halb = this.sq / 2;
+  Schaubild.prototype.zeichnenStandorte = function () {
+    var g = this.stift, i, o, ziel;
+    var n = this.orte.length;
+    var kx = this.cx - this.kb / 2, kunten = this.cy + this.kh / 2;
 
-    /* Federn */
-    for (i = 0; i < this.knoten.length; i++) {
-      k = this.knoten[i];
-      if (this.zeiger) {
-        var qx = k.rx + k.dx - this.zeiger.x;
-        var qy = k.ry + k.dy - this.zeiger.y;
-        var ab = Math.sqrt(qx * qx + qy * qy);
-        if (ab < wirk && ab > 0.01) {
-          var f = (1 - ab / wirk) * (1 - ab / wirk) * KRAFT;
-          k.vx += (qx / ab) * f;
-          k.vy += (qy / ab) * f;
-        }
-      }
-      k.vx = (k.vx - STEIF * k.dx) * DAEMPF;
-      k.vy = (k.vy - STEIF * k.dy) * DAEMPF;
-      k.dx += k.vx;
-      k.dy += k.vy;
-      k.x = k.rx + k.dx;
-      k.y = k.ry + k.dy;
-    }
+    for (i = 0; i < n; i++) {
+      o = this.orte[i];
+      o.ax = kx + this.kb * ((i + 0.5) / n);
+      o.u = ruhig.matches ? 0.55 : (this.t * 0.15 + o.phase) % 1;
+      ziel = Math.max(0, 1 - o.u * 4.5);
+      o.an += (ziel - o.an) * 0.16;
 
-    /* Bogen vom Auftrag zu jedem Handwerker */
-    g.strokeStyle = "rgba(66,133,244,0.55)";
-    g.lineWidth = 1.2;
-    for (i = 0; i < this.knoten.length; i++) {
-      k = this.knoten[i];
-      var vx = k.x - this.cx, vy = k.y - this.cy;
-      var vl = Math.sqrt(vx * vx + vy * vy) || 1;
-      /* Start auf der Squircle-Kante, Ende auf dem Kreisrand */
-      var sx = this.cx + (vx / vl) * halb * 1.02;
-      var sy = this.cy + (vy / vl) * halb * 1.02;
-      var ex = k.x - (vx / vl) * k.r;
-      var ey = k.y - (vy / vl) * k.r;
-      var ddx = ex - sx, ddy = ey - sy;
-      var waag = Math.abs(ddx) >= Math.abs(ddy);
-      var z = 0.55;
+      g.globalAlpha = 0.10 + 0.22 * o.an;
+      g.lineWidth = 0.8;
       g.beginPath();
-      g.moveTo(sx, sy);
-      if (waag) g.bezierCurveTo(sx + ddx * z, sy, ex - ddx * z, ey, ex, ey);
-      else      g.bezierCurveTo(sx, sy + ddy * z, ex, ey - ddy * z, ex, ey);
+      g.moveTo(o.x, o.y);
+      g.lineTo(o.ax, kunten);
       g.stroke();
     }
 
-    /* Auftrag: Squircle mit zweilagigem Schatten */
-    g.save();
-    g.shadowColor = "rgba(" + SCHATTEN + ",0.20)";
-    g.shadowBlur = 42;
-    g.shadowOffsetY = 18;
-    g.fillStyle = "#ffffff";
-    this.pfadSquircle(this.cx, this.cy, halb, halb, 5);
-    g.fill();
-    g.shadowColor = "rgba(" + SCHATTEN + ",0.15)";
-    g.shadowBlur = 12;
-    g.shadowOffsetY = 4;
-    this.pfadSquircle(this.cx, this.cy, halb, halb, 5);
-    g.fill();
-    g.restore();
-
-    if (this.icon.complete && this.icon.naturalWidth) {
-      var ih = this.sq * 0.58;
-      var iw = ih * (this.icon.naturalWidth / this.icon.naturalHeight);
-      /* Nicht die Bildmitte auf die Squircle-Mitte legen, sondern den
-         Schwerpunkt der Deckung - das ist die optische Mitte. */
-      var mx = this.ikoMitte ? this.ikoMitte.x : 0.5;
-      var my = this.ikoMitte ? this.ikoMitte.y : 0.5;
-      g.drawImage(this.icon, this.cx - iw * mx, this.cy - ih * my, iw, ih);
-    }
-
-    /* Handwerker */
-    for (i = 0; i < this.knoten.length; i++) {
-      k = this.knoten[i];
-
-      g.save();
-      g.shadowColor = "rgba(" + SCHATTEN + ",0.24)";
-      g.shadowBlur = 26;
-      g.shadowOffsetY = 9;
-      g.fillStyle = "#ffffff";
-      g.beginPath();
-      g.arc(k.x, k.y, k.r + 3, 0, 6.283);
-      g.fill();
-      g.shadowColor = "rgba(" + SCHATTEN + ",0.13)";
-      g.shadowBlur = 7;
-      g.shadowOffsetY = 2;
-      g.beginPath();
-      g.arc(k.x, k.y, k.r + 3, 0, 6.283);
-      g.fill();
-      g.restore();
-
-      if (this.avatar.complete && this.avatar.naturalWidth) {
-        g.save();
+    if (!ruhig.matches) {
+      for (i = 0; i < n; i++) {
+        o = this.orte[i];
+        g.globalAlpha = 0.70 * Math.sin(o.u * Math.PI);
         g.beginPath();
-        g.arc(k.x, k.y, k.r, 0, 6.283);
-        g.clip();
-        var sk = Math.max((k.r * 2) / this.avatar.naturalWidth,
-                          (k.r * 2) / this.avatar.naturalHeight);
-        var bw = this.avatar.naturalWidth * sk, bh = this.avatar.naturalHeight * sk;
-        g.drawImage(this.avatar, k.x - bw / 2, k.y - bh / 2, bw, bh);
-        g.restore();
-      }
-    }
-
-    g.globalAlpha = 1;
-  };
-
-
-  /* ---------------------------------------------------------------- *
-   *  Motiv Kosten - Kachel "Nachvollziehbar abgerechnet."
-   *  Eine Kurve laeuft beim Sichtbarwerden von links nach rechts ein
-   *  (Trim Path), danach tauchen die Kostenpunkte nacheinander auf.
-   *  Zeigt man auf einen, wird er blau und nennt daneben seinen Posten.
-   *
-   *  Die Kurve ist ein Catmull-Rom-Spline durch feste Stuetzstellen.
-   *  Die Kostenpunkte gehoeren selbst zu den Stuetzstellen - dadurch
-   *  liegen sie exakt auf der Linie, statt danebengesetzt zu werden.
-   *
-   *  Der Verlauf an den Raendern steckt im Strichmuster selbst: der
-   *  Strich ist ein Farbverlauf, der aussen auf null geht. Eine Maske
-   *  darueber waere teurer und wuerde die Punkte mit ausblenden.
-   * ---------------------------------------------------------------- */
-  Schaubild.prototype.saeenKosten = function () {
-    var i;
-    this.ruht = this.kostenRuht;
-    this.wachBis = 0;
-
-    /* Die Kurve besteht aus drei kubischen Bezier-Stuecken. An Hoch-
-       und Tiefpunkt liegen die Kontrollpunkte waagerecht - dadurch
-       laeuft die Kurve dort glatt durch, statt einen Knick zu machen.
-       Genau so zeichnet ein Vektorprogramm eine solche Welle. */
-    var seg = [
-      [[-0.14, 0.740], [0.000, 0.500], [0.100, 0.306], [0.220, 0.306]],
-      [[0.220, 0.306], [0.365, 0.306], [0.365, 0.738], [0.510, 0.738]],
-      [[0.510, 0.738], [0.660, 0.738], [0.860, 0.400], [1.140, 0.000]]
-    ];
-
-    var n = 200, punkte = [], k, u, mu, a0, a1, a2, a3;
-    for (k = 0; k < seg.length; k++) {
-      for (i = (k ? 1 : 0); i <= n; i++) {
-        u = i / n; mu = 1 - u;
-        a0 = mu * mu * mu; a1 = 3 * mu * mu * u; a2 = 3 * mu * u * u; a3 = u * u * u;
-        punkte.push({
-          x: this.b * (a0 * seg[k][0][0] + a1 * seg[k][1][0] + a2 * seg[k][2][0] + a3 * seg[k][3][0]),
-          y: this.h * (a0 * seg[k][0][1] + a1 * seg[k][1][1] + a2 * seg[k][2][1] + a3 * seg[k][3][1])
-        });
-      }
-    }
-
-    var ges = 0;
-    for (i = 1; i < punkte.length; i++) {
-      var dx = punkte[i].x - punkte[i - 1].x, dy = punkte[i].y - punkte[i - 1].y;
-      punkte[i].l = Math.sqrt(dx * dx + dy * dy);
-      ges += punkte[i].l;
-    }
-    this.linie = punkte;
-    this.gesamt = ges;
-
-    /* Kostenpunkte: an der Stuetzstelle, y von der abgetasteten Kurve */
-    var namen = (this.flaeche.dataset.posten ||
-      "Anfahrt,Materialkosten,Arbeitszeit,Handlingfee").split(",");
-    var stellen = [0.111, 0.354, 0.678, 0.887];
-    var mass = Math.min(this.b, this.h * 1.9);
-    this.posten = [];
-    for (i = 0; i < stellen.length && i < namen.length; i++) {
-      var zx = this.b * stellen[i];
-      this.posten.push({
-        x: zx,
-        y: this.yAuf(zx),
-        r: Math.max(9, mass * 0.028),
-        name: namen[i].trim(),
-        an: 0
-      });
-    }
-
-    this.einlauf = 1.15;                     /* Sekunden fuer den Strich */
-    this.einlaufBis = this.einlauf + 0.14 * this.posten.length + 0.6;
-    this.startZeit = null;
-    this.beginn = this.kostenBeginn;
-
-    /* Canvas nimmt keine Ruecksicht auf noch ladende Schriften: es misst
-       und zeichnet dann den Rueckfall. Deshalb einmal anfordern. */
-    var s2 = this;
-    if (document.fonts && document.fonts.load) {
-      document.fonts.load('900 15px "DIN Pro Cond"').then(function () { s2.zeichnen(); },
-                                                          function () {});
-    }
-  };
-
-  /* Der Einlauf haengt an der echten Uhr, nicht am Bildzaehler: sonst
-     liefe er auf 120-Hz-Schirmen doppelt so schnell. Gestartet wird er
-     beim ersten Sichtbarwerden, danach nie wieder. */
-  Schaubild.prototype.kostenBeginn = function () {
-    if (this.startZeit == null) this.startZeit = Schaubild.uhr();
-  };
-  Schaubild.prototype.kostenSek = function () {
-    return this.startZeit == null ? 0 : (Schaubild.uhr() - this.startZeit) / 1000;
-  };
-  Schaubild.uhr = function () {
-    return (window.performance && performance.now) ? performance.now() : Date.now();
-  };
-
-  /* y der abgetasteten Kurve an der Stelle x */
-  Schaubild.prototype.yAuf = function (x) {
-    var l = this.linie, i;
-    for (i = 1; i < l.length; i++) {
-      if (l[i].x >= x) {
-        var f = (x - l[i - 1].x) / ((l[i].x - l[i - 1].x) || 1);
-        return l[i - 1].y + (l[i].y - l[i - 1].y) * f;
-      }
-    }
-    return l[l.length - 1].y;
-  };
-
-  Schaubild.prototype.kostenRuht = function () {
-    if (this.zeiger) { this.wachBis = this.t + 1.2; return false; }
-    if (this.kostenSek() < this.einlaufBis) return false;
-    return this.t > this.wachBis;
-  };
-
-  Schaubild.prototype.zeichnenKosten = function () {
-    var g = this.stift, i, p;
-
-    /* Strich einlaufen lassen */
-    var sek = this.kostenSek();
-    var e = Math.min(1, sek / this.einlauf);
-    e = e < 0.5 ? 4 * e * e * e : 1 - Math.pow(-2 * e + 2, 3) / 2;   /* easeInOutCubic */
-
-    var vl = g.createLinearGradient(0, 0, this.b, 0);
-    vl.addColorStop(0.000, "rgba(66,133,244,0)");
-    vl.addColorStop(0.022, "rgba(66,133,244,0.85)");
-    vl.addColorStop(0.978, "rgba(66,133,244,0.85)");
-    vl.addColorStop(1.000, "rgba(66,133,244,0)");
-    g.strokeStyle = vl;
-    g.lineWidth = 1.8;
-    g.lineJoin = "round";
-
-    var ziel = e * this.gesamt, acc = 0, l = this.linie;
-    g.beginPath();
-    g.moveTo(l[0].x, l[0].y);
-    for (i = 1; i < l.length; i++) {
-      if (acc + l[i].l <= ziel) { g.lineTo(l[i].x, l[i].y); acc += l[i].l; }
-      else {
-        var f = (ziel - acc) / (l[i].l || 1);
-        g.lineTo(l[i - 1].x + (l[i].x - l[i - 1].x) * f,
-                 l[i - 1].y + (l[i].y - l[i - 1].y) * f);
-        break;
-      }
-    }
-    g.stroke();
-
-    /* Kostenpunkte */
-    for (i = 0; i < this.posten.length; i++) {
-      p = this.posten[i];
-
-      var ab = sek - (this.einlauf + 0.14 * i);
-      var auf = Math.max(0, Math.min(1, ab / 0.3));
-      auf = 1 - Math.pow(1 - auf, 3);                                /* easeOutCubic */
-      if (auf <= 0.001) continue;
-
-      var ziel2 = 0;
-      if (this.zeiger) {
-        var qx = this.zeiger.x - p.x, qy = this.zeiger.y - p.y;
-        if (Math.sqrt(qx * qx + qy * qy) < p.r + 14) ziel2 = 1;
-      }
-      p.an += (ziel2 - p.an) * 0.2;
-
-      var r = p.r * (0.6 + 0.4 * auf) * (1 + 0.10 * p.an);
-
-      g.save();
-      g.globalAlpha = auf;
-      g.shadowColor = "rgba(" + SCHATTEN + ",0.22)";
-      g.shadowBlur = 18;
-      g.shadowOffsetY = 6;
-      g.fillStyle = p.an > 0.5 ? "#1155cc" : "#ffffff";
-      g.beginPath();
-      g.arc(p.x, p.y, r, 0, 6.283);
-      g.fill();
-      g.shadowColor = "rgba(" + SCHATTEN + ",0.12)";
-      g.shadowBlur = 6;
-      g.shadowOffsetY = 2;
-      g.beginPath();
-      g.arc(p.x, p.y, r, 0, 6.283);
-      g.fill();
-      g.restore();
-
-      /* Farbwechsel weich ueberblenden */
-      if (p.an > 0.01) {
-        g.globalAlpha = auf * p.an;
-        g.fillStyle = "#1155cc";
-        g.beginPath();
-        g.arc(p.x, p.y, r, 0, 6.283);
+        g.arc(o.x + (o.ax - o.x) * o.u, o.y + (kunten - o.y) * o.u, 1.6, 0, 6.283);
         g.fill();
       }
+    }
 
-      /* Beschriftung nur bei Beruehrung */
-      if (p.an > 0.02) {
-        g.globalAlpha = auf * Math.min(1, p.an * 1.4);
-        g.fillStyle = "#1155cc";
-        g.font = '900 15px "DIN Pro Cond", "DIN Pro", ui-sans-serif, sans-serif';
-        try { g.letterSpacing = "0.06em"; } catch (e3) {}
-        g.textBaseline = "middle";
-        var txt = p.name.toUpperCase();
-        var br = g.measureText(txt).width;
-        var rechts = p.x + r + 12 + br < this.b - 6;
-        g.textAlign = rechts ? "left" : "right";
-        g.fillText(txt, p.x + (rechts ? r + 12 : -(r + 12)), p.y);
-        try { g.letterSpacing = "0px"; } catch (e3) {}
+    for (i = 0; i < n; i++) {
+      o = this.orte[i];
+      if (o.an > 0.04) {
+        g.globalAlpha = 0.20 * o.an;
+        g.lineWidth = 1;
+        g.beginPath();
+        g.arc(o.x, o.y, 5 + 13 * (1 - o.an), 0, 6.283);
+        g.stroke();
       }
-      g.globalAlpha = 1;
-    }
-  };
-
-
-  /* ---------------------------------------------------------------- *
-   *  Motiv Dashboard - Kachel "Alle Standorte auf einem Dashboard."
-   *  Das Tablet in der Mitte, davon laufen Wellen nach aussen. Oben und
-   *  unten blenden sie aus, sodass nur die seitlichen Boegen stehen.
-   *
-   *  Die Radien wachsen nicht linear, sondern geometrisch. Bei linearem
-   *  Wachstum stehen die Ringe gleich weit auseinander und das Bild
-   *  wirkt wie eine Zielscheibe; geometrisch werden die Abstaende nach
-   *  aussen groesser - so sehen Wellen aus.
-   * ---------------------------------------------------------------- */
-  Schaubild.prototype.saeenDashboard = function () {
-    var s = this;
-    this.cx = this.b * 0.5;
-    this.cy = this.h * 0.5;
-
-    var mass = Math.min(this.b, this.h * 1.9);
-    this.iko = mass * 0.18;
-    this.rMin = this.b * 0.155;
-    this.rMax = this.b * 0.95;
-    this.wellen = 6;
-    /* Bewusst langsam: bei 26 s je Umlauf und sechs Ringen loest sich
-       etwa alle 4,3 s ein Ring von der Mitte - das laeuft nebenher,
-       statt den Blick vom Text zu ziehen. */
-    this.dauer = 26;                       /* Sekunden je Umlauf */
-
-    this.startZeit = null;
-    this.beginn = this.kostenBeginn;       /* dieselbe Uhr wie Kachel 2 */
-    this.ruht = null;                      /* laeuft dauerhaft */
-
-    this.icon = new Image();
-    this.icon.decoding = "async";
-    this.icon.onload = function () { s.ikoMitteMessen(); s.zeichnen(); };
-    this.icon.src = this.flaeche.dataset.icon || "images/icons/tablet.svg";
-
-    /* Standorte um das Tablet herum. Die Lage folgt dem Entwurf, ein
-       kleiner ausgewuerfelter Versatz nimmt ihr das Mechanische. Der
-       Wuerfel hat eine feste Saat, damit das Bild bei jedem Aufruf
-       gleich aussteht. */
-    var w = wuerfelAb(20261114), i;
-    var lage = [
-      [0.139, 0.204], [0.315, 0.345], [0.127, 0.697],
-      [0.820, 0.322], [0.917, 0.500], [0.721, 0.704]
-    ];
-    this.orte = [];
-    for (i = 0; i < lage.length; i++) {
-      this.orte.push({
-        x: this.b * (lage[i][0] + (w() - 0.5) * 0.035),
-        y: this.h * (lage[i][1] + (w() - 0.5) * 0.055)
-      });
-    }
-    this.ortHoehe = mass * 0.088;
-
-    this.ort = new Image();
-    this.ort.decoding = "async";
-    this.ort.onload = function () { s.zeichnen(); };
-    this.ort.src = this.flaeche.dataset.ort || "images/icons/standort.svg";
-  };
-
-  Schaubild.prototype.zeichnenDashboard = function () {
-    var g = this.stift, i;
-    var sek = this.kostenSek();
-    var v = this.rMax / this.rMin;
-
-    g.strokeStyle = "rgba(0,0,49,1)";
-    g.lineWidth = 1;
-    for (i = 0; i < this.wellen; i++) {
-      var u = ((sek / this.dauer) + i / this.wellen) % 1;
-      var r = this.rMin * Math.pow(v, u);
-      /* am Anfang auf-, am Ende abblenden */
-      var a = Math.min(1, u / 0.10) * Math.min(1, (1 - u) / 0.28);
-      g.globalAlpha = 0.26 * a;
+      g.globalAlpha = 0.30 + 0.58 * o.an;
       g.beginPath();
-      g.arc(this.cx, this.cy, r, 0, 6.283);
-      g.stroke();
+      g.arc(o.x, o.y, 2.2 + 1.7 * o.an, 0, 6.283);
+      g.fill();
     }
 
-    /* oben und unten ausblenden - danach kommt erst das Icon, sonst
-       wuerde der Radierer es mit wegnehmen */
     g.globalAlpha = 1;
-    g.globalCompositeOperation = "destination-out";
-    var vv = g.createLinearGradient(0, 0, 0, this.h);
-    vv.addColorStop(0.00, "rgba(0,0,0,1)");
-    vv.addColorStop(0.26, "rgba(0,0,0,0)");
-    vv.addColorStop(0.74, "rgba(0,0,0,0)");
-    vv.addColorStop(1.00, "rgba(0,0,0,1)");
-    g.fillStyle = vv;
-    g.fillRect(0, 0, this.b, this.h);
-    g.globalCompositeOperation = "source-over";
-
-    /* Standorte nach dem Radierer, damit sie nicht mit ausgeblendet
-       werden - genau wie das Tablet. */
-    if (this.ort.complete && this.ort.naturalWidth) {
-      var oh = this.ortHoehe;
-      var ow = oh * (this.ort.naturalWidth / this.ort.naturalHeight);
-      for (i = 0; i < this.orte.length; i++) {
-        g.drawImage(this.ort, this.orte[i].x - ow / 2, this.orte[i].y - oh / 2, ow, oh);
-      }
-    }
-
-    if (this.icon.complete && this.icon.naturalWidth) {
-      var ih = this.iko;
-      var iw = ih * (this.icon.naturalWidth / this.icon.naturalHeight);
-      var mx = this.ikoMitte ? this.ikoMitte.x : 0.5;
-      var my = this.ikoMitte ? this.ikoMitte.y : 0.5;
-      g.drawImage(this.icon, this.cx - iw * mx, this.cy - ih * my, iw, ih);
-    }
+    this.karteZeichnen();
   };
+})();
 
+/* == team.js ============================================================= */
+/* taskrunner - Schaubild "team": Drei ueberlappende Portraitkreise.
+   Einbau:  <canvas data-schaubild="team"></canvas>                                                */
+(function () {
+  "use strict";
+
+  var Schaubild = window.Schaubild;
+  var SCHATTEN = Schaubild.SCHATTEN;
 
   /* ---------------------------------------------------------------- *
    *  Motiv Team - Kachel "Eine feste Ansprechperson."
@@ -1648,72 +1745,109 @@
       }
     }
   };
+})();
 
+/* == welle.js ============================================================ */
+/* taskrunner - Schaubild "welle": Wellen durch ein Punktfeld.
+   Einbau:  <canvas data-schaubild="welle"></canvas>                                               */
+(function () {
+  "use strict";
+
+  var Schaubild = window.Schaubild;
+  var ruhig = Schaubild.ruhig;
 
   /* ---------------------------------------------------------------- *
-   *  Motiv Notdienst - Kachel "Notdienst innerhalb von 4 Stunden."
-   *  Ein rotes Kreuz auf dunklem Grund, dahinter ein Schein, der
-   *  pulsiert. Sonst nichts.
-   *
-   *  Der Schein besteht aus zwei Teilen: einem weiten Radialverlauf
-   *  hinter dem Kreuz und einem engen Schlagschatten am Kreuz selbst.
-   *  Der weite Verlauf traegt die Flaeche, der enge die Kante - eine
-   *  Lage allein wirkt entweder wie Nebel oder wie eine Kontur.
+   *  Motiv Welle
+   *  Der Auftrag schlaegt Wellen durch ein Feld aus Taskrunnern. Die Front
+   *  laeuft hindurch, die erreichten Punkte leuchten auf und verbinden sich
+   *  kurz mit ihren Nachbarn.
    * ---------------------------------------------------------------- */
-  var NOTROT = "255,59,42";       /* #ff3b2a */
+  Schaubild.prototype.saeenWelle = function () {
+    var zufall = 20260904;
+    var wuerfel = function () {
+      zufall = (zufall * 1103515245 + 12345) % 2147483648;
+      return zufall / 2147483648;
+    };
+    this.cx = this.b / 2;
+    this.cy = this.h * 0.17;
+    this.kb = Math.min(150, this.b * 0.42);
+    this.kh = this.kb * 0.50;
 
-  Schaubild.prototype.saeenNotdienst = function () {
-    var mass = Math.min(this.b, this.h * 1.9);
-    this.cx = this.b * 0.5;
-    this.cy = this.h * 0.5;
-    this.kreuz = mass * 0.26;               /* Kantenlaenge des Kreuzes */
-    this.takt = 2.6;                        /* Sekunden je Pulsschlag */
-    this.startZeit = null;
-    this.beginn = this.kostenBeginn;
-    this.ruht = null;                       /* laeuft dauerhaft */
+    this.feld = [];
+    var sp = 22, reihe = 0, x, y;
+    for (y = this.h * 0.30; y < this.h * 0.94; y += sp * 0.86) {
+      for (x = (reihe % 2 ? sp / 2 : 0) + sp * 0.5; x < this.b; x += sp) {
+        this.feld.push({ x: x + (wuerfel() - 0.5) * 4, y: y + (wuerfel() - 0.5) * 4, an: 0 });
+      }
+      reihe++;
+    }
+    this.wellen = [{ r: this.b * 0.30 }, { r: this.b * 0.70 }, { r: this.b * 1.05 }];
   };
 
-  Schaubild.prototype.zeichnenNotdienst = function () {
-    var g = this.stift;
-    var sek = this.kostenSek();
-    var p = 0.5 + 0.5 * Math.sin(6.2832 * sek / this.takt);
+  Schaubild.prototype.zeichnenWelle = function () {
+    var g = this.stift, i, j, p, q;
+    var grenze = this.b * 1.25;
 
-    var k = this.kreuz, s2 = k / 2, a = k * 0.17;
+    if (!ruhig.matches) {
+      if (this.wellen.length < 3 && Math.random() < 0.014) this.wellen.push({ r: 0 });
+      for (i = this.wellen.length - 1; i >= 0; i--) {
+        this.wellen[i].r += 1.5;
+        if (this.wellen[i].r > grenze) this.wellen.splice(i, 1);
+      }
+    }
 
-    /* weiter Schein */
-    var r = k * (0.92 + 0.22 * p);
-    var vv = g.createRadialGradient(this.cx, this.cy, k * 0.30, this.cx, this.cy, r);
-    vv.addColorStop(0.00, "rgba(" + NOTROT + "," + (0.26 + 0.20 * p).toFixed(3) + ")");
-    vv.addColorStop(0.45, "rgba(" + NOTROT + "," + (0.08 + 0.08 * p).toFixed(3) + ")");
-    vv.addColorStop(1.00, "rgba(" + NOTROT + ",0)");
-    g.fillStyle = vv;
-    g.beginPath();
-    g.arc(this.cx, this.cy, r, 0, 6.283);
-    g.fill();
+    for (i = 0; i < this.feld.length; i++) {
+      p = this.feld[i];
+      var e = Math.sqrt((p.x - this.cx) * (p.x - this.cx) + (p.y - this.cy) * (p.y - this.cy));
+      for (j = 0; j < this.wellen.length; j++) {
+        if (Math.abs(e - this.wellen[j].r) < 16) p.an = 1;
+      }
+      p.an *= 0.975;
+    }
 
-    /* Kreuz mit engem Schein an der Kante */
-    g.save();
-    g.shadowColor = "rgba(" + NOTROT + "," + (0.55 + 0.30 * p).toFixed(3) + ")";
-    g.shadowBlur = k * (0.22 + 0.14 * p);
-    g.fillStyle = "rgb(" + NOTROT + ")";
-    g.beginPath();
-    g.moveTo(this.cx - a, this.cy - s2);
-    g.lineTo(this.cx + a, this.cy - s2);
-    g.lineTo(this.cx + a, this.cy - a);
-    g.lineTo(this.cx + s2, this.cy - a);
-    g.lineTo(this.cx + s2, this.cy + a);
-    g.lineTo(this.cx + a, this.cy + a);
-    g.lineTo(this.cx + a, this.cy + s2);
-    g.lineTo(this.cx - a, this.cy + s2);
-    g.lineTo(this.cx - a, this.cy + a);
-    g.lineTo(this.cx - s2, this.cy + a);
-    g.lineTo(this.cx - s2, this.cy - a);
-    g.lineTo(this.cx - a, this.cy - a);
-    g.closePath();
-    g.fill();
-    g.fill();                                /* zweimal: Schein verdichten */
-    g.restore();
+    for (i = 0; i < this.wellen.length; i++) {
+      g.globalAlpha = 0.22 * (1 - this.wellen[i].r / grenze);
+      g.lineWidth = 1;
+      g.beginPath();
+      g.arc(this.cx, this.cy, this.wellen[i].r, 0.06 * Math.PI, 0.94 * Math.PI);
+      g.stroke();
+    }
+
+    g.lineWidth = 0.7;
+    for (i = 0; i < this.feld.length; i++) {
+      p = this.feld[i];
+      if (p.an < 0.12) continue;
+      for (j = i + 1; j < this.feld.length; j++) {
+        q = this.feld[j];
+        if (q.an < 0.12) continue;
+        var dd = Math.sqrt((p.x - q.x) * (p.x - q.x) + (p.y - q.y) * (p.y - q.y));
+        if (dd < 30) {
+          g.globalAlpha = 0.30 * Math.min(p.an, q.an) * (1 - dd / 30);
+          g.beginPath(); g.moveTo(p.x, p.y); g.lineTo(q.x, q.y); g.stroke();
+        }
+      }
+    }
+
+    for (i = 0; i < this.feld.length; i++) {
+      p = this.feld[i];
+      g.globalAlpha = 0.16 + 0.74 * p.an;
+      g.beginPath();
+      g.arc(p.x, p.y, 1.7 + 2.2 * p.an, 0, 6.283);
+      g.fill();
+    }
+
+    g.globalAlpha = 1;
+    this.karteZeichnen();
   };
+})();
+
+/* == start.js ============================================================ */
+/* taskrunner - startet die Schaubilder, sobald die Seite steht.
+   Muss die letzte Datei sein: vorher sind die Motive noch nicht da.      */
+(function () {
+  "use strict";
+
+  var Schaubild = window.Schaubild;
 
   function starten() {
     var f = document.querySelectorAll("canvas[data-schaubild]");
