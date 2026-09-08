@@ -394,15 +394,14 @@ html.js-auf .variante-b [data-auf].da { opacity: 1; translate: none; }
 
 
 /* Container-Breiten: der Prototyp nutzt zwei Rasterbreiten */
+/* Die eine Inhaltsbreite der Seite: 1328 aussen, 1.5rem Polster je
+   Seite, also 1280 innen. Frueher waren es 1240/1192; daneben stand an
+   einer Stelle dasselbe noch einmal als max-w-[1328px] und es gab eine
+   dritte, engere Stufe. Jetzt gibt es nur diese - und die volle Breite
+   des Hero. */
 @utility container-wide {
   width: 100%;
-  max-width: 1240px;
-  margin-inline: auto;
-  padding-inline: 1.5rem;
-}
-@utility container-narrow {
-  width: 100%;
-  max-width: 1040px;
+  max-width: 1328px;
   margin-inline: auto;
   padding-inline: 1.5rem;
 }
