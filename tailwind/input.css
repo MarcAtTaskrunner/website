@@ -249,12 +249,13 @@ html.js-auf .variante-b [data-auf].da { opacity: 1; translate: none; }
      das Rad rechnet ihn in rad.js aus der freien Hoehe heraus.
      dvh beruecksichtigt die Browserleisten auf dem Handy, vh ist der
      Rueckfall. */
-  --hero-ueberstand: 68px;
+  --hero-ueberstand: 34px;
   height: calc(100vh + var(--hero-ueberstand));
   height: calc(100dvh + var(--hero-ueberstand));
   min-height: calc(620px + var(--hero-ueberstand));
-  border-bottom-left-radius: 68px;
-  border-bottom-right-radius: 68px;
+  border-bottom-left-radius: 34px;
+  border-bottom-right-radius: 34px;
+  isolation: isolate;
 
   /* Farbverlauf aus dem Entwurf "Startseite B" (Variante Vorlage):
      sechs Lichter auf einer diagonalen Grundlage. Von unten rechts nach
@@ -275,6 +276,33 @@ html.js-auf .variante-b [data-auf].da { opacity: 1; translate: none; }
 .variante-b .hero-voll [data-hero-text] {
   margin-bottom: var(--hero-ueberstand);
 }
+
+/* Grobe Koernung ueber dem Verlauf. Das Muster ist gerechnet, kein Bild:
+   feTurbulence als SVG im data-URI, entsaettigt und kachelbar. Eine
+   niedrige baseFrequency macht die Koerner gross - 0.22 ergibt rund
+   fuenf Pixel. Die Deckung wird auf 1 festgesetzt: sonst ist auch der
+   Alphakanal verrauscht und das Korn hellt den Verlauf im Mittel auf.
+   color-interpolation-filters='sRGB' gehoert dazu: ohne das rechnet
+   der Filter in linearem RGB und das Korn liegt im Mittel bei Grau 187
+   statt 128 - es wuerde den ganzen Verlauf aufhellen. So bleibt es
+   neutral, und mix-blend-mode: overlay hellt helle Koerner auf und
+   dunkelt dunkle ab - der Verlauf selbst bleibt unveraendert.
+
+   z-index 0 haelt die Koernung unter Rad und Text: die liegen ueber
+   .hero-voll > * bei 1. isolation am Hero sorgt dafuer, dass sich das
+   Blenden auf den Hero beschraenkt. */
+.variante-b .hero-voll::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='240'%20height='240'%3E%3Cfilter%20id='k'%20color-interpolation-filters='sRGB'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='0.22'%20numOctaves='2'%20stitchTiles='stitch'/%3E%3CfeColorMatrix%20type='saturate'%20values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA%20type='discrete'%20tableValues='1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect%20width='240'%20height='240'%20filter='url%28%23k%29'/%3E%3C/svg%3E");
+  background-size: 240px 240px;
+  opacity: 0.5;
+  mix-blend-mode: overlay;
+}
+.variante-b .hero-voll > * { z-index: 1; }
 
 .variante-b header .logo-dunkel,
 .variante-b header .logo-hell { transition: opacity .22s var(--kurve); }
