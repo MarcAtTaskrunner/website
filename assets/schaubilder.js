@@ -1032,6 +1032,75 @@
    *  Kontrollpunkt liegt nicht auf der Kurve, deshalb wird er aus dem
    *  gewuenschten Scheitel zurueckgerechnet: C = 2M - (P0 + P2) / 2.
    * ---------------------------------------------------------------- */
+  /* Der Bereich, den der Text wirklich einnimmt - nicht sein Kasten.
+     Gemessen werden nur die Blaetter des Textblocks, denn die Kaesten
+     darueber sind Bloecke ueber die volle Breite: die Zeile mit den
+     Schaltflaechen etwa ist 1376 px breit, die Schaltflaechen selbst
+     sind es nicht. Fuer Bloecke (Ueberschrift, Absatz) zaehlen die
+     Zeilen, nicht die max-width - dafuer der Range. Inline-Elemente
+     wie die Schaltflaechen umschliessen ihren Inhalt schon selbst,
+     dort zaehlt der Kasten samt Polsterung. */
+  Schaubild.prototype.textkasten = function (el) {
+    var f = this.flaeche.getBoundingClientRect();
+    var l = Infinity, o = Infinity, r = -Infinity, u = -Infinity;
+
+    function messen(k) {
+      var rechteck = null;
+      if ((getComputedStyle(k).display || "").indexOf("inline") !== 0) {
+        try {
+          var bereich = document.createRange();
+          bereich.selectNodeContents(k);
+          rechteck = bereich.getBoundingClientRect();
+        } catch (e) { rechteck = null; }
+      }
+      if (!rechteck || !rechteck.width || !rechteck.height) {
+        rechteck = k.getBoundingClientRect();
+      }
+      if (!rechteck.width && !rechteck.height) return;
+      l = Math.min(l, rechteck.left);
+      o = Math.min(o, rechteck.top);
+      r = Math.max(r, rechteck.right);
+      u = Math.max(u, rechteck.bottom);
+    }
+
+    (function durchgehen(knoten) {
+      for (var i = 0; i < knoten.children.length; i++) {
+        var kind = knoten.children[i];
+        if (kind.hidden || kind.children.length) durchgehen(kind);
+        else messen(kind);
+      }
+    })(el);
+
+    if (l === Infinity) {
+      var ganz = el.getBoundingClientRect();
+      l = ganz.left; o = ganz.top; r = ganz.right; u = ganz.bottom;
+    }
+    return { links: l - f.left, rechts: r - f.left,
+             oben: o - f.top, unten: u - f.top };
+  };
+
+  /* Schneidet der Kreis das Rechteck? Geprueft wird ueber den Punkt des
+     Rechtecks, der dem Mittelpunkt am naechsten liegt. */
+  Schaubild.prototype.radSchneidet = function (cx, cy, r, k) {
+    var x = Math.max(k.links, Math.min(cx, k.rechts));
+    var y = Math.max(k.oben, Math.min(cy, k.unten));
+    var dx = cx - x, dy = cy - y;
+    return dx * dx + dy * dy < r * r;
+  };
+
+  /* Letzte Moeglichkeit: das Rad sitzt mittig in dem Band, das ueber
+     dem Text frei bleibt. Liefert den dort groesstmoeglichen Radius. */
+  Schaubild.prototype.radUeberText = function (kasten, oben, luecke) {
+    var band = Math.max(1, this.h - oben);
+    if (kasten) band = Math.max(1, Math.min(band, kasten.oben - luecke - oben));
+    /* 0.46 statt 0.5: die geoeffneten Punkte ragen ueber den Ring
+       hinaus, der Rest ihres Ueberstands faellt in die Luecke zum
+       Text. Auf schmalen Fenstern ist dieses Band der einzige Platz -
+       hier zaehlt jeder Pixel. */
+    return { cx: this.b * 0.5, cy: oben + band * 0.5,
+             radius: Math.min(this.b * 0.38, band * 0.46) };
+  };
+
   Schaubild.prototype.saeenRad = function () {
     var w = wuerfelAb(20261002), i;
     var nSaiten = parseInt(this.flaeche.dataset.punkte, 10) || 76;
@@ -1045,37 +1114,41 @@
     var oben = kopf ? kopf.offsetHeight : 0;
     var frei = Math.max(1, this.h - oben);
 
-    /* Die Ueberschrift ist gross und ihre Zeilenzahl haengt vom Text ab.
-       Der Kreis bekommt deshalb nicht die ganze freie Flaeche, sondern
-       nur den Platz oberhalb von [data-hero-text] (mit etwas Luft) - so
-       landet er nie auf der Ueberschrift, unabhaengig davon, wie viele
-       Zeilen sie gerade braucht. */
-    var LUECKE = 24;
+    var LUECKE = 28;              /* Luft zwischen Text und Rad */
+    var RAND = 24;                /* Luft zum rechten Fensterrand */
+    /* Ueber data-groesse am Canvas feinjustierbar: Anteil des Radius an
+       der freien Hoehe. 0.42 laesst oben und unten gerade Luft fuer die
+       geoeffneten Punkte, die auf dem Ring sitzen. */
+    var anteil = parseFloat(this.flaeche.dataset.groesse) || 0.42;
+
     var text = this.flaeche.parentElement
       ? this.flaeche.parentElement.querySelector("[data-hero-text]")
       : null;
-    if (text) {
-      var rFlaeche = this.flaeche.getBoundingClientRect();
-      var textOben = text.getBoundingClientRect().top - rFlaeche.top;
-      frei = Math.max(1, Math.min(frei, textOben - LUECKE - oben));
+    var kasten = text ? this.textkasten(text) : null;
+
+    /* Wunschzustand: so gross wie moeglich, mittig in der Flaeche unter
+       der Kopfleiste. Der Ring ist dabei nicht die aeussere Kante - die
+       geoeffneten Punkte sitzen darauf und ragen um ihren eigenen
+       Radius hinaus, daher der Faktor 1.16. */
+    var AUSSEN = 1.16;
+    var wunsch = Math.min(this.b * 0.30, (frei * 0.5 - 1) / AUSSEN, frei * anteil);
+    var lage = { cx: this.b * 0.5, cy: oben + frei * 0.5, radius: wunsch };
+
+    if (kasten && this.radSchneidet(lage.cx, lage.cy, wunsch * AUSSEN + LUECKE, kasten)) {
+      /* Der Text laege auf dem Rad. Zwei Auswege, es gewinnt der mit dem
+         groesseren Rad:
+           rechts   - neben dem Text, so weit wie noetig nach rechts
+           darueber - mittig in dem Band ueber dem Text (wie bisher) */
+      var platz = (this.b - RAND - LUECKE - kasten.rechts) / 2;   /* fuer aussen */
+      var rechts = { radius: Math.min(wunsch, platz / AUSSEN), cy: oben + frei * 0.5 };
+      rechts.cx = kasten.rechts + LUECKE + rechts.radius * AUSSEN;
+      var darueber = this.radUeberText(kasten, oben, LUECKE);
+      lage = rechts.radius >= darueber.radius ? rechts : darueber;
     }
 
-    if (this.b < 700) {
-      /* Schmal: Text nimmt die ganze Breite, der Kreis steht mittig
-         darueber. */
-      this.cx = this.b * 0.5;
-      this.cy = oben + frei * 0.5;
-      this.radius = Math.min(this.b * 0.38, frei * 0.48);
-    } else {
-      /* Breit: der Kreis steht genau mittig in der freien Flaeche unter
-         der Kopfleiste, der Text liegt unten links darueber. */
-      this.cx = this.b * 0.5;
-      this.cy = oben + frei * 0.5;
-      /* 0.48 statt 0.36: der Kreis soll das Band ueber der Headline
-         ausfuellen, nicht nur ein Drittel davon. Die Luecke zum Text
-         ist oben schon abgezogen. */
-      this.radius = Math.min(this.b * 0.22, frei * 0.48);
-    }
+    this.cx = lage.cx;
+    this.cy = lage.cy;
+    this.radius = Math.max(1, lage.radius);
 
     this.prand = Math.max(3, this.radius * 0.020);
     this.pgross = this.radius * 0.155;        /* Radius des geoeffneten Punktes */
