@@ -2,3 +2,6 @@
 # Vor dem Launch loeschen, sobald die echten Seiten existieren.
 /kontakt              /   302
 /blog                 /   302
+
+# Die frühere Variante B ist jetzt die Startseite.
+/startseite-b.html    /   301

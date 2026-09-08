@@ -10,7 +10,6 @@
 @source "../impressum.html";
 @source "../index.html";
 @source "../nutzungsbedingungen.html";
-@source "../startseite-b.html";
 @source "../vergleich.html";
 /* seiten:ende */
 
@@ -103,11 +102,12 @@
 
 
 /* ------------------------------------------------------------------ *
- *  Variante B - kleinere Radien
- *  Gilt nur unter .variante-b am body, die Startseite bleibt unberuehrt.
+ *  Kleinere Radien der Startseite
+ *  Gilt nur unter .variante-b am body - diese Klasse traegt seit dem
+ *  Wechsel die Startseite. Die Unterseiten bleiben unberuehrt.
  * ------------------------------------------------------------------ */
 /* ------------------------------------------------------------------ *
- *  Variante B - Gestaltung naeher an Stripe
+ *  Gestaltung der Startseite - naeher an Stripe
  *
  *  Gemessen an stripe.com/de (Stand 04.09.2026):
  *    Ueberschriften   Gewicht 300, nicht 700
@@ -119,7 +119,7 @@
  *
  *  Uebernommen wird die Anmutung, nicht die Marke: Schrift bleibt DIN Pro,
  *  die Farben bleiben die taskrunner-Blautoene, das Logo bleibt.
- *  Alles gilt nur unter .variante-b am body.
+ *  Alles gilt nur unter .variante-b am body, also auf der Startseite.
  * ------------------------------------------------------------------ */
 .variante-b {
   --radius-card: 34px;
@@ -198,9 +198,9 @@
 
 
 /* ------------------------------------------------------------------ *
- *  Variante B - Bewegung
+ *  Bewegung auf der Startseite
  *  Dezent gehalten: kurze Wege (10 px), kurze Dauern, eine gemeinsame
- *  Kurve. Alles haengt an .variante-b, Startseite A bleibt unberuehrt.
+ *  Kurve. Alles haengt an .variante-b, die Unterseiten bleiben unberuehrt.
  *  Die Einblendung greift nur, wenn JavaScript laeuft (html.js-auf) -
  *  sonst bliebe die Seite ohne JS leer.
  * ------------------------------------------------------------------ */

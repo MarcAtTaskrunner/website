@@ -17,17 +17,17 @@
     <meta property="og:locale" content="de_DE">
     <link rel="stylesheet" href="assets/style.css">
   </head>
-  <body>
+  <body class="variante-b">
+    <script>document.documentElement.className+=" js-auf";</script>
     <a href="#inhalt" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-navy focus:px-5 focus:py-3 focus:text-white">Zum Inhalt springen</a>
     <header class="sticky top-0 z-50 border-b border-black/5 bg-white/95 backdrop-blur">
-      <div class="container-wide grid h-[64px] grid-cols-[auto_1fr_auto] items-center gap-6">
-        <a href="/" class="shrink-0" aria-label="taskrunner Startseite"><img src="images/logo.svg" alt="taskrunner" width="2000" height="456" class="w-auto h-7"></a>
+      <div class="grid h-[64px] w-full grid-cols-[auto_1fr_auto] items-center gap-6 px-6 lg:px-8">
+        <a href="/" class="relative block shrink-0" aria-label="taskrunner Startseite"><img src="images/logo.svg" alt="taskrunner" width="2000" height="456" class="logo-dunkel block w-auto h-7"><img src="images/logo-white.svg" alt="" aria-hidden="true" width="2000" height="456" class="logo-hell absolute left-0 top-0 block w-auto h-7"></a>
         <!-- Desktop-Navigation -->
         <nav class="hidden justify-self-center lg:block" aria-label="Hauptnavigation">
           <ul class="flex items-center gap-6">
             <li><a href="dienstleistungen.html" class="t-caption text-navy/85 transition-colors hover:text-blue">Dienstleistungen</a></li>
             <li><a href="foerderungen.html" class="t-caption text-navy/85 transition-colors hover:text-blue">Förderungen</a></li>
-            <li><a href="startseite-b.html" class="t-caption text-navy/85 transition-colors hover:text-blue">Variante B</a></li>
             <li><a href="/blog" class="t-caption text-navy/85 transition-colors hover:text-blue">Blog</a></li>
             <li><a href="/kontakt" class="t-caption text-navy/85 transition-colors hover:text-blue">Kontakt</a></li>
             <li><a href="https://taskrunner.jobs.personio.de/" class="t-caption text-navy/85 transition-colors hover:text-blue">Jobs</a></li>
@@ -41,7 +41,6 @@
         <ul class="container-wide flex flex-col gap-1 py-4">
           <li><a href="dienstleistungen.html" class="block rounded-xl px-3 py-3 t-body font-medium text-navy hover:bg-ice">Dienstleistungen</a></li>
           <li><a href="foerderungen.html" class="block rounded-xl px-3 py-3 t-body font-medium text-navy hover:bg-ice">Förderungen</a></li>
-          <li><a href="startseite-b.html" class="block rounded-xl px-3 py-3 t-body font-medium text-navy hover:bg-ice">Variante B</a></li>
           <li><a href="/blog" class="block rounded-xl px-3 py-3 t-body font-medium text-navy hover:bg-ice">Blog</a></li>
           <li><a href="/kontakt" class="block rounded-xl px-3 py-3 t-body font-medium text-navy hover:bg-ice">Kontakt</a></li>
           <li><a href="https://taskrunner.jobs.personio.de/" class="block rounded-xl px-3 py-3 t-body font-medium text-navy hover:bg-ice">Jobs</a></li>
@@ -50,244 +49,121 @@
       </nav>
     </header>
     <main id="inhalt">
-      <section class="relative flex hero-viewport flex-col justify-end overflow-hidden bg-blue-300 text-white">
-        <img src="images/hero-klettern.webp" alt="Industriekletterer bei Arbeiten an einer Gebäudefassade" width="900" height="2040" fetchpriority="high" decoding="async" class="pointer-events-none absolute bottom-0 right-0 h-[40%] w-auto max-w-none select-none lg:h-full">
-        <div class="container-wide relative w-full py-[60px] text-center lg:py-[72px]">
-          <h1 class="mx-auto max-w-[1180px] text-balance t-h1">Facility Management leicht gemacht!</h1>
-          <p class="mx-auto mt-6 max-w-[760px] text-pretty t-intro text-white">Wir helfen Ihnen deutschlandweit Wartungen, Reparaturen, Instandhaltungsarbeiten zu vereinfachen und Ihre Firmenprozesse zu digitalisieren.</p>
-          <div class="mt-8 flex flex-wrap items-center justify-center gap-4"><a href="/kontakt" class="btn btn-ghost">Kostenlos Testen</a><a href="/kontakt" class="btn btn-white">Kontakt Aufnehmen</a></div>
+      <section class="hero-b hero-voll relative flex flex-col justify-end overflow-hidden bg-navy text-white">
+        <canvas data-schaubild="rad" data-punkte="96" data-bild="images/headshot.webp" aria-hidden="true" class="pointer-events-none absolute inset-0 block h-full w-full"></canvas>
+        <div data-radlabel hidden class="pointer-events-none absolute z-20 rounded-[34px] border border-white/15 bg-navy/90 px-4 py-2.5 backdrop-blur-sm transition-opacity duration-150">
+          <p data-radname class="text-[16px] font-medium leading-tight text-white"></p>
+          <p data-radgewerk class="mt-1 font-mono text-[12px] uppercase leading-tight tracking-[0.08em] text-white/60"></p>
+        </div>
+        <div data-hero-text class="relative w-full px-6 pb-[60px] lg:px-8 lg:pb-[76px]">
+          <h1 class="max-w-[620px] text-balance t-h2">Facility Management leicht gemacht!</h1>
+          <p class="mt-6 max-w-[520px] text-pretty t-intro text-white">Wir helfen Ihnen deutschlandweit Wartungen, Reparaturen, Instandhaltungsarbeiten zu vereinfachen und Ihre Firmenprozesse zu digitalisieren.</p>
+          <div class="mt-8 flex flex-wrap items-center gap-4"><a href="/kontakt" class="btn btn-ghost">Kostenlos Testen</a><a href="/kontakt" class="btn btn-white">Kontakt Aufnehmen</a></div>
         </div>
       </section>
-      <section class="bg-ice section-y">
-        <div class="container-wide">
-          <h2 class="max-w-[900px] t-h2 text-blue">Schnell, einfach und Transparent</h2>
-          <p class="mt-5 max-w-[760px] t-intro text-ink">Taskrunner bündelt Wartung, Reparatur und Instandhaltung auf einer Plattform – deutschlandweit, mit fester Ansprechperson und vollem Überblick im Dashboard. Qualität und Abrechnung prüfen wir für Sie.</p>
-        </div>
-        <!-- Karussell -->
-        <div class="relative mt-12">
-          <ul id="feature-track" class="snap-track flex snap-x snap-mandatory gap-[18px] overflow-x-auto scroll-smooth px-6 pb-2
-             [scroll-padding-left:1.5rem] xl:[scroll-padding-left:calc((100vw-1240px)/2+1.5rem)]
-             xl:pl-[calc((100vw-1240px)/2+1.5rem)]">
-            <li class="flex min-h-[440px] w-[300px] shrink-0 snap-start flex-col justify-between overflow-hidden rounded-[var(--radius-card)] bg-white p-9 sm:min-h-[540px] sm:w-[372px]">
-              <div>
-                <p class="t-eyebrow text-ink/75">Leistungen</p>
-                <h3 class="mt-5 t-h4 text-ink">Ein Auftrag, alle Gewerke.</h3>
-                <p class="mt-5 t-body-tight text-ink">Reparatur, Wartung, Maler-, Elektro- oder IT-Arbeiten laufen über dieselbe Plattform. Sie geben den Auftrag auf, wir koordinieren die Betriebe.</p>
-              </div>
-              <img src="images/werkzeuge.webp" alt="Werkzeuge: Pinsel, Säge, Schraubenschlüssel und Zange" width="1080" height="792" loading="lazy" decoding="async" class="mt-6 -mx-9 -mb-9 block h-auto w-[calc(100%+4.5rem)] max-w-none">
+      <section class="bg-white section-y">
+        <div class="mx-auto w-full max-w-[1328px] px-6">
+          <h2 data-auf class="max-w-[900px] t-h2 text-blue-600">Schnell, einfach und Transparent</h2>
+          <p data-auf class="mt-5 max-w-[620px] t-intro text-ink">Taskrunner bündelt Wartung, Reparatur und Instandhaltung auf einer Plattform – deutschlandweit, mit fester Ansprechperson und vollem Überblick im Dashboard. Qualität und Abrechnung prüfen wir für Sie.</p>
+          <ul class="mt-12 grid gap-6 md:grid-cols-2 lg:mt-16 lg:gap-7">
+            <li data-auf class="flex min-h-[340px] flex-col overflow-hidden rounded-[var(--radius-tile)] bg-[#f9f9f9] p-9 sm:min-h-[380px]">
+              <h3 class="t-h3 text-blue-600">Ein Task, alle Gewerke.</h3>
+              <p class="mt-4 t-caption text-ink/85">Reparatur, Wartung, Maler-, Elektro- oder IT-Arbeiten laufen über dieselbe Plattform. Sie geben den Task auf, wir koordinieren die Betriebe.</p>
+              <canvas data-schaubild="gewerke" data-bild="images/headshot.webp" data-icon="images/icons/dokument.svg" aria-hidden="true" class="mt-8 block h-[300px] w-full sm:h-[360px]"></canvas>
             </li>
-            <li class="flex min-h-[440px] w-[300px] shrink-0 snap-start flex-col justify-between overflow-hidden rounded-[var(--radius-card)] bg-white p-9 sm:min-h-[540px] sm:w-[372px]">
-              <div>
-                <p class="t-eyebrow text-ink/75">Kosten</p>
-                <h3 class="mt-5 t-h4 text-ink">Nachvollziehbar abgerechnet.</h3>
-                <p class="mt-5 t-body-tight text-ink">Jeder Auftrag wird über die Plattform abgerechnet – mit Abschlussbericht und Fotos zur erbrachten Leistung.</p>
-              </div>
-              <img src="images/abrechnung.webp" alt="Gläserne Darstellung einer Rechnung" width="1080" height="831" loading="lazy" decoding="async" class="mt-6 -mx-9 -mb-9 block h-auto w-[calc(100%+4.5rem)] max-w-none">
+            <li data-auf class="flex min-h-[340px] flex-col overflow-hidden rounded-[var(--radius-tile)] bg-[#f9f9f9] p-9 sm:min-h-[380px]">
+              <h3 class="t-h3 text-blue-600">Nachvollziehbar abgerechnet.</h3>
+              <p class="mt-4 t-caption text-ink/85">Jeder Task wird über die Plattform abgerechnet – mit Abschlussbericht und Fotos zur erbrachten Leistung.</p>
+              <canvas data-schaubild="kosten" data-posten="Anfahrt,Materialkosten,Arbeitszeit,Handlingfee" aria-hidden="true" class="mt-8 -mx-9 block h-[300px] w-[calc(100%+4.5rem)] max-w-none sm:h-[360px]"></canvas>
             </li>
-            <li class="flex min-h-[440px] w-[300px] shrink-0 snap-start flex-col justify-between overflow-hidden rounded-[var(--radius-card)] bg-white p-9 sm:min-h-[540px] sm:w-[372px]">
-              <div>
-                <p class="t-eyebrow text-ink/75">Controlling</p>
-                <h3 class="mt-5 t-h4 text-ink">Alle Standorte auf einem Dashboard.</h3>
-                <p class="mt-5 t-body-tight text-ink">Offene Aufträge, Termine und Kosten je Objekt an einer Stelle.</p>
-              </div>
-              <img src="images/standorte.webp" alt="Kartenmarker für mehrere Standorte" width="1035" height="796" loading="lazy" decoding="async" class="mt-6 -mx-9 -mb-9 block h-auto w-[calc(100%+4.5rem)] max-w-none">
+            <li data-auf class="flex min-h-[340px] flex-col overflow-hidden rounded-[var(--radius-tile)] bg-[#f9f9f9] p-9 sm:min-h-[380px]">
+              <h3 class="t-h3 text-blue-600">Alle Standorte auf einem Dashboard.</h3>
+              <p class="mt-4 t-caption text-ink/85">Offene Tasks, Termine und Kosten je Objekt an einer Stelle.</p>
+              <canvas data-schaubild="dashboard" data-icon="images/icons/tablet.svg" aria-hidden="true" class="mt-8 -mx-9 block h-[300px] w-[calc(100%+4.5rem)] max-w-none sm:h-[360px]"></canvas>
             </li>
-            <li class="flex min-h-[440px] w-[300px] shrink-0 snap-start flex-col justify-between overflow-hidden rounded-[var(--radius-card)] bg-white p-9 sm:min-h-[540px] sm:w-[372px]">
-              <div>
-                <p class="t-eyebrow text-ink/75">Ansprechpartner</p>
-                <h3 class="mt-5 t-h4 text-ink">Eine feste Ansprechperson.</h3>
-                <p class="mt-5 t-body-tight text-ink">Unser Operationsteam begleitet jeden Task und stellt die korrekte Durchführung sicher.</p>
-              </div>
-              <img src="images/ansprechperson.webp" alt="Ansprechpartnerin von taskrunner" width="949" height="740" loading="lazy" decoding="async" class="mt-6 -mx-9 -mb-9 block h-[210px] w-[calc(100%+4.5rem)] max-w-none object-cover object-top sm:h-[290px]">
+            <li data-auf class="flex min-h-[340px] flex-col overflow-hidden rounded-[var(--radius-tile)] bg-[#f9f9f9] p-9 sm:min-h-[380px]">
+              <h3 class="t-h3 text-blue-600">Eine feste Ansprechperson.</h3>
+              <p class="mt-4 t-caption text-ink/85">Unser Operationsteam begleitet jeden Task und stellt die korrekte Durchführung sicher.</p>
+              <canvas data-schaubild="team" data-bild="images/ansprechperson-portrait.webp" aria-hidden="true" class="mt-8 block h-[300px] w-full sm:h-[360px]"></canvas>
             </li>
-            <li class="flex min-h-[440px] w-[300px] shrink-0 snap-start flex-col justify-between overflow-hidden rounded-[var(--radius-card)] bg-white p-9 sm:min-h-[540px] sm:w-[372px]">
-              <div>
-                <p class="t-eyebrow text-ink/75">Abdeckung</p>
-                <h3 class="mt-5 t-h4 text-ink">Deutschlandweit verfügbar.</h3>
-                <p class="mt-5 t-body-tight text-ink">Über 20.000 erreichbare Techniker, im Einsatz an mehr als 21.000 betreuten Standorten.</p>
-              </div>
-              <img src="images/germany-dots-blau.svg" alt="" aria-hidden="true" width="360" height="460" loading="lazy" decoding="async" class="mx-auto mt-6 block h-[195px] w-auto sm:h-[256px]">
+            <li data-auf class="flex min-h-[340px] flex-col overflow-hidden rounded-[var(--radius-tile)] bg-[#f9f9f9] p-9 sm:min-h-[380px]">
+              <h3 class="t-h3 text-blue-600">Deutschlandweit verfügbar.</h3>
+              <p class="mt-4 t-caption text-ink/85">Über 20.000 erreichbare Techniker, im Einsatz an mehr als 21.000 betreuten Standorten.</p>
+              <img src="images/germany-dots-standorte.svg" alt="" aria-hidden="true" width="360" height="460" loading="lazy" decoding="async" class="mx-auto mt-8 block h-[300px] w-auto sm:h-[360px]">
             </li>
-            <li class="flex min-h-[440px] w-[300px] shrink-0 snap-start flex-col justify-between overflow-hidden rounded-[var(--radius-card)] bg-white p-9 sm:min-h-[540px] sm:w-[372px]">
-              <div>
-                <p class="t-eyebrow text-ink/75">Qualität</p>
-                <h3 class="mt-5 t-h4 text-ink">Wir prüfen Qualität und Abrechnung.</h3>
-                <p class="mt-5 t-body-tight text-ink">Jede Leistung wird mit Abschlussbericht und Fotos dokumentiert. Die Abrechnung prüfen wir, bevor sie bei Ihnen landet.</p>
-              </div>
-              <img src="images/qualitaet.webp" alt="Lupe über einer Tabelle" width="1080" height="739" loading="lazy" decoding="async" class="mt-6 -mx-9 -mb-9 block h-auto w-[calc(100%+4.5rem)] max-w-none">
+            <li data-auf class="flex min-h-[340px] flex-col overflow-hidden rounded-[var(--radius-tile)] bg-[#000031] p-9 sm:min-h-[380px]">
+              <h3 class="t-h3 text-white">Notdienst innerhalb von 4 Stunden.</h3>
+              <p class="mt-4 t-caption text-white/75">Manchmal muss es schnell gehen. In 99,7&thinsp;% der Fälle haben wir innerhalb von 4 Stunden einen Spezialisten vor Ort, der sich um das Problem kümmert.</p>
+              <canvas data-schaubild="notdienst" aria-hidden="true" class="mt-8 block h-[300px] w-full sm:h-[360px]"></canvas>
             </li>
           </ul>
-          <div class="container-wide mt-10 flex justify-end gap-3">
-            <button type="button" data-carousel="prev" class="inline-flex h-9 w-9 items-center justify-center rounded-full border-[1.5px] border-blue text-blue transition-colors hover:bg-blue hover:text-white disabled:opacity-35 disabled:hover:bg-transparent disabled:hover:text-blue" aria-label="Vorherige Karte"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"></path></svg></button><button type="button" data-carousel="next" class="inline-flex h-9 w-9 items-center justify-center rounded-full border-[1.5px] border-blue text-blue transition-colors hover:bg-blue hover:text-white disabled:opacity-35 disabled:hover:bg-transparent disabled:hover:text-blue" aria-label="Nächste Karte"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></button>
-          </div>
         </div>
       </section>
       <section class="bg-white section-y" aria-label="Taskrunner in Zahlen">
         <div class="container-wide">
-          <ul class="grid grid-cols-1 gap-[18px] sm:grid-cols-5">
-            <li class="relative flex min-h-[300px] flex-col justify-end gap-2 overflow-hidden sm:min-h-[420px] rounded-[var(--radius-tile)] p-9 bg-blue-300 text-white sm:col-span-3">
-              <div class="pointer-events-none absolute inset-0 flex flex-col justify-between py-8 sm:py-9">
-                <div class="logo-band overflow-hidden">
-                  <div class="logo-spur items-center" style="--verzug:-7s;--dauer:64s;--dauer-sm:83s;--dauer-lg:102s">
-                    <img src="images/kundenlogos/amplifon.svg" alt="Amplifon" loading="lazy" decoding="async" width="112" height="27" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:18px;--h-sm:21px;--h-lg:27px">
-                    <img src="images/kundenlogos/dm.svg" alt="dm-drogerie markt" loading="lazy" decoding="async" width="57" height="38" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:25px;--h-sm:31px;--h-lg:38px">
-                    <img src="images/kundenlogos/globus.svg" alt="Globus" loading="lazy" decoding="async" width="51" height="41" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:27px;--h-sm:33px;--h-lg:41px">
-                    <img src="images/kundenlogos/rossmann.svg" alt="Rossmann" loading="lazy" decoding="async" width="186" height="26" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:17px;--h-sm:21px;--h-lg:26px">
-                    <img src="images/kundenlogos/bonita.svg" alt="Bonita" loading="lazy" decoding="async" width="141" height="26" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:17px;--h-sm:21px;--h-lg:26px">
-                    <img src="images/kundenlogos/fressnapf.svg" alt="Fressnapf" loading="lazy" decoding="async" width="163" height="26" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:17px;--h-sm:21px;--h-lg:26px">
-                    <img src="images/kundenlogos/obi.svg" alt="OBI" loading="lazy" decoding="async" width="114" height="27" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:18px;--h-sm:21px;--h-lg:27px">
-                    <img src="images/kundenlogos/avis.svg" alt="Avis" loading="lazy" decoding="async" width="95" height="29" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:19px;--h-sm:23px;--h-lg:29px">
-                    <img src="images/kundenlogos/flink.svg" alt="Flink" loading="lazy" decoding="async" width="105" height="27" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:18px;--h-sm:22px;--h-lg:27px">
-                    <img src="images/kundenlogos/amplifon.svg" aria-hidden="true" alt="" loading="lazy" decoding="async" width="112" height="27" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:18px;--h-sm:21px;--h-lg:27px">
-                    <img src="images/kundenlogos/dm.svg" aria-hidden="true" alt="" loading="lazy" decoding="async" width="57" height="38" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:25px;--h-sm:31px;--h-lg:38px">
-                    <img src="images/kundenlogos/globus.svg" aria-hidden="true" alt="" loading="lazy" decoding="async" width="51" height="41" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:27px;--h-sm:33px;--h-lg:41px">
-                    <img src="images/kundenlogos/rossmann.svg" aria-hidden="true" alt="" loading="lazy" decoding="async" width="186" height="26" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:17px;--h-sm:21px;--h-lg:26px">
-                    <img src="images/kundenlogos/bonita.svg" aria-hidden="true" alt="" loading="lazy" decoding="async" width="141" height="26" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:17px;--h-sm:21px;--h-lg:26px">
-                    <img src="images/kundenlogos/fressnapf.svg" aria-hidden="true" alt="" loading="lazy" decoding="async" width="163" height="26" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:17px;--h-sm:21px;--h-lg:26px">
-                    <img src="images/kundenlogos/obi.svg" aria-hidden="true" alt="" loading="lazy" decoding="async" width="114" height="27" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:18px;--h-sm:21px;--h-lg:27px">
-                    <img src="images/kundenlogos/avis.svg" aria-hidden="true" alt="" loading="lazy" decoding="async" width="95" height="29" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:19px;--h-sm:23px;--h-lg:29px">
-                    <img src="images/kundenlogos/flink.svg" aria-hidden="true" alt="" loading="lazy" decoding="async" width="105" height="27" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:18px;--h-sm:22px;--h-lg:27px">
-                  </div>
-                </div>
-                <div class="logo-band overflow-hidden">
-                  <div class="logo-spur items-center" style="--verzug:-23s;--dauer:49s;--dauer-sm:64s;--dauer-lg:78s">
-                    <img src="images/kundenlogos/apleona.svg" alt="Apleona" loading="lazy" decoding="async" width="181" height="26" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:17px;--h-sm:21px;--h-lg:26px">
-                    <img src="images/kundenlogos/easyapotheke.svg" alt="easyApotheke" loading="lazy" decoding="async" width="125" height="26" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:17px;--h-sm:21px;--h-lg:26px">
-                    <img src="images/kundenlogos/kamps.svg" alt="Kamps" loading="lazy" decoding="async" width="112" height="27" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:18px;--h-sm:21px;--h-lg:27px">
-                    <img src="images/kundenlogos/amplifon.svg" alt="Amplifon" loading="lazy" decoding="async" width="112" height="27" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:18px;--h-sm:21px;--h-lg:27px">
-                    <img src="images/kundenlogos/dm.svg" alt="dm-drogerie markt" loading="lazy" decoding="async" width="57" height="38" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:25px;--h-sm:31px;--h-lg:38px">
-                    <img src="images/kundenlogos/globus.svg" alt="Globus" loading="lazy" decoding="async" width="51" height="41" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:27px;--h-sm:33px;--h-lg:41px">
-                    <img src="images/kundenlogos/rossmann.svg" alt="Rossmann" loading="lazy" decoding="async" width="186" height="26" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:17px;--h-sm:21px;--h-lg:26px">
-                    <img src="images/kundenlogos/bonita.svg" alt="Bonita" loading="lazy" decoding="async" width="141" height="26" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:17px;--h-sm:21px;--h-lg:26px">
-                    <img src="images/kundenlogos/fressnapf.svg" alt="Fressnapf" loading="lazy" decoding="async" width="163" height="26" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:17px;--h-sm:21px;--h-lg:26px">
-                    <img src="images/kundenlogos/apleona.svg" aria-hidden="true" alt="" loading="lazy" decoding="async" width="181" height="26" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:17px;--h-sm:21px;--h-lg:26px">
-                    <img src="images/kundenlogos/easyapotheke.svg" aria-hidden="true" alt="" loading="lazy" decoding="async" width="125" height="26" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:17px;--h-sm:21px;--h-lg:26px">
-                    <img src="images/kundenlogos/kamps.svg" aria-hidden="true" alt="" loading="lazy" decoding="async" width="112" height="27" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:18px;--h-sm:21px;--h-lg:27px">
-                    <img src="images/kundenlogos/amplifon.svg" aria-hidden="true" alt="" loading="lazy" decoding="async" width="112" height="27" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:18px;--h-sm:21px;--h-lg:27px">
-                    <img src="images/kundenlogos/dm.svg" aria-hidden="true" alt="" loading="lazy" decoding="async" width="57" height="38" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:25px;--h-sm:31px;--h-lg:38px">
-                    <img src="images/kundenlogos/globus.svg" aria-hidden="true" alt="" loading="lazy" decoding="async" width="51" height="41" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:27px;--h-sm:33px;--h-lg:41px">
-                    <img src="images/kundenlogos/rossmann.svg" aria-hidden="true" alt="" loading="lazy" decoding="async" width="186" height="26" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:17px;--h-sm:21px;--h-lg:26px">
-                    <img src="images/kundenlogos/bonita.svg" aria-hidden="true" alt="" loading="lazy" decoding="async" width="141" height="26" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:17px;--h-sm:21px;--h-lg:26px">
-                    <img src="images/kundenlogos/fressnapf.svg" aria-hidden="true" alt="" loading="lazy" decoding="async" width="163" height="26" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:17px;--h-sm:21px;--h-lg:26px">
-                  </div>
-                </div>
-                <div class="logo-band overflow-hidden">
-                  <div class="logo-spur items-center" style="--verzug:-41s;--dauer:53s;--dauer-sm:70s;--dauer-lg:85s">
-                    <img src="images/kundenlogos/atu.svg" alt="A.T.U" loading="lazy" decoding="async" width="70" height="35" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:23px;--h-sm:28px;--h-lg:35px">
-                    <img src="images/kundenlogos/flaschenpost.svg" alt="flaschenpost" loading="lazy" decoding="async" width="122" height="26" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:17px;--h-sm:21px;--h-lg:26px">
-                    <img src="images/kundenlogos/lush.svg" alt="Lush" loading="lazy" decoding="async" width="105" height="27" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:18px;--h-sm:22px;--h-lg:27px">
-                    <img src="images/kundenlogos/apleona.svg" alt="Apleona" loading="lazy" decoding="async" width="181" height="26" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:17px;--h-sm:21px;--h-lg:26px">
-                    <img src="images/kundenlogos/easyapotheke.svg" alt="easyApotheke" loading="lazy" decoding="async" width="125" height="26" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:17px;--h-sm:21px;--h-lg:26px">
-                    <img src="images/kundenlogos/kamps.svg" alt="Kamps" loading="lazy" decoding="async" width="112" height="27" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:18px;--h-sm:21px;--h-lg:27px">
-                    <img src="images/kundenlogos/amplifon.svg" alt="Amplifon" loading="lazy" decoding="async" width="112" height="27" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:18px;--h-sm:21px;--h-lg:27px">
-                    <img src="images/kundenlogos/dm.svg" alt="dm-drogerie markt" loading="lazy" decoding="async" width="57" height="38" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:25px;--h-sm:31px;--h-lg:38px">
-                    <img src="images/kundenlogos/globus.svg" alt="Globus" loading="lazy" decoding="async" width="51" height="41" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:27px;--h-sm:33px;--h-lg:41px">
-                    <img src="images/kundenlogos/atu.svg" aria-hidden="true" alt="" loading="lazy" decoding="async" width="70" height="35" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:23px;--h-sm:28px;--h-lg:35px">
-                    <img src="images/kundenlogos/flaschenpost.svg" aria-hidden="true" alt="" loading="lazy" decoding="async" width="122" height="26" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:17px;--h-sm:21px;--h-lg:26px">
-                    <img src="images/kundenlogos/lush.svg" aria-hidden="true" alt="" loading="lazy" decoding="async" width="105" height="27" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:18px;--h-sm:22px;--h-lg:27px">
-                    <img src="images/kundenlogos/apleona.svg" aria-hidden="true" alt="" loading="lazy" decoding="async" width="181" height="26" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:17px;--h-sm:21px;--h-lg:26px">
-                    <img src="images/kundenlogos/easyapotheke.svg" aria-hidden="true" alt="" loading="lazy" decoding="async" width="125" height="26" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:17px;--h-sm:21px;--h-lg:26px">
-                    <img src="images/kundenlogos/kamps.svg" aria-hidden="true" alt="" loading="lazy" decoding="async" width="112" height="27" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:18px;--h-sm:21px;--h-lg:27px">
-                    <img src="images/kundenlogos/amplifon.svg" aria-hidden="true" alt="" loading="lazy" decoding="async" width="112" height="27" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:18px;--h-sm:21px;--h-lg:27px">
-                    <img src="images/kundenlogos/dm.svg" aria-hidden="true" alt="" loading="lazy" decoding="async" width="57" height="38" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:25px;--h-sm:31px;--h-lg:38px">
-                    <img src="images/kundenlogos/globus.svg" aria-hidden="true" alt="" loading="lazy" decoding="async" width="51" height="41" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:27px;--h-sm:33px;--h-lg:41px">
-                  </div>
-                </div>
-                <div class="logo-band overflow-hidden">
-                  <div class="logo-spur items-center" style="--verzug:-14s;--dauer:43s;--dauer-sm:55s;--dauer-lg:67s">
-                    <img src="images/kundenlogos/avis.svg" alt="Avis" loading="lazy" decoding="async" width="95" height="29" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:19px;--h-sm:23px;--h-lg:29px">
-                    <img src="images/kundenlogos/flink.svg" alt="Flink" loading="lazy" decoding="async" width="105" height="27" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:18px;--h-sm:22px;--h-lg:27px">
-                    <img src="images/kundenlogos/nordsee.svg" alt="Nordsee" loading="lazy" decoding="async" width="164" height="26" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:17px;--h-sm:21px;--h-lg:26px">
-                    <img src="images/kundenlogos/atu.svg" alt="A.T.U" loading="lazy" decoding="async" width="70" height="35" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:23px;--h-sm:28px;--h-lg:35px">
-                    <img src="images/kundenlogos/flaschenpost.svg" alt="flaschenpost" loading="lazy" decoding="async" width="122" height="26" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:17px;--h-sm:21px;--h-lg:26px">
-                    <img src="images/kundenlogos/lush.svg" alt="Lush" loading="lazy" decoding="async" width="105" height="27" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:18px;--h-sm:22px;--h-lg:27px">
-                    <img src="images/kundenlogos/apleona.svg" alt="Apleona" loading="lazy" decoding="async" width="181" height="26" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:17px;--h-sm:21px;--h-lg:26px">
-                    <img src="images/kundenlogos/easyapotheke.svg" alt="easyApotheke" loading="lazy" decoding="async" width="125" height="26" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:17px;--h-sm:21px;--h-lg:26px">
-                    <img src="images/kundenlogos/kamps.svg" alt="Kamps" loading="lazy" decoding="async" width="112" height="27" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:18px;--h-sm:21px;--h-lg:27px">
-                    <img src="images/kundenlogos/avis.svg" aria-hidden="true" alt="" loading="lazy" decoding="async" width="95" height="29" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:19px;--h-sm:23px;--h-lg:29px">
-                    <img src="images/kundenlogos/flink.svg" aria-hidden="true" alt="" loading="lazy" decoding="async" width="105" height="27" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:18px;--h-sm:22px;--h-lg:27px">
-                    <img src="images/kundenlogos/nordsee.svg" aria-hidden="true" alt="" loading="lazy" decoding="async" width="164" height="26" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:17px;--h-sm:21px;--h-lg:26px">
-                    <img src="images/kundenlogos/atu.svg" aria-hidden="true" alt="" loading="lazy" decoding="async" width="70" height="35" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:23px;--h-sm:28px;--h-lg:35px">
-                    <img src="images/kundenlogos/flaschenpost.svg" aria-hidden="true" alt="" loading="lazy" decoding="async" width="122" height="26" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:17px;--h-sm:21px;--h-lg:26px">
-                    <img src="images/kundenlogos/lush.svg" aria-hidden="true" alt="" loading="lazy" decoding="async" width="105" height="27" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:18px;--h-sm:22px;--h-lg:27px">
-                    <img src="images/kundenlogos/apleona.svg" aria-hidden="true" alt="" loading="lazy" decoding="async" width="181" height="26" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:17px;--h-sm:21px;--h-lg:26px">
-                    <img src="images/kundenlogos/easyapotheke.svg" aria-hidden="true" alt="" loading="lazy" decoding="async" width="125" height="26" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:17px;--h-sm:21px;--h-lg:26px">
-                    <img src="images/kundenlogos/kamps.svg" aria-hidden="true" alt="" loading="lazy" decoding="async" width="112" height="27" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:18px;--h-sm:21px;--h-lg:27px">
-                  </div>
-                </div>
-                <div class="logo-band overflow-hidden">
-                  <div class="logo-spur items-center" style="--verzug:-33s;--dauer:52s;--dauer-sm:68s;--dauer-lg:83s">
-                    <img src="images/kundenlogos/bonita.svg" alt="Bonita" loading="lazy" decoding="async" width="141" height="26" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:17px;--h-sm:21px;--h-lg:26px">
-                    <img src="images/kundenlogos/fressnapf.svg" alt="Fressnapf" loading="lazy" decoding="async" width="163" height="26" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:17px;--h-sm:21px;--h-lg:26px">
-                    <img src="images/kundenlogos/obi.svg" alt="OBI" loading="lazy" decoding="async" width="114" height="27" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:18px;--h-sm:21px;--h-lg:27px">
-                    <img src="images/kundenlogos/avis.svg" alt="Avis" loading="lazy" decoding="async" width="95" height="29" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:19px;--h-sm:23px;--h-lg:29px">
-                    <img src="images/kundenlogos/flink.svg" alt="Flink" loading="lazy" decoding="async" width="105" height="27" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:18px;--h-sm:22px;--h-lg:27px">
-                    <img src="images/kundenlogos/nordsee.svg" alt="Nordsee" loading="lazy" decoding="async" width="164" height="26" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:17px;--h-sm:21px;--h-lg:26px">
-                    <img src="images/kundenlogos/atu.svg" alt="A.T.U" loading="lazy" decoding="async" width="70" height="35" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:23px;--h-sm:28px;--h-lg:35px">
-                    <img src="images/kundenlogos/flaschenpost.svg" alt="flaschenpost" loading="lazy" decoding="async" width="122" height="26" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:17px;--h-sm:21px;--h-lg:26px">
-                    <img src="images/kundenlogos/lush.svg" alt="Lush" loading="lazy" decoding="async" width="105" height="27" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:18px;--h-sm:22px;--h-lg:27px">
-                    <img src="images/kundenlogos/bonita.svg" aria-hidden="true" alt="" loading="lazy" decoding="async" width="141" height="26" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:17px;--h-sm:21px;--h-lg:26px">
-                    <img src="images/kundenlogos/fressnapf.svg" aria-hidden="true" alt="" loading="lazy" decoding="async" width="163" height="26" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:17px;--h-sm:21px;--h-lg:26px">
-                    <img src="images/kundenlogos/obi.svg" aria-hidden="true" alt="" loading="lazy" decoding="async" width="114" height="27" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:18px;--h-sm:21px;--h-lg:27px">
-                    <img src="images/kundenlogos/avis.svg" aria-hidden="true" alt="" loading="lazy" decoding="async" width="95" height="29" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:19px;--h-sm:23px;--h-lg:29px">
-                    <img src="images/kundenlogos/flink.svg" aria-hidden="true" alt="" loading="lazy" decoding="async" width="105" height="27" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:18px;--h-sm:22px;--h-lg:27px">
-                    <img src="images/kundenlogos/nordsee.svg" aria-hidden="true" alt="" loading="lazy" decoding="async" width="164" height="26" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:17px;--h-sm:21px;--h-lg:26px">
-                    <img src="images/kundenlogos/atu.svg" aria-hidden="true" alt="" loading="lazy" decoding="async" width="70" height="35" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:23px;--h-sm:28px;--h-lg:35px">
-                    <img src="images/kundenlogos/flaschenpost.svg" aria-hidden="true" alt="" loading="lazy" decoding="async" width="122" height="26" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:17px;--h-sm:21px;--h-lg:26px">
-                    <img src="images/kundenlogos/lush.svg" aria-hidden="true" alt="" loading="lazy" decoding="async" width="105" height="27" class="mr-8 w-auto shrink-0 object-contain sm:mr-12 lg:mr-14" style="--h:18px;--h-sm:22px;--h-lg:27px">
-                  </div>
-                </div>
-              </div>
-              <p class="relative t-h2 tabular-nums">53</p>
-              <p class="relative t-body">Kunden</p>
+          <p data-auf class="t-caption text-ink/55">Unternehmen, die mit Taskrunner arbeiten</p>
+          <div data-auf class="logo-reihe mt-7 flex flex-wrap items-center gap-x-7 gap-y-5 sm:gap-x-9">
+            <img src="images/kundenlogos/amplifon.svg" alt="Amplifon" loading="lazy" decoding="async" width="112" height="27" class="h-[var(--h)] w-auto shrink-0 object-contain brightness-0 opacity-45 sm:h-[var(--h-sm)] lg:h-[var(--h-lg)]" style="--h:15px;--h-sm:18px;--h-lg:22px">
+            <img src="images/kundenlogos/dm.svg" alt="dm-drogerie markt" loading="lazy" decoding="async" width="57" height="38" class="h-[var(--h)] w-auto shrink-0 object-contain brightness-0 opacity-45 sm:h-[var(--h-sm)] lg:h-[var(--h-lg)]" style="--h:21px;--h-sm:25px;--h-lg:31px">
+            <img src="images/kundenlogos/globus.svg" alt="Globus" loading="lazy" decoding="async" width="51" height="41" class="h-[var(--h)] w-auto shrink-0 object-contain brightness-0 opacity-45 sm:h-[var(--h-sm)] lg:h-[var(--h-lg)]" style="--h:22px;--h-sm:26px;--h-lg:33px">
+            <img src="images/kundenlogos/rossmann.svg" alt="Rossmann" loading="lazy" decoding="async" width="186" height="26" class="h-[var(--h)] w-auto shrink-0 object-contain brightness-0 opacity-45 sm:h-[var(--h-sm)] lg:h-[var(--h-lg)]" style="--h:14px;--h-sm:17px;--h-lg:21px">
+            <img src="images/kundenlogos/bonita.svg" alt="Bonita" loading="lazy" decoding="async" width="141" height="26" class="h-[var(--h)] w-auto shrink-0 object-contain brightness-0 opacity-45 sm:h-[var(--h-sm)] lg:h-[var(--h-lg)]" style="--h:14px;--h-sm:17px;--h-lg:21px">
+            <img src="images/kundenlogos/fressnapf.svg" alt="Fressnapf" loading="lazy" decoding="async" width="163" height="26" class="h-[var(--h)] w-auto shrink-0 object-contain brightness-0 opacity-45 sm:h-[var(--h-sm)] lg:h-[var(--h-lg)]" style="--h:14px;--h-sm:17px;--h-lg:21px">
+            <img src="images/kundenlogos/obi.svg" alt="OBI" loading="lazy" decoding="async" width="114" height="27" class="h-[var(--h)] w-auto shrink-0 object-contain brightness-0 opacity-45 sm:h-[var(--h-sm)] lg:h-[var(--h-lg)]" style="--h:15px;--h-sm:18px;--h-lg:22px">
+            <img src="images/kundenlogos/avis.svg" alt="Avis" loading="lazy" decoding="async" width="95" height="29" class="h-[var(--h)] w-auto shrink-0 object-contain brightness-0 opacity-45 sm:h-[var(--h-sm)] lg:h-[var(--h-lg)]" style="--h:16px;--h-sm:19px;--h-lg:24px">
+            <img src="images/kundenlogos/flink.svg" alt="Flink" loading="lazy" decoding="async" width="105" height="27" class="h-[var(--h)] w-auto shrink-0 object-contain brightness-0 opacity-45 sm:h-[var(--h-sm)] lg:h-[var(--h-lg)]" style="--h:15px;--h-sm:18px;--h-lg:22px">
+          </div>
+        </div>
+        <div class="container-wide mt-16 lg:mt-20">
+          <ul data-auf class="grid grid-cols-1 sm:grid-cols-5">
+            <li class="zahl-zelle flex flex-col justify-center border-t border-ink/10 px-0 py-8 sm:border-l sm:border-t-0 sm:px-7">
+              <p class="t-h2 tabular-nums text-ink">53</p>
+              <p class="mt-2 t-caption">Kunden</p>
             </li>
-            <li class="relative flex min-h-[200px] flex-col justify-end gap-2 overflow-hidden sm:min-h-[420px] rounded-[var(--radius-tile)] p-9 bg-blue-600 text-white sm:col-span-2">
-              <video class="pointer-events-none absolute inset-0 h-full w-full object-cover" autoplay muted loop playsinline preload="auto" aria-hidden="true" tabindex="-1" poster="images/video/techniker-v1-poster.jpg">
-                <source src="images/video/techniker-v1.webm" type="video/webm">
-                <source src="images/video/techniker-v1.mp4" type="video/mp4">
-              </video>
-              <div class="pointer-events-none absolute inset-x-0 bottom-0 h-[82%] bg-gradient-to-t from-black/80 via-black/50 to-transparent"></div>
-              <p class="relative t-h2 tabular-nums">20.241</p>
-              <p class="relative t-body">Erreichbare Techniker</p>
+            <li class="zahl-zelle relative -mx-px flex flex-col justify-center rounded-[var(--radius-card)] border border-blue px-6 py-8 sm:px-7">
+              <p class="t-h2 tabular-nums text-ink">20.241</p>
+              <p class="mt-2 t-caption">Erreichbare Techniker</p>
+            </li>
+            <li class="zahl-zelle flex flex-col justify-center border-t border-ink/10 px-0 py-8 sm:border-l sm:border-t-0 sm:px-7">
+              <p class="t-h2 tabular-nums text-ink">41</p>
+              <p class="mt-2 t-caption">Mitarbeiter, davon 14&nbsp;Frauen</p>
+            </li>
+            <li class="zahl-zelle flex flex-col justify-center border-t border-ink/10 px-0 py-8 sm:border-l sm:border-t-0 sm:px-7">
+              <p class="t-h2 tabular-nums text-ink">99,7&thinsp;%</p>
+              <p class="mt-2 t-caption">SLA-Rate</p>
+            </li>
+            <li class="zahl-zelle flex flex-col justify-center border-t border-ink/10 px-0 py-8 sm:border-l sm:border-t-0 sm:px-7">
+              <p class="t-h2 tabular-nums text-ink">21.453</p>
+              <p class="mt-2 t-caption">Betreute Standorte</p>
             </li>
           </ul>
-          <ul class="mt-[18px] grid grid-cols-1 gap-[18px] sm:grid-cols-2 lg:grid-cols-[1fr_0.75fr_1fr]">
-            <li class="relative flex flex-col justify-end gap-2 overflow-hidden rounded-[var(--radius-tile)] p-9 min-h-[400px] sm:min-h-[420px] lg:min-h-[420px] bg-navy text-white">
-              <div class="pointer-events-none absolute inset-x-9 top-9 bottom-[149px] flex flex-col justify-center">
-                <div class="mx-auto flex w-full max-w-[255px] flex-wrap justify-start gap-y-[11px] lg:max-w-[280px] lg:gap-y-[10px]"><span class="flex w-[calc(100%/7)] justify-start"><span class="block aspect-square w-[70%] rounded-full bg-blue"></span></span><span class="flex w-[calc(100%/7)] justify-start"><span class="block aspect-square w-[70%] rounded-full bg-blue"></span></span><span class="flex w-[calc(100%/7)] justify-start"><span class="block aspect-square w-[70%] rounded-full bg-blue"></span></span><span class="flex w-[calc(100%/7)] justify-start"><span class="block aspect-square w-[70%] rounded-full bg-blue"></span></span><span class="flex w-[calc(100%/7)] justify-start"><span class="block aspect-square w-[70%] rounded-full bg-blue"></span></span><span class="flex w-[calc(100%/7)] justify-start"><span class="block aspect-square w-[70%] rounded-full bg-blue"></span></span><span class="flex w-[calc(100%/7)] justify-start"><span class="block aspect-square w-[70%] rounded-full bg-blue"></span></span><span class="flex w-[calc(100%/7)] justify-start"><span class="block aspect-square w-[70%] rounded-full bg-blue"></span></span><span class="flex w-[calc(100%/7)] justify-start"><span class="block aspect-square w-[70%] rounded-full bg-blue"></span></span><span class="flex w-[calc(100%/7)] justify-start"><span class="block aspect-square w-[70%] rounded-full bg-blue"></span></span><span class="flex w-[calc(100%/7)] justify-start"><span class="block aspect-square w-[70%] rounded-full bg-blue"></span></span><span class="flex w-[calc(100%/7)] justify-start"><span class="block aspect-square w-[70%] rounded-full bg-blue"></span></span><span class="flex w-[calc(100%/7)] justify-start"><span class="block aspect-square w-[70%] rounded-full bg-blue"></span></span><span class="flex w-[calc(100%/7)] justify-start"><span class="block aspect-square w-[70%] rounded-full bg-blue"></span></span><span class="flex w-[calc(100%/7)] justify-start"><span class="block aspect-square w-[70%] rounded-full bg-blue"></span></span><span class="flex w-[calc(100%/7)] justify-start"><span class="block aspect-square w-[70%] rounded-full bg-blue"></span></span><span class="flex w-[calc(100%/7)] justify-start"><span class="block aspect-square w-[70%] rounded-full bg-blue"></span></span><span class="flex w-[calc(100%/7)] justify-start"><span class="block aspect-square w-[70%] rounded-full bg-blue"></span></span><span class="flex w-[calc(100%/7)] justify-start"><span class="block aspect-square w-[70%] rounded-full bg-blue"></span></span><span class="flex w-[calc(100%/7)] justify-start"><span class="block aspect-square w-[70%] rounded-full bg-blue"></span></span><span class="flex w-[calc(100%/7)] justify-start"><span class="block aspect-square w-[70%] rounded-full bg-blue"></span></span><span class="flex w-[calc(100%/7)] justify-start"><span class="block aspect-square w-[70%] rounded-full bg-blue"></span></span><span class="flex w-[calc(100%/7)] justify-start"><span class="block aspect-square w-[70%] rounded-full bg-blue"></span></span><span class="flex w-[calc(100%/7)] justify-start"><span class="block aspect-square w-[70%] rounded-full bg-blue"></span></span><span class="flex w-[calc(100%/7)] justify-start"><span class="block aspect-square w-[70%] rounded-full bg-blue"></span></span><span class="flex w-[calc(100%/7)] justify-start"><span class="block aspect-square w-[70%] rounded-full bg-blue"></span></span><span class="flex w-[calc(100%/7)] justify-start"><span class="block aspect-square w-[70%] rounded-full bg-blue"></span></span><span class="flex w-[calc(100%/7)] justify-start"><span class="block aspect-square w-[70%] rounded-full bg-pink"></span></span><span class="flex w-[calc(100%/7)] justify-start"><span class="block aspect-square w-[70%] rounded-full bg-pink"></span></span><span class="flex w-[calc(100%/7)] justify-start"><span class="block aspect-square w-[70%] rounded-full bg-pink"></span></span><span class="flex w-[calc(100%/7)] justify-start"><span class="block aspect-square w-[70%] rounded-full bg-pink"></span></span><span class="flex w-[calc(100%/7)] justify-start"><span class="block aspect-square w-[70%] rounded-full bg-pink"></span></span><span class="flex w-[calc(100%/7)] justify-start"><span class="block aspect-square w-[70%] rounded-full bg-pink"></span></span><span class="flex w-[calc(100%/7)] justify-start"><span class="block aspect-square w-[70%] rounded-full bg-pink"></span></span><span class="flex w-[calc(100%/7)] justify-start"><span class="block aspect-square w-[70%] rounded-full bg-pink"></span></span><span class="flex w-[calc(100%/7)] justify-start"><span class="block aspect-square w-[70%] rounded-full bg-pink"></span></span><span class="flex w-[calc(100%/7)] justify-start"><span class="block aspect-square w-[70%] rounded-full bg-pink"></span></span><span class="flex w-[calc(100%/7)] justify-start"><span class="block aspect-square w-[70%] rounded-full bg-pink"></span></span><span class="flex w-[calc(100%/7)] justify-start"><span class="block aspect-square w-[70%] rounded-full bg-pink"></span></span><span class="flex w-[calc(100%/7)] justify-start"><span class="block aspect-square w-[70%] rounded-full bg-pink"></span></span><span class="flex w-[calc(100%/7)] justify-start"><span class="block aspect-square w-[70%] rounded-full bg-pink"></span></span></div>
-              </div>
-              <p class="relative t-h2 tabular-nums">41</p>
-              <p class="relative t-body">Mitarbeiter, davon 14 Frauen</p>
-            </li>
-            <li class="relative flex flex-col justify-end gap-2 overflow-hidden rounded-[var(--radius-tile)] p-9 min-h-[340px] sm:min-h-[420px] lg:min-h-[420px] bg-grey-darker text-white">
-              <img src="images/sla-stoppuhr.webp" alt="" aria-hidden="true" width="540" height="746" loading="lazy" decoding="async" class="pointer-events-none absolute left-1/2 top-9 h-[150px] w-auto -translate-x-1/2 sm:h-[230px]">
-              <p class="relative t-h2 tabular-nums">99,7&thinsp;%</p>
-              <p class="relative t-body">SLA-Rate</p>
-            </li>
-            <li class="relative flex flex-col justify-end gap-2 overflow-hidden rounded-[var(--radius-tile)] p-9 min-h-[340px] sm:min-h-[420px] sm:col-span-2 lg:min-h-[420px] lg:col-span-1 bg-stone text-navy">
-              <img src="images/germany-dots.svg" alt="Deutschlandkarte aus Punkten für die betreuten Standorte" width="360" height="460" loading="lazy" decoding="async" class="pointer-events-none absolute left-1/2 top-8 lg:top-4 h-[170px] w-auto -translate-x-1/2 object-contain [mask-image:linear-gradient(to_bottom,black_58%,transparent_100%)] sm:h-[250px] lg:h-[330px]">
-              <p class="relative t-h2 tabular-nums">21.453</p>
-              <p class="relative t-body">Betreute Standorte</p>
-            </li>
-          </ul>
+        </div>
+        <div class="container-wide mt-14 lg:mt-16">
+          <div data-auf class="band-video relative h-[260px] overflow-hidden rounded-[var(--radius-tile)] bg-blue-600 sm:h-[340px] lg:h-[420px]">
+            <video class="pointer-events-none absolute inset-0 h-full w-full object-cover" autoplay muted loop playsinline preload="auto" aria-hidden="true" tabindex="-1" poster="images/video/techniker-v1-poster.jpg">
+              <source src="images/video/techniker-v1.webm" type="video/webm">
+              <source src="images/video/techniker-v1.mp4" type="video/mp4">
+            </video>
+            <div class="pointer-events-none absolute inset-x-0 bottom-0 h-[45%] bg-gradient-to-t from-black/45 to-transparent"></div>
+          </div>
         </div>
       </section>
       <section class="bg-ice section-y">
         <div class="container-wide">
-          <h2 class="t-h2 text-ink">So funktioniert Taskrunner</h2>
-          <p class="mt-5 max-w-[520px] t-intro text-ink/80">Vom Auftrag bis zum Abschlussbericht – drei Schritte, kein Hinterhertelefonieren.</p>
+          <h2 data-auf class="t-h2 text-ink">So funktioniert Taskrunner</h2>
+          <p data-auf class="mt-5 max-w-[520px] t-intro text-ink/80">Vom Auftrag bis zum Abschlussbericht – drei Schritte, kein Hinterhertelefonieren.</p>
           <ol class="mt-16 grid gap-x-8 gap-y-12 md:grid-cols-3 lg:mt-20 lg:gap-x-10">
-            <li class="border-t border-ink/20 pt-8">
+            <li data-auf class="border-t border-ink/20 pt-8">
               <p class="t-eyebrow text-ink/80">Schritt 1</p>
               <h3 class="mt-4 t-h4 text-ink">Legen Sie Ihren Auftrag an.</h3>
               <p class="mt-5 t-body-tight text-ink/85">Einfach die entsprechende Dienstleistung auswählen, den Auftragsort, -zeit und Notizen für Ihren Auftrag hinterlegen.</p>
             </li>
-            <li class="border-t border-ink/20 pt-8">
+            <li data-auf class="border-t border-ink/20 pt-8">
               <p class="t-eyebrow text-ink/80">Schritt 2</p>
               <h3 class="mt-4 t-h4 text-ink">Wir beauftragen den Betrieb.</h3>
               <p class="mt-5 t-body-tight text-ink/85">Das Fachpersonal oder der Handwerksbetrieb wird digital und automatisiert beauftragt. Unser Operationsteam begleitet jeden Task und stellt die korrekte Durchführung sicher.</p>
             </li>
-            <li class="border-t border-ink/20 pt-8">
+            <li data-auf class="border-t border-ink/20 pt-8">
               <p class="t-eyebrow text-ink/80">Schritt 3</p>
               <h3 class="mt-4 t-h4 text-ink">Ihr Task ist abgeschlossen.</h3>
               <p class="mt-5 t-body-tight text-ink/85">Sie erhalten einen Abschlussbericht mit Fotos und die Abrechnung – gebündelt auf der Taskrunner Plattform.</p>
@@ -300,10 +176,10 @@
       </section>
       <section id="kontakt" class="bg-white section-y scroll-mt-[calc(var(--header-h)+24px)]">
         <div class="container-wide">
-          <h2 class="mx-auto max-w-[820px] text-balance t-h2 text-ink text-center">Lieber kurz durchsprechen?</h2>
-          <p class="mx-auto mt-5 max-w-[760px] text-balance t-intro text-ink/80 text-center">Ein Gespräch reicht, um zu klären, ob Taskrunner zu Ihren Objekten und Abläufen passt. Kein Verkaufsgespräch, keine Verpflichtung.</p>
+          <h2 data-auf class="mx-auto max-w-[820px] text-balance t-h2 text-ink text-center">Lieber kurz durchsprechen?</h2>
+          <p data-auf class="mx-auto mt-5 max-w-[760px] text-balance t-intro text-ink/80 text-center">Ein Gespräch reicht, um zu klären, ob Taskrunner zu Ihren Objekten und Abläufen passt. Kein Verkaufsgespräch, keine Verpflichtung.</p>
           <ul class="mt-16 grid gap-5 md:grid-cols-3 lg:mt-20">
-            <li class="flex flex-col rounded-[var(--radius-tile)] bg-ice p-9">
+            <li data-auf class="kachel flex flex-col rounded-[var(--radius-tile)] bg-ice p-9">
               <span class="flex h-[42px] items-center text-blue-600"><svg width="34" height="36" viewBox="0 0 90.62 97.36" aria-hidden="true" focusable="false"><path fill="currentColor" d="M90.39,23.01c-.64-2.05-2.5-3.42-4.65-3.42-.49,0-.98.07-1.46.22l-6.7,2.09V6.14c0-3.88-2.41-6.14-6.08-6.14h-31.04c-3.74,0-6.37,2.19-6.37,6.14v30.15c-3.39,1.47-5.76,2.52-6.27,2.78-4.1,2.09-7.19,6.88-7.88,8.81-.85,1.93-19.95,49.47-19.95,49.47h39.58s9.59-4.02,14.69-9.59c2.15-2.34,3.87-5.52,5.06-8.14h12.5c3.29,0,5.77-2.12,5.77-6.35v-3.6h4.24c2.69,0,4.87-2.18,4.87-4.87s-2.18-4.87-4.87-4.87h-4.24v-1.62h4.36c2.68,0,4.87-2.19,4.87-4.87s-2.18-4.87-4.87-4.87h-4.36v-1.62h4.36c2.68,0,4.87-2.19,4.87-4.87s-2.18-4.87-4.87-4.87h-4.36v-5.11l9.61-3c1.24-.39,2.26-1.24,2.86-2.39.6-1.15.72-2.47.33-3.71ZM73.21,74.29h-27.17c-.16,1.03-.36,2.08-.64,3.17-1.81,6.94-7.76,10.86-8.01,11.02-.23.15-.49.22-.75.22-.46,0-.9-.22-1.17-.64-.42-.65-.23-1.5.41-1.93.05-.03,5.29-3.52,6.83-9.39,1.64-6.24.82-11.77.81-11.83-.02-.12-.01-.23,0-.35h15.84c3.25,0,6.49-1.96,6.49-5.8s-2.86-6.26-6.49-6.26h-26.9v-2.78h5.99V4.97h7.32c.03,1.78,1.15,2.77,2.75,2.77h14.64c1.57,0,2.6-1.02,2.62-2.77h7.43v69.32h0Z"/></svg></span>
               <h3 class="mt-6 t-h4 text-ink">Anrufen</h3>
               <p class="mt-3 t-body-tight text-ink/85">Sie schildern uns Ihre Situation, wir sagen Ihnen ehrlich, wo wir Ihnen Arbeit abnehmen – und wo nicht.</p>
@@ -311,7 +187,7 @@
                 <a href="tel:+4920199999201" class="group inline-flex items-center gap-2 t-body font-bold text-blue-600 transition-colors hover:text-ink">+49 201 99999-201<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="transition-transform group-hover:translate-x-1"><path d="M9 6l6 6-6 6"></path></svg></a>
               </p>
             </li>
-            <li class="flex flex-col rounded-[var(--radius-tile)] bg-ice p-9">
+            <li data-auf class="kachel flex flex-col rounded-[var(--radius-tile)] bg-ice p-9">
               <span class="flex h-[42px] items-center text-blue-600"><svg width="29" height="42" viewBox="0 0 67.67 97.79" aria-hidden="true" focusable="false"><rect fill="currentColor" x="28.91" y="43.96" width="10.25" height="53.83"/> <polygon fill="currentColor" points="27.14 12.02 27.14 6.41 35.5 6.41 35.5 0 23.65 0 23.65 5.05 23.65 6.41 23.65 12.02 27.14 12.02"/> <path fill="currentColor" d="M10.71,41.54v-22.2h.01c0-2.96-2.4-5.36-5.36-5.36S0,16.37,0,19.33v22.21h10.71Z"/> <path fill="currentColor" d="M13.76,17.46h-.01v24.08h53.91v-23.1h.01c0-3.07-2.49-5.55-5.55-5.55v-.05H27.14v7.35h-3.5v-7.35h-12.35c1.49,1,2.46,2.7,2.46,4.63Z"/></svg></span>
               <h3 class="mt-6 t-h4 text-ink">Schreiben</h3>
               <p class="mt-3 t-body-tight text-ink/85">Kurz beschreiben, worum es geht. Wir melden uns mit einer Einschätzung zurück.</p>
@@ -319,7 +195,7 @@
                 <a href="mailto:sales@taskrunner.de" class="group inline-flex items-center gap-2 t-body font-bold text-blue-600 transition-colors hover:text-ink">sales@taskrunner.de<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="transition-transform group-hover:translate-x-1"><path d="M9 6l6 6-6 6"></path></svg></a>
               </p>
             </li>
-            <li class="flex flex-col rounded-[var(--radius-tile)] bg-ice p-9">
+            <li data-auf class="kachel flex flex-col rounded-[var(--radius-tile)] bg-ice p-9">
               <span class="flex h-[42px] items-center text-blue-600"><svg width="43" height="29" viewBox="0 0 97.55 65.03" aria-hidden="true" focusable="false"><path fill="currentColor" d="M66.78,65.05h30.77s-4.31-20.04-14.97-35.8c-3-4.69-10.81-8.96-16.59-2.4-5.54,6.28-10.9,27.55-10.9,27.55,0,0-4.2,0-9.01,0l-9.24-19.59c-.87-2.15-3.17-3.76-5.38-3.76H3.78c-1.32,0-2.47.57-3.15,1.57-.71,1.04-.83,2.41-.31,3.75l11.7,24.82c.87,2.15,3.17,3.79,5.39,3.79l46.05.09,11.63-25.44c.35-.76,1.24-1.09,2-.75.76.35,1.09,1.24.75,2l-11.06,24.19ZM15.82,59.62l-11.55-24.49h27.18c.51,0,1.34.56,1.59,1.22l8.5,18.03c-5.03,0-9.54,0-9.54,0-2.92,0-5.47,2.36-5.48,5.28,0,.41.06.8.14,1.18h-9.26c-.5,0-1.34-.56-1.59-1.21Z"/> <path fill="currentColor" d="M51.59,24.09h.02c1.93.96,11.71,3.9,21.28-7,3.81-4.71,5.17-11.45,5.17-11.45,0,0-4.3,2.47-7.94,1.45-2.47-.69-5.11-3.3-5.62-3.82-1.22-1.13-2.67-2.05-4.34-2.61-6.47-2.21-13.5,1.32-15.71,7.85-2.14,6.36,1.05,13.14,7.14,15.58Z"/></svg></span>
               <h3 class="mt-6 t-h4 text-ink">Ausprobieren</h3>
               <p class="mt-3 t-body-tight text-ink/85">Die Plattform unverbindlich testen und einen ersten Auftrag anlegen.</p>
@@ -383,5 +259,6 @@
       </div>
     </footer>
     <script src="assets/app.js" defer></script>
+    <script src="assets/schaubilder.js" defer></script>
   </body>
 </html>

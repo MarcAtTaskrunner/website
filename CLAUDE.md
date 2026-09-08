@@ -50,7 +50,10 @@ Vorgabe `index.html`), `kontakt` (Vorgabe `index.html#kontakt`), `robots`
 `ogbeschreibung` (Vorgabe: wie `beschreibung`).
 
 Der `<body>`-Tag steht bewusst in der Seite selbst, weil er sich je Seite
-unterscheidet.
+unterscheidet. Die Startseite trägt `class="variante-b"` – daran hängen ihre
+eigene Typografie-Skala, die durchsichtige Kopfzeile mit Logowechsel und die
+Einblendungen (alles in `tailwind/input.css`). Die Unterseiten haben das nicht.
+Sie benutzt außerdem `bausteine/kopfzeile-start.html` statt `kopfzeile.html`.
 
 Menüpunkte tragen in der Kopfzeile ein `data-aktiv="…"`. Baut `bauen.py` die
 Seite, auf die ein Punkt zeigt, ersetzt es dessen `class` durch diesen Wert
