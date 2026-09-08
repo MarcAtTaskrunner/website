@@ -777,3 +777,30 @@ html.js-auf .variante-b [data-auf].da { opacity: 1; translate: none; }
   outline-offset: 3px;
   border-radius: 8px;
 }
+
+/* ------------------------------------------------------------------ *
+ *  Menue: ein Blauton, die eigene Seite traegt einen Strich
+ *
+ *  Alle Menuepunkte stehen in #1155cc (--color-blue-medium). Da die
+ *  Farbe die aktuelle Seite nicht mehr abhebt, bekommt sie einen
+ *  dauerhaften Unterstrich - auf der Startseite denselben, den der
+ *  Hover dort ohnehin zeichnet, deshalb auch scaleX(1). Ungeschachtelt
+ *  notiert, damit es auch auf den Unterseiten gilt, die kein
+ *  .variante-b am body tragen.
+ * ------------------------------------------------------------------ */
+header nav a[aria-current="page"] { position: relative; }
+header nav a[aria-current="page"]::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -5px;
+  height: 1.5px;
+  background: currentColor;
+  transform: scaleX(1);
+}
+/* Im Klappmenue steht der Punkt als Zeile - dort traegt ihn der Grund. */
+header #mobile-nav a[aria-current="page"] {
+  background-color: var(--color-ice);
+}
+header #mobile-nav a[aria-current="page"]::after { content: none; }
