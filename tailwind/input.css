@@ -375,8 +375,6 @@ html.js-auf .variante-b [data-auf].da { opacity: 1; translate: none; }
   .variante-b .zahl-zelle { transition: background-color var(--dauer-kurz) var(--kurve); }
   .variante-b .zahl-zelle:hover { background-color: #f6f9fe; }
 
-  .variante-b .logo-reihe img { transition: opacity var(--dauer-kurz) var(--kurve); }
-  .variante-b .logo-reihe img:hover { opacity: .9; }
 
   /* Hauptnavigation: Unterstrich waechst von links */
   .variante-b header nav[aria-label="Hauptnavigation"] a { position: relative; }
@@ -391,12 +389,6 @@ html.js-auf .variante-b [data-auf].da { opacity: 1; translate: none; }
     transition: transform var(--dauer-kurz) var(--kurve);
   }
   .variante-b header nav[aria-label="Hauptnavigation"] a:hover::after { transform: scaleX(1); }
-
-  /* Video-Band: sehr leichter Zoom */
-  .variante-b .band-video video,
-  .variante-b .band-video img { transition: transform .6s var(--kurve); }
-  .variante-b .band-video:hover video,
-  .variante-b .band-video:hover img { transform: scale(1.02); }
 }
 
 @media (prefers-reduced-motion: reduce) {
