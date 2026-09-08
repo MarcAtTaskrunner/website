@@ -247,6 +247,19 @@ html.js-auf .variante-b [data-auf].da { opacity: 1; translate: none; }
   height: 100vh;
   height: 100dvh;
   min-height: 620px;
+
+  /* Farbverlauf aus dem Entwurf "Startseite B" (Variante Vorlage):
+     sechs Lichter auf einer diagonalen Grundlage. Von unten rechts nach
+     oben links wird es dunkler, damit die weisse Schrift unten links und
+     das Rad darueber stehen koennen. Ersetzt die Flaeche aus bg-navy. */
+  background:
+    radial-gradient(26% 30% at 71% 88%, rgba(227,245,255,0.92) 0%, rgba(227,245,255,0.4) 28%, rgba(227,245,255,0) 66%),
+    radial-gradient(46% 52% at 74% 86%, #00b1ff 0%, rgba(0,177,255,0.55) 36%, rgba(0,177,255,0) 74%),
+    radial-gradient(40% 48% at 95% 62%, rgba(0,177,255,0.7) 0%, rgba(0,177,255,0) 70%),
+    radial-gradient(58% 62% at 99% 26%, #024cff 0%, rgba(2,76,255,0.5) 42%, rgba(2,76,255,0) 76%),
+    radial-gradient(56% 66% at 30% 62%, #0024bc 0%, rgba(0,36,188,0.5) 44%, rgba(0,36,188,0) 78%),
+    radial-gradient(78% 72% at 2% 0%, #000d30 0%, rgba(0,13,48,0.94) 24%, rgba(0,13,48,0) 64%),
+    linear-gradient(126deg, #000d30 0%, #0024bc 50%, #024cff 100%);
 }
 
 .variante-b header .logo-dunkel,
