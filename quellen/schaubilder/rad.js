@@ -227,14 +227,47 @@
         this.marken.push({ txt: txt + "...", w: mw });
       }
     }
+    /* Ruhelage des Zeigers. Ohne Maus wirkte das Rad unfertig - deshalb
+       liegt von Anfang an ein gedachter Zeiger auf dem Ring, als haette
+       man schon einmal hingezeigt. Der Winkel ist ueber data-ruhewinkel
+       einstellbar: 0 Grad ist rechts, 90 unten, 225 oben links. Dort
+       steht das Namensschild frei neben dem Rad, ueber der Ueberschrift.
+       Auf schmalen Fenstern bleibt es aus - da ist neben dem Rad kein
+       Platz fuer das Schild. */
+    var ruheWinkel = parseFloat(this.flaeche.dataset.ruhewinkel);
+    if (isNaN(ruheWinkel)) ruheWinkel = 225;
+    this.zeigerRuhe = null;
+    if (this.b >= 700) {
+      var rw = ruheWinkel * Math.PI / 180;
+      this.zeigerRuhe = {
+        x: this.cx + Math.cos(rw) * this.radius,
+        y: this.cy + Math.sin(rw) * this.radius
+      };
+      /* Der getroffene Punkt ist gleich offen statt aufzugehen: sonst
+         zeigte das erste Bild einen halb gewachsenen Punkt, und bei
+         abgeschalteter Bewegung bliebe es dabei. */
+      var jn = Math.round(((rw + 1.5708) / 6.283) * nRand);
+      this.aktiv = ((jn % nRand) + nRand) % nRand;
+      this.rand[this.aktiv].gr = 1;
+    }
+    this.zeiger = this.zeigerRuhe;
+
     this.ruht = this.radRuht;
-    this.wachBis = 0;
+    /* Drei Sekunden wach: so lange brauchen die Saiten, bis sie in der
+       ausgelenkten Lage stehen. Danach ruht das Bild darin. */
+    this.wachBis = this.zeigerRuhe ? 3 : 0;
   };
 
   /* Im Ruhezustand wird nicht neu gezeichnet. Nach dem Verlassen laeuft
      es weiter, bis die Saiten ausgeschwungen sind. */
   Schaubild.prototype.radRuht = function () {
-    if (this.zeiger) { this.wachBis = this.t + 2.2; return false; }
+    /* Nur ein echter Zeiger haelt das Bild wach. Die Ruhelage steht
+       still, sie muss nicht Bild fuer Bild neu gezeichnet werden -
+       daran erkennbar, dass es dasselbe Objekt ist. */
+    if (this.zeiger && this.zeiger !== this.zeigerRuhe) {
+      this.wachBis = this.t + 2.2;
+      return false;
+    }
     return this.t > this.wachBis;
   };
 

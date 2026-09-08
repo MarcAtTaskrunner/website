@@ -114,7 +114,11 @@
         var r = s.flaeche.getBoundingClientRect();
         s.zeiger = { x: e.clientX - r.left, y: e.clientY - r.top };
       }, { passive: true });
-      buehne.addEventListener("pointerleave", function () { s.zeiger = null; }, { passive: true });
+      /* Zurueck in die Ruhelage, nicht ins Leere - sonst faellt das Rad
+         beim Verlassen in einen Zustand, den es beim Laden nie hatte. */
+      buehne.addEventListener("pointerleave", function () {
+        s.zeiger = s.zeigerRuhe || null;
+      }, { passive: true });
     }
 
     var wirt = this.flaeche.closest("li");
