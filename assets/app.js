@@ -250,10 +250,10 @@
 
 
   /* ---------------------------------------------------------------- *
-   *  Zahlenband: das Leuchten wandert
-   *  Die beiden Linien tragen je eine Leuchtlage. Beim Ueberfahren
-   *  einer Zelle laeuft sie dorthin, statt an der einen aus- und an
-   *  der naechsten aufzugehen.
+   *  Zahlenband: das Leuchten folgt dem Zeiger
+   *  Die beiden Linien tragen je eine Leuchtlage. Sie haengt am
+   *  Mauszeiger, nicht an der Zelle darunter - beim Wandern ueber das
+   *  Band laeuft sie also mit, statt von Feld zu Feld zu springen.
    * ---------------------------------------------------------------- */
   (function () {
     var band = document.querySelector(".zahlen-band");
@@ -265,31 +265,49 @@
        eine waagerechte Lage koennte dort gar nicht auf sie zeigen. */
     var reihe = window.matchMedia("(min-width: 640px) and (hover: hover) and (pointer: fine)");
 
+    /* So breit wie eine Zelle - das gibt dem Schein ein Mass, das zum
+       Raster passt, ohne dass er daran haengt. */
     band.style.setProperty("--leucht-b", (100 / zellen.length) + "%");
 
-    var an = false;
-    Array.prototype.forEach.call(zellen, function (zelle, i) {
-      zelle.addEventListener("pointerenter", function () {
-        if (!reihe.matches) return;
-        if (!an) {
-          /* Aus dem Nichts nicht von links hereinfahren, sondern gleich
-             an der richtigen Stelle aufgehen. */
-          band.classList.add("ohne-lauf");
-          band.style.setProperty("--leucht-i", i);
-          void band.offsetWidth;              /* Umbruch erzwingen */
-          band.classList.remove("ohne-lauf");
-        } else {
-          band.style.setProperty("--leucht-i", i);
-        }
-        band.style.setProperty("--leucht-an", "1");
-        an = true;
-      }, { passive: true });
-    });
+    /* Die Kante des Bandes wandert beim Scrollen nicht, nur beim
+       Aendern der Fenstergroesse. Einmal je Besuch messen reicht also,
+       statt bei jeder Zeigerbewegung. */
+    var links = 0, breite = 0;
+    var messen = function () {
+      var r = band.getBoundingClientRect();
+      links = r.left;
+      breite = r.width;
+    };
+
+    var setzen = function (e, sofort) {
+      var x = Math.max(0, Math.min(breite, e.clientX - links));
+      if (sofort) band.classList.add("ohne-lauf");
+      band.style.setProperty("--leucht-x", x + "px");
+      if (sofort) {
+        void band.offsetWidth;            /* Umbruch erzwingen */
+        band.classList.remove("ohne-lauf");
+      }
+    };
+
+    band.addEventListener("pointerenter", function (e) {
+      if (!reihe.matches) return;
+      messen();
+      /* Aus dem Nichts nicht von links hereinfahren, sondern gleich an
+         der richtigen Stelle aufgehen. */
+      setzen(e, true);
+      band.style.setProperty("--leucht-an", "1");
+    }, { passive: true });
+
+    band.addEventListener("pointermove", function (e) {
+      if (!reihe.matches) return;
+      setzen(e, false);
+    }, { passive: true });
 
     band.addEventListener("pointerleave", function () {
       band.style.setProperty("--leucht-an", "0");
-      an = false;
     }, { passive: true });
+
+    window.addEventListener("resize", messen, { passive: true });
   })();
 
 

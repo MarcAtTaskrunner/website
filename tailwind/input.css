@@ -203,9 +203,8 @@
  * ------------------------------------------------------------------ */
 .variante-b {
   --kurve:      cubic-bezier(.22, .61, .36, 1);
-  --dauer-kurz:   .18s;
-  --dauer-mittel: .34s;    /* Wege, die man mit dem Auge verfolgt */
-  --dauer-lang:   .5s;
+  --dauer-kurz: .18s;
+  --dauer-lang: .5s;
 }
 
 /* Bewusst "translate" statt "transform": so bleibt transform fuer das
@@ -700,14 +699,14 @@ html.js-auf .variante-b [data-auf].da { opacity: 1; translate: none; }
   .zahl-zelle + .zahl-zelle { border-top: 1px solid rgba(26, 64, 129, 0.12); }
 }
 
-/* Das Leuchten ist eine einzige Lage je Linie, die zur ueberfahrenen
-   Zelle wandert - nicht fuenf, die abwechselnd auf- und zugehen. Sonst
-   ginge das Licht beim Wechsel kurz aus, statt hinueberzulaufen.
+/* Das Leuchten ist eine einzige Lage je Linie, die dem Zeiger folgt -
+   nicht fuenf, die abwechselnd auf- und zugehen, und auch nicht von
+   Zelle zu Zelle springend. app.js schreibt die Zeigerstelle nach
+   --leucht-x; das -50% darin setzt die Lage mittig darauf.
 
-   Gerechnet wird in Prozent: die Lage ist so breit wie eine Zelle
-   (--leucht-b, von app.js einmal gesetzt), und translateX(i * 100%)
-   schiebt sie um ihre eigene Breite je Zelle weiter. Das ueberlebt
-   jede Fensteraenderung ohne Nachmessen. */
+   Der kurze Uebergang ist Absicht: er buegelt das Zittern des Zeigers
+   aus und laesst das Licht dem Mauszeiger leicht nachlaufen. Ohne ihn
+   klebt es hart am Zeiger und wirkt nervoes. */
 .zahlen-band::before,
 .zahlen-band::after {
   content: "";
@@ -715,7 +714,7 @@ html.js-auf .variante-b [data-auf].da { opacity: 1; translate: none; }
   left: 0;
   height: 2px;
   width: var(--leucht-b, 20%);
-  transform: translateX(calc(var(--leucht-i, 0) * 100%));
+  transform: translateX(calc(var(--leucht-x, 0px) - 50%));
   opacity: var(--leucht-an, 0);
   pointer-events: none;
   background: linear-gradient(90deg,
@@ -725,8 +724,8 @@ html.js-auf .variante-b [data-auf].da { opacity: 1; translate: none; }
     rgba(2, 76, 255, 0.85) 80%,
     rgba(2, 76, 255, 0) 100%);
   transition:
-    transform var(--dauer-mittel, .34s) var(--kurve, ease),
-    opacity var(--dauer-kurz, .22s) var(--kurve, ease);
+    transform var(--dauer-kurz, .18s) var(--kurve, ease),
+    opacity var(--dauer-kurz, .18s) var(--kurve, ease);
 }
 .zahlen-band::before { top: -1px; }
 .zahlen-band::after  { bottom: -1px; }
@@ -734,4 +733,4 @@ html.js-auf .variante-b [data-auf].da { opacity: 1; translate: none; }
 /* Beim ersten Auftauchen soll die Lage nicht von links hereinfahren:
    app.js schaltet den Uebergang fuer dieses eine Bild ab. */
 .zahlen-band.ohne-lauf::before,
-.zahlen-band.ohne-lauf::after { transition: opacity var(--dauer-kurz, .22s) var(--kurve, ease); }
+.zahlen-band.ohne-lauf::after { transition: opacity var(--dauer-kurz, .18s) var(--kurve, ease); }
