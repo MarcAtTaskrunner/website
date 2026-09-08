@@ -128,27 +128,25 @@
   --vb-linie:    #e4e9f2;    /* Haarlinien */
 }
 
-/* --- Ueberschriften: leicht statt fett, enger, mit negativer Laufweite --- */
+/* --- Ueberschriften ---------------------------------------------------
+   h1 und h2 folgen der Hausskala aus TYPOGRAFIE.md (48/64/80 bzw.
+   40/48/56) - hier steht dazu bewusst nichts, sonst gaebe es zwei
+   Wahrheiten. Eigene Werte hat die Startseite nur fuer h3 und h4, und
+   das Gewicht ist durchgehend Medium statt Bold. */
 .variante-b h1, .variante-b .t-h1,
 .variante-b h2, .variante-b .t-h2,
 .variante-b h3, .variante-b .t-h3,
 .variante-b h4, .variante-b .t-h4 {
   font-weight: 500;          /* DIN Pro Medium */
 }
-.variante-b h1, .variante-b .t-h1 { font-size: 34px; line-height: 1.12; letter-spacing: -0.021em; }
-.variante-b h2, .variante-b .t-h2 { font-size: 27px; line-height: 1.12; letter-spacing: -0.020em; }
 .variante-b h3, .variante-b .t-h3 { font-size: 22px; line-height: 1.14; letter-spacing: -0.012em; }
 .variante-b h4, .variante-b .t-h4 { font-size: 19px; line-height: 1.18; letter-spacing: -0.010em; }
 
 @media (min-width: 735px) {
-  .variante-b h1, .variante-b .t-h1 { font-size: 42px; }
-  .variante-b h2, .variante-b .t-h2 { font-size: 31px; }
   .variante-b h3, .variante-b .t-h3 { font-size: 25px; }
   .variante-b h4, .variante-b .t-h4 { font-size: 21px; }
 }
 @media (min-width: 1069px) {
-  .variante-b h1, .variante-b .t-h1 { font-size: 50px; line-height: 1.10; }
-  .variante-b h2, .variante-b .t-h2 { font-size: 36px; }
   .variante-b h3, .variante-b .t-h3 { font-size: 28px; }
   .variante-b h4, .variante-b .t-h4 { font-size: 23px; }
 }
@@ -613,18 +611,3 @@ html.js-auf .variante-b [data-auf].da { opacity: 1; translate: none; }
     border-radius: 8px;
   }
 }
-
-
-/* ------------------------------------------------------------------ *
- *  Feste Groesse fuer die beiden Leitueberschriften der Startseite
- *
- *  "Facility Management leicht gemacht!" und "Schnell, einfach und
- *  Transparent" stehen fest auf 56 px - unabhaengig von der Skala und
- *  von der Fensterbreite. Deshalb eine eigene Klasse und nicht t-h2:
- *  dieselbe Klasse tragen auch die Statistik-Zahlen, die klein bleiben.
- *
- *  Steht bewusst am Dateiende - so gewinnt die Regel gegen die Stufen
- *  der Typografie-Skala, ohne dass es Ausrufezeichen braucht.
- * ------------------------------------------------------------------ */
-.variante-b .t-56,
-.t-56 { font-size: 56px; }
