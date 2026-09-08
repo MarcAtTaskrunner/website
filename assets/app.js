@@ -248,4 +248,49 @@
     pruefe();
   })();
 
+
+  /* ---------------------------------------------------------------- *
+   *  Zahlenband: das Leuchten wandert
+   *  Die beiden Linien tragen je eine Leuchtlage. Beim Ueberfahren
+   *  einer Zelle laeuft sie dorthin, statt an der einen aus- und an
+   *  der naechsten aufzugehen.
+   * ---------------------------------------------------------------- */
+  (function () {
+    var band = document.querySelector(".zahlen-band");
+    if (!band) return;
+    var zellen = band.querySelectorAll(".zahl-zelle");
+    if (!zellen.length) return;
+
+    /* Nur im Nebeneinander: gestapelt liegen die Zellen untereinander,
+       eine waagerechte Lage koennte dort gar nicht auf sie zeigen. */
+    var reihe = window.matchMedia("(min-width: 640px) and (hover: hover) and (pointer: fine)");
+
+    band.style.setProperty("--leucht-b", (100 / zellen.length) + "%");
+
+    var an = false;
+    Array.prototype.forEach.call(zellen, function (zelle, i) {
+      zelle.addEventListener("pointerenter", function () {
+        if (!reihe.matches) return;
+        if (!an) {
+          /* Aus dem Nichts nicht von links hereinfahren, sondern gleich
+             an der richtigen Stelle aufgehen. */
+          band.classList.add("ohne-lauf");
+          band.style.setProperty("--leucht-i", i);
+          void band.offsetWidth;              /* Umbruch erzwingen */
+          band.classList.remove("ohne-lauf");
+        } else {
+          band.style.setProperty("--leucht-i", i);
+        }
+        band.style.setProperty("--leucht-an", "1");
+        an = true;
+      }, { passive: true });
+    });
+
+    band.addEventListener("pointerleave", function () {
+      band.style.setProperty("--leucht-an", "0");
+      an = false;
+    }, { passive: true });
+  })();
+
+
 })();
