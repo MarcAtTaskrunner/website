@@ -568,3 +568,18 @@ html.js-auf .variante-b [data-auf].da { opacity: 1; translate: none; }
     border-radius: 8px;
   }
 }
+
+
+/* ------------------------------------------------------------------ *
+ *  Feste Groesse fuer die beiden Leitueberschriften der Startseite
+ *
+ *  "Facility Management leicht gemacht!" und "Schnell, einfach und
+ *  Transparent" stehen fest auf 56 px - unabhaengig von der Skala und
+ *  von der Fensterbreite. Deshalb eine eigene Klasse und nicht t-h2:
+ *  dieselbe Klasse tragen auch die Statistik-Zahlen, die klein bleiben.
+ *
+ *  Steht bewusst am Dateiende - so gewinnt die Regel gegen die Stufen
+ *  der Typografie-Skala, ohne dass es Ausrufezeichen braucht.
+ * ------------------------------------------------------------------ */
+.variante-b .t-56,
+.t-56 { font-size: 56px; }
