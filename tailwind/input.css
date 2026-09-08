@@ -240,13 +240,17 @@ html.js-auf .variante-b [data-auf].da { opacity: 1; translate: none; }
   transition: background-color .22s var(--kurve), box-shadow .22s var(--kurve);
 }
 .variante-b .hero-b { padding-top: var(--header-h); }
-/* Hero fuellt den Bildschirm. dvh beruecksichtigt die Browserleisten auf
-   dem Handy, vh ist der Rueckfall. Die Kopfleiste liegt darueber, also
-   wird ihre Hoehe nicht abgezogen. */
+/* Hero fuellt den Bildschirm und ragt unten darueber hinaus. Die
+   Kopfleiste liegt darueber, ihre Hoehe wird also nicht abgezogen. */
 .variante-b .hero-voll {
-  height: 100vh;
-  height: 100dvh;
-  min-height: 620px;
+  /* Der Hero ragt 68 px ueber die Bildschirmhoehe hinaus und ist unten
+     mit 68 px abgerundet. dvh beruecksichtigt die Browserleisten auf
+     dem Handy, vh ist der Rueckfall. */
+  height: calc(100vh + 68px);
+  height: calc(100dvh + 68px);
+  min-height: 688px;
+  border-bottom-left-radius: 68px;
+  border-bottom-right-radius: 68px;
 
   /* Farbverlauf aus dem Entwurf "Startseite B" (Variante Vorlage):
      sechs Lichter auf einer diagonalen Grundlage. Von unten rechts nach
