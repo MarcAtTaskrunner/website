@@ -33,6 +33,18 @@ der Cloudflare-CI. Deshalb liegen die gebauten Seiten im Git.
 Suchen statt lesen: die Seiten sind zeilenweise umgebrochen, `grep -n` findet
 die Stelle. Ganze Dateien nur öffnen, wenn es wirklich nötig ist.
 
+## Achtung: keine neuen Tailwind-Klassen
+
+Tailwind kann hier nicht laufen (kein Node). `assets/style.css` enthält nur
+Klassen, die zum Zeitpunkt des letzten CI-Builds im HTML standen. Eine neue
+Klasse wie `text-left` wirkt deshalb **lokal nicht** – und nach dem nächsten
+Push plötzlich doch, was Layouts still verschiebt.
+
+Also: entweder eine Klasse verwenden, die schon irgendwo im HTML steht
+(`grep -c '\.text-left{' assets/style.css` zeigt, ob es sie gibt), oder die
+Eigenschaft als richtige Regel in `tailwind/input.css` schreiben und
+denselben Text minifiziert in `assets/style.css` ergänzen.
+
 ## Vorlagensyntax (mehr kann `bauen.py` nicht)
 
 ```html

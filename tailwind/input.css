@@ -734,3 +734,46 @@ html.js-auf .variante-b [data-auf].da { opacity: 1; translate: none; }
    app.js schaltet den Uebergang fuer dieses eine Bild ab. */
 .zahlen-band.ohne-lauf::before,
 .zahlen-band.ohne-lauf::after { transition: opacity var(--dauer-kurz, .18s) var(--kurve, ease); }
+
+/* ------------------------------------------------------------------ *
+ *  Zahlenband: Felder unter dem Band
+ *
+ *  Zellen mit data-feld klappen darunter einen Bereich auf - beim
+ *  Ueberfahren mit dem Zeiger, beim Antippen und beim Anspringen mit
+ *  der Tastatur. Aufgeklappt wird ueber grid-template-rows: eine Hoehe
+ *  von auto laesst sich nicht ueberblenden, 0fr auf 1fr schon.
+ * ------------------------------------------------------------------ */
+.zahlen-feld {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows var(--dauer-kurz, .18s) var(--kurve, ease),
+    opacity var(--dauer-kurz, .18s) var(--kurve, ease);
+}
+.zahlen-feld > * {
+  overflow: hidden;
+  min-height: 0;             /* sonst laesst sich die Zeile nicht auf 0 ziehen */
+  padding-top: 2.25rem;      /* Abstand zum Band, wenn das Feld offen ist */
+}
+.zahlen-feld[data-offen] {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+/* Der Knopf traegt den Inhalt der Zelle und soll aussehen wie der Text
+   daneben, nicht wie ein Knopf. */
+.zahl-knopf {
+  appearance: none;
+  background: none;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  text-align: left;          /* Knoepfe zentrieren von Haus aus */
+  cursor: pointer;
+}
+.zahl-knopf:focus-visible {
+  outline: 2px solid var(--color-blue-medium);
+  outline-offset: 3px;
+  border-radius: 8px;
+}

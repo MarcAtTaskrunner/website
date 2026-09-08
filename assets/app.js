@@ -308,6 +308,52 @@
     }, { passive: true });
 
     window.addEventListener("resize", messen, { passive: true });
+
+    /* -------------------------------------------------------------- *
+     *  Felder unter dem Band
+     *  Zellen mit data-feld zeigen darunter einen Bereich. Mit Zeiger
+     *  beim Ueberfahren, sonst beim Antippen; die Tastatur erreicht
+     *  ihn ueber den Knopf in der Zelle.
+     * -------------------------------------------------------------- */
+    var fein = window.matchMedia("(hover: hover) and (pointer: fine)");
+    var block = band.parentElement;
+    var felder = block.querySelectorAll("[data-feld-inhalt]");
+    var offen = null;
+
+    var zeige = function (name) {
+      if (offen === name) return;
+      offen = name;
+      Array.prototype.forEach.call(felder, function (feld) {
+        if (feld.getAttribute("data-feld-inhalt") === name) feld.setAttribute("data-offen", "");
+        else feld.removeAttribute("data-offen");
+      });
+      Array.prototype.forEach.call(band.querySelectorAll("[data-feld]"), function (zelle) {
+        var knopf = zelle.querySelector(".zahl-knopf");
+        if (knopf) knopf.setAttribute("aria-expanded", zelle.getAttribute("data-feld") === name ? "true" : "false");
+      });
+    };
+
+    Array.prototype.forEach.call(band.querySelectorAll("[data-feld]"), function (zelle) {
+      var name = zelle.getAttribute("data-feld");
+      var knopf = zelle.querySelector(".zahl-knopf");
+      zelle.addEventListener("pointerenter", function () {
+        if (fein.matches) zeige(name);
+      }, { passive: true });
+      if (!knopf) return;
+      knopf.addEventListener("click", function () { zeige(offen === name ? null : name); });
+      /* Ohne Zeiger fuehrt der Weg ueber die Tastatur. */
+      knopf.addEventListener("focus", function () { if (!fein.matches) zeige(name); });
+    });
+
+    /* Erst ausserhalb von Band und Feld wieder zuklappen - sonst faellt
+       es zu, sobald der Zeiger vom Band nach unten ins Feld wandert. */
+    block.addEventListener("pointerleave", function () {
+      if (fein.matches) zeige(null);
+    }, { passive: true });
+
+    block.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") zeige(null);
+    });
   })();
 
 

@@ -98,14 +98,12 @@
             </li>
           </ul>
         </div>
+        </div></div>
       </section>
       <section class="bg-white section-y" aria-label="Taskrunner in Zahlen">
         <div class="container-wide">
           <ul data-auf class="zahlen-band grid grid-cols-1 sm:grid-cols-5">
-            <li class="zahl-zelle flex flex-col justify-center px-0 py-8 sm:px-7">
-              <p class="t-h2 tabular-nums text-ink">53</p>
-              <p class="mt-2 t-caption">Kunden</p>
-            </li>
+            <li class="zahl-zelle" data-feld="kunden"><button type="button" class="zahl-knopf flex w-full flex-col justify-center px-0 py-8 sm:px-7" aria-expanded="false" aria-controls="feld-kunden"><span class="t-h2 tabular-nums text-ink">53</span><span class="mt-2 t-caption">Kunden</span></button></li>
             <li class="zahl-zelle flex flex-col justify-center px-0 py-8 sm:px-7">
               <p class="t-h2 tabular-nums text-ink">20.241</p>
               <p class="mt-2 t-caption">Erreichbare Techniker</p>
@@ -123,7 +121,21 @@
               <p class="mt-2 t-caption">Betreute Standorte</p>
             </li>
           </ul>
-        </div>
+          <div id="feld-kunden" class="zahlen-feld" data-feld-inhalt="kunden">
+            <div>
+              <p class="t-caption text-ink/55">Unternehmen, die mit Taskrunner arbeiten</p>
+              <div class="logo-reihe mt-6 flex flex-wrap items-center gap-x-7 gap-y-5 sm:gap-x-9">
+                <img src="images/kundenlogos/amplifon.svg" alt="Amplifon" loading="lazy" decoding="async" width="112" height="27" class="h-[var(--h)] w-auto shrink-0 object-contain brightness-0 opacity-45 sm:h-[var(--h-sm)] lg:h-[var(--h-lg)]" style="--h:15px;--h-sm:18px;--h-lg:22px">
+                <img src="images/kundenlogos/dm.svg" alt="dm-drogerie markt" loading="lazy" decoding="async" width="57" height="38" class="h-[var(--h)] w-auto shrink-0 object-contain brightness-0 opacity-45 sm:h-[var(--h-sm)] lg:h-[var(--h-lg)]" style="--h:21px;--h-sm:25px;--h-lg:31px">
+                <img src="images/kundenlogos/globus.svg" alt="Globus" loading="lazy" decoding="async" width="51" height="41" class="h-[var(--h)] w-auto shrink-0 object-contain brightness-0 opacity-45 sm:h-[var(--h-sm)] lg:h-[var(--h-lg)]" style="--h:22px;--h-sm:26px;--h-lg:33px">
+                <img src="images/kundenlogos/rossmann.svg" alt="Rossmann" loading="lazy" decoding="async" width="186" height="26" class="h-[var(--h)] w-auto shrink-0 object-contain brightness-0 opacity-45 sm:h-[var(--h-sm)] lg:h-[var(--h-lg)]" style="--h:14px;--h-sm:17px;--h-lg:21px">
+                <img src="images/kundenlogos/bonita.svg" alt="Bonita" loading="lazy" decoding="async" width="141" height="26" class="h-[var(--h)] w-auto shrink-0 object-contain brightness-0 opacity-45 sm:h-[var(--h-sm)] lg:h-[var(--h-lg)]" style="--h:14px;--h-sm:17px;--h-lg:21px">
+                <img src="images/kundenlogos/fressnapf.svg" alt="Fressnapf" loading="lazy" decoding="async" width="163" height="26" class="h-[var(--h)] w-auto shrink-0 object-contain brightness-0 opacity-45 sm:h-[var(--h-sm)] lg:h-[var(--h-lg)]" style="--h:14px;--h-sm:17px;--h-lg:21px">
+                <img src="images/kundenlogos/obi.svg" alt="OBI" loading="lazy" decoding="async" width="114" height="27" class="h-[var(--h)] w-auto shrink-0 object-contain brightness-0 opacity-45 sm:h-[var(--h-sm)] lg:h-[var(--h-lg)]" style="--h:15px;--h-sm:18px;--h-lg:22px">
+                <img src="images/kundenlogos/avis.svg" alt="Avis" loading="lazy" decoding="async" width="95" height="29" class="h-[var(--h)] w-auto shrink-0 object-contain brightness-0 opacity-45 sm:h-[var(--h-sm)] lg:h-[var(--h-lg)]" style="--h:16px;--h-sm:19px;--h-lg:24px">
+                <img src="images/kundenlogos/flink.svg" alt="Flink" loading="lazy" decoding="async" width="105" height="27" class="h-[var(--h)] w-auto shrink-0 object-contain brightness-0 opacity-45 sm:h-[var(--h-sm)] lg:h-[var(--h-lg)]" style="--h:15px;--h-sm:18px;--h-lg:22px">
+              </div>
+            </div>
       </section>
       <section class="bg-ice section-y">
         <div class="container-wide">
