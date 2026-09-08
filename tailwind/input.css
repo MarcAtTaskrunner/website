@@ -253,7 +253,6 @@ html.js-auf .variante-b [data-auf].da { opacity: 1; translate: none; }
   min-height: calc(620px + var(--hero-ueberstand));
   border-bottom-left-radius: 34px;
   border-bottom-right-radius: 34px;
-  isolation: isolate;
 
   /* Farbverlauf aus dem Entwurf "Startseite B" (Variante Vorlage):
      sechs Lichter auf einer diagonalen Grundlage. Von unten rechts nach
@@ -275,35 +274,54 @@ html.js-auf .variante-b [data-auf].da { opacity: 1; translate: none; }
   margin-bottom: var(--hero-ueberstand);
 }
 
-/* Grobe Koernung ueber dem Verlauf. Das Muster ist gerechnet, kein Bild:
-   feTurbulence als SVG im data-URI, entsaettigt und kachelbar. Eine
-   hohe baseFrequency macht die Koerner klein - 0.85 ergibt gut einen
-   Pixel, also Filmkorn und keine Flecken. Vier Oktaven legen mehrere
-   Korngroessen uebereinander, das laesst es organisch wirken statt
-   gleichmaessig gerastert. Die Deckung wird auf 1 festgesetzt: sonst
-   ist auch der Alphakanal verrauscht und das Korn hellt den Verlauf
-   im Mittel auf.
-   color-interpolation-filters='sRGB' gehoert dazu: ohne das rechnet
-   der Filter in linearem RGB und das Korn liegt im Mittel bei Grau 187
-   statt 128 - es wuerde den ganzen Verlauf aufhellen. So bleibt es
-   neutral, und mix-blend-mode: overlay hellt helle Koerner auf und
-   dunkelt dunkle ab - der Verlauf selbst bleibt unveraendert.
-
-   z-index 0 haelt die Koernung unter Rad und Text: die liegen ueber
-   .hero-voll > * bei 1. isolation am Hero sorgt dafuer, dass sich das
-   Blenden auf den Hero beschraenkt. */
-.variante-b .hero-voll::before {
+/* ------------------------------------------------------------------ *
+ *  Korn ueber einem Verlauf
+ *
+ *  Wer .mit-korn traegt, bekommt eine Lage Filmkorn ueber seinen
+ *  Hintergrund gelegt. Das Muster ist gerechnet, kein Bild:
+ *  feTurbulence als SVG im data-URI, entsaettigt und kachelbar.
+ *  Drei Dinge haengen daran:
+ *    baseFrequency 0.85  Korn von rund einem Pixel, also Filmkorn
+ *    numOctaves 4        mehrere Korngroessen uebereinander - das
+ *                        laesst es organisch wirken statt gerastert
+ *    feFuncA auf 1       sonst ist auch die Deckung verrauscht
+ *  color-interpolation-filters='sRGB' gehoert dazu: ohne das rechnet
+ *  der Filter in linearem RGB, das Korn laege im Mittel bei Grau 187
+ *  statt 128 und wuerde den Verlauf aufhellen.
+ *
+ *  Gemischt wird mit hard-light und nicht mit overlay. Overlay erhaelt
+ *  Schwarz und Weiss und greift deshalb genau dort nicht, wo es hier
+ *  gebraucht wird: auf dem fast weissen Kachelgrund brachte es ±0.8
+ *  Helligkeitsstufen, auf dem dunklen Notdienstfeld ±0.4 - unsichtbar.
+ *  hard-light rechnet um die Mitte des Korns herum und wirkt deshalb
+ *  auf jedem Grund. Gemessen bei Deckung 0.28: helles Blau ±6.4,
+ *  mittleres ±6.6, Kachelgrund ±7.3, Notdienst ±7.4; der Mittelwert
+ *  verschiebt sich dabei um hoechstens fuenf Stufen.
+ *
+ *  z-index -1 legt das Korn zwischen den Hintergrund des Elements und
+ *  seinen Inhalt: ueber dem Verlauf, aber unter Text, Bild und
+ *  Schaubild. isolation: isolate haelt beides im Element - sonst
+ *  rutschte die Lage hinter den Hintergrund eines Vorfahren und das
+ *  Blenden griffe ueber das Element hinaus.
+ *
+ *  Staerke je Element ueber --korn-deckung.
+ * ------------------------------------------------------------------ */
+.mit-korn {
+  position: relative;
+  isolation: isolate;
+}
+.mit-korn::before {
   content: "";
   position: absolute;
   inset: 0;
-  z-index: 0;
+  z-index: -1;
+  border-radius: inherit;
   pointer-events: none;
   background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='200'%20height='200'%3E%3Cfilter%20id='k'%20color-interpolation-filters='sRGB'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='0.85'%20numOctaves='4'%20stitchTiles='stitch'/%3E%3CfeColorMatrix%20type='saturate'%20values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA%20type='discrete'%20tableValues='1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect%20width='200'%20height='200'%20filter='url%28%23k%29'/%3E%3C/svg%3E");
   background-size: 200px 200px;
-  opacity: 0.6;
-  mix-blend-mode: overlay;
+  opacity: var(--korn-deckung, 0.28);
+  mix-blend-mode: hard-light;
 }
-.variante-b .hero-voll > * { z-index: 1; }
 
 .variante-b header .logo-dunkel,
 .variante-b header .logo-hell { transition: opacity .22s var(--kurve); }
@@ -624,7 +642,12 @@ html.js-auf .variante-b [data-auf].da { opacity: 1; translate: none; }
  *  Grundton #f7f8fa statt der frueheren Flaeche #f9f9f9: eine Spur
  *  kuehler, damit der Schein nicht auf einem warmen Grau sitzt.
  *  Vorlage: der Versuch am Feld "Eine feste Ansprechperson".
+ *
+ *  Das Korn (.mit-korn) liegt auf den Kacheln leiser als im Hero: die
+ *  Flaechen sind gross und hell, dort faellt es staerker auf.
  * ------------------------------------------------------------------ */
+[class*="kachel-verlauf-"] { --korn-deckung: 0.18; }
+
 .kachel-verlauf-1 {
   background:
     radial-gradient(110% 100% at 100% 100%, rgba(66,133,244,0.26) 0%, rgba(66,133,244,0.08) 45%, rgba(66,133,244,0) 76%),
