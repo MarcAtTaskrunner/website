@@ -372,9 +372,6 @@ html.js-auf .variante-b [data-auf].da { opacity: 1; translate: none; }
     box-shadow: 0 10px 22px -12px rgba(0, 1, 107, .20);
   }
 
-  .variante-b .zahl-zelle { transition: background-color var(--dauer-kurz) var(--kurve); }
-  .variante-b .zahl-zelle:hover { background-color: #f6f9fe; }
-
 
   /* Hauptnavigation: Unterstrich waechst von links */
   .variante-b header nav[aria-label="Hauptnavigation"] a { position: relative; }
@@ -675,4 +672,54 @@ html.js-auf .variante-b [data-auf].da { opacity: 1; translate: none; }
   background:
     radial-gradient(115% 100% at 100% 100%, rgba(66,133,244,0.38) 0%, rgba(2,76,255,0.16) 44%, rgba(0,0,49,0) 76%),
     #000031;
+}
+
+/* ------------------------------------------------------------------ *
+ *  Zahlenband
+ *
+ *  Statt eines Rasters aus Trennstrichen nur zwei Linien: eine oben,
+ *  eine unten, durchgezogen ueber die ganze Breite. Der Rahmen um die
+ *  zweite Zelle ist entfallen, alle fuenf sind jetzt gleich.
+ *
+ *  Beim Ueberfahren leuchten die beiden Linien genau ueber der Zelle
+ *  auf, in den Farben des Hero-Verlaufs (#024cff nach #00b1ff) und zu
+ *  den Seiten auslaufend. Die Leuchtlage liegt bei -1px, also genau
+ *  auf der Linie, und ist 2px hoch, damit sie sie sicher ueberdeckt.
+ * ------------------------------------------------------------------ */
+.zahlen-band {
+  border-top: 1px solid rgba(26, 64, 129, 0.12);
+  border-bottom: 1px solid rgba(26, 64, 129, 0.12);
+}
+.zahl-zelle { position: relative; }
+
+/* Untereinander stehende Zellen brauchen einen Strich dazwischen -
+   nebeneinander stehende nicht, dort waeren es die entfallenen
+   senkrechten Linien. */
+@media (max-width: 639px) {
+  .zahl-zelle + .zahl-zelle { border-top: 1px solid rgba(26, 64, 129, 0.12); }
+}
+
+.zahl-zelle::before,
+.zahl-zelle::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  opacity: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg,
+    rgba(2, 76, 255, 0) 0%,
+    rgba(2, 76, 255, 0.85) 20%,
+    #00b1ff 50%,
+    rgba(2, 76, 255, 0.85) 80%,
+    rgba(2, 76, 255, 0) 100%);
+  transition: opacity var(--dauer-kurz, .22s) var(--kurve, ease);
+}
+.zahl-zelle::before { top: -1px; }
+.zahl-zelle::after  { bottom: -1px; }
+
+@media (hover: hover) and (pointer: fine) {
+  .zahl-zelle:hover::before,
+  .zahl-zelle:hover::after { opacity: 1; }
 }
