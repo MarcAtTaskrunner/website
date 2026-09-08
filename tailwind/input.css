@@ -364,14 +364,6 @@ html.js-auf .variante-b [data-auf].da { opacity: 1; translate: none; }
     box-shadow: 0 1px 2px rgba(0, 1, 107, .04), 0 10px 22px -10px rgba(0, 1, 107, .18);
   }
 
-  .variante-b .kachel {
-    transition: box-shadow .28s var(--kurve), transform .28s var(--kurve);
-  }
-  .variante-b .kachel:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 22px -12px rgba(0, 1, 107, .20);
-  }
-
 
   /* Hauptnavigation: Unterstrich waechst von links */
   .variante-b header nav[aria-label="Hauptnavigation"] a { position: relative; }
@@ -633,7 +625,12 @@ html.js-auf .variante-b [data-auf].da { opacity: 1; translate: none; }
  *
  *  Das Korn (.mit-korn) liegt auf den Kacheln leiser als im Hero: die
  *  Flaechen sind gross und hell, dort faellt es staerker auf.
+ *
+ *  Das Polster steht hier und nicht als Tailwind-Stufe: 40 px waere
+ *  p-10, und p-10 gibt es im gebauten CSS nicht (siehe CLAUDE.md).
  * ------------------------------------------------------------------ */
+.kachel-polster { padding: 40px; }
+
 [class*="kachel-verlauf-"] { --korn-deckung: 0.18; }
 
 .kachel-verlauf-1 {
