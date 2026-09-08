@@ -803,3 +803,49 @@ header #mobile-nav a[aria-current="page"] {
   background-color: var(--color-ice);
 }
 header #mobile-nav a[aria-current="page"]::after { content: none; }
+
+/* ------------------------------------------------------------------ *
+ *  Verlaeufe fuer Ablaufabschnitt und Fusszeile
+ *
+ *  Beide nach dem Vorbild des Hero: eine diagonale Grundlage, darauf
+ *  zwei bis drei weiche Lichter aus derselben Farbfamilie. Der
+ *  Unterschied ist die Tonlage - der Abschnitt "So funktioniert
+ *  Taskrunner" traegt dunkle Schrift und bleibt deshalb hell, die
+ *  Fusszeile traegt weisse und bleibt dunkel.
+ *
+ *  Die Lichter sind in der Hoehe ueber 100% gross: beide Flaechen sind
+ *  breit und niedrig, ein Licht mit 100% Hoehe waere darin ein
+ *  flacher Streifen statt eines Scheins.
+ *
+ *  Die Grundfarbe steht als letzte Lage im Kurzschreiber - ohne sie
+ *  setzt background die Hintergrundfarbe auf durchsichtig zurueck.
+ * ------------------------------------------------------------------ */
+.ablauf-verlauf {
+  background:
+    radial-gradient(46% 130% at 88% 100%, rgba(0, 177, 255, 0.13) 0%, rgba(0, 177, 255, 0) 72%),
+    radial-gradient(58% 140% at 18% 0%, rgba(66, 133, 244, 0.16) 0%, rgba(66, 133, 244, 0) 70%),
+    linear-gradient(126deg, #eef4ff 0%, #e8f0fe 55%, #deeafe 100%),
+    #e8f0fe;
+  --korn-deckung: 0.18;      /* helle Flaeche, dort faellt Korn auf */
+
+  /* Die Lichter sind hier schwaecher als in der Fusszeile: der
+     Abschnitt traegt Text in ink zu 80 %, und der braucht hellen Grund.
+     Bei 0.20 Cyan kam er auf 4.33, noetig sind 4.5 - bei 0.13 sind es
+     4.51. */
+}
+
+/* Die Fusszeile bleibt dunkler als der Hero. Dort steht kleine Schrift
+   in gedaempftem Weiss, und die braucht Grund unter sich: bei der
+   ersten, helleren Fassung (bis #024cff mit Cyanlicht) kam Weiss zu
+   60 % auf einen Kontrast von 2.35 - noetig sind 4.5. Der hellste
+   Punkt liegt jetzt bei rgb(1,67,217), dort erreicht Weiss zu 75 %
+   einen Kontrast von 4.82. Das Licht sitzt ausserdem oben, nicht unten
+   rechts, wo die Rechtslinks stehen. */
+.fuss-verlauf {
+  background:
+    radial-gradient(34% 110% at 92% 22%, rgba(0, 177, 255, 0.14) 0%, rgba(0, 177, 255, 0) 72%),
+    radial-gradient(52% 140% at 74% 8%, rgba(2, 76, 255, 0.34) 0%, rgba(2, 76, 255, 0) 74%),
+    radial-gradient(72% 150% at 0% 100%, #000724 0%, rgba(0, 7, 36, 0) 66%),
+    linear-gradient(116deg, #000724 0%, #001a7d 58%, #0024bc 100%),
+    #00016b;
+}
