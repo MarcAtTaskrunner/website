@@ -726,18 +726,37 @@
     var kopf = document.querySelector("header");
     var oben = kopf ? kopf.offsetHeight : 0;
     var frei = Math.max(1, this.h - oben);
+
+    /* Die Ueberschrift ist gross und ihre Zeilenzahl haengt vom Text ab.
+       Der Kreis bekommt deshalb nicht die ganze freie Flaeche, sondern
+       nur den Platz oberhalb von [data-hero-text] (mit etwas Luft) - so
+       landet er nie auf der Ueberschrift, unabhaengig davon, wie viele
+       Zeilen sie gerade braucht. */
+    var LUECKE = 24;
+    var text = this.flaeche.parentElement
+      ? this.flaeche.parentElement.querySelector("[data-hero-text]")
+      : null;
+    if (text) {
+      var rFlaeche = this.flaeche.getBoundingClientRect();
+      var textOben = text.getBoundingClientRect().top - rFlaeche.top;
+      frei = Math.max(1, Math.min(frei, textOben - LUECKE - oben));
+    }
+
     if (this.b < 700) {
       /* Schmal: Text nimmt die ganze Breite, der Kreis steht mittig
          darueber. */
       this.cx = this.b * 0.5;
-      this.cy = oben + frei * 0.26;
-      this.radius = Math.min(this.b * 0.38, frei * 0.24);
+      this.cy = oben + frei * 0.5;
+      this.radius = Math.min(this.b * 0.38, frei * 0.48);
     } else {
       /* Breit: der Kreis steht genau mittig in der freien Flaeche unter
          der Kopfleiste, der Text liegt unten links darueber. */
       this.cx = this.b * 0.5;
       this.cy = oben + frei * 0.5;
-      this.radius = Math.min(this.b * 0.22, frei * 0.36);
+      /* 0.48 statt 0.36: der Kreis soll das Band ueber der Headline
+         ausfuellen, nicht nur ein Drittel davon. Die Luecke zum Text
+         ist oben schon abgezogen. */
+      this.radius = Math.min(this.b * 0.22, frei * 0.48);
     }
 
     this.prand = Math.max(3, this.radius * 0.020);
