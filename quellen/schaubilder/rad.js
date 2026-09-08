@@ -101,7 +101,13 @@
        Kopfleiste. Fuer die Lage zaehlt nur, was darunter frei ist. */
     var kopf = document.querySelector("header");
     var oben = kopf ? kopf.offsetHeight : 0;
-    var frei = Math.max(1, this.h - oben);
+    /* Der Hero ragt unten ueber den Bildschirm hinaus (--hero-ueberstand
+       in tailwind/input.css). Dieser Streifen ist reine Flaeche und
+       zaehlt fuer die Lage nicht mit - sonst wanderte das Rad mit ihm
+       nach unten. */
+    var ueberstand = parseFloat(
+      getComputedStyle(this.flaeche).getPropertyValue("--hero-ueberstand")) || 0;
+    var frei = Math.max(1, this.h - oben - ueberstand);
 
     var LUECKE = 28;              /* Luft zwischen Text und Rad */
     var RAND = 24;                /* Luft zum rechten Fensterrand */

@@ -243,12 +243,16 @@ html.js-auf .variante-b [data-auf].da { opacity: 1; translate: none; }
 /* Hero fuellt den Bildschirm und ragt unten darueber hinaus. Die
    Kopfleiste liegt darueber, ihre Hoehe wird also nicht abgezogen. */
 .variante-b .hero-voll {
-  /* Der Hero ragt 68 px ueber die Bildschirmhoehe hinaus und ist unten
-     mit 68 px abgerundet. dvh beruecksichtigt die Browserleisten auf
-     dem Handy, vh ist der Rueckfall. */
-  height: calc(100vh + 68px);
-  height: calc(100dvh + 68px);
-  min-height: 688px;
+  /* Der Hero ragt unten ueber die Bildschirmhoehe hinaus und ist dort
+     abgerundet. Der Ueberstand ist reine Flaeche: Text und Rad stehen
+     genauso wie ohne ihn - der Text haelt ihn sich per margin vom Leib,
+     das Rad rechnet ihn in rad.js aus der freien Hoehe heraus.
+     dvh beruecksichtigt die Browserleisten auf dem Handy, vh ist der
+     Rueckfall. */
+  --hero-ueberstand: 68px;
+  height: calc(100vh + var(--hero-ueberstand));
+  height: calc(100dvh + var(--hero-ueberstand));
+  min-height: calc(620px + var(--hero-ueberstand));
   border-bottom-left-radius: 68px;
   border-bottom-right-radius: 68px;
 
@@ -264,6 +268,12 @@ html.js-auf .variante-b [data-auf].da { opacity: 1; translate: none; }
     radial-gradient(56% 66% at 30% 62%, #0024bc 0%, rgba(0,36,188,0.5) 44%, rgba(0,36,188,0) 78%),
     radial-gradient(78% 72% at 2% 0%, #000d30 0%, rgba(0,13,48,0.94) 24%, rgba(0,13,48,0) 64%),
     linear-gradient(126deg, #000d30 0%, #0024bc 50%, #024cff 100%);
+}
+
+/* Der Text sitzt am unteren Ende des Hero (justify-end). Ohne diesen
+   Abstand wuerde ihn der Ueberstand mit nach unten nehmen. */
+.variante-b .hero-voll [data-hero-text] {
+  margin-bottom: var(--hero-ueberstand);
 }
 
 .variante-b header .logo-dunkel,
