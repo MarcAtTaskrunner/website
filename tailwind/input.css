@@ -876,7 +876,7 @@ footer h3 {
 /* ------------------------------------------------------------------ *
  *  Kopfband mit Video
  *
- *  Das Band ist zwei Drittel des Bildschirms hoch; die Mindesthoehe
+ *  Das Band nimmt vier Fuenftel des Bildschirms ein; die Mindesthoehe
  *  faengt sehr flache Fenster ab, damit Ueberschrift, Vorspann und
  *  Knoepfe nicht herauslaufen.
  *
@@ -886,11 +886,18 @@ footer h3 {
  *  Hoehe, weil der Text am unteren Rand sitzt.
  * ------------------------------------------------------------------ */
 .kopf-video {
-  min-height: 66vh;
-  min-height: 66dvh;
+  min-height: 80vh;
+  min-height: 80dvh;
 }
 @media (max-height: 720px) {
-  .kopf-video { min-height: 560px; }
+  .kopf-video { min-height: 640px; }
+}
+
+/* Das Video ist von Haus aus schon dunkel, die Deckenlampen sind es
+   aber nicht. Abgedunkelt tritt es hinter Schrift und Verlauf zurueck
+   und die Lampen stechen nicht mehr heraus. */
+.kopf-video video {
+  filter: brightness(0.6);
 }
  /* Zweiter Schleier oben: die Kopfleiste liegt durchsichtig ueber dem
     Video, und im Bild sind Deckenlampen. Ohne ihn faellt die weisse
