@@ -358,29 +358,6 @@
 
 
 
-  /* ---------------------------------------------------------------- *
-   *  Hintergrundvideo im Kopfband
-   *  Wer im Betriebssystem weniger Bewegung eingestellt hat, bekommt
-   *  das Standbild statt der Schleife.
-   * ---------------------------------------------------------------- */
-  (function () {
-    var video = document.querySelector("video[poster]");
-    if (!video) return;
-    var sanft = window.matchMedia("(prefers-reduced-motion: reduce)");
-    var richten = function () {
-      if (sanft.matches) {
-        video.removeAttribute("autoplay");
-        video.pause();
-        video.load();                    /* stellt das Standbild wieder her */
-      } else if (video.paused) {
-        var lauf = video.play();
-        if (lauf && lauf.catch) lauf.catch(function () {});
-      }
-    };
-    richten();
-    if (sanft.addEventListener) sanft.addEventListener("change", richten);
-    else if (sanft.addListener) sanft.addListener(richten);
-  })();
 
 
 })();
