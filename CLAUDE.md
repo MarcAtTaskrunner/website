@@ -33,6 +33,7 @@ mit im Git.
 | Inhalt einer Seite | `quellen/<seite>.html` |
 | Ein Canvas-Schaubild | `quellen/schaubilder/<motiv>.js` |
 | Farben, Schrift, Komponentenklassen | `tailwind/input.css` |
+| Schriftgrößen | **eine** Skala in `input.css` (`@layer components`), dokumentiert in `TYPOGRAFIE.md` – es gibt keine zweite mehr |
 | Mobilmenü-Verhalten, Karussell | `assets/app.js` (keine Quelle, direkt bearbeiten) |
 
 Suchen statt lesen: die Seiten sind zeilenweise umgebrochen, `grep -n` findet
@@ -140,3 +141,5 @@ und veröffentlicht. Einzelheiten in `DEPLOY.md`.
   Leerraum unsichtbar ist, und ist umkehrbar (`entformatiere`)
 - `werkzeuge/pruefen.mjs` – prüft die gebauten Seiten in einem Browser
   ohne Fenster (Playwright + axe-core), Ausgabe nur als Text
+- `werkzeuge/schriftbild.mjs` – zeigt, welche Größe und Stärke jede
+  Textklasse auf welcher Seite bekommt; zum Vergleichen zweier Seiten

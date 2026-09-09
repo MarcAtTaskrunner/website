@@ -128,48 +128,16 @@
   --vb-linie:    #e4e9f2;    /* Haarlinien */
 }
 
-/* --- Ueberschriften ---------------------------------------------------
-   h1 und h2 folgen der Hausskala aus TYPOGRAFIE.md (48/64/80 bzw.
-   40/48/56) - hier steht dazu bewusst nichts, sonst gaebe es zwei
-   Wahrheiten. Eigene Werte hat die Startseite nur fuer h3 und h4, und
-   das Gewicht ist durchgehend Medium statt Bold. */
-.variante-b h1, .variante-b .t-h1,
-.variante-b h2, .variante-b .t-h2,
-.variante-b h3, .variante-b .t-h3,
-.variante-b h4, .variante-b .t-h4 {
-  font-weight: 500;          /* DIN Pro Medium */
-}
-.variante-b h3, .variante-b .t-h3 { font-size: 22px; line-height: 1.14; letter-spacing: -0.012em; }
-.variante-b h4, .variante-b .t-h4 { font-size: 19px; line-height: 1.18; letter-spacing: -0.010em; }
+/* --- Schriftgroessen ---------------------------------------------------
+   Hier steht bewusst nichts mehr. Bis eben hatte die Startseite eine
+   zweite Skala: h3 28 statt 40, Fliesstext 16 statt 17, Auszeichnungen
+   17 statt 14, Ueberschriften in Medium statt Bold. Damit sah jede
+   Klasse auf der Startseite anders aus als auf den Unterseiten.
 
-@media (min-width: 735px) {
-  .variante-b h3, .variante-b .t-h3 { font-size: 25px; }
-  .variante-b h4, .variante-b .t-h4 { font-size: 21px; }
-}
-@media (min-width: 1069px) {
-  .variante-b h3, .variante-b .t-h3 { font-size: 28px; }
-  .variante-b h4, .variante-b .t-h4 { font-size: 23px; }
-}
-
-/* --- Fliesstext: luftiger, gedaempfte Farbe, durchgehend Medium --- */
-.variante-b body, .variante-b {
-  font-weight: 500;
-}
-.variante-b .t-intro {
-  font-size: 18px; line-height: 1.42; letter-spacing: -0.004em; font-weight: 500;
-}
-.variante-b .t-body, .variante-b .t-body-tight {
-  font-size: 16px; line-height: 1.44; letter-spacing: -0.004em; font-weight: 500;
-}
-.variante-b .t-caption {
-  font-size: 17px; line-height: 1.42; letter-spacing: -0.002em; font-weight: 500;
-}
-.variante-b .t-eyebrow {
-  font-size: 14px; line-height: 1.3; letter-spacing: 0.01em; font-weight: 500;
-}
-@media (min-width: 735px) {
-  .variante-b .t-intro { font-size: 19px; }
-}
+   Jetzt gilt die Skala aus TYPOGRAFIE.md ueberall - mit einer
+   Aenderung, die von hier stammt: alle Ueberschriften stehen in Medium
+   (500), nicht in Bold. Bei 80 px waere Bold zu schwer. Die Skala
+   selbst steht weiter unten im @layer components. */
 
 /* Fliesstext bekommt das gedaempfte Blaugrau, Ueberschriften bleiben blau */
 .variante-b .text-ink\/85, .variante-b .text-ink\/80,
@@ -422,7 +390,7 @@ html.js-auf .variante-b [data-auf].da { opacity: 1; translate: none; }
   }
   h1, h2, h3, h4, .font-display {
     font-family: var(--font-display);
-    font-weight: 700;
+    font-weight: 500;          /* DIN Pro Medium - eine Staerke fuer alle */
   }
   :focus-visible {
     outline: 3px solid var(--color-blue);
@@ -480,7 +448,7 @@ html.js-auf .variante-b [data-auf].da { opacity: 1; translate: none; }
 @layer components {
   h1, .t-h1, h2, .t-h2, h3, .t-h3, h4, .t-h4 {
     font-family: var(--font-display);
-    font-weight: 700;
+    font-weight: 500;
   }
 
   /* --- bis 734 px --- */
@@ -496,7 +464,7 @@ html.js-auf .variante-b [data-auf].da { opacity: 1; translate: none; }
   /* In Karten setzt Apple den Fliesstext enger als im Lauftext (1.235 statt
      1.471) und die Kategorie darueber in Regular statt Medium. */
   .t-body-tight { font-size: 17px; line-height: 1.23529; letter-spacing: -0.022em; font-weight: 500; }
-  .t-eyebrow    { font-size: 17px; line-height: 1.23529; letter-spacing: -0.022em; font-weight: 400; }
+  .t-eyebrow    { font-size: 14px; line-height: 1.3;     letter-spacing:  0.010em; font-weight: 500; }
 
   /* --- 735 bis 1068 px --- */
   @media (min-width: 735px) {

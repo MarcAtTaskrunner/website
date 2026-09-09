@@ -8,7 +8,9 @@ Verbindliche Regeln für die Website. Umgesetzt in `tailwind/input.css`
 
 - **Schrift:** DIN Pro, selbst gehostet (`assets/fonts/dinpro-*.woff2`),
   Quelle `Font/DINPro-*.ttf` im Projektordner.
-- **Überschriften:** Bold (700).
+- **Überschriften:** Medium (500). Bis September 2026 stand hier Bold (700);
+  bei 80 px war das zu schwer, und die Startseite setzte ohnehin schon
+  Medium. Jetzt gilt eine Stärke für alle Überschriften.
 - **Fließtext:** Medium (500), 17 px.
 - **Zeilenhöhen, Laufweiten und Breakpoints** sind an apple.com orientiert.
   Apple setzt SF Pro; übernommen sind die Metriken, nicht die Schriftfamilie.
@@ -20,15 +22,15 @@ Fließtext skaliert nicht mit — 17 px auf allen Größen.
 
 | Klasse | ≤734 | 735–1068 | ≥1069 | line-height | letter-spacing | Gewicht |
 |---|---|---|---|---|---|---|
-| `.t-h1` | 48 px | 64 px | **80 px** | 1.05 | −0.015em | 700 |
-| `.t-h2` | 40 px | 48 px | **56 px** | 1.0714 | −0.016em | 700 |
-| `.t-h3` | 28 px | 32 px | **40 px** | 1.1 | −0.012em | 700 |
-| `.t-h4` | 21 px | 24 px | **28 px** | 1.1429 | −0.014em | 700 |
+| `.t-h1` | 48 px | 64 px | **80 px** | 1.05 | −0.015em | 500 |
+| `.t-h2` | 40 px | 48 px | **56 px** | 1.0714 | −0.016em | 500 |
+| `.t-h3` | 28 px | 32 px | **40 px** | 1.1 | −0.012em | 500 |
+| `.t-h4` | 21 px | 24 px | **28 px** | 1.1429 | −0.014em | 500 |
 | `.t-intro` | 19 px | 21 px | 21 px | 1.1905 | 0.011em | 500 |
 | `.t-body` | 17 px | 17 px | 17 px | 1.4706 | −0.022em | 500 |
 | `.t-caption` | 14 px | 14 px | 14 px | 1.4286 | −0.016em | 500 |
 | `.t-body-tight` | 17 px | 17 px | 17 px | 1.2353 | −0.022em | 500 |
-| `.t-eyebrow` | 17 px | 17 px | 17 px | 1.2353 | −0.022em | 400 |
+| `.t-eyebrow` | 14 px | 14 px | 14 px | 1.3 | +0.010em | 500 |
 
 Die fett gesetzten Werte sind die von dir vorgegebenen Größen.
 
@@ -50,10 +52,10 @@ gesetzt.
 | Sektions-Headlines | `h2` | `.t-h2` — 56 px |
 | Hero-Subline, Sektions-Lead | `p` | `.t-intro` — 21 px |
 | Titel Leistungskarten | `h3` | `.t-h4` — 28 px |
-| Titel Prozessschritte | `h3` | `.t-intro` bold — 21 px |
+| Titel Prozessschritte | `h3` | `.t-intro` — 21 px |
 | Zahlen im Bento-Grid | `p` | `.t-h4` — 28 px |
 | Footer-Spaltentitel | `h2` | `.t-h4` — 28 px |
-| Kategoriezeile über Kartentiteln | `p` | `.t-eyebrow` — 17 px Regular |
+| Kategoriezeile über Kartentiteln | `p` | `.t-eyebrow` — 14 px Medium |
 | Fließtext in Karten | `p` | `.t-body-tight` — 17 px, lh 1.235 |
 | Fließtext sonst | `p`, `li` | `.t-body` — 17 px, lh 1.471 |
 | Navigation, Copyright | `a`, `p` | `.t-caption` — 14 px |
