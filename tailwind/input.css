@@ -867,3 +867,8 @@ footer h3 {
   border-bottom-left-radius: 34px;
   border-bottom-right-radius: 34px;
 }
+
+/* Im Kopfband der Unterseiten steht der Vorspann voll in Weiss - wie im
+   Hero der Startseite. Ohne diese Zeile zoege ihn die Ausnahme fuer
+   .verlauf-nacht weiter oben auf 75 %. */
+.seitenkopf p.t-intro { color: #ffffff; }
