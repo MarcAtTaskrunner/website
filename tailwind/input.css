@@ -872,3 +872,42 @@ footer h3 {
    Hero der Startseite. Ohne diese Zeile zoege ihn die Ausnahme fuer
    .verlauf-nacht weiter oben auf 75 %. */
 .seitenkopf p.t-intro { color: #ffffff; }
+
+/* ------------------------------------------------------------------ *
+ *  Kopfband mit Video
+ *
+ *  Das Band ist zwei Drittel des Bildschirms hoch; die Mindesthoehe
+ *  faengt sehr flache Fenster ab, damit Ueberschrift, Vorspann und
+ *  Knoepfe nicht herauslaufen.
+ *
+ *  Der Schleier laeuft von unten nach oben aus: unten deckt er das
+ *  Video in Blau ab, damit die weisse Schrift darauf steht, oben ist
+ *  er durchsichtig und laesst das Bild frei. Er reicht ueber 72 % der
+ *  Hoehe, weil der Text am unteren Rand sitzt.
+ * ------------------------------------------------------------------ */
+.kopf-video {
+  min-height: 66vh;
+  min-height: 66dvh;
+}
+@media (max-height: 720px) {
+  .kopf-video { min-height: 560px; }
+}
+ /* Zweiter Schleier oben: die Kopfleiste liegt durchsichtig ueber dem
+    Video, und im Bild sind Deckenlampen. Ohne ihn faellt die weisse
+    Schrift dort auf 1.09:1 - unsichtbar. Er ist nur so kraeftig wie
+    noetig und laeuft nach 180 px aus, damit das Bild frei bleibt. */
+.kopf-schleier-oben {
+  background: linear-gradient(to bottom,
+    rgba(0, 1, 107, 0.78) 0%,
+    rgba(0, 1, 107, 0.62) 40%,
+    rgba(0, 1, 107, 0.28) 72%,
+    rgba(0, 1, 107, 0) 100%);
+}
+.kopf-schleier {
+  background: linear-gradient(to top,
+    #00016b 0%,
+    rgba(0, 1, 107, 0.94) 26%,
+    rgba(0, 1, 107, 0.72) 48%,
+    rgba(0, 1, 107, 0.34) 68%,
+    rgba(0, 1, 107, 0) 100%);
+}

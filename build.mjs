@@ -15,7 +15,7 @@ const DATEIEN = [
   'favicon.svg', 'favicon-96.png', 'apple-touch-icon.png',
   '_redirects', '_headers',
 ];
-const ORDNER = ['assets', 'images'];
+const ORDNER = ['assets', 'images', 'videos'];
 
 try {
   await rm(AUS, { recursive: true, force: true });
