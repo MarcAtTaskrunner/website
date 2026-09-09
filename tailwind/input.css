@@ -175,6 +175,13 @@
 .variante-b .text-ink\/85, .variante-b .text-ink\/80,
 .variante-b .text-ink\/75, .variante-b .text-ink\/60 { color: var(--vb-text); }
 .variante-b p.t-body, .variante-b p.t-body-tight, .variante-b p.t-intro { color: var(--vb-text); }
+/* Auf dunklem Grund erbt der Fliesstext die Farbe des Kastens, statt
+   das gedaempfte Blaugrau von oben zu nehmen. Achtung: diese Regel
+   steht ungeschachtelt und schlaegt damit auch eine Klasse wie
+   text-white/75 am Absatz selbst. Wer eine eigene Abstufung will,
+   gibt dem Kasten keine dieser Hintergrundklassen - die Verlaeufe
+   (.fuss-verlauf, .ablauf-verlauf) bringen ihre Grundfarbe als letzte
+   Lage selbst mit und brauchen sie nicht. */
 .variante-b .bg-navy p, .variante-b .bg-blue-600 p, .variante-b .bg-blue-300 p,
 .variante-b .bg-grey-darker p, .variante-b .text-white p { color: inherit; }
 
@@ -805,10 +812,10 @@ header #mobile-nav a[aria-current="page"]::after { content: none; }
  *  Verlaeufe fuer Ablaufabschnitt und Fusszeile
  *
  *  Beide nach dem Vorbild des Hero: eine diagonale Grundlage, darauf
- *  zwei bis drei weiche Lichter aus derselben Farbfamilie. Der
- *  Unterschied ist die Tonlage - der Abschnitt "So funktioniert
- *  Taskrunner" traegt dunkle Schrift und bleibt deshalb hell, die
- *  Fusszeile traegt weisse und bleibt dunkel.
+ *  drei weiche Lichter aus derselben Farbfamilie, dazu .mit-korn.
+ *  Beide sind dunkel und tragen weisse Schrift; sie unterscheiden sich
+ *  nur darin, wo die Lichter sitzen - im Ablaufabschnitt oben rechts
+ *  und unten links, in der Fusszeile oben.
  *
  *  Die Lichter sind in der Hoehe ueber 100% gross: beide Flaechen sind
  *  breit und niedrig, ein Licht mit 100% Hoehe waere darin ein
@@ -819,16 +826,11 @@ header #mobile-nav a[aria-current="page"]::after { content: none; }
  * ------------------------------------------------------------------ */
 .ablauf-verlauf {
   background:
-    radial-gradient(46% 130% at 88% 100%, rgba(0, 177, 255, 0.13) 0%, rgba(0, 177, 255, 0) 72%),
-    radial-gradient(58% 140% at 18% 0%, rgba(66, 133, 244, 0.16) 0%, rgba(66, 133, 244, 0) 70%),
-    linear-gradient(126deg, #eef4ff 0%, #e8f0fe 55%, #deeafe 100%),
-    #e8f0fe;
-  --korn-deckung: 0.18;      /* helle Flaeche, dort faellt Korn auf */
-
-  /* Die Lichter sind hier schwaecher als in der Fusszeile: der
-     Abschnitt traegt Text in ink zu 80 %, und der braucht hellen Grund.
-     Bei 0.20 Cyan kam er auf 4.33, noetig sind 4.5 - bei 0.13 sind es
-     4.51. */
+    radial-gradient(40% 100% at 14% 94%, rgba(0, 177, 255, 0.14) 0%, rgba(0, 177, 255, 0) 72%),
+    radial-gradient(56% 120% at 86% 10%, rgba(2, 76, 255, 0.34) 0%, rgba(2, 76, 255, 0) 74%),
+    radial-gradient(80% 130% at 0% 0%, #000724 0%, rgba(0, 7, 36, 0) 64%),
+    linear-gradient(124deg, #000724 0%, #001a7d 55%, #0024bc 100%),
+    #00016b;
 }
 
 /* Die Fusszeile bleibt dunkler als der Hero. Dort steht kleine Schrift
@@ -846,3 +848,11 @@ header #mobile-nav a[aria-current="page"]::after { content: none; }
     linear-gradient(116deg, #000724 0%, #001a7d 58%, #0024bc 100%),
     #00016b;
 }
+
+/* Im dunklen Ablaufabschnitt gilt die Klasse am Absatz, nicht das
+   gedaempfte Blaugrau: die Regel .variante-b p.t-intro/p.t-body-tight
+   weiter oben steht ungeschachtelt und schlaegt sonst text-white/75.
+   Gleiche Spezifitaet, aber spaeter in der Datei - damit gewinnt sie. */
+.ablauf-verlauf p.t-body,
+.ablauf-verlauf p.t-body-tight,
+.ablauf-verlauf p.t-intro { color: rgba(255, 255, 255, 0.75); }
