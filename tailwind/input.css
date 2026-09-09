@@ -451,8 +451,12 @@ html.js-auf .variante-b [data-auf].da { opacity: 1; translate: none; }
   }
   .btn:hover { transform: translateY(-1px); }
 
-  .btn-primary   { background: var(--color-blue); color: #fff; }
-  .btn-primary:hover { background: var(--color-blue-600); }
+  /* Weiss auf --color-blue (#4285f4) ergibt 3.56:1 - zu wenig fuer
+     17px. --color-blue-600 (#1155cc) war schon die Hover-Farbe und
+     schafft 6.36:1, deshalb steht sie jetzt vorn; der Hover geht eine
+     Stufe tiefer. Passt ausserdem zum Blau der Kopfzeile. */
+  .btn-primary   { background: var(--color-blue-600); color: #fff; }
+  .btn-primary:hover { background: var(--color-blue-base); }
 
   .btn-white     { background: #fff; color: var(--color-blue-600); }
   .btn-white:hover { background: var(--color-ice); }

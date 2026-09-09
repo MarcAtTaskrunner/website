@@ -108,6 +108,19 @@ einen unbekannten Namen trägt. Frühere Motive (`hero`, `welle`, `posten`,
 ## Kontrolle vor dem Ausliefern
 
 ```bash
+node werkzeuge/pruefen.mjs           # alle Seiten, ohne Fenster
+node werkzeuge/pruefen.mjs index.html
+```
+
+Prüft je Seite: Fehler in der Konsole, Anfragen ins Leere,
+Barrierefreiheit nach WCAG AA (samt Kontrastwerten mit Zahlen),
+seitlichen Überlauf bei 375/768/1440 px, Inhaltsbreite 1280 und ob die
+randlosen Schaubilder bündig sitzen. Gibt nur Text aus – das ist der
+schnellste Weg, etwas zu prüfen, und sollte vor dem Browser kommen.
+
+Zum Anschauen:
+
+```bash
 python3 -m http.server 8765          # dann http://localhost:8765 öffnen
 ```
 
@@ -125,3 +138,5 @@ und veröffentlicht. Einzelheiten in `DEPLOY.md`.
   aktuell, fügt `assets/schaubilder.js` zusammen
 - `werkzeuge/htmlformat.py` – bricht HTML lesbar um; bricht nur dort, wo
   Leerraum unsichtbar ist, und ist umkehrbar (`entformatiere`)
+- `werkzeuge/pruefen.mjs` – prüft die gebauten Seiten in einem Browser
+  ohne Fenster (Playwright + axe-core), Ausgabe nur als Text
