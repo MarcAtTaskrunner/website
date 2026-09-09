@@ -881,9 +881,13 @@ footer h3 {
  *  Knoepfe nicht herauslaufen.
  *
  *  Der Schleier laeuft von unten nach oben aus: unten deckt er das
- *  Video in Blau ab, damit die weisse Schrift darauf steht, oben ist
- *  er durchsichtig und laesst das Bild frei. Er reicht ueber 72 % der
- *  Hoehe, weil der Text am unteren Rand sitzt.
+ *  Video in Blau ab, damit die weisse Schrift darauf steht. Er endet
+ *  bei 58 % der Hoehe - weiter oben soll kein Blau mehr liegen, dort
+ *  gehoert das Bild sich selbst.
+ *
+ *  Der Schleier am oberen Rand ist deshalb neutral schwarz und nicht
+ *  blau: er hat nur die eine Aufgabe, Logo und Menue ueber den
+ *  Deckenlampen lesbar zu halten.
  * ------------------------------------------------------------------ */
 .kopf-video {
   min-height: 80vh;
@@ -905,16 +909,16 @@ footer h3 {
     noetig und laeuft nach 180 px aus, damit das Bild frei bleibt. */
 .kopf-schleier-oben {
   background: linear-gradient(to bottom,
-    rgba(0, 1, 107, 0.78) 0%,
-    rgba(0, 1, 107, 0.62) 40%,
-    rgba(0, 1, 107, 0.28) 72%,
-    rgba(0, 1, 107, 0) 100%);
+    rgba(0, 0, 0, 0.62) 0%,
+    rgba(0, 0, 0, 0.44) 45%,
+    rgba(0, 0, 0, 0.18) 74%,
+    rgba(0, 0, 0, 0) 100%);
 }
 .kopf-schleier {
   background: linear-gradient(to top,
     #00016b 0%,
-    rgba(0, 1, 107, 0.94) 26%,
-    rgba(0, 1, 107, 0.72) 48%,
-    rgba(0, 1, 107, 0.34) 68%,
+    rgba(0, 1, 107, 0.95) 32%,
+    rgba(0, 1, 107, 0.72) 58%,
+    rgba(0, 1, 107, 0.30) 80%,
     rgba(0, 1, 107, 0) 100%);
 }
