@@ -17,11 +17,11 @@
     <meta property="og:locale" content="de_DE">
     <link rel="stylesheet" href="assets/style.css">
   </head>
-  <body class="bg-white text-ink antialiased">
+  <body class="variante-b">
     <a href="#inhalt" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-navy focus:px-5 focus:py-3 focus:text-white">Zum Inhalt springen</a>
     <header class="sticky top-0 z-50 border-b border-black/5 bg-white/95 backdrop-blur">
-      <div class="container-wide grid h-[64px] grid-cols-[auto_1fr_auto] items-center gap-6">
-        <a href="index.html" class="shrink-0" aria-label="taskrunner Startseite"><img src="images/logo.svg" alt="taskrunner" width="2000" height="456" class="w-auto h-7"></a>
+      <div class="grid h-[64px] w-full grid-cols-[auto_1fr_auto] items-center gap-6 px-6 lg:px-8">
+        <a href="index.html" class="relative block shrink-0" aria-label="taskrunner Startseite"><img src="images/logo.svg" alt="taskrunner" width="2000" height="456" class="logo-dunkel block w-auto h-7"><img src="images/logo-white.svg" alt="" aria-hidden="true" width="2000" height="456" class="logo-hell absolute left-0 top-0 block w-auto h-7"></a>
         <!-- Desktop-Navigation -->
         <nav class="hidden justify-self-center lg:block" aria-label="Hauptnavigation">
           <ul class="flex items-center gap-6">
@@ -48,32 +48,32 @@
       </nav>
     </header>
     <main id="inhalt">
-      <section class="bg-ice pb-[60px] pt-[72px] sm:pb-[90px] sm:pt-[110px] lg:pb-[120px] lg:pt-[140px]">
+      <section class="seitenkopf verlauf-nacht mit-korn pb-[60px] pt-[calc(var(--header-h)+72px)] sm:pb-[90px] sm:pt-[calc(var(--header-h)+110px)] lg:pb-[120px] lg:pt-[calc(var(--header-h)+140px)]">
         <div class="container-wide">
-          <h1 class="mx-auto max-w-[900px] text-balance hyphens-auto break-words t-h1 text-ink text-center">Dienstleistungen</h1>
-          <p class="mx-auto mt-6 max-w-[720px] text-pretty t-intro text-ink/80 text-center">Handwerk, Beratung und Einkauf für Ihre Standorte – gebündelt über eine Plattform, deutschlandweit und ohne monatliche Fixkosten.</p>
+          <h1 class="mx-auto max-w-[900px] text-balance hyphens-auto break-words t-h1 text-white text-center">Dienstleistungen</h1>
+          <p class="mx-auto mt-6 max-w-[720px] text-pretty t-intro text-white/75 text-center">Handwerk, Beratung und Einkauf für Ihre Standorte – gebündelt über eine Plattform, deutschlandweit und ohne monatliche Fixkosten.</p>
         </div>
       </section>
       <section class="bg-white section-y">
         <div class="container-wide">
           <h2 class="sr-only">Die drei Leistungsbereiche im Überblick</h2>
           <ul class="grid gap-5 md:grid-cols-3">
-            <li class="flex flex-col rounded-[var(--radius-tile)] bg-ice p-9">
-              <h3 class="hyphens-auto break-words t-h4 text-ink">Handwerks&shy;dienstleistung</h3>
+            <li class="flex flex-col rounded-[var(--radius-tile)] kachel-verlauf-1 mit-korn kachel-polster">
+              <h3 class="hyphens-auto break-words t-h4 text-blue-600">Handwerks&shy;dienstleistung</h3>
               <p class="mt-4 t-body-tight text-ink/85">Beauftragen Sie ganz einfach deutschlandweit über Taskrunner all Ihre regelmäßig anfallenden Instandhaltungsaufgaben ohne monatliche Fixkosten.</p>
               <p class="mt-auto pt-8">
                 <a href="#handwerk" class="group inline-flex items-center gap-2 t-body font-bold text-blue-600 transition-colors hover:text-ink">Mehr erfahren<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="transition-transform group-hover:translate-x-1"><path d="M9 6l6 6-6 6"></path></svg></a>
               </p>
             </li>
-            <li class="flex flex-col rounded-[var(--radius-tile)] bg-ice p-9">
-              <h3 class="hyphens-auto break-words t-h4 text-ink">Beratung</h3>
+            <li class="flex flex-col rounded-[var(--radius-tile)] kachel-verlauf-3 mit-korn kachel-polster">
+              <h3 class="hyphens-auto break-words t-h4 text-blue-600">Beratung</h3>
               <p class="mt-4 t-body-tight text-ink/85">Wir beraten Sie gerne individuell zu Themen von der Digitalisierung im Facility Management Ihrer Zentrale bis hin zur Brandsicherheit in Ihren Stores.</p>
               <p class="mt-auto pt-8">
                 <a href="#beratung" class="group inline-flex items-center gap-2 t-body font-bold text-blue-600 transition-colors hover:text-ink">Mehr erfahren<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="transition-transform group-hover:translate-x-1"><path d="M9 6l6 6-6 6"></path></svg></a>
               </p>
             </li>
-            <li class="flex flex-col rounded-[var(--radius-tile)] bg-ice p-9">
-              <h3 class="hyphens-auto break-words t-h4 text-ink">Zentraler Einkauf</h3>
+            <li class="flex flex-col rounded-[var(--radius-tile)] kachel-verlauf-5 mit-korn kachel-polster">
+              <h3 class="hyphens-auto break-words t-h4 text-blue-600">Zentraler Einkauf</h3>
               <p class="mt-4 t-body-tight text-ink/85">Sparen Sie mit dem zentralen Einkauf Geld und Zeit. Taskrunner bietet Ihnen übersichtliche Bestellungen, Kostentransparenz und koordinierte Auftragsabläufe.</p>
               <p class="mt-auto pt-8">
                 <a href="#einkauf" class="group inline-flex items-center gap-2 t-body font-bold text-blue-600 transition-colors hover:text-ink">Mehr erfahren<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="transition-transform group-hover:translate-x-1"><path d="M9 6l6 6-6 6"></path></svg></a>
@@ -82,7 +82,7 @@
           </ul>
         </div>
       </section>
-      <section id="handwerk" class="bg-ice section-y scroll-mt-[calc(var(--header-h)+24px)]">
+      <section id="handwerk" class="bg-white section-y scroll-mt-[calc(var(--header-h)+24px)]">
         <div class="container-wide">
           <p class="t-eyebrow text-ink/80">Deutschlandweit verfügbar</p>
           <h2 class="mt-4 max-w-[900px] text-balance hyphens-auto break-words t-h2 text-ink">Handwerks&shy;dienstleistungen</h2>
@@ -92,7 +92,7 @@
               <div class="flex h-[184px] items-end">
                 <img src="images/gewerke/stecker-dunkel.webp" alt="" aria-hidden="true" width="590" height="613" loading="lazy" decoding="async" class="block h-auto w-[80px]">
               </div>
-              <h3 class="mt-6 hyphens-auto break-words t-h4 text-ink">Elektroarbeiten</h3>
+              <h3 class="mt-6 hyphens-auto break-words t-h4 text-blue-600">Elektroarbeiten</h3>
               <ul class="mt-5 space-y-2.5">
                 <li class="t-body-tight text-ink/85">Elektriker</li>
                 <li class="t-body-tight text-ink/85">Schwachstrom&shy;techniker</li>
@@ -104,7 +104,7 @@
               <div class="flex h-[184px] items-end">
                 <img src="images/gewerke/rohr-dunkel.webp" alt="" aria-hidden="true" width="718" height="654" loading="lazy" decoding="async" class="block h-auto w-[111px]">
               </div>
-              <h3 class="mt-6 hyphens-auto break-words t-h4 text-ink">Installations&shy;arbeiten</h3>
+              <h3 class="mt-6 hyphens-auto break-words t-h4 text-blue-600">Installations&shy;arbeiten</h3>
               <ul class="mt-5 space-y-2.5">
                 <li class="t-body-tight text-ink/85">Rohr- / Kanalreinigung</li>
                 <li class="t-body-tight text-ink/85">Sanitärarbeiten</li>
@@ -116,7 +116,7 @@
               <div class="flex h-[184px] items-end">
                 <img src="images/gewerke/schluessel-dunkel.webp" alt="" aria-hidden="true" width="373" height="648" loading="lazy" decoding="async" class="block h-auto w-[89px]">
               </div>
-              <h3 class="mt-6 hyphens-auto break-words t-h4 text-ink">Schlosserarbeiten</h3>
+              <h3 class="mt-6 hyphens-auto break-words t-h4 text-blue-600">Schlosserarbeiten</h3>
               <ul class="mt-5 space-y-2.5">
                 <li class="t-body-tight text-ink/85">Schlosser</li>
                 <li class="t-body-tight text-ink/85">Schlüsseldienst</li>
@@ -128,7 +128,7 @@
               <div class="flex h-[184px] items-end">
                 <img src="images/gewerke/kelle-dunkel.webp" alt="" aria-hidden="true" width="485" height="758" loading="lazy" decoding="async" class="block h-auto w-[113px]">
               </div>
-              <h3 class="mt-6 hyphens-auto break-words t-h4 text-ink">Bau&shy;dienstleistungen</h3>
+              <h3 class="mt-6 hyphens-auto break-words t-h4 text-blue-600">Bau&shy;dienstleistungen</h3>
               <ul class="mt-5 space-y-2.5">
                 <li class="t-body-tight text-ink/85">Maurer</li>
                 <li class="t-body-tight text-ink/85">Bodenleger</li>
@@ -141,7 +141,7 @@
               <div class="flex h-[184px] items-end">
                 <img src="images/gewerke/saege-dunkel.webp" alt="" aria-hidden="true" width="733" height="719" loading="lazy" decoding="async" class="block h-auto w-[180px]">
               </div>
-              <h3 class="mt-6 hyphens-auto break-words t-h4 text-ink">Sonstige Leistungen</h3>
+              <h3 class="mt-6 hyphens-auto break-words t-h4 text-blue-600">Sonstige Leistungen</h3>
               <ul class="mt-5 space-y-2.5">
                 <li class="t-body-tight text-ink/85">Glaser / Rollladen / Schaufenster</li>
                 <li class="t-body-tight text-ink/85">Dachdecker</li>
@@ -168,20 +168,20 @@
             <p class="t-body text-ink/85">Wir sehen jedoch das auf der Strecke gelassene Potenzial und wollen mit unserem digitalisierten und vollautomatisierten Ansatz den Facility Markt revolutionieren. Bei der Umsetzung erfinden wir das Rad jedoch nicht neu, sondern setzen auf bereits langjährig bewährte Mittel aus dem Facility Management, welche wir in Code-Format und Algorithmen umwandeln. Diese Digitalisierung bietet Chancen, die wir auch gerne in Ihrem Unternehmen umsetzen möchten.</p>
           </div>
           <ul class="mt-16 grid gap-5 sm:grid-cols-2 lg:mt-20">
-            <li class="rounded-[var(--radius-tile)] bg-ice p-9">
-              <h3 class="hyphens-auto break-words t-h4 text-ink">FM-Optimierung</h3>
+            <li class="rounded-[var(--radius-tile)] kachel-verlauf-2 mit-korn kachel-polster">
+              <h3 class="hyphens-auto break-words t-h4 text-blue-600">FM-Optimierung</h3>
               <p class="mt-4 t-body-tight text-ink/85">Taskrunner kann Ihnen in persönlichen Schulungen und Workshops dabei helfen die Facility Management Prozesse und die damit verbundenen Kosten in Ihrem Unternehmen nachhaltig zu verbessern.</p>
             </li>
-            <li class="rounded-[var(--radius-tile)] bg-ice p-9">
-              <h3 class="hyphens-auto break-words t-h4 text-ink">Digitalisierung</h3>
+            <li class="rounded-[var(--radius-tile)] kachel-verlauf-4 mit-korn kachel-polster">
+              <h3 class="hyphens-auto break-words t-h4 text-blue-600">Digitalisierung</h3>
               <p class="mt-4 t-body-tight text-ink/85">Facility Management kann heutzutage größtenteils automatisiert und vor allen Dingen auch digitalisiert werden. Wir von Taskrunner zeigen Ihnen, wie auch Ihr Unternehmen davon profitieren kann.</p>
             </li>
-            <li class="rounded-[var(--radius-tile)] bg-ice p-9">
-              <h3 class="hyphens-auto break-words t-h4 text-ink">Datenpflege</h3>
+            <li class="rounded-[var(--radius-tile)] kachel-verlauf-1 mit-korn kachel-polster">
+              <h3 class="hyphens-auto break-words t-h4 text-blue-600">Datenpflege</h3>
               <p class="mt-4 t-body-tight text-ink/85">Oftmals gehen mit der Zeit Stammdaten, Ausführungsberichte und auch Rechnungen verloren. Diese können aber auch für zukünftige Aufträge und Preisvergleiche noch relevant sein, wir zeigen Ihnen den richtigen und datenschutzkonformen Umgang.</p>
             </li>
-            <li class="rounded-[var(--radius-tile)] bg-ice p-9">
-              <h3 class="hyphens-auto break-words t-h4 text-ink">Amts&shy;vorschriften</h3>
+            <li class="rounded-[var(--radius-tile)] kachel-verlauf-3 mit-korn kachel-polster">
+              <h3 class="hyphens-auto break-words t-h4 text-blue-600">Amts&shy;vorschriften</h3>
               <p class="mt-4 t-body-tight text-ink/85">Von der Arbeitsstättenverordnung (AStV) über die Arbeitsschutzrichtlinien (ASR) und Brandsicherheit bis hin zu den gesetzlichen Regelungen für DIN-Prüfungen, Taskrunner berät Sie gerne in Hinblick auf die Einhaltung sämtlicher gesetzlicher Normen und Vorschriften.</p>
             </li>
           </ul>
@@ -193,18 +193,18 @@
           </div>
         </div>
       </section>
-      <section id="einkauf" class="bg-ice section-y scroll-mt-[calc(var(--header-h)+24px)]">
+      <section id="einkauf" class="bg-white section-y scroll-mt-[calc(var(--header-h)+24px)]">
         <div class="container-wide">
           <p class="t-eyebrow text-ink/80">Facility Management weiter gedacht</p>
           <h2 class="mt-4 max-w-[900px] text-balance hyphens-auto break-words t-h2 text-ink">Zentraler Einkauf</h2>
           <p class="mt-6 max-w-[680px] t-body text-ink/85">Durch den zentralen Einkauf direkt über Taskrunner ermöglichen wir eine neue Ära der Handwerks&shy;dienstleistungen. Bei Reparaturen, welche materialintensiv sind, können Sie einfach per Einkaufsfunktion von unseren Großhändlerpreisen, einer minutengenauen Sendungsverfolgung und Zustellung profitieren.</p>
           <ul class="mt-16 grid gap-x-8 gap-y-8 sm:grid-cols-2 lg:mt-20 lg:grid-cols-3 lg:gap-x-10">
-            <li class="border-t border-ink/20 pt-6 hyphens-auto break-words t-h4 text-ink">Kosten&shy;einsparungen</li>
-            <li class="border-t border-ink/20 pt-6 hyphens-auto break-words t-h4 text-ink">Geringerer Verwaltungs&shy;aufwand</li>
-            <li class="border-t border-ink/20 pt-6 hyphens-auto break-words t-h4 text-ink">Detaillierte Produkt&shy;spezifikationen</li>
-            <li class="border-t border-ink/20 pt-6 hyphens-auto break-words t-h4 text-ink">Bessere Einkaufs&shy;konditionen</li>
-            <li class="border-t border-ink/20 pt-6 hyphens-auto break-words t-h4 text-ink">Erhöhte Markt&shy;transparenz</li>
-            <li class="border-t border-ink/20 pt-6 hyphens-auto break-words t-h4 text-ink">Sendungsverlauf in Echtzeit</li>
+            <li class="border-t border-ink/20 pt-6 hyphens-auto break-words t-h4 text-blue-600">Kosten&shy;einsparungen</li>
+            <li class="border-t border-ink/20 pt-6 hyphens-auto break-words t-h4 text-blue-600">Geringerer Verwaltungs&shy;aufwand</li>
+            <li class="border-t border-ink/20 pt-6 hyphens-auto break-words t-h4 text-blue-600">Detaillierte Produkt&shy;spezifikationen</li>
+            <li class="border-t border-ink/20 pt-6 hyphens-auto break-words t-h4 text-blue-600">Bessere Einkaufs&shy;konditionen</li>
+            <li class="border-t border-ink/20 pt-6 hyphens-auto break-words t-h4 text-blue-600">Erhöhte Markt&shy;transparenz</li>
+            <li class="border-t border-ink/20 pt-6 hyphens-auto break-words t-h4 text-blue-600">Sendungsverlauf in Echtzeit</li>
           </ul>
         </div>
       </section>

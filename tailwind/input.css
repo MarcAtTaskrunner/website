@@ -148,7 +148,7 @@
    steht ungeschachtelt und schlaegt damit auch eine Klasse wie
    text-white/75 am Absatz selbst. Wer eine eigene Abstufung will,
    gibt dem Kasten keine dieser Hintergrundklassen - die Verlaeufe
-   (.fuss-verlauf, .ablauf-verlauf) bringen ihre Grundfarbe als letzte
+   (.fuss-verlauf, .verlauf-nacht) bringen ihre Grundfarbe als letzte
    Lage selbst mit und brauchen sie nicht. */
 .variante-b .bg-navy p, .variante-b .bg-blue-600 p, .variante-b .bg-blue-300 p,
 .variante-b .bg-grey-darker p, .variante-b .text-white p { color: inherit; }
@@ -297,6 +297,12 @@ html.js-auf .variante-b [data-auf].da { opacity: 1; translate: none; }
   opacity: var(--korn-deckung, 0.28);
   mix-blend-mode: hard-light;
 }
+
+/* Grundstellung: das dunkle Logo. Seit alle Seiten dieselbe Kopfzeile
+   benutzen, traegt sie beide Fassungen; ohne diese Zeile laege das
+   weisse Logo auf hellen Seiten unsichtbar obenauf. Nur wenn die
+   Leiste durchsichtig ueber einem dunklen Band liegt, wird gewechselt. */
+header .logo-hell { opacity: 0; }
 
 .variante-b header .logo-dunkel,
 .variante-b header .logo-hell { transition: opacity .22s var(--kurve); }
@@ -781,13 +787,14 @@ header #mobile-nav a[aria-current="page"] {
 header #mobile-nav a[aria-current="page"]::after { content: none; }
 
 /* ------------------------------------------------------------------ *
- *  Verlaeufe fuer Ablaufabschnitt und Fusszeile
+ *  Dunkle Verlaeufe: Abschnitte und Fusszeile
  *
  *  Beide nach dem Vorbild des Hero: eine diagonale Grundlage, darauf
  *  drei weiche Lichter aus derselben Farbfamilie, dazu .mit-korn.
  *  Beide sind dunkel und tragen weisse Schrift; sie unterscheiden sich
- *  nur darin, wo die Lichter sitzen - im Ablaufabschnitt oben rechts
- *  und unten links, in der Fusszeile oben.
+ *  nur darin, wo die Lichter sitzen - .verlauf-nacht oben rechts und
+ *  unten links, die Fusszeile oben. .verlauf-nacht traegt den Abschnitt
+ *  "So funktioniert Taskrunner" und die Kopfbaender der Unterseiten.
  *
  *  Die Lichter sind in der Hoehe ueber 100% gross: beide Flaechen sind
  *  breit und niedrig, ein Licht mit 100% Hoehe waere darin ein
@@ -796,7 +803,7 @@ header #mobile-nav a[aria-current="page"]::after { content: none; }
  *  Die Grundfarbe steht als letzte Lage im Kurzschreiber - ohne sie
  *  setzt background die Hintergrundfarbe auf durchsichtig zurueck.
  * ------------------------------------------------------------------ */
-.ablauf-verlauf {
+.verlauf-nacht {
   background:
     radial-gradient(40% 100% at 14% 94%, rgba(0, 177, 255, 0.14) 0%, rgba(0, 177, 255, 0) 72%),
     radial-gradient(56% 120% at 86% 10%, rgba(2, 76, 255, 0.34) 0%, rgba(2, 76, 255, 0) 74%),
@@ -849,6 +856,14 @@ footer h3 {
    gedaempfte Blaugrau: die Regel .variante-b p.t-intro/p.t-body-tight
    weiter oben steht ungeschachtelt und schlaegt sonst text-white/75.
    Gleiche Spezifitaet, aber spaeter in der Datei - damit gewinnt sie. */
-.ablauf-verlauf p.t-body,
-.ablauf-verlauf p.t-body-tight,
-.ablauf-verlauf p.t-intro { color: rgba(255, 255, 255, 0.75); }
+.verlauf-nacht p.t-body,
+.verlauf-nacht p.t-body-tight,
+.verlauf-nacht p.t-intro { color: rgba(255, 255, 255, 0.75); }
+
+/* Kopfband der Unterseiten: dunkles Band mit .verlauf-nacht, unten
+   abgerundet wie der Hero der Startseite. Die Hoehe kommt aus dem
+   Polster im Markup, damit jede Seite ihr eigenes Mass haben kann. */
+.seitenkopf {
+  border-bottom-left-radius: 34px;
+  border-bottom-right-radius: 34px;
+}
