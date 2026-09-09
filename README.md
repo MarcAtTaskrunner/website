@@ -27,13 +27,13 @@ CLAUDE.md             Kurzanleitung: was liegt wo, wie wird gebaut
 
 ```bash
 python3 werkzeuge/bauen.py     # quellen/ -> Seiten im Wurzelverzeichnis
+npm run css                    # tailwind/input.css -> assets/style.css
 ```
 
 Kopfzeile und Fußzeile stehen dadurch genau einmal im Projekt statt neunmal.
 Was `bauen.py` an Vorlagensyntax versteht – drei Dinge – steht in `CLAUDE.md`.
-Node ist auf diesem Rechner nicht installiert; `npm run build` (Tailwind +
-`dist/`) läuft nur in der Cloudflare-CI. Deshalb liegen die gebauten Seiten
-mit im Git.
+Die gebauten Seiten liegen mit im Git, damit die Cloudflare-CI nur noch
+ausliefern muss.
 
 ## Herkunft der Assets
 
@@ -93,6 +93,7 @@ die einzige Vorlagensyntax sind `<!--einbau: …-->`, `{{werte}}` und der
 
 ```bash
 python3 werkzeuge/bauen.py     # nach jeder Änderung in quellen/
+npm run css                    # nach jeder Änderung an input.css oder an Klassen
 python3 -m http.server 8765    # Vorschau unter http://localhost:8765
 ```
 

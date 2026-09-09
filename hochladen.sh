@@ -8,6 +8,7 @@ cd "$(dirname "$0")"
 # Erst bauen: sonst wandert ein alter Stand der Seiten hoch, wenn in
 # quellen/ etwas geaendert und der Bau vergessen wurde.
 python3 werkzeuge/bauen.py
+if command -v npm >/dev/null 2>&1; then npm run css --silent; fi
 
 if [ -n "$(git status --porcelain)" ]; then
   git add -A

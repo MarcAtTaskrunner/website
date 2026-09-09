@@ -8,14 +8,19 @@ Python-Skript setzt die Seiten aus wiederverwendeten Bausteinen zusammen.
 **Bearbeitet wird nur `quellen/`.** Die HTML-Dateien im Wurzelverzeichnis und
 `assets/schaubilder.js` sind Bauergebnis und werden überschrieben.
 
-Nach jeder Änderung an `quellen/`:
+Nach jeder Änderung an `quellen/` oder `tailwind/input.css`:
 
 ```bash
-python3 werkzeuge/bauen.py
+python3 werkzeuge/bauen.py && npm run css
 ```
 
-Node ist auf diesem Rechner nicht installiert; `npm run build` läuft nur in
-der Cloudflare-CI. Deshalb liegen die gebauten Seiten im Git.
+In dieser Reihenfolge: Tailwind schreibt nur die Klassen ins CSS, die zu
+dem Zeitpunkt im gebauten HTML stehen.
+
+Node ist installiert (v24, über den Installer von nodejs.org). Die
+Cloudflare-CI baut beim Push ohnehin neu; lokal gebaut wird, damit sich
+Vorschau und Live-Stand nicht unterscheiden. Die gebauten Seiten liegen
+mit im Git.
 
 ## Wo liegt was
 
@@ -33,17 +38,21 @@ der Cloudflare-CI. Deshalb liegen die gebauten Seiten im Git.
 Suchen statt lesen: die Seiten sind zeilenweise umgebrochen, `grep -n` findet
 die Stelle. Ganze Dateien nur öffnen, wenn es wirklich nötig ist.
 
-## Achtung: keine neuen Tailwind-Klassen
+## Nach jeder Änderung: zweimal bauen
 
-Tailwind kann hier nicht laufen (kein Node). `assets/style.css` enthält nur
-Klassen, die zum Zeitpunkt des letzten CI-Builds im HTML standen. Eine neue
-Klasse wie `text-left` wirkt deshalb **lokal nicht** – und nach dem nächsten
-Push plötzlich doch, was Layouts still verschiebt.
+```bash
+python3 werkzeuge/bauen.py     # quellen/ -> Seiten im Wurzelverzeichnis
+npm run css                    # tailwind/input.css -> assets/style.css
+```
 
-Also: entweder eine Klasse verwenden, die schon irgendwo im HTML steht
-(`grep -c '\.text-left{' assets/style.css` zeigt, ob es sie gibt), oder die
-Eigenschaft als richtige Regel in `tailwind/input.css` schreiben und
-denselben Text minifiziert in `assets/style.css` ergänzen.
+`assets/style.css` ist reines Bauergebnis – **nie von Hand ändern**. Tailwind
+schreibt nur die Klassen hinein, die zu diesem Zeitpunkt im HTML stehen;
+deshalb erst `bauen.py`, dann `npm run css`. In der umgekehrten Reihenfolge
+fehlen genau die Klassen, die gerade dazugekommen sind.
+
+Eigene Regeln (alles, was keine Tailwind-Klasse ist) gehören nach
+`tailwind/input.css` – ungeschachtelt am Dateiende, wenn sie gegen die
+Skala gewinnen sollen.
 
 ## Vorlagensyntax (mehr kann `bauen.py` nicht)
 
