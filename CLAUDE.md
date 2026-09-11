@@ -119,6 +119,18 @@ seitlichen Überlauf bei 375/768/1440 px, Inhaltsbreite 1280 und ob die
 randlosen Schaubilder bündig sitzen. Gibt nur Text aus – das ist der
 schnellste Weg, etwas zu prüfen, und sollte vor dem Browser kommen.
 
+Wenn wirklich ein Bild nötig ist, dann klein und als Ausschnitt:
+
+```bash
+node werkzeuge/bild.mjs dienstleistungen.html "#handwerk" /tmp/a.png
+```
+
+Ein Bild bleibt im Gespräch liegen und wird in **jeder folgenden Runde**
+erneut gelesen. Ein ganzer Bildschirm in voller Auflösung kostet rund
+2.200 Tokens – mal mehrere hundert Runden. Ein Ausschnitt in halber
+Auflösung kostet davon ein Zwanzigstel. Deshalb: erst messen, nur im
+Zweifel schauen, und dann nur den fraglichen Ausschnitt.
+
 Zum Anschauen:
 
 ```bash
@@ -143,3 +155,5 @@ und veröffentlicht. Einzelheiten in `DEPLOY.md`.
   ohne Fenster (Playwright + axe-core), Ausgabe nur als Text
 - `werkzeuge/schriftbild.mjs` – zeigt, welche Größe und Stärke jede
   Textklasse auf welcher Seite bekommt; zum Vergleichen zweier Seiten
+- `werkzeuge/bild.mjs` – Ausschnitt einer Seite als Bild, standardmäßig
+  in halber Auflösung
