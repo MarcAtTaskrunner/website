@@ -887,3 +887,19 @@ footer h3 {
 @media (max-height: 720px) {
   .kopf-hoch { min-height: 640px; }
 }
+
+/* ------------------------------------------------------------------ *
+ *  Gewerke-Marken
+ *
+ *  Die Unterpunkte eines Gewerks stehen nebeneinander statt
+ *  untereinander, jeder auf eigenem Grund. Die Form ist dem Knopf
+ *  entlehnt, mehr nicht: sie sind nicht anklickbar, sondern zaehlen
+ *  auf - deshalb kein Zeigefinger, kein Hover, kein Rahmen.
+ * ------------------------------------------------------------------ */
+.gewerk-marke {
+  display: inline-block;
+  padding: 0.45rem 0.95rem;
+  border-radius: 9999px;
+  background: var(--color-ice);
+  color: var(--color-ink);
+}
