@@ -20,19 +20,35 @@ Verbindliche Regeln für die Website. Umgesetzt in `tailwind/input.css`
 Drei Breakpoints, wie bei Apple: bis 734 px, 735–1068 px, ab 1069 px.
 Fließtext skaliert nicht mit — 17 px auf allen Größen.
 
-| Klasse | ≤734 | 735–1068 | ≥1069 | line-height | letter-spacing | Gewicht |
-|---|---|---|---|---|---|---|
-| `.t-h1` | 48 px | 64 px | **80 px** | 1.05 | −0.015em | 500 |
-| `.t-h2` | 40 px | 48 px | **56 px** | 1.0714 | −0.016em | 500 |
-| `.t-h3` | 28 px | 32 px | **40 px** | 1.1 | −0.012em | 500 |
-| `.t-h4` | 21 px | 24 px | **28 px** | 1.1429 | −0.014em | 500 |
-| `.t-intro` | 19 px | 21 px | 21 px | 1.1905 | 0.011em | 500 |
-| `.t-body` | 17 px | 17 px | 17 px | 1.4706 | −0.022em | 500 |
-| `.t-caption` | 14 px | 14 px | 14 px | 1.4286 | −0.016em | 500 |
-| `.t-body-tight` | 17 px | 17 px | 17 px | 1.2353 | −0.022em | 500 |
-| `.t-eyebrow` | 14 px | 14 px | 14 px | 1.3 | +0.010em | 500 |
+Zeilenhöhe und Laufweite gehören zur **Größe**, nicht zur Klasse: Wird eine
+Überschrift auf dem Handy kleiner, bekommt sie die Werte der kleineren Stufe.
+So macht es Apple (nachgemessen am 14.09.2026). Je Zelle:
+Größe px / Zeilenhöhe / Laufweite.
+
+| Klasse | ≤734 | 735–1068 | ≥1069 | Gewicht |
+|---|---|---|---|---|
+| `.t-h1` | 48 / 1.083 / −0.003em | 64 / 1.063 / −0.009em | **80** / 1.05 / −0.015em | 500 |
+| `.t-h2` | 32 / 1.125 / +0.004em | 48 / 1.083 / −0.003em | **56** / 1.071 / −0.016em¹ | 500 |
+| `.t-h3` | 28 / 1.143 / +0.007em | 32 / 1.125 / +0.004em | **40** / 1.1 / −0.012em¹ | 500 |
+| `.t-h4` | 21 / 1.190 / +0.011em | 24 / 1.167 / +0.009em | **28** / 1.143 / −0.014em¹ | 500 |
+| `.t-intro` | 21 / 1.381 / +0.011em | gleich | gleich | 400 |
+| `.t-body` | 17 / 1.471 / −0.022em | gleich | gleich | 500 |
+| `.t-caption` | 14 / 1.429 / −0.016em | gleich | gleich | 500 |
+| `.t-body-tight` | 17 / 1.235 / −0.022em | gleich | gleich | 500 |
+| `.t-eyebrow` | 14 / 1.3 / +0.010em | gleich | gleich | 500 |
 
 Die fett gesetzten Werte sind die von dir vorgegebenen Größen.
+
+¹ Auf dem Desktop ist die Laufweite von h2–h4 enger als bei Apple
+(dort −0.005 / 0 / +0.007em). Apples Werte sind auf SF Pro abgestimmt; ob
+DIN Pro sie verträgt, ist offen (Vergleich vom 14.09.2026).
+
+`.t-intro` steht an mehrzeiligen Einleitungsabsätzen, deshalb gilt die
+lockere Zeilenhöhe von Apples Einleitungstexten (1.381) statt der engen
+Überschriften-Zeilenhöhe 1.19, die hier bis September 2026 stand. Wie
+Apples Einleitungstexte in Regular (400), auf allen Breiten 21 px.
+`.t-h2` ist auf dem Handy seit September 2026 32 statt 40 px, wie Apples
+Abschnittsüberschriften (28–32 px).
 
 `.t-body-tight` und `.t-eyebrow` sind für Karten: Apple setzt Fließtext dort
 enger als im Lauftext (1.235 statt 1.471) und die Kategoriezeile darüber in

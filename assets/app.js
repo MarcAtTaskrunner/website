@@ -19,7 +19,7 @@
       /* Die Kopfleiste ist ganz oben durchsichtig. Waehrend die Klappe
          offen ist, braucht sie festen Grund - sonst steht die weisse
          Schrift der Leiste ueber dem weissen Feld der Klappe. */
-      if (kopf) kopf.classList.toggle("gescrollt", offen || window.scrollY > 8);
+      if (kopf) kopf.classList.toggle("gescrollt", offen || window.scrollY > 8 || document.documentElement.classList.contains("kontakt-offen"));
     };
 
     var schliesse = function (fokusZurueck) {
@@ -46,6 +46,63 @@
     if (breit.addEventListener) breit.addEventListener("change", aufBreite);
     else breit.addListener(aufBreite);
   }
+
+  /* ---------------------------------------------------------------- *
+   *  Kontaktfenster
+   *  "Kontakt" in der Kopfleiste klappt ein Fenster unter der Leiste
+   *  auf (Vorbild: serviceplan.com). Ohne JavaScript fuehrt der Link
+   *  wie bisher auf /kontakt. Solange es offen ist, sind Inhalt und
+   *  Fusszeile inert: Tab bleibt in Kopfleiste und Fenster, dahinter
+   *  ist nichts erreichbar.
+   * ---------------------------------------------------------------- */
+  (function () {
+    var fenster = document.getElementById("kontakt-fenster");
+    var ausloeser = document.querySelectorAll("[data-kontakt-auf]");
+    if (!fenster || !ausloeser.length) return;
+    var wurzel = document.documentElement;
+    var kopf = document.querySelector("header");
+    var zu = fenster.querySelector("[data-kontakt-zu]");
+    var dahinter = document.querySelectorAll("main, footer");
+    var herkunft = null;
+
+    var istOffen = function () { return wurzel.classList.contains("kontakt-offen"); };
+    var sichtbar = function (el) { return el && el.offsetParent !== null; };
+
+    var setze = function (offen) {
+      wurzel.classList.toggle("kontakt-offen", offen);
+      fenster.inert = !offen;
+      Array.prototype.forEach.call(dahinter, function (el) { el.inert = offen; });
+      Array.prototype.forEach.call(ausloeser, function (a) { a.setAttribute("aria-expanded", String(offen)); });
+      if (kopf) kopf.classList.toggle("gescrollt", offen || window.scrollY > 8);
+    };
+
+    /* Fokus zurueck an den Ausloeser. Kam der Klick aus dem Mobilmenue,
+       ist das inzwischen zu - dann an den Menueknopf. */
+    var schliesse = function () {
+      if (!istOffen()) return;
+      setze(false);
+      var ziel = sichtbar(herkunft) ? herkunft : document.getElementById("nav-toggle");
+      if (sichtbar(ziel)) ziel.focus();
+    };
+
+    Array.prototype.forEach.call(ausloeser, function (a) {
+      a.addEventListener("click", function (e) {
+        e.preventDefault();
+        if (istOffen()) { schliesse(); return; }
+        herkunft = a;
+        setze(true);
+        zu.focus({ preventScroll: true });
+      });
+    });
+    zu.addEventListener("click", schliesse);
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") schliesse();
+    });
+    /* Ein Klick auf einen der Wege (Telefon, Mail, Testen) schliesst. */
+    fenster.addEventListener("click", function (e) {
+      if (e.target.closest("a")) schliesse();
+    });
+  })();
 
   /* ---------------------------------------------------------------- *
    *  Karussell der Leistungs-Karten
@@ -237,7 +294,7 @@
     var offen = false;
     var pruefe = function () {
       offen = false;
-      var soll = window.scrollY > 8;
+      var soll = window.scrollY > 8 || document.documentElement.classList.contains("kontakt-offen");
       if (soll !== kopf.classList.contains("gescrollt")) kopf.classList.toggle("gescrollt", soll);
     };
     window.addEventListener("scroll", function () {

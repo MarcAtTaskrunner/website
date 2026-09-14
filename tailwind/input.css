@@ -4,6 +4,7 @@
    werkzeuge/bauen.py bei jedem Lauf neu - hier nichts von Hand aendern. */
 /* seiten:anfang */
 @source "../agb.html";
+@source "../blog.html";
 @source "../datenschutz.html";
 @source "../dienstleistungen.html";
 @source "../foerderungen.html";
@@ -11,6 +12,8 @@
 @source "../index.html";
 @source "../nutzungsbedingungen.html";
 /* seiten:ende */
+/* Die Ergebniskarten des Foerder-Checks entstehen erst im Browser. */
+@source "../assets/foerdercheck.js";
 
 /* ------------------------------------------------------------------ *
  *  Hausschrift DIN Pro – selbst gehostet, kein externer Request.
@@ -366,17 +369,25 @@ header .logo-hell { opacity: 0; }
 }
 
 
+/* Seitenrand links und rechts, fuer .container-wide, .rand-seite und
+   das Handwerk-Foto: 24 px auf dem Handy, 56 bei 1024, 79 bei 1440,
+   hoechstens 112. */
+:root { --rand: clamp(24px, 5.5vw, 112px); }
+
 /* Container-Breiten: der Prototyp nutzt zwei Rasterbreiten */
-/* Die eine Inhaltsbreite der Seite: 1328 aussen, 1.5rem Polster je
-   Seite, also 1280 innen. Frueher waren es 1240/1192; daneben stand an
+/* Die eine Inhaltsbreite der Seite: 1280 innen, dazu je Seite ein Rand,
+   der mit dem Fenster waechst (24 px auf dem Handy bis hoechstens
+   112, gleich wie .rand-seite). Bis September 2026 war er fest 1.5rem,
+   bei 1024-1280 px Fensterbreite wirkte das zu knapp. Frueher waren
+   es 1240/1192; daneben stand an
    einer Stelle dasselbe noch einmal als max-w-[1328px] und es gab eine
    dritte, engere Stufe. Jetzt gibt es nur diese - und die volle Breite
    des Hero. */
 @utility container-wide {
   width: 100%;
-  max-width: 1328px;
+  max-width: calc(1280px + 2 * var(--rand));
   margin-inline: auto;
-  padding-inline: 1.5rem;
+  padding-inline: var(--rand);
 }
 
 @layer base {
@@ -457,36 +468,42 @@ header .logo-hell { opacity: 0; }
     font-weight: 500;
   }
 
-  /* --- bis 734 px --- */
-  h1, .t-h1 { font-size: 48px; line-height: 1.05;    letter-spacing: -0.015em; }
-  h2, .t-h2 { font-size: 40px; line-height: 1.07143; letter-spacing: -0.016em; }
-  h3, .t-h3 { font-size: 28px; line-height: 1.1;     letter-spacing: -0.012em; }
-  h4, .t-h4 { font-size: 21px; line-height: 1.14286; letter-spacing: -0.014em; }
+  /* Zeilenhoehe und Laufweite gehoeren zur Groesse, nicht zur Klasse:
+     wird eine Ueberschrift kleiner, bekommt sie die Werte der kleineren
+     Stufe - so macht es apple.com (nachgemessen 14.09.2026). Einzige
+     Abweichung: die Laufweite von h2-h4 ab 1069 px ist enger als bei
+     Apple, siehe TYPOGRAFIE.md. */
 
-  .t-intro   { font-size: 19px; line-height: 1.19048; letter-spacing:  0.011em; font-weight: 500; }
+  /* --- bis 734 px --- */
+  h1, .t-h1 { font-size: 48px; line-height: 1.08349; letter-spacing: -0.003em; }
+  h2, .t-h2 { font-size: 32px; line-height: 1.125;   letter-spacing:  0.004em; }
+  h3, .t-h3 { font-size: 28px; line-height: 1.14286; letter-spacing:  0.007em; }
+  h4, .t-h4 { font-size: 21px; line-height: 1.19048; letter-spacing:  0.011em; }
+
+  .t-intro   { font-size: 21px; line-height: 1.381002381; letter-spacing:  0.011em; font-weight: 400; }
   .t-body    { font-size: 17px; line-height: 1.47059; letter-spacing: -0.022em; font-weight: 500; }
   .t-caption { font-size: 14px; line-height: 1.42857; letter-spacing: -0.016em; font-weight: 500; }
 
   /* In Karten setzt Apple den Fliesstext enger als im Lauftext (1.235 statt
      1.471) und die Kategorie darueber in Regular statt Medium. */
-  .t-body-tight { font-size: 17px; line-height: 1.23529; letter-spacing: -0.022em; font-weight: 500; }
+  .t-body-tight { font-size: 17px; line-height: 1.23529; letter-spacing: -0.022em; font-weight: 400; }
   .t-eyebrow    { font-size: 14px; line-height: 1.3;     letter-spacing:  0.010em; font-weight: 500; }
 
   /* --- 735 bis 1068 px --- */
   @media (min-width: 735px) {
-    h1, .t-h1 { font-size: 64px; }
-    h2, .t-h2 { font-size: 48px; }
-    h3, .t-h3 { font-size: 32px; }
-    h4, .t-h4 { font-size: 24px; }
+    h1, .t-h1 { font-size: 64px; line-height: 1.0625;  letter-spacing: -0.009em; }
+    h2, .t-h2 { font-size: 48px; line-height: 1.08349; letter-spacing: -0.003em; }
+    h3, .t-h3 { font-size: 32px; line-height: 1.125;   letter-spacing:  0.004em; }
+    h4, .t-h4 { font-size: 24px; line-height: 1.16667; letter-spacing:  0.009em; }
     .t-intro  { font-size: 21px; }
   }
 
   /* --- ab 1069 px: die vorgegebenen Zielgroessen --- */
   @media (min-width: 1069px) {
-    h1, .t-h1 { font-size: 80px; }
-    h2, .t-h2 { font-size: 56px; }
-    h3, .t-h3 { font-size: 40px; }
-    h4, .t-h4 { font-size: 28px; }
+    h1, .t-h1 { font-size: 80px; line-height: 1.05;    letter-spacing: -0.015em; }
+    h2, .t-h2 { font-size: 56px; line-height: 1.07143; letter-spacing: -0.016em; }
+    h3, .t-h3 { font-size: 40px; line-height: 1.1;     letter-spacing: -0.012em; }
+    h4, .t-h4 { font-size: 28px; line-height: 1.14286; letter-spacing: -0.014em; }
   }
 }
 
@@ -769,8 +786,11 @@ header .logo-hell { opacity: 0; }
  *  notiert, damit es auch auf den Unterseiten gilt, die kein
  *  .variante-b am body tragen.
  * ------------------------------------------------------------------ */
-header nav a[aria-current="page"] { position: relative; }
-header nav a[aria-current="page"]::after {
+/* Dieselbe Linie traegt "Kontakt", solange das Kontaktfenster offen ist. */
+header nav a[aria-current="page"],
+header nav a[aria-expanded="true"] { position: relative; }
+header nav a[aria-current="page"]::after,
+header nav a[aria-expanded="true"]::after {
   content: "";
   position: absolute;
   left: 0;
@@ -784,7 +804,8 @@ header nav a[aria-current="page"]::after {
 header #mobile-nav a[aria-current="page"] {
   background-color: var(--color-ice);
 }
-header #mobile-nav a[aria-current="page"]::after { content: none; }
+header #mobile-nav a[aria-current="page"]::after,
+header #mobile-nav a[aria-expanded="true"]::after { content: none; }
 
 /* ------------------------------------------------------------------ *
  *  Dunkle Verlaeufe: Abschnitte und Fusszeile
@@ -889,17 +910,595 @@ footer h3 {
 }
 
 /* ------------------------------------------------------------------ *
- *  Gewerke-Marken
+ *  Gewerke-Accordion (Dienstleistungen, Abschnitt Handwerk)
  *
- *  Die Unterpunkte eines Gewerks stehen nebeneinander statt
- *  untereinander, jeder auf eigenem Grund. Die Form ist dem Knopf
- *  entlehnt, mehr nicht: sie sind nicht anklickbar, sondern zaehlen
- *  auf - deshalb kein Zeigefinger, kein Hover, kein Rahmen.
+ *  Links die Gewerke, rechts das Foto im Rahmen. Die offene Zeile
+ *  zeigt Symbol, Ueberschrift in Blau und ihre Liste; die
+ *  geschlossenen stehen nur als Ueberschrift in leisem Blaugrau.
+ *  Haarlinien trennen die Zeilen, ueber der offenen wird die Linie
+ *  kraeftiger. Kein Plus/Minus: offen und zu unterscheiden sich schon
+ *  durch Farbe, Symbol und Liste.
+ *
+ *  Gebaut aus <details>/<summary>: kein JavaScript, per Tastatur
+ *  bedienbar, und name="gewerke" haelt immer nur eine Zeile offen
+ *  (aeltere Browser oeffnen eben mehrere). Das Aufklappen gleitet, wo
+ *  ::details-content und interpolate-size bekannt sind; sonst springt
+ *  es - beides funktioniert.
+ *
+ *  Leises Blaugrau #6b7588: 4.6:1 auf Weiss. Das reicht auch fuer die
+ *  21 px der t-h4 auf dem Handy, die dort noch kein "grosser Text"
+ *  sind.
  * ------------------------------------------------------------------ */
-.gewerk-marke {
-  display: inline-block;
-  padding: 0.45rem 0.95rem;
+
+.gewerk-karte {
+  border-top: 1px solid var(--vb-linie);
+  transition: border-color 0.25s ease;
+}
+.gewerk-karte[open] { border-top-color: rgba(0,70,137,0.35); }
+.gewerk-karte > summary {
+  display: flex;
+  align-items: center;
+  padding: 20px 0;
+  cursor: pointer;
+  list-style: none;
+}
+.gewerk-karte > summary::-webkit-details-marker { display: none; }
+.gewerk-karte h3 { color: var(--color-blue-medium); transition: color 0.2s ease; }
+.gewerk-karte > summary:hover h3 { color: var(--color-ink); }
+.gewerk-karte > summary:focus-visible {
+  outline: 2px solid var(--color-blue-medium);
+  outline-offset: 3px;
+}
+/* Symbol nur an der offenen Zeile. Es waechst aus der Breite 0, damit
+   die Ueberschrift beim Wechsel gleitet statt zu springen. Die Hoehe
+   bleibt auch zu stehen - so sind alle Zeilen gleich hoch. */
+.gewerk-symbol {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 0;
+  height: 44px;
+  margin-right: 0;
+  overflow: hidden;
+  border-radius: 12px;
+  background: var(--color-ice);
+  opacity: 0;
+  transition: width 0.25s ease, margin-right 0.25s ease, opacity 0.2s ease;
+}
+.gewerk-symbol img { width: 28px; height: 28px; max-width: none; object-fit: contain; }
+.gewerk-karte[open] .gewerk-symbol { width: 44px; margin-right: 16px; opacity: 1; }
+
+.gewerk-liste {
+  display: grid;
+  gap: 6px 24px;
+  padding: 0 0 24px;
+  color: var(--color-ink);
+}
+.gewerk-liste li { position: relative; padding-left: 16px; }
+.gewerk-liste li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-blue-light);
+}
+@media (min-width: 40rem) {
+  .gewerk-karte > summary { padding: 22px 0; }
+  .gewerk-liste {
+    grid-template-columns: 1fr 1fr;
+    padding: 0 0 28px;
+  }
+}
+@supports selector(::details-content) {
+  .gewerk-karte { interpolate-size: allow-keywords; }
+  .gewerk-karte::details-content {
+    block-size: 0;
+    overflow: hidden;
+    transition: block-size 0.3s ease, content-visibility 0.3s allow-discrete;
+  }
+  .gewerk-karte[open]::details-content { block-size: auto; }
+}
+
+/* Seitenrand fuer Abschnitte ueber die volle Breite (Kopfband und
+   Handwerk auf den Dienstleistungen). Derselbe Rand wie in
+   .container-wide: 24 px auf dem Handy, 56 bei 1024, 79 bei 1440,
+   hoechstens 112. Bis das Fenster breiter ist als 1280 + zweimal der
+   Rand (rund 1440), fluchten beide; darueber bleibt der Inhalt von
+   .container-wide bei 1280 und rueckt zur Mitte. */
+.rand-seite { padding-inline: var(--rand); }
+
+/* Das Foto rechts, ohne Rahmen: es fuellt seine Spalte, die Ecken
+   rundet der Kasten ab.
+   Ab lg eine feste Mindesthoehe, mindestens so hoch wie die linke
+   Spalte mit dem laengsten offenen Gewerk - sonst wuerde das Foto
+   beim Auf- und Zuklappen mitspringen. Gemessen (linke Spalte,
+   hoechster Stand): 641 px bei 1024-1100, 622 ab 1200. */
+.gewerk-bild {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-tile);
+  aspect-ratio: 4 / 3;
+}
+.gewerk-bild img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  object-position: 80% 20%;
+}
+@media (min-width: 64rem) {
+  .gewerk-bild { aspect-ratio: auto; min-height: 660px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gewerk-karte,
+  .gewerk-karte h3,
+  .gewerk-symbol,
+  .gewerk-karte::details-content { transition: none; }
+}
+
+/* ------------------------------------------------------------------ *
+ *  Beratung (Dienstleistungen)
+ *
+ *  Dunkles Band wie das Kopfband (.verlauf-nacht). Die vier Themen
+ *  stehen als Zeilen zwischen Haarlinien: links Symbol und Titel,
+ *  rechts der Text - im selben Raster 7:5 wie die Kopfzeile darueber,
+ *  so fluchtet er mit dem Einleitungssatz. Symbole statt Nummern, weil
+ *  die Themen keine Reihenfolge sind. Keine Kaesten: im dunklen Band
+ *  wirkten sie zu schwer.
+ *
+ *  Die Symbole in #8ab4f8 statt Light Blue (#4285f4): das waere auf
+ *  dem Verlauf zu dunkel. Sie sind reiner Schmuck (aria-hidden).
+ * ------------------------------------------------------------------ */
+.beratung-zeile { border-top: 1px solid rgba(255,255,255,0.2); }
+.beratung-zeile:last-child { border-bottom: 1px solid rgba(255,255,255,0.2); }
+.beratung-symbol { flex: none; color: #8ab4f8; }
+.beratung-symbol svg { display: block; width: 32px; height: 32px; }
+/* Im Beratungsabschnitt steht aller Text in vollem Weiss statt der 75 %
+   von .verlauf-nacht p - die ID schlaegt die Klassenregel. */
+#beratung p { color: #fff; }
+
+/* ------------------------------------------------------------------ *
+ *  Mehr Luft fuer Handwerk und Beratung (Dienstleistungen): oben und
+ *  unten 80 / 130 / 170 px statt 60 / 90 / 120 wie .section-y.
+ * ------------------------------------------------------------------ */
+.section-y-weit { padding-block: 80px; }
+@media (min-width: 735px)  { .section-y-weit { padding-block: 130px; } }
+@media (min-width: 1069px) { .section-y-weit { padding-block: 170px; } }
+
+/* Das Handwerk-Foto laeuft ab lg rechts bis an den Fensterrand. Der
+   Abschnitt steht in .container-wide; das Foto zieht sich um genau den
+   Abstand zwischen Inhaltskante und Fensterrand heraus - den Rand, auf
+   Fenstern breiter als 1280 + 2 x Rand die halbe Differenz zu 1280.
+   Rechts dann keine Rundung. 100vw zaehlt eine Scrollleiste mit; den
+   Ueberstand darunter schneidet overflow-x-clip am Abschnitt ab. */
+@media (min-width: 64rem) {
+  .gewerk-bild {
+    margin-right: calc(-1 * max(var(--rand), (100vw - 1280px) / 2));
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ *  Kontaktfenster (alle Seiten, Baustein kopfzeile.html)
+ *
+ *  Nach dem Vorbild von serviceplan.com: "Kontakt" in der Kopfleiste
+ *  klappt ein Fenster unter der Leiste auf, ueber die volle Breite und
+ *  bis zum unteren Bildrand. Es faehrt von oben herunter - per
+ *  clip-path statt height, so muss beim Aufklappen nichts neu
+ *  umbrechen. Dauer und Kurve wie beim Vorbild (0.5 s, 0.3/0/0/1).
+ *  Geschlossen ist es unsichtbar und inert, also auch fuer Tastatur und
+ *  Screenreader nicht da. Die Kopfleiste bleibt darueber (z-50 > 40)
+ *  und bekommt festen Grund (app.js setzt .gescrollt).
+ *  position: fixed schlaegt das relative von .mit-korn, weil diese
+ *  Regel spaeter in der Datei steht.
+ * ------------------------------------------------------------------ */
+.kontakt-fenster {
+  position: fixed;
+  inset: var(--header-h) 0 0 0;
+  z-index: 40;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  visibility: hidden;
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path 0.5s cubic-bezier(0.3, 0, 0, 1), visibility 0s linear 0.5s;
+}
+.kontakt-offen { overflow: hidden; }
+.kontakt-offen .kontakt-fenster {
+  visibility: visible;
+  clip-path: inset(0);
+  transition: clip-path 0.5s cubic-bezier(0.3, 0, 0, 1);
+}
+/* Der Inhalt folgt kurz nach dem Fenster und blendet ein. */
+.kontakt-innen {
+  padding-block: 48px 72px;
+  opacity: 0;
+  transform: translateY(-16px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.kontakt-offen .kontakt-innen {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.4s ease 0.15s, transform 0.5s cubic-bezier(0.3, 0, 0, 1) 0.15s;
+}
+.kontakt-zu {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
   border-radius: 9999px;
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  transition: background-color 0.2s ease;
+}
+.kontakt-zu:hover { background: rgba(255,255,255,0.2); }
+.kontakt-zu:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+/* Drei Wege: auf dem Handy untereinander mit Linie darueber, ab lg
+   nebeneinander mit senkrechten Linien dazwischen wie beim Vorbild. */
+.kontakt-weg {
+  display: flex;
+  flex-direction: column;
+  padding-block: 32px;
+  border-top: 1px solid rgba(255,255,255,0.2);
+}
+.kontakt-bild { display: block; width: auto; height: 80px; color: #8ab4f8; }
+.kontakt-link { color: #fff; transition: color 0.2s ease; }
+.kontakt-link:hover { color: #8ab4f8; }
+.kontakt-link:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+@media (min-width: 64rem) {
+  .kontakt-innen { padding-block: 72px 96px; }
+  .kontakt-weg {
+    padding: 8px 40px;
+    border-top: 0;
+    border-left: 1px solid rgba(255,255,255,0.2);
+  }
+  .kontakt-weg:first-child { padding-left: 0; border-left: 0; }
+  .kontakt-bild { height: 112px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .kontakt-fenster, .kontakt-offen .kontakt-fenster,
+  .kontakt-innen, .kontakt-offen .kontakt-innen { transition: none; }
+}
+
+/* Zentraler Einkauf (Dienstleistungen): Schatten im Farbton von Kopfzeile
+   und Menue, nur groesser - die Karten stehen auf weissem Grund. Der Knopf
+   zwischen den Karten bekommt zusaetzlich einen weissen Ring, der ihn aus
+   den Kanten der Karten freistellt. */
+.schatten-kachel {
+  box-shadow: 0 1px 2px rgba(0, 1, 107, .04), 0 28px 56px -28px rgba(0, 1, 107, .28);
+}
+.schatten-knopf {
+  box-shadow: 0 0 0 6px #fff, 0 12px 24px -10px rgba(0, 1, 107, .45);
+}
+
+/* Klimaziele (Foerderungen): drei Etappen auf einer Zeitachse. Ab md
+   laeuft die Linie ohne Luecke ueber alle drei Spalten, jeder Punkt ist
+   ein Ziel, der gelbe das Endziel. Die Zahl nutzt .t-h1 aus der Skala,
+   keine eigene Groesse. */
+.klimaziel {
+  position: relative;
+  padding: 28px 24px 0 0;
+  border-top: 2px solid rgba(66, 133, 244, 0.28);
+}
+.klimaziel::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: -7px;
+  width: 12px;
+  height: 12px;
+  border-radius: 9999px;
+  background: #fff;
+  border: 3px solid var(--color-blue-light);
+}
+.klimaziel-ziel::before {
+  background: var(--color-orange);
+  border-color: var(--color-orange);
+}
+.klimaziel-wert {
+  margin-top: 6px;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Datumsmarke ueber den Titeln der Gesetzeskacheln (Foerderungen). */
+.datumsmarke {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 9999px;
+  background: #fff;
+  color: var(--color-blue-medium);
+}
+.datumsmarke::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 9999px;
+  background: var(--color-orange);
+}
+
+/* ------------------------------------------------------------------ *
+ *  Kopfband mit Foto (Foerderungen)
+ *
+ *  Drei Lagen ueber .verlauf-nacht (der nur noch zu sehen ist, solange
+ *  das Foto laedt), von unten nach oben:
+ *    .kopf-foto-bild  z -3  das Foto in seinen eigenen Farben
+ *    ::after          z -2  Verlauf nur hinter dem Text: dunkel links
+ *                           unten, wo Ueberschrift und Knoepfe stehen,
+ *                           ab gut der Haelfte der Breite und im oberen
+ *                           Teil ganz durchsichtig. Dazu ein schmaler
+ *                           Schatten oben fuer die weisse Navigation.
+ *    ::before         z -1  das Korn von .mit-korn
+ * ------------------------------------------------------------------ */
+.kopf-foto-bild {
+  position: absolute;
+  inset: 0;
+  z-index: -3;
+  border-radius: inherit;
+  background: url("../images/wald-von-oben.jpg") 50% 40% / cover no-repeat;
+  pointer-events: none;
+}
+.kopf-foto::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(0, 7, 36, 0.5) 0%, rgba(0, 7, 36, 0) 20%),
+    linear-gradient(0deg, rgba(0, 7, 36, 0.6) 0%, rgba(0, 7, 36, 0) 42%),
+    linear-gradient(90deg, rgba(0, 7, 36, 0.86) 0%, rgba(0, 7, 36, 0.66) 30%, rgba(0, 7, 36, 0.22) 48%, rgba(0, 7, 36, 0) 60%);
+}
+@media (max-width: 734px) {
+  .kopf-foto-bild { background-image: url("../images/wald-von-oben-1200.jpg"); }
+  .kopf-foto::after {
+    background:
+      linear-gradient(180deg, rgba(0, 7, 36, 0.5) 0%, rgba(0, 7, 36, 0) 20%),
+      linear-gradient(0deg, rgba(0, 7, 36, 0.88) 0%, rgba(0, 7, 36, 0.6) 40%, rgba(0, 7, 36, 0) 72%);
+  }
+}
+
+/* Dienstleistungen: Handwerker steht rechts im Bild, der Text links auf
+   dem Verlauf. Auf dem Handy rueckt der Ausschnitt auf sein Gesicht. */
+.kopf-foto-bild.foto-handwerk {
+  background-image: url("../images/handwerker-montage.jpg");
+  background-position: 70% 35%;
+}
+@media (max-width: 734px) {
+  .kopf-foto-bild.foto-handwerk {
+    background-image: url("../images/handwerker-montage-1200.jpg");
+    background-position: 80% 30%;
+  }
+}
+
+/* Blog: der Aufmacher links. Ab xl fuellt das Foto die Kachel, Datum,
+   Titel und Auszug liegen unten auf diesem Verlauf in Nachtblau, der
+   nach oben ausblendet, damit das Bild oben frei bleibt. */
+.blog-verlauf {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(0deg, rgba(0, 7, 36, 0.92) 0%, rgba(0, 7, 36, 0.78) 40%, rgba(0, 7, 36, 0) 72%);
+}
+
+/* ------------------------------------------------------------------ *
+ *  Foerder-Check (Foerderungen)
+ *
+ *  Dunkle Flaeche wie das Kontaktfenster: links die drei Fragen,
+ *  rechts das Ergebnis, auf dem Handy untereinander. Die Antworten
+ *  sind echte Radio- und Checkboxen, nur unsichtbar. Sie liegen im
+ *  Label und bleiben per Tastatur erreichbar; zu sehen ist das span
+ *  dahinter. Das Haekchen im gewaehlten Knopf ist ein gedrehter
+ *  Winkel aus zwei Raendern.
+ *
+ *  Die Ergebniskarten schreibt assets/foerdercheck.js. Sie sind weiss
+ *  und bringen ihre Textfarbe selbst mit: unter .text-white erben
+ *  Absaetze die Farbe ihres Kastens (siehe .variante-b oben).
+ * ------------------------------------------------------------------ */
+.foerdercheck {
+  display: grid;
+  gap: 48px;
+  padding: 32px 20px;
+}
+@media (min-width: 735px) { .foerdercheck { padding: 48px; } }
+@media (min-width: 64rem) {
+  .foerdercheck {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    gap: 64px;
+    padding: 56px;
+  }
+  /* Die Fragen bleiben stehen, waehrend rechts die Karten vorbeiziehen -
+     sonst stuende links unter ihnen eine leere dunkle Flaeche. */
+  .foerdercheck > form {
+    position: sticky;
+    top: calc(var(--header-h) + 32px);
+    align-self: start;
+  }
+}
+.check-frage + .check-frage { margin-top: 36px; }
+.check-wahl { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+
+.wahl { position: relative; display: inline-flex; cursor: pointer; }
+.wahl > input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+.wahl > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 9999px;
+  color: #fff;
+  transition: background-color .18s ease, border-color .18s ease, color .18s ease;
+}
+.wahl:hover > span { border-color: #fff; background: rgba(255, 255, 255, 0.1); }
+.wahl > input:checked + span { border-color: #fff; background: #fff; color: var(--color-navy); }
+.wahl > input:focus-visible + span { outline: 2px solid #fff; outline-offset: 3px; }
+.wahl > input:checked + span::before {
+  content: "";
+  flex: none;
+  width: 11px;
+  height: 6px;
+  margin-top: -3px;
+  border-left: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(-45deg);
+}
+
+.check-zahl { display: flex; align-items: center; gap: 12px; margin-top: 12px; }
+.check-zahl input {
+  width: 10rem;
+  padding: 10px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+}
+.check-zahl input::placeholder { color: rgba(255, 255, 255, 0.6); }
+.check-zahl input:hover { border-color: #fff; }
+.check-zahl input:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+/* Ohne die Pfeile zum Hoch- und Runterzaehlen - bei 800 m² nutzt die
+   niemand, und im runden Feld stehen sie als weisser Kasten. */
+.check-zahl input { -moz-appearance: textfield; appearance: textfield; }
+.check-zahl input::-webkit-inner-spin-button,
+.check-zahl input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+
+.ergebnis-leer {
+  padding: 32px 28px;
+  border: 1px dashed rgba(255, 255, 255, 0.4);
+  border-radius: 20px;
+}
+.ergebnis-karte {
+  padding: 28px 24px;
+  border-radius: 20px;
+  background: #fff;
+  color: var(--vb-text);
+}
+@media (min-width: 735px) { .ergebnis-karte { padding: 32px; } }
+.ergebnis-karte + .ergebnis-karte { margin-top: 12px; }
+/* .verlauf-nacht faerbt Absaetze in t-body-tight hellweiss (fuer das
+   Kontaktfenster). In der weissen Karte gilt wieder ihre eigene Farbe. */
+.verlauf-nacht .ergebnis-karte p { color: inherit; }
+/* Auf dem Handy steht die Quote ueber ihrem Text. Ab 735 px links in
+   fester Spalte, damit die Werte untereinander fluchten; 6rem reicht
+   fuer "bis 70 %" in der t-intro. */
+.ergebnis-posten { display: grid; gap: 12px; margin-top: 20px; }
+.ergebnis-posten li { display: grid; gap: 2px; }
+@media (min-width: 735px) {
+  .ergebnis-posten li {
+    grid-template-columns: 6rem minmax(0, 1fr);
+    gap: 16px;
+    align-items: baseline;
+  }
+}
+.ergebnis-quote {
+  color: var(--color-blue-medium);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.ergebnis-betrag {
+  margin-top: 20px;
+  padding: 14px 18px;
+  border-radius: 14px;
   background: var(--color-ice);
   color: var(--color-ink);
+}
+.ergebnis-betrag strong { font-weight: 700; }
+.ergebnis-hinweise { display: grid; gap: 8px; margin-top: 20px; }
+.ergebnis-hinweise li { position: relative; padding-left: 16px; }
+.ergebnis-hinweise li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.44em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-blue-light);
+}
+/* Entfallene Foerderung: oranger Punkt vor der Auszeichnung. */
+.ergebnis-marke { display: inline-flex; align-items: center; gap: 8px; }
+.ergebnis-marke::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 9999px;
+  background: var(--color-orange-dark);
+}
+
+/* ------------------------------------------------------------------ *
+ *  Programme zum Aufklappen (Foerderungen)
+ *
+ *  Wie das Gewerke-Accordion aus <details>/<summary>, aber mehrere
+ *  duerfen offen sein und alle starten zu. Deshalb steht rechts ein
+ *  Pfeil, der sich beim Oeffnen dreht - sonst saehe man einer
+ *  geschlossenen Zeile nicht an, dass sich darunter etwas verbirgt.
+ *  Links auf #heizung usw. klappen das Programm auf (foerdercheck.js).
+ * ------------------------------------------------------------------ */
+.programm { border-top: 1px solid var(--vb-linie); }
+.programm:last-child { border-bottom: 1px solid var(--vb-linie); }
+.programm > summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 24px;
+  align-items: center;
+  padding: 28px 0;
+  cursor: pointer;
+  list-style: none;
+}
+.programm > summary::-webkit-details-marker { display: none; }
+.programm > summary > * { grid-column: 1; }
+.programm > summary h3 { transition: color 0.2s ease; }
+.programm > summary:hover h3 { color: var(--color-ink); }
+.programm > summary:focus-visible {
+  outline: 2px solid var(--color-blue-medium);
+  outline-offset: 3px;
+}
+.programm > summary > .programm-pfeil {
+  grid-column: 2;
+  grid-row: 1 / span 3;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 9999px;
+  background: var(--color-ice);
+  color: var(--color-blue-medium);
+  transition: transform 0.25s ease, background-color 0.2s ease;
+}
+.programm > summary:hover .programm-pfeil { background: #d6e4fd; }
+.programm[open] .programm-pfeil { transform: rotate(180deg); }
+.programm-inhalt { padding-bottom: 48px; }
+@media (min-width: 735px) {
+  .programm > summary { padding: 36px 0; }
+  .programm > summary > .programm-pfeil { width: 52px; height: 52px; }
+  .programm-inhalt { padding-bottom: 64px; }
+}
+@supports selector(::details-content) {
+  .programm { interpolate-size: allow-keywords; }
+  .programm::details-content {
+    block-size: 0;
+    overflow: hidden;
+    transition: block-size 0.3s ease, content-visibility 0.3s allow-discrete;
+  }
+  .programm[open]::details-content { block-size: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .programm::details-content, .programm-pfeil { transition: none; }
 }

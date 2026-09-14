@@ -35,6 +35,8 @@ mit im Git.
 | Farben, Schrift, Komponentenklassen | `tailwind/input.css` |
 | Schriftgrößen | **eine** Skala in `input.css` (`@layer components`), dokumentiert in `TYPOGRAFIE.md` – es gibt keine zweite mehr |
 | Mobilmenü-Verhalten, Karussell | `assets/app.js` (keine Quelle, direkt bearbeiten) |
+| Förder-Check (Förderungen): Fragen | `quellen/foerderungen.html` |
+| Förder-Check: Quoten, Obergrenzen, Ergebnistexte | `assets/foerdercheck.js` (keine Quelle, direkt bearbeiten). Dieselben Werte stehen als Text in `quellen/foerderungen.html` unter „Die Programme im Einzelnen“ – bei neuen Richtlinien **beide** anpassen |
 
 Suchen statt lesen: die Seiten sind zeilenweise umgebrochen, `grep -n` findet
 die Stelle. Ganze Dateien nur öffnen, wenn es wirklich nötig ist.

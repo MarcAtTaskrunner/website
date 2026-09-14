@@ -11,8 +11,9 @@ beschreibung: Handwerk in allen gängigen Gewerken, Beratung zu Facility Managem
 <a href="#inhalt" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-navy focus:px-5 focus:py-3 focus:text-white">Zum Inhalt springen</a>
 <!--einbau: kopfzeile.html-->
 <main id="inhalt">
-      <section class="seitenkopf kopf-hoch verlauf-nacht mit-korn relative flex items-end overflow-hidden">
-        <div class="relative w-full px-6 pb-[60px] pt-[calc(var(--header-h)+72px)] lg:px-8 lg:pb-[76px]">
+      <section class="seitenkopf kopf-hoch kopf-foto verlauf-nacht mit-korn relative flex items-end overflow-hidden">
+        <div class="kopf-foto-bild foto-handwerk" aria-hidden="true"></div>
+        <div class="rand-seite relative w-full pb-[60px] pt-[calc(var(--header-h)+72px)] lg:pb-[76px]">
           <h1 class="max-w-[620px] text-balance hyphens-auto break-words t-h1 text-white">Dienstleistungen</h1>
           <p class="mt-6 max-w-[520px] text-pretty t-intro text-white">Handwerk, Beratung und Einkauf für Ihre Standorte – gebündelt über eine Plattform, deutschlandweit und ohne monatliche Fixkosten.</p>
           <nav class="mt-8 flex flex-wrap items-center gap-4" aria-label="Leistungsbereiche">
@@ -22,139 +23,173 @@ beschreibung: Handwerk in allen gängigen Gewerken, Beratung zu Facility Managem
           </nav>
         </div>
       </section>
-      <section id="handwerk" class="bg-white section-y scroll-mt-[calc(var(--header-h)+24px)]">
+      <section id="handwerk" class="bg-white section-y-weit overflow-x-clip scroll-mt-[calc(var(--header-h)+24px)]">
         <div class="container-wide">
-          <div class="grid gap-10 lg:grid-cols-2 lg:items-start lg:gap-12">
-            <div class="kachel-verlauf-5 mit-korn kachel-polster rounded-[var(--radius-tile)]">
-              <p class="t-eyebrow text-ink/80">Deutschlandweit verfügbar</p>
-              <h2 class="mt-4 max-w-[900px] text-balance hyphens-auto break-words t-h2 text-ink">Handwerks&shy;dienstleistungen</h2>
-              <p class="mt-6 max-w-[680px] t-body text-ink/85">Mit Taskrunner haben Sie die Möglichkeit der deutschlandweiten Handwerkerbeauftragung in allen gängigen Gewerken mit nur einem Single Point of Contact. Betreuen Sie all Ihre Filialen von Hamburg bis München über nur eine Anlaufstelle ohne monatliche Fixkosten. Profitieren Sie von einer effektiven Auftragsvergabe, detaillierten Statistiken und einfachen, einheitlichen Abrechnungen.</p>
-            </div>
-            <div class="flex flex-col gap-12">
-            <div>
-              <div class="flex items-center gap-4">
-                <img src="images/icons/elektro.svg" alt="" aria-hidden="true" width="98" height="51" loading="lazy" decoding="async" class="block h-[34px] w-[64px] shrink-0 object-contain object-left">
-                <h3 class="hyphens-auto break-words t-h4 text-blue-600">Elektroarbeiten</h3>
-              </div>
-              <ul class="mt-5 flex flex-wrap gap-3">
-                <li class="gewerk-marke t-caption">Elektriker</li>
-                <li class="gewerk-marke t-caption">Schwachstrom&shy;techniker</li>
-                <li class="gewerk-marke t-caption">IT / EDV</li>
-                <li class="gewerk-marke t-caption">Werbetechnik</li>
+          <div class="grid gap-6 lg:grid-cols-2 lg:items-end lg:gap-16">
+            <h2 class="max-w-[900px] text-balance hyphens-auto break-words t-h2 text-blue-600">Handwerks&shy;dienstleistungen <span class="block">aus einer Hand</span></h2>
+            <p class="max-w-[560px] text-pretty t-intro text-ink/80">Handwerksleistungen in allen nur erdenklichen Gewerken mit einem festen Ansprechpartner (Single Point of Contact).</p>
+          </div>
+          <div class="mt-12 grid gap-10 lg:mt-20 lg:grid-cols-2 lg:gap-16">
+            <div class="flex flex-col">
+            <details class="gewerk-karte" name="gewerke" open>
+              <summary>
+                <span class="gewerk-symbol" aria-hidden="true"><img src="images/icons/elektro.svg" alt=""></span>
+                <h3 class="hyphens-auto break-words t-h4">Elektroarbeiten</h3>
+              </summary>
+              <ul class="gewerk-liste t-body">
+                <li>Elektriker</li>
+                <li>Schwachstrom&shy;techniker</li>
+                <li>IT / EDV</li>
+                <li>Werbetechnik</li>
+                <li>Blitzschutz</li>
+                <li>Beleuchtung</li>
+                <li>Photovoltaik</li>
+                <li>Brandmeldeanlagen</li>
               </ul>
-            </div>
-            <div>
-              <div class="flex items-center gap-4">
-                <img src="images/icons/installation.svg" alt="" aria-hidden="true" width="91" height="98" loading="lazy" decoding="async" class="block h-[34px] w-[64px] shrink-0 object-contain object-left">
-                <h3 class="hyphens-auto break-words t-h4 text-blue-600">Installations&shy;arbeiten</h3>
-              </div>
-              <ul class="mt-5 flex flex-wrap gap-3">
-                <li class="gewerk-marke t-caption">Rohr- / Kanalreinigung</li>
-                <li class="gewerk-marke t-caption">Sanitärarbeiten</li>
-                <li class="gewerk-marke t-caption">Klimatechnik / Lüftungssysteme</li>
-                <li class="gewerk-marke t-caption">Heizungstechniker</li>
+            </details>
+            <details class="gewerk-karte" name="gewerke">
+              <summary>
+                <span class="gewerk-symbol" aria-hidden="true"><img src="images/icons/installation.svg" alt=""></span>
+                <h3 class="hyphens-auto break-words t-h4">Installations&shy;arbeiten</h3>
+              </summary>
+              <ul class="gewerk-liste t-body">
+                <li>Rohr- / Kanalreinigung</li>
+                <li>Heizungstechniker</li>
+                <li>Trinkwasserhygiene</li>
+                <li>Sanitärarbeiten</li>
+                <li>Klimatechnik / Lüftungssysteme</li>
+                <li>Gasinstallation</li>
               </ul>
-            </div>
-            <div>
-              <div class="flex items-center gap-4">
-                <img src="images/icons/schloss.svg" alt="" aria-hidden="true" width="99" height="46" loading="lazy" decoding="async" class="block h-[34px] w-[64px] shrink-0 object-contain object-left">
-                <h3 class="hyphens-auto break-words t-h4 text-blue-600">Schlosserarbeiten</h3>
-              </div>
-              <ul class="mt-5 flex flex-wrap gap-3">
-                <li class="gewerk-marke t-caption">Schlosser</li>
-                <li class="gewerk-marke t-caption">Schlüsseldienst</li>
-                <li class="gewerk-marke t-caption">Tresoröffnung</li>
-                <li class="gewerk-marke t-caption">Metallbauer</li>
+            </details>
+            <details class="gewerk-karte" name="gewerke">
+              <summary>
+                <span class="gewerk-symbol" aria-hidden="true"><img src="images/icons/schloss.svg" alt=""></span>
+                <h3 class="hyphens-auto break-words t-h4">Schlosserarbeiten</h3>
+              </summary>
+              <ul class="gewerk-liste t-body">
+                <li>Schlosser</li>
+                <li>Schlüsseldienst</li>
+                <li>Tresoröffnung</li>
+                <li>Automatiktüren</li>
+                <li>Metallbauer</li>
+                <li>Tore / Rolltore</li>
+                <li>Schließanlagen</li>
+                <li>Einbruchschutz</li>
               </ul>
-            </div>
-            <div>
-              <div class="flex items-center gap-4">
-                <img src="images/icons/bau.svg" alt="" aria-hidden="true" width="100" height="52" loading="lazy" decoding="async" class="block h-[34px] w-[64px] shrink-0 object-contain object-left">
-                <h3 class="hyphens-auto break-words t-h4 text-blue-600">Bau&shy;dienstleistungen</h3>
-              </div>
-              <ul class="mt-5 flex flex-wrap gap-3">
-                <li class="gewerk-marke t-caption">Maurer</li>
-                <li class="gewerk-marke t-caption">Bodenleger</li>
-                <li class="gewerk-marke t-caption">Trockenbau</li>
-                <li class="gewerk-marke t-caption">Verputzer</li>
-                <li class="gewerk-marke t-caption">Maler und Lackierer</li>
+            </details>
+            <details class="gewerk-karte" name="gewerke">
+              <summary>
+                <span class="gewerk-symbol" aria-hidden="true"><img src="images/icons/bau.svg" alt=""></span>
+                <h3 class="hyphens-auto break-words t-h4">Bau&shy;dienstleistungen</h3>
+              </summary>
+              <ul class="gewerk-liste t-body">
+                <li>Maurer</li>
+                <li>Bodenleger</li>
+                <li>Trockenbau</li>
+                <li>Verputzer</li>
+                <li>Zimmerer</li>
+                <li>Maler und Lackierer</li>
+                <li>Fliesenleger</li>
+                <li>Estrich</li>
+                <li>Betonsanierung</li>
               </ul>
-            </div>
-            <div>
-              <div class="flex items-center gap-4">
-                <img src="images/icons/saege.svg" alt="" aria-hidden="true" width="1200" height="417" loading="lazy" decoding="async" class="block h-[34px] w-[64px] shrink-0 object-contain object-left">
-                <h3 class="hyphens-auto break-words t-h4 text-blue-600">Sonstige Leistungen</h3>
-              </div>
-              <ul class="mt-5 flex flex-wrap gap-3">
-                <li class="gewerk-marke t-caption">Glaser / Rollladen / Schaufenster</li>
-                <li class="gewerk-marke t-caption">Dachdecker</li>
-                <li class="gewerk-marke t-caption">Garten- / Landschaftsbau</li>
-                <li class="gewerk-marke t-caption">Tischler</li>
-                <li class="gewerk-marke t-caption">Transport / Helfer</li>
+            </details>
+            <details class="gewerk-karte" name="gewerke">
+              <summary>
+                <span class="gewerk-symbol" aria-hidden="true"><img src="images/icons/saege.svg" alt=""></span>
+                <h3 class="hyphens-auto break-words t-h4">Sonstige Leistungen</h3>
+              </summary>
+              <ul class="gewerk-liste t-body">
+                <li>Glaser / Rollladen / Schaufenster</li>
+                <li>Dachdecker</li>
+                <li>Transport / Helfer</li>
+                <li>Garten- / Landschaftsbau</li>
+                <li>Tischler</li>
+                <li>Reinigung</li>
+                <li>Winterdienst</li>
               </ul>
+            </details>
             </div>
-          </div
-          </div>>
-          <div class="mt-14 lg:mt-16">
-            <p class="t-intro font-bold text-ink">Ihnen fehlt etwas? Kontaktieren Sie uns gerne.</p>
-            <p class="mt-4">
-              <a href="index.html#kontakt" class="group inline-flex items-center gap-2 t-intro font-bold text-blue-600 transition-colors hover:text-ink">Jetzt Kontakt aufnehmen<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="transition-transform group-hover:translate-x-1"><path d="M9 6l6 6-6 6"></path></svg></a>
-            </p>
+            <div class="gewerk-bild order-first lg:order-none">
+              <img src="images/Handwerksdienstleistung_v2.webp" alt="" loading="lazy" decoding="async">
+            </div>
           </div>
         </div>
       </section>
-      <section id="beratung" class="bg-white section-y scroll-mt-[calc(var(--header-h)+24px)]">
+      <section id="beratung" class="verlauf-nacht mit-korn section-y-weit scroll-mt-[calc(var(--header-h)+24px)]">
         <div class="container-wide">
-          <h2 class="max-w-[900px] text-balance hyphens-auto break-words t-h2 text-ink">Beratung</h2>
-          <p class="mt-6 max-w-[760px] text-pretty t-h3 text-ink">Andere Bereiche des B2B-Umfelds sind längst hochautomatisiert. Im Facility Management wurde diese Entwicklung schlichtweg verschlafen.</p>
-          <div class="mt-8 max-w-[680px] space-y-5">
-            <p class="t-body text-ink/85">Unsere Dienstleistung endet nicht bei der Beauftragung und Koordination von Handwerkenden, denn wir von Taskrunner möchten Ihrem Unternehmen eine vollumfängliche Betreuung im Facility Management anbieten. Streng nach dem Motto: Wieso sollte man etwas ändern, wenn es doch funktioniert, bewegen sich die Mühlen im Facility Management seit Jahren immer gleich. Aber wer soll es denn auch verübeln, ist das Facility Management in vielen Firmen eins der unliebsamen Themen und wird gleichzeitig – fälschlicherweise – oftmals als Kostenpunkt anstatt als Unternehmenstreiber gesehen.</p>
-            <p class="t-body text-ink/85">Wir sehen jedoch das auf der Strecke gelassene Potenzial und wollen mit unserem digitalisierten und vollautomatisierten Ansatz den Facility Markt revolutionieren. Bei der Umsetzung erfinden wir das Rad jedoch nicht neu, sondern setzen auf bereits langjährig bewährte Mittel aus dem Facility Management, welche wir in Code-Format und Algorithmen umwandeln. Diese Digitalisierung bietet Chancen, die wir auch gerne in Ihrem Unternehmen umsetzen möchten.</p>
+          <div class="grid gap-6 lg:grid-cols-[7fr_5fr] lg:items-end lg:gap-12">
+            <h2 class="max-w-[900px] text-balance hyphens-auto break-words t-h2 text-white">Beratung <span class="block">im Facility Management</span></h2>
+            <div class="max-w-[560px] lg:justify-self-end">
+              <p class="text-pretty t-intro">Über die Beauftragung von Handwerkern hinaus: Wir übersetzen bewährte Methoden des Facility Managements in digitale, automatisierte Abläufe.</p>
+              <a href="index.html#kontakt" class="btn btn-white mt-8">Beratung vereinbaren</a>
+            </div>
           </div>
-          <ul class="mt-16 grid gap-5 sm:grid-cols-2 lg:mt-20">
-            <li class="rounded-[var(--radius-tile)] kachel-verlauf-2 mit-korn kachel-polster">
-              <h3 class="hyphens-auto break-words t-h4 text-blue-600">FM-Optimierung</h3>
-              <p class="mt-4 t-body-tight text-ink/85">Taskrunner kann Ihnen in persönlichen Schulungen und Workshops dabei helfen die Facility Management Prozesse und die damit verbundenen Kosten in Ihrem Unternehmen nachhaltig zu verbessern.</p>
+          <ul class="mt-12 lg:mt-24">
+            <li class="beratung-zeile grid gap-4 py-10 lg:py-12 lg:grid-cols-[7fr_5fr] lg:gap-12">
+              <div class="flex items-center gap-5">
+                <span class="beratung-symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></span>
+                <h3 class="hyphens-auto break-words t-h4 text-white">FM-Optimierung</h3>
+              </div>
+              <p class="max-w-[560px] t-body-tight">Taskrunner kann Ihnen in persönlichen Schulungen und Workshops dabei helfen die Facility Management Prozesse und die damit verbundenen Kosten in Ihrem Unternehmen nachhaltig zu verbessern.</p>
             </li>
-            <li class="rounded-[var(--radius-tile)] kachel-verlauf-4 mit-korn kachel-polster">
-              <h3 class="hyphens-auto break-words t-h4 text-blue-600">Digitalisierung</h3>
-              <p class="mt-4 t-body-tight text-ink/85">Facility Management kann heutzutage größtenteils automatisiert und vor allen Dingen auch digitalisiert werden. Wir von Taskrunner zeigen Ihnen, wie auch Ihr Unternehmen davon profitieren kann.</p>
+            <li class="beratung-zeile grid gap-4 py-10 lg:py-12 lg:grid-cols-[7fr_5fr] lg:gap-12">
+              <div class="flex items-center gap-5">
+                <span class="beratung-symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M11 18h2"/></svg></span>
+                <h3 class="hyphens-auto break-words t-h4 text-white">Digitalisierung</h3>
+              </div>
+              <p class="max-w-[560px] t-body-tight">Facility Management kann heutzutage größtenteils automatisiert und vor allen Dingen auch digitalisiert werden. Wir von Taskrunner zeigen Ihnen, wie auch Ihr Unternehmen davon profitieren kann.</p>
             </li>
-            <li class="rounded-[var(--radius-tile)] kachel-verlauf-1 mit-korn kachel-polster">
-              <h3 class="hyphens-auto break-words t-h4 text-blue-600">Datenpflege</h3>
-              <p class="mt-4 t-body-tight text-ink/85">Oftmals gehen mit der Zeit Stammdaten, Ausführungsberichte und auch Rechnungen verloren. Diese können aber auch für zukünftige Aufträge und Preisvergleiche noch relevant sein, wir zeigen Ihnen den richtigen und datenschutzkonformen Umgang.</p>
+            <li class="beratung-zeile grid gap-4 py-10 lg:py-12 lg:grid-cols-[7fr_5fr] lg:gap-12">
+              <div class="flex items-center gap-5">
+                <span class="beratung-symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.66 3.58 3 8 3s8-1.34 8-3V5"/><path d="M4 12c0 1.66 3.58 3 8 3s8-1.34 8-3"/></svg></span>
+                <h3 class="hyphens-auto break-words t-h4 text-white">Datenpflege</h3>
+              </div>
+              <p class="max-w-[560px] t-body-tight">Oftmals gehen mit der Zeit Stammdaten, Ausführungsberichte und auch Rechnungen verloren. Diese können aber auch für zukünftige Aufträge und Preisvergleiche noch relevant sein, wir zeigen Ihnen den richtigen und datenschutzkonformen Umgang.</p>
             </li>
-            <li class="rounded-[var(--radius-tile)] kachel-verlauf-3 mit-korn kachel-polster">
-              <h3 class="hyphens-auto break-words t-h4 text-blue-600">Amts&shy;vorschriften</h3>
-              <p class="mt-4 t-body-tight text-ink/85">Von der Arbeitsstättenverordnung (AStV) über die Arbeitsschutzrichtlinien (ASR) und Brandsicherheit bis hin zu den gesetzlichen Regelungen für DIN-Prüfungen, Taskrunner berät Sie gerne in Hinblick auf die Einhaltung sämtlicher gesetzlicher Normen und Vorschriften.</p>
+            <li class="beratung-zeile grid gap-4 py-10 lg:py-12 lg:grid-cols-[7fr_5fr] lg:gap-12">
+              <div class="flex items-center gap-5">
+                <span class="beratung-symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 15l2 2 4-4"/></svg></span>
+                <h3 class="hyphens-auto break-words t-h4 text-white">Amts&shy;vorschriften</h3>
+              </div>
+              <p class="max-w-[560px] t-body-tight">Von der Arbeitsstättenverordnung (AStV) über die Arbeitsschutzrichtlinien (ASR) und Brandsicherheit bis hin zu den gesetzlichen Regelungen für DIN-Prüfungen, Taskrunner berät Sie gerne in Hinblick auf die Einhaltung sämtlicher gesetzlicher Normen und Vorschriften.</p>
             </li>
           </ul>
-          <div class="mt-14 lg:mt-16">
-            <p class="t-intro font-bold text-ink">Lassen Sie uns gemeinsam Ihren Beratungsbedarf ermitteln.</p>
-            <p class="mt-4">
-              <a href="index.html#kontakt" class="group inline-flex items-center gap-2 t-intro font-bold text-blue-600 transition-colors hover:text-ink">Beratung vereinbaren<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="transition-transform group-hover:translate-x-1"><path d="M9 6l6 6-6 6"></path></svg></a>
-            </p>
-          </div>
         </div>
       </section>
       <section id="einkauf" class="bg-white section-y scroll-mt-[calc(var(--header-h)+24px)]">
         <div class="container-wide">
-          <p class="t-eyebrow text-ink/80">Facility Management weiter gedacht</p>
-          <h2 class="mt-4 max-w-[900px] text-balance hyphens-auto break-words t-h2 text-ink">Zentraler Einkauf</h2>
-          <p class="mt-6 max-w-[680px] t-body text-ink/85">Durch den zentralen Einkauf direkt über Taskrunner ermöglichen wir eine neue Ära der Handwerks&shy;dienstleistungen. Bei Reparaturen, welche materialintensiv sind, können Sie einfach per Einkaufsfunktion von unseren Großhändlerpreisen, einer minutengenauen Sendungsverfolgung und Zustellung profitieren.</p>
-          <ul class="mt-16 grid gap-x-8 gap-y-8 sm:grid-cols-2 lg:mt-20 lg:grid-cols-3 lg:gap-x-10">
-            <li class="border-t border-ink/20 pt-6 hyphens-auto break-words t-h4 text-blue-600">Kosten&shy;einsparungen</li>
-            <li class="border-t border-ink/20 pt-6 hyphens-auto break-words t-h4 text-blue-600">Geringerer Verwaltungs&shy;aufwand</li>
-            <li class="border-t border-ink/20 pt-6 hyphens-auto break-words t-h4 text-blue-600">Detaillierte Produkt&shy;spezifikationen</li>
-            <li class="border-t border-ink/20 pt-6 hyphens-auto break-words t-h4 text-blue-600">Bessere Einkaufs&shy;konditionen</li>
-            <li class="border-t border-ink/20 pt-6 hyphens-auto break-words t-h4 text-blue-600">Erhöhte Markt&shy;transparenz</li>
-            <li class="border-t border-ink/20 pt-6 hyphens-auto break-words t-h4 text-blue-600">Sendungsverlauf in Echtzeit</li>
-          </ul>
+          <p class="t-eyebrow text-ink/80 text-center">Facility Management weiter gedacht</p>
+          <h2 class="mx-auto mt-4 max-w-[900px] text-balance hyphens-auto break-words t-h2 text-blue-600 text-center">Zentraler Einkauf</h2>
+          <p class="mx-auto mt-6 max-w-[680px] text-balance t-body text-ink/85 text-center">Durch den zentralen Einkauf direkt über Taskrunner ermöglichen wir eine neue Ära der Handwerks&shy;dienstleistungen. Bei Reparaturen, welche materialintensiv sind, können Sie einfach per Einkaufsfunktion von unseren Großhändlerpreisen, einer minutengenauen Sendungsverfolgung und Zustellung profitieren.</p>
+          <div class="relative mt-16 flex flex-col gap-4 lg:mt-20 lg:grid lg:grid-cols-2 lg:gap-6">
+            <div class="grid rounded-[var(--radius-tile)] border border-ink/10 bg-white schatten-kachel p-7 lg:row-span-6 lg:grid-rows-subgrid lg:gap-y-0 lg:p-10">
+              <h3 class="pb-4 t-h4 text-blue-600">Bisher</h3>
+              <ul class="grid t-intro text-ink/80 lg:row-span-5 lg:grid-rows-subgrid lg:gap-y-0">
+                <li class="flex gap-3 border-t border-current/15 py-4 hyphens-auto break-words last:pb-0"><svg class="mt-[0.1em] size-6 flex-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M17 7 7 17M7 7l10 10"/></svg>Jeder Handwerker kauft sein Material selbst</li>
+                <li class="flex gap-3 border-t border-current/15 py-4 hyphens-auto break-words last:pb-0"><svg class="mt-[0.1em] size-6 flex-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M17 7 7 17M7 7l10 10"/></svg>Aufschläge auf den Materialpreis</li>
+                <li class="flex gap-3 border-t border-current/15 py-4 hyphens-auto break-words last:pb-0"><svg class="mt-[0.1em] size-6 flex-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M17 7 7 17M7 7l10 10"/></svg>Ungenaue Angaben zum verbauten Material</li>
+                <li class="flex gap-3 border-t border-current/15 py-4 hyphens-auto break-words last:pb-0"><svg class="mt-[0.1em] size-6 flex-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M17 7 7 17M7 7l10 10"/></svg>Preise kaum vergleichbar</li>
+                <li class="flex gap-3 border-t border-current/15 py-4 hyphens-auto break-words last:pb-0"><svg class="mt-[0.1em] size-6 flex-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M17 7 7 17M7 7l10 10"/></svg>Lieferstatus nur auf Nachfrage</li>
+              </ul>
+            </div>
+            <span class="relative z-10 -my-9 flex size-14 flex-none items-center justify-center self-center rounded-full bg-white text-blue-600 schatten-knopf lg:absolute lg:top-1/2 lg:left-1/2 lg:my-0 lg:-translate-x-1/2 lg:-translate-y-1/2" aria-hidden="true"><svg class="size-6 rotate-90 lg:rotate-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            <div class="grid rounded-[var(--radius-tile)] kachel-verlauf-nacht mit-korn schatten-kachel p-7 text-white lg:row-span-6 lg:grid-rows-subgrid lg:gap-y-0 lg:p-10">
+              <h3 class="pb-4 t-h4 text-[#8ab4f8]">Mit Taskrunner</h3>
+              <ul class="grid t-intro lg:row-span-5 lg:grid-rows-subgrid lg:gap-y-0">
+                <li class="flex gap-3 border-t border-current/15 py-4 hyphens-auto break-words last:pb-0"><svg class="mt-[0.1em] size-6 flex-none text-[#8ab4f8]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Zentral bestellt, weniger Verwaltungs&shy;aufwand</li>
+                <li class="flex gap-3 border-t border-current/15 py-4 hyphens-auto break-words last:pb-0"><svg class="mt-[0.1em] size-6 flex-none text-[#8ab4f8]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Großhändlerpreise und bessere Konditionen</li>
+                <li class="flex gap-3 border-t border-current/15 py-4 hyphens-auto break-words last:pb-0"><svg class="mt-[0.1em] size-6 flex-none text-[#8ab4f8]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Detaillierte Produkt&shy;spezifikationen</li>
+                <li class="flex gap-3 border-t border-current/15 py-4 hyphens-auto break-words last:pb-0"><svg class="mt-[0.1em] size-6 flex-none text-[#8ab4f8]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Erhöhte Markt&shy;transparenz</li>
+                <li class="flex gap-3 border-t border-current/15 py-4 hyphens-auto break-words last:pb-0"><svg class="mt-[0.1em] size-6 flex-none text-[#8ab4f8]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Sendungsverlauf in Echtzeit</li>
+              </ul>
+            </div>
+          </div>
         </div>
       </section>
       <section class="bg-white section-y">
         <div class="container-wide">
-          <h2 class="mx-auto max-w-[820px] text-balance hyphens-auto break-words t-h2 text-ink text-center">Fehlt Ihnen ein Gewerk?</h2>
+          <h2 class="mx-auto max-w-[820px] text-balance hyphens-auto break-words t-h2 text-blue-600 text-center">Fehlt Ihnen ein Gewerk?</h2>
           <p class="mx-auto mt-5 max-w-[680px] text-balance t-intro text-ink/80 text-center">Sagen Sie uns, was Sie brauchen. Wenn wir es nicht abdecken, sagen wir es Ihnen ehrlich.</p>
           <p class="mt-10 text-center">
             <a href="index.html#kontakt" class="group inline-flex items-center gap-2 t-intro font-bold text-blue-600 transition-colors hover:text-ink">Jetzt Kontakt aufnehmen<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="transition-transform group-hover:translate-x-1"><path d="M9 6l6 6-6 6"></path></svg></a>

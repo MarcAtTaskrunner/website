@@ -20,15 +20,15 @@
   <body class="variante-b">
     <a href="#inhalt" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-navy focus:px-5 focus:py-3 focus:text-white">Zum Inhalt springen</a>
     <header class="sticky top-0 z-50 border-b border-black/5 bg-white/95 backdrop-blur">
-      <div class="grid h-[64px] w-full grid-cols-[auto_1fr_auto] items-center gap-6 px-6 lg:px-8">
-        <a href="index.html" class="relative block shrink-0" aria-label="taskrunner Startseite"><img src="images/logo.svg" alt="taskrunner" width="2000" height="456" class="logo-dunkel block w-auto h-7"><img src="images/logo-white.svg" alt="" aria-hidden="true" width="2000" height="456" class="logo-hell absolute left-0 top-0 block w-auto h-7"></a>
+      <div class="grid h-[64px] w-full grid-cols-[auto_1fr_auto] items-center gap-6 rand-seite min-[1100px]:grid-cols-[1fr_auto_1fr]">
+        <a href="index.html" class="relative block shrink-0 justify-self-start" aria-label="taskrunner Startseite"><img src="images/logo.svg" alt="taskrunner" width="2000" height="456" class="logo-dunkel block w-auto h-7"><img src="images/logo-white.svg" alt="" aria-hidden="true" width="2000" height="456" class="logo-hell absolute left-0 top-0 block w-auto h-7"></a>
         <!-- Desktop-Navigation -->
         <nav class="hidden justify-self-center lg:block" aria-label="Hauptnavigation">
           <ul class="flex items-center gap-6">
             <li><a href="dienstleistungen.html" class="t-body text-blue-600 transition-colors">Dienstleistungen</a></li>
             <li><a href="foerderungen.html" aria-current="page" class="t-body text-blue-600 transition-colors">Förderungen</a></li>
-            <li><a href="/blog" class="t-body text-blue-600 transition-colors">Blog</a></li>
-            <li><a href="/kontakt" class="t-body text-blue-600 transition-colors">Kontakt</a></li>
+            <li><a href="blog.html" class="t-body text-blue-600 transition-colors">Blog</a></li>
+            <li><a href="/kontakt" class="t-body text-blue-600 transition-colors" data-kontakt-auf aria-haspopup="dialog" aria-controls="kontakt-fenster" aria-expanded="false">Kontakt</a></li>
             <li><a href="https://taskrunner.jobs.personio.de/" class="t-body text-blue-600 transition-colors">Jobs</a></li>
           </ul>
         </nav>
@@ -40,32 +40,89 @@
         <ul class="container-wide flex flex-col gap-1 py-4">
           <li><a href="dienstleistungen.html" class="block rounded-xl px-3 py-3 t-body font-medium text-blue-600 hover:bg-ice">Dienstleistungen</a></li>
           <li><a href="foerderungen.html" aria-current="page" class="block rounded-xl px-3 py-3 t-body font-medium text-blue-600 hover:bg-ice">Förderungen</a></li>
-          <li><a href="/blog" class="block rounded-xl px-3 py-3 t-body font-medium text-blue-600 hover:bg-ice">Blog</a></li>
-          <li><a href="/kontakt" class="block rounded-xl px-3 py-3 t-body font-medium text-blue-600 hover:bg-ice">Kontakt</a></li>
+          <li><a href="blog.html" class="block rounded-xl px-3 py-3 t-body font-medium text-blue-600 hover:bg-ice">Blog</a></li>
+          <li><a href="/kontakt" class="block rounded-xl px-3 py-3 t-body font-medium text-blue-600 hover:bg-ice" data-kontakt-auf aria-haspopup="dialog" aria-controls="kontakt-fenster" aria-expanded="false">Kontakt</a></li>
           <li><a href="https://taskrunner.jobs.personio.de/" class="block rounded-xl px-3 py-3 t-body font-medium text-blue-600 hover:bg-ice">Jobs</a></li>
           <li class="mt-3 flex flex-col gap-3"><a href="/kontakt" class="btn btn-primary w-full">Kostenlos Testen</a><a href="https://app.taskrunner.de" class="btn w-full border border-navy/15 text-blue-600">Login</a></li>
         </ul>
       </nav>
     </header>
+    <!-- Kontaktfenster: klappt unter der Kopfleiste auf, sobald "Kontakt"
+     angeklickt wird (assets/app.js, Vorbild serviceplan.com). Inhalt wie
+     der Kontaktbereich der Startseite - dort mit aendern. -->
+    <div id="kontakt-fenster" class="kontakt-fenster verlauf-nacht mit-korn" role="dialog" aria-labelledby="kontakt-titel" inert>
+      <div class="kontakt-innen container-wide">
+        <div class="flex items-start justify-between gap-6">
+          <h2 id="kontakt-titel" class="text-balance t-h2 text-white">Lieber kurz durchsprechen?</h2>
+          <button type="button" class="kontakt-zu" data-kontakt-zu><span class="sr-only">Kontakt schließen</span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+        </div>
+        <p class="mt-5 max-w-[640px] text-pretty t-intro">Ein Gespräch reicht, um zu klären, ob Taskrunner zu Ihren Objekten und Abläufen passt. Kein Verkaufsgespräch, keine Verpflichtung.</p>
+        <ul class="mt-10 grid lg:mt-16 lg:grid-cols-3">
+          <li class="kontakt-weg">
+            <svg class="kontakt-bild" aria-hidden="true" focusable="false" viewBox="0 0 90.62 97.36"><path fill="currentColor" d="M90.39,23.01c-.64-2.05-2.5-3.42-4.65-3.42-.49,0-.98.07-1.46.22l-6.7,2.09V6.14c0-3.88-2.41-6.14-6.08-6.14h-31.04c-3.74,0-6.37,2.19-6.37,6.14v30.15c-3.39,1.47-5.76,2.52-6.27,2.78-4.1,2.09-7.19,6.88-7.88,8.81-.85,1.93-19.95,49.47-19.95,49.47h39.58s9.59-4.02,14.69-9.59c2.15-2.34,3.87-5.52,5.06-8.14h12.5c3.29,0,5.77-2.12,5.77-6.35v-3.6h4.24c2.69,0,4.87-2.18,4.87-4.87s-2.18-4.87-4.87-4.87h-4.24v-1.62h4.36c2.68,0,4.87-2.19,4.87-4.87s-2.18-4.87-4.87-4.87h-4.36v-1.62h4.36c2.68,0,4.87-2.19,4.87-4.87s-2.18-4.87-4.87-4.87h-4.36v-5.11l9.61-3c1.24-.39,2.26-1.24,2.86-2.39.6-1.15.72-2.47.33-3.71ZM73.21,74.29h-27.17c-.16,1.03-.36,2.08-.64,3.17-1.81,6.94-7.76,10.86-8.01,11.02-.23.15-.49.22-.75.22-.46,0-.9-.22-1.17-.64-.42-.65-.23-1.5.41-1.93.05-.03,5.29-3.52,6.83-9.39,1.64-6.24.82-11.77.81-11.83-.02-.12-.01-.23,0-.35h15.84c3.25,0,6.49-1.96,6.49-5.8s-2.86-6.26-6.49-6.26h-26.9v-2.78h5.99V4.97h7.32c.03,1.78,1.15,2.77,2.75,2.77h14.64c1.57,0,2.6-1.02,2.62-2.77h7.43v69.32h0Z"/></svg>
+            <h3 class="mt-8 t-h4 text-white">Anrufen</h3>
+            <p class="mt-3 t-body-tight">Sie schildern uns Ihre Situation, wir sagen Ihnen ehrlich, wo wir Ihnen Arbeit abnehmen – und wo nicht.</p>
+            <p class="mt-auto pt-8">
+              <a href="tel:+4920199999201" class="kontakt-link group inline-flex items-center gap-2 t-body font-bold">+49 201 99999-201<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="transition-transform group-hover:translate-x-1"><path d="M9 6l6 6-6 6"></path></svg></a>
+            </p>
+          </li>
+          <li class="kontakt-weg">
+            <svg class="kontakt-bild" aria-hidden="true" focusable="false" viewBox="0 0 67.67 97.79"><rect fill="currentColor" x="28.91" y="43.96" width="10.25" height="53.83"/> <polygon fill="currentColor" points="27.14 12.02 27.14 6.41 35.5 6.41 35.5 0 23.65 0 23.65 5.05 23.65 6.41 23.65 12.02 27.14 12.02"/> <path fill="currentColor" d="M10.71,41.54v-22.2h.01c0-2.96-2.4-5.36-5.36-5.36S0,16.37,0,19.33v22.21h10.71Z"/> <path fill="currentColor" d="M13.76,17.46h-.01v24.08h53.91v-23.1h.01c0-3.07-2.49-5.55-5.55-5.55v-.05H27.14v7.35h-3.5v-7.35h-12.35c1.49,1,2.46,2.7,2.46,4.63Z"/></svg>
+            <h3 class="mt-8 t-h4 text-white">Schreiben</h3>
+            <p class="mt-3 t-body-tight">Kurz beschreiben, worum es geht. Wir melden uns mit einer Einschätzung zurück.</p>
+            <p class="mt-auto pt-8">
+              <a href="mailto:sales@taskrunner.de" class="kontakt-link group inline-flex items-center gap-2 t-body font-bold">sales@taskrunner.de<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="transition-transform group-hover:translate-x-1"><path d="M9 6l6 6-6 6"></path></svg></a>
+            </p>
+          </li>
+          <li class="kontakt-weg">
+            <svg class="kontakt-bild" aria-hidden="true" focusable="false" viewBox="0 0 97.55 65.03"><path fill="currentColor" d="M66.78,65.05h30.77s-4.31-20.04-14.97-35.8c-3-4.69-10.81-8.96-16.59-2.4-5.54,6.28-10.9,27.55-10.9,27.55,0,0-4.2,0-9.01,0l-9.24-19.59c-.87-2.15-3.17-3.76-5.38-3.76H3.78c-1.32,0-2.47.57-3.15,1.57-.71,1.04-.83,2.41-.31,3.75l11.7,24.82c.87,2.15,3.17,3.79,5.39,3.79l46.05.09,11.63-25.44c.35-.76,1.24-1.09,2-.75.76.35,1.09,1.24.75,2l-11.06,24.19ZM15.82,59.62l-11.55-24.49h27.18c.51,0,1.34.56,1.59,1.22l8.5,18.03c-5.03,0-9.54,0-9.54,0-2.92,0-5.47,2.36-5.48,5.28,0,.41.06.8.14,1.18h-9.26c-.5,0-1.34-.56-1.59-1.21Z"/> <path fill="currentColor" d="M51.59,24.09h.02c1.93.96,11.71,3.9,21.28-7,3.81-4.71,5.17-11.45,5.17-11.45,0,0-4.3,2.47-7.94,1.45-2.47-.69-5.11-3.3-5.62-3.82-1.22-1.13-2.67-2.05-4.34-2.61-6.47-2.21-13.5,1.32-15.71,7.85-2.14,6.36,1.05,13.14,7.14,15.58Z"/></svg>
+            <h3 class="mt-8 t-h4 text-white">Ausprobieren</h3>
+            <p class="mt-3 t-body-tight">Die Plattform unverbindlich testen und einen ersten Auftrag anlegen.</p>
+            <p class="mt-auto pt-8">
+              <a href="/kontakt" class="kontakt-link group inline-flex items-center gap-2 t-body font-bold">Kostenlos testen<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="transition-transform group-hover:translate-x-1"><path d="M9 6l6 6-6 6"></path></svg></a>
+            </p>
+          </li>
+        </ul>
+      </div>
+    </div>
     <main id="inhalt">
-      <section class="seitenkopf verlauf-nacht mit-korn pb-[60px] pt-[calc(var(--header-h)+72px)] sm:pb-[90px] sm:pt-[calc(var(--header-h)+110px)] lg:pb-[120px] lg:pt-[calc(var(--header-h)+140px)]">
-        <div class="w-full px-6 lg:px-8">
+      <section class="seitenkopf kopf-hoch kopf-foto verlauf-nacht mit-korn relative flex items-end overflow-hidden">
+        <div class="kopf-foto-bild" aria-hidden="true"></div>
+        <div class="rand-seite relative w-full pb-[60px] pt-[calc(var(--header-h)+72px)] lg:pb-[76px]">
           <h1 class="max-w-[620px] text-balance hyphens-auto break-words t-h1 text-white">Förderungen</h1>
           <p class="mt-6 max-w-[520px] text-pretty t-intro text-white">Heizung, Gebäudehülle und Anlagentechnik: wo der Bund Ihre Sanierung bezuschusst – und wie Sie von der Antrag&shy;stellung bis zur Durchführung dorthin kommen.</p>
+          <p class="mt-8 flex flex-wrap items-center gap-4"><a href="#foerder-check" class="btn btn-white">Förder-Check starten</a><a href="#programme" class="btn btn-ghost">Alle Programme</a></p>
         </div>
       </section>
       <section class="bg-white section-y">
         <div class="container-wide">
-          <h2 class="max-w-[900px] text-balance hyphens-auto break-words t-h2 text-ink">Klimaschutz ist längst Gesetz</h2>
-          <p class="mt-6 max-w-[900px] text-pretty t-h3 text-ink">Bis 2030 muss Deutschland seine Treibhausgas&shy;emissionen um mindestens 65 Prozent gegenüber 1990 senken, bis 2040 um 88 Prozent. Ab 2045 gilt Netto-Treibhausgas&shy;neutralität.</p>
-          <div class="mt-8 max-w-[680px] space-y-5">
+          <h2 class="max-w-[900px] text-balance hyphens-auto break-words t-h2 text-blue-600">Klimaschutz ist längst Gesetz</h2>
+          <ol class="mt-10 grid gap-y-10 md:grid-cols-3 lg:mt-14" aria-label="Klimaziele Deutschlands">
+            <li class="klimaziel">
+              <p class="t-eyebrow text-ink/80">bis 2030</p>
+              <p class="klimaziel-wert t-h1 text-blue-600">−65&#8239;%</p>
+              <p class="mt-3 max-w-[26ch] t-body-tight text-ink/85">Treibhausgas&shy;emissionen gegenüber 1990</p>
+            </li>
+            <li class="klimaziel">
+              <p class="t-eyebrow text-ink/80">bis 2040</p>
+              <p class="klimaziel-wert t-h1 text-blue-600">−88&#8239;%</p>
+              <p class="mt-3 max-w-[26ch] t-body-tight text-ink/85">Treibhausgas&shy;emissionen gegenüber 1990</p>
+            </li>
+            <li class="klimaziel klimaziel-ziel">
+              <p class="t-eyebrow text-ink/80">ab 2045</p>
+              <p class="klimaziel-wert t-h1 text-navy">netto 0</p>
+              <p class="mt-3 max-w-[26ch] t-body-tight text-ink/85">Treibhausgas&shy;neutralität</p>
+            </li>
+          </ol>
+          <div class="mt-12 grid max-w-[1000px] gap-5 md:grid-cols-2 md:gap-x-12 lg:mt-16">
             <p class="t-body text-ink/85">Für den Weg dorthin bezuschusst der Bund energieeffiziente Sanierungen über die Bundes&shy;förderung für effiziente Gebäude – den Tausch der Heizungsanlage, Maßnahmen an der Gebäudehülle und Anlagentechnik wie Lüftung, Kältetechnik und Gebäude&shy;automation. Die Konditionen wurden zuletzt zum 21. Juli 2026 neu gefasst.</p>
             <p class="t-body text-ink/85">Nachhaltigkeit betrifft dabei alle Bereiche im Unternehmen, von Energie&shy;einsparungen über die Digitalisierung bis zum Heizungsumbau. Wir haben bereits zahlreiche Kunden bei der Umrüstung begleitet und beraten Sie von der Antrag&shy;stellung bis zur Durchführung.</p>
           </div>
           <h3 class="sr-only">Neue gesetzliche Vorgaben</h3>
           <ul class="mt-16 grid gap-5 sm:grid-cols-2 lg:mt-20">
             <li class="rounded-[var(--radius-tile)] kachel-verlauf-1 mit-korn kachel-polster">
-              <h4 class="hyphens-auto break-words t-h4 text-blue-600">Smart Meter: Pflicht seit 2025</h4>
+              <p class="datumsmarke t-eyebrow">Pflicht seit 2025</p>
+              <h4 class="mt-4 hyphens-auto break-words t-h4 text-blue-600">Smart Meter</h4>
               <ul class="mt-5 space-y-2.5">
                 <li class="t-body-tight text-ink/85">Pflichteinbau bei mehr als 6.000 kWh Jahresverbrauch je Zählpunkt</li>
                 <li class="t-body-tight text-ink/85">Der Rollout soll bis 2032 abgeschlossen sein</li>
@@ -74,7 +131,8 @@
               </ul>
             </li>
             <li class="rounded-[var(--radius-tile)] kachel-verlauf-3 mit-korn kachel-polster">
-              <h4 class="hyphens-auto break-words t-h4 text-blue-600">Gebäude&shy;modernisierungs&shy;gesetz seit Juli 2026</h4>
+              <p class="datumsmarke t-eyebrow">In Kraft seit 29.07.2026</p>
+              <h4 class="mt-4 hyphens-auto break-words t-h4 text-blue-600">Gebäude&shy;modernisierungs&shy;gesetz</h4>
               <ul class="mt-5 space-y-2.5">
                 <li class="t-body-tight text-ink/85">Löst das Gebäude&shy;energie&shy;gesetz ab, in Kraft seit dem 29. Juli 2026</li>
                 <li class="t-body-tight text-ink/85">Die 65-Prozent-Regel für neue Heizungen ist entfallen</li>
@@ -85,180 +143,179 @@
           </ul>
         </div>
       </section>
-      <section class="bg-white section-y">
+      <section id="foerder-check" class="bg-white section-y scroll-mt-[calc(var(--header-h)+24px)]">
         <div class="container-wide">
-          <h2 class="sr-only">Die drei Förderbereiche im Überblick</h2>
-          <ul class="grid gap-5 md:grid-cols-3">
-            <li class="flex flex-col rounded-[var(--radius-tile)] kachel-verlauf-5 mit-korn kachel-polster">
-              <p class="t-eyebrow text-ink/80">30 % Grundförderung</p>
-              <h3 class="mt-4 hyphens-auto break-words t-h4 text-blue-600">Heizungs&shy;förderung</h3>
-              <p class="mt-4 t-body-tight text-ink/85">Für den Tausch der Heizungsanlage, beantragt über die KfW. Boni bleiben selbstnutzenden Privatpersonen vorbehalten.</p>
-              <p class="mt-auto pt-8">
-                <a href="#heizung" class="group inline-flex items-center gap-2 t-body font-bold text-blue-600 transition-colors hover:text-ink">Mehr erfahren<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="transition-transform group-hover:translate-x-1"><path d="M9 6l6 6-6 6"></path></svg></a>
-              </p>
-            </li>
-            <li class="flex flex-col rounded-[var(--radius-tile)] kachel-verlauf-2 mit-korn kachel-polster">
-              <p class="t-eyebrow text-ink/80">15 % Zuschuss</p>
-              <h3 class="mt-4 hyphens-auto break-words t-h4 text-blue-600">Gebäude&shy;hüllen&shy;förderung</h3>
-              <p class="mt-4 t-body-tight text-ink/85">Für Dämmung, Fenster, Türen und Tore, beantragt über das BAFA. Fachplanung und Baubegleitung mit 50 %.</p>
-              <p class="mt-auto pt-8">
-                <a href="#gebaeudehuelle" class="group inline-flex items-center gap-2 t-body font-bold text-blue-600 transition-colors hover:text-ink">Mehr erfahren<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="transition-transform group-hover:translate-x-1"><path d="M9 6l6 6-6 6"></path></svg></a>
-              </p>
-            </li>
-            <li class="flex flex-col rounded-[var(--radius-tile)] kachel-verlauf-4 mit-korn kachel-polster">
-              <p class="t-eyebrow text-ink/80">15 % Zuschuss</p>
-              <h3 class="mt-4 hyphens-auto break-words t-h4 text-blue-600">Anlagentechnik</h3>
-              <p class="mt-4 t-body-tight text-ink/85">Für Lüftungs- und Kältetechnik sowie Gebäude&shy;automation. Heizungs&shy;optimierung wird mit 50 % gefördert.</p>
-              <p class="mt-auto pt-8">
-                <a href="#anlagentechnik" class="group inline-flex items-center gap-2 t-body font-bold text-blue-600 transition-colors hover:text-ink">Mehr erfahren<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="transition-transform group-hover:translate-x-1"><path d="M9 6l6 6-6 6"></path></svg></a>
-              </p>
-            </li>
-          </ul>
-        </div>
-      </section>
-      <section id="heizung" class="bg-white section-y scroll-mt-[calc(var(--header-h)+24px)]">
-        <div class="container-wide">
-          <p class="t-eyebrow text-ink/80">Beantragt über die KfW</p>
-          <h2 class="mt-4 max-w-[900px] text-balance hyphens-auto break-words t-h2 text-ink">Heizungs&shy;förderung</h2>
-          <p class="mt-6 max-w-[680px] t-body text-ink/85">Ein Umbau des vorhandenen Heizungssystems senkt mittel- bis langfristig die Energiekosten und verbessert die Energieausbeute. Die Heizungs&shy;förderung läuft nicht mehr über das BAFA, sondern über die KfW; zum 21. Juli 2026 wurden die Konditionen neu gefasst.</p>
-          <div class="mt-16 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:mt-20 lg:grid-cols-3 lg:gap-x-10">
-            <div class="border-t border-ink/20 pt-8">
-              <h3 class="hyphens-auto break-words t-h4 text-blue-600">Förderhöhe</h3>
-              <ul class="mt-5 space-y-2.5">
-                <li class="t-body-tight text-ink/85">30 % Grundförderung auf die förderfähigen Kosten</li>
-                <li class="t-body-tight text-ink/85">Klima&shy;geschwindigkeits&shy;bonus von 16 % und Einkommensbonus gelten nur für selbstnutzende Privatpersonen</li>
-                <li class="t-body-tight text-ink/85">Für Unternehmen und vermietete Objekte bleibt es damit bei 30 %</li>
-                <li class="t-body-tight text-ink/85">Die maximale Förderquote liegt bei 70 %, für die niedrigste Einkommensgruppe bei 80 %</li>
-              </ul>
+          <p class="t-eyebrow text-ink/80">Förder-Check</p>
+          <h2 class="mt-4 max-w-[900px] text-balance hyphens-auto break-words t-h2 text-blue-600">Welche Förderung passt zu Ihrem Vorhaben?</h2>
+          <p class="mt-6 max-w-[680px] t-body text-ink/85">Drei Angaben genügen für eine erste Einschätzung: welche Programme infrage kommen, wie hoch der Zuschuss ausfällt und worauf Sie achten müssen. Die genaue Prüfung übernehmen wir gemeinsam mit Ihnen.</p>
+          <p class="mt-4 max-w-[680px] t-body text-ink/85" data-ohne-js>Alle Programme mit ihren Bedingungen finden Sie <a href="#programme" class="font-bold text-blue-600 underline">weiter unten</a>.</p>
+          <div class="foerdercheck verlauf-nacht mit-korn mt-12 rounded-[var(--radius-tile)] text-white lg:mt-16" data-foerdercheck-flaeche hidden>
+            <form data-foerdercheck>
+              <fieldset class="check-frage">
+                <legend class="t-intro font-bold">1. Wer beantragt die Förderung?</legend>
+                <div class="check-wahl"><label class="wahl"><input type="radio" name="wer" value="unternehmen"><span class="t-body">Unternehmen</span></label><label class="wahl"><input type="radio" name="wer" value="vermieter"><span class="t-body">Vermieter</span></label><label class="wahl"><input type="radio" name="wer" value="privat"><span class="t-body">Privatperson, selbst nutzend</span></label><label class="wahl"><input type="radio" name="wer" value="weg"><span class="t-body">Eigentümer&shy;gemeinschaft</span></label><label class="wahl"><input type="radio" name="wer" value="kommune"><span class="t-body">Kommune oder gemeinnützig</span></label></div>
+              </fieldset>
+              <fieldset class="check-frage">
+                <legend class="t-intro font-bold">2. Um welches Gebäude geht es?</legend>
+                <div class="check-wahl"><label class="wahl"><input type="radio" name="gebaeude" value="wohn"><span class="t-body">Wohngebäude</span></label><label class="wahl"><input type="radio" name="gebaeude" value="nichtwohn"><span class="t-body">Nichtwohngebäude</span></label></div>
+              </fieldset>
+              <fieldset class="check-frage">
+                <legend class="t-intro font-bold">3. Was haben Sie vor? <span class="mt-1 block t-caption font-medium text-white/75">Mehrere Antworten möglich</span></legend>
+                <div class="check-wahl"><label class="wahl"><input type="checkbox" name="vorhaben" value="heizung"><span class="t-body">Heizung tauschen</span></label><label class="wahl"><input type="checkbox" name="vorhaben" value="optimierung"><span class="t-body">Heizung optimieren</span></label><label class="wahl"><input type="checkbox" name="vorhaben" value="huelle"><span class="t-body">Dämmung, Fenster, Türen</span></label><label class="wahl"><input type="checkbox" name="vorhaben" value="anlagen"><span class="t-body">Lüftung, Kälte, Gebäude&shy;automation</span></label><label class="wahl"><input type="checkbox" name="vorhaben" value="beleuchtung"><span class="t-body">Beleuchtung</span></label></div>
+              </fieldset>
+              <div class="check-frage" data-zusatz="flaeche" hidden><label for="check-flaeche" class="t-body font-bold">Nettoraumfläche <span class="font-medium text-white/75">(optional, für den Betrag)</span></label><span class="check-zahl"><input id="check-flaeche" name="flaeche" type="number" min="1" step="1" inputmode="numeric" placeholder="z. B. 800"><span class="t-body">m²</span></span></div>
+              <div class="check-frage" data-zusatz="einheiten" hidden><label for="check-einheiten" class="t-body font-bold">Anzahl Wohneinheiten <span class="font-medium text-white/75">(optional, für den Betrag)</span></label><span class="check-zahl"><input id="check-einheiten" name="einheiten" type="number" min="1" step="1" inputmode="numeric" placeholder="z. B. 6"></span></div>
+            </form>
+            <div>
+              <p class="sr-only" role="status" data-check-status></p>
+              <div data-check-ergebnis>
+                <div class="ergebnis-leer">
+                  <p class="t-intro font-bold">Ihr Ergebnis</p>
+                  <p class="mt-3 t-body-tight">Sobald Sie ein Vorhaben auswählen, steht hier, welche Förderung infrage kommt.</p>
+                </div>
+              </div>
+              <div class="mt-8">
+                <p class="t-body-tight">Für alle Programme gilt: Der Antrag ist vor Vorhabenbeginn zu stellen, und die technische Projekt&shy;beschreibung erstellt ein Energieeffizienz-Experte.</p>
+                <p class="mt-6"><a href="/kontakt" class="btn btn-white" data-kontakt-auf aria-haspopup="dialog" aria-controls="kontakt-fenster" aria-expanded="false">Ergebnis mit uns besprechen</a></p>
+                <p class="mt-5 t-caption"><span class="text-white/75">Unverbindliche Ersteinschätzung, Stand September 2026, ohne Gewähr.</span></p>
+              </div>
             </div>
-            <div class="border-t border-ink/20 pt-8">
-              <h3 class="hyphens-auto break-words t-h4 text-blue-600">Förderfähige Kosten</h3>
-              <ul class="mt-5 space-y-2.5">
-                <li class="t-body-tight text-ink/85">Bis 150 m² Netto&shy;raumfläche: 28.000 €</li>
-                <li class="t-body-tight text-ink/85">150 bis 400 m²: zusätzlich 197 € je m²</li>
-                <li class="t-body-tight text-ink/85">400 bis 1.000 m²: zusätzlich 118 € je m²</li>
-                <li class="t-body-tight text-ink/85">Über 1.000 m²: zusätzlich 79 € je m²</li>
-              </ul>
-            </div>
-            <div class="border-t border-ink/20 pt-8">
-              <h3 class="hyphens-auto break-words t-h4 text-blue-600">Neu seit dem 21. Juli 2026</h3>
-              <ul class="mt-5 space-y-2.5">
-                <li class="t-body-tight text-ink/85">Der Effizienzbonus für Wärmepumpen ist entfallen</li>
-                <li class="t-body-tight text-ink/85">Der Emissions&shy;minderungs&shy;zuschlag für Biomasse&shy;heizungen ist entfallen</li>
-                <li class="t-body-tight text-ink/85">Der Klima&shy;geschwindigkeits&shy;bonus sinkt ab dem 1. Februar 2027 halbjährlich</li>
-                <li class="t-body-tight text-ink/85">Für neue Anträge ist eine neue TPB-ID erforderlich</li>
-              </ul>
-            </div>
-            <div class="border-t border-ink/20 pt-8">
-              <h3 class="hyphens-auto break-words t-h4 text-blue-600">Antrag&shy;stellung</h3>
-              <ul class="mt-5 space-y-2.5">
-                <li class="t-body-tight text-ink/85">Der Antrag ist vor Vorhabenbeginn zu stellen</li>
-                <li class="t-body-tight text-ink/85">Die technische Projekt&shy;beschreibung erstellt ein Energieeffizienz-Experte</li>
-                <li class="t-body-tight text-ink/85">Vom 9. bis 20. Juli 2026 ruhte die Antrag&shy;stellung, seit dem 21. Juli ist sie wieder möglich</li>
-              </ul>
-            </div>
-          </div>
-          <div class="mt-14 lg:mt-16">
-            <p class="t-intro font-bold text-ink">Sind Sie an der Heizungs&shy;förderung interessiert?</p>
-            <p class="mt-4">
-              <a href="index.html#kontakt" class="group inline-flex items-center gap-2 t-intro font-bold text-blue-600 transition-colors hover:text-ink">Beratung vereinbaren<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="transition-transform group-hover:translate-x-1"><path d="M9 6l6 6-6 6"></path></svg></a>
-            </p>
           </div>
         </div>
       </section>
-      <section id="gebaeudehuelle" class="bg-white section-y scroll-mt-[calc(var(--header-h)+24px)]">
+      <section id="programme" class="bg-white section-y scroll-mt-[calc(var(--header-h)+24px)]">
         <div class="container-wide">
-          <p class="t-eyebrow text-ink/80">Eine gute Wärmedämmung ist essenziell</p>
-          <h2 class="mt-4 max-w-[900px] text-balance hyphens-auto break-words t-h2 text-ink">Gebäude&shy;hüllen&shy;förderung</h2>
-          <p class="mt-6 max-w-[680px] t-body text-ink/85">Eine gute Wärmedämmung gehört zum Klimaschutz genauso dazu wie eine effiziente Heizungsanlage. Es bringt selten etwas, allein die Heizung zu erneuern, wenn die Wärme dem Gebäude entweicht. Damit geht die Gebäude&shy;hüllen&shy;förderung meist Hand in Hand mit der Heizungs&shy;förderung, ist aber auch als Einzelmaßnahme sinnvoll.</p>
-          <div class="mt-16 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:mt-20 lg:grid-cols-3 lg:gap-x-10">
-            <div class="border-t border-ink/20 pt-8">
-              <h3 class="hyphens-auto break-words t-h4 text-blue-600">Für wen</h3>
-              <ul class="mt-5 space-y-2.5">
-                <li class="t-body-tight text-ink/85">Unternehmen</li>
-                <li class="t-body-tight text-ink/85">Juristische Personen</li>
-                <li class="t-body-tight text-ink/85">Privatpersonen</li>
-                <li class="t-body-tight text-ink/85">Wohnungs&shy;eigentümer&shy;gemeinschaften</li>
-                <li class="t-body-tight text-ink/85">Gebiets&shy;körperschaften und Gemeinden</li>
-                <li class="t-body-tight text-ink/85">Gemeinnützige Organisationen</li>
-              </ul>
-            </div>
-            <div class="border-t border-ink/20 pt-8">
-              <h3 class="hyphens-auto break-words t-h4 text-blue-600">Förderinhalt und -höhe</h3>
-              <ul class="mt-5 space-y-2.5">
-                <li class="t-body-tight text-ink/85">Maßnahmen an der Gebäudehülle wie Dämmung von Außenwänden und Dachflächen sowie Erneuerung, Ersatz oder erstmaliger Einbau von Türen, Toren und Fenstern: 15 %</li>
-                <li class="t-body-tight text-ink/85">iSFP-Bonus von 5 %, nur für Wohngebäude und nur auf Ausgaben oberhalb von 30.000 €</li>
-                <li class="t-body-tight text-ink/85">Fachplanung und Baubegleitung: 50 %</li>
-              </ul>
-            </div>
-            <div class="border-t border-ink/20 pt-8">
-              <h3 class="hyphens-auto break-words t-h4 text-blue-600">Förderfähige Kosten</h3>
-              <ul class="mt-5 space-y-2.5">
-                <li class="t-body-tight text-ink/85">30.000 € je Wohneinheit</li>
-                <li class="t-body-tight text-ink/85">Mit individuellem Sanierungs&shy;fahrplan bis zu 60.000 € je Wohneinheit</li>
-                <li class="t-body-tight text-ink/85">Für Nichtwohngebäude gelten eigene Obergrenzen – wir prüfen sie für Ihr Objekt</li>
-              </ul>
-            </div>
-            <div class="border-t border-ink/20 pt-8">
-              <h3 class="hyphens-auto break-words t-h4 text-blue-600">Voraussetzungen</h3>
-              <ul class="mt-5 space-y-2.5">
-                <li class="t-body-tight text-ink/85">Der Antrag ist vor Vorhabenbeginn zu stellen</li>
-                <li class="t-body-tight text-ink/85">Einbindung eines Energieeffizienz-Experten für die technische Projekt&shy;beschreibung</li>
-                <li class="t-body-tight text-ink/85">Einhaltung der Mindestanforderungen, abhängig von Bauteilart und Einbausituation</li>
-              </ul>
-            </div>
-          </div>
-          <div class="mt-14 lg:mt-16">
-            <p class="t-intro font-bold text-ink">Passt die Gebäude&shy;hüllen&shy;förderung zu Ihrem Objekt?</p>
-            <p class="mt-4">
-              <a href="index.html#kontakt" class="group inline-flex items-center gap-2 t-intro font-bold text-blue-600 transition-colors hover:text-ink">Beratung vereinbaren<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="transition-transform group-hover:translate-x-1"><path d="M9 6l6 6-6 6"></path></svg></a>
-            </p>
-          </div>
-        </div>
-      </section>
-      <section id="anlagentechnik" class="bg-white section-y scroll-mt-[calc(var(--header-h)+24px)]">
-        <div class="container-wide">
-          <p class="t-eyebrow text-ink/80">Beantragt über das BAFA</p>
-          <h2 class="mt-4 max-w-[900px] text-balance hyphens-auto break-words t-h2 text-ink">Anlagentechnik</h2>
-          <p class="mt-6 max-w-[680px] t-body text-ink/85">Neben Heizung und Gebäudehülle fördert der Bund die technische Ausstattung des Gebäudes. Das betrifft vor allem Lüftungs- und Kältetechnik sowie die Gebäude&shy;automation – also genau die Gewerke, die im laufenden Betrieb den größten Teil des Stromverbrauchs ausmachen.</p>
-          <div class="mt-16 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:mt-20 lg:grid-cols-3 lg:gap-x-10">
-            <div class="border-t border-ink/20 pt-8">
-              <h3 class="hyphens-auto break-words t-h4 text-blue-600">Förderinhalt und -höhe</h3>
-              <ul class="mt-5 space-y-2.5">
-                <li class="t-body-tight text-ink/85">Lüftungstechnik, Kältetechnik und Gebäude&shy;automation: 15 %</li>
-                <li class="t-body-tight text-ink/85">Heizungs&shy;optimierung zur Emissionsminderung: 50 %</li>
-                <li class="t-body-tight text-ink/85">Fachplanung und Baubegleitung: 50 %</li>
-              </ul>
-            </div>
-            <div class="border-t border-ink/20 pt-8">
-              <h3 class="hyphens-auto break-words t-h4 text-blue-600">Beleuchtung: Förderung entfallen</h3>
-              <ul class="mt-5 space-y-2.5">
-                <li class="t-body-tight text-ink/85">Energieeffiziente Innen&shy;beleuchtung in Nichtwohngebäuden wird seit dem 21. Juli 2026 nicht mehr über die BEG gefördert</li>
-                <li class="t-body-tight text-ink/85">Grund waren kurzfristige Haushaltsvorgaben; das Antragsportal wurde geschlossen</li>
-                <li class="t-body-tight text-ink/85">Als Alternativen kommen die Nationale Klimaschutz&shy;initiative, KfW-Kredite, Landesprogramme oder Contracting infrage</li>
-                <li class="t-body-tight text-ink/85">Wir prüfen für Ihr Vorhaben, was davon trägt</li>
-              </ul>
-            </div>
-            <div class="border-t border-ink/20 pt-8">
-              <h3 class="hyphens-auto break-words t-h4 text-blue-600">Antrag&shy;stellung</h3>
+          <h2 class="max-w-[900px] text-balance hyphens-auto break-words t-h2 text-blue-600">Die Programme im Einzelnen</h2>
+          <p class="mt-6 max-w-[680px] t-body text-ink/85">Was für alle Programme gilt und was sich im Juli 2026 geändert hat, steht hier einmal vorweg. Die Einzelheiten finden Sie im jeweiligen Programm.</p>
+          <div class="mt-12 grid gap-5 md:grid-cols-2 lg:mt-16">
+            <div class="rounded-[var(--radius-tile)] kachel-verlauf-2 mit-korn kachel-polster">
+              <p class="datumsmarke t-eyebrow">Gilt für alle Programme</p>
+              <h3 class="mt-4 hyphens-auto break-words t-h4 text-blue-600">Voraussetzungen</h3>
               <ul class="mt-5 space-y-2.5">
                 <li class="t-body-tight text-ink/85">Der Antrag ist vor Vorhabenbeginn zu stellen</li>
                 <li class="t-body-tight text-ink/85">Die technische Projekt&shy;beschreibung erstellt ein Energieeffizienz-Experte</li>
                 <li class="t-body-tight text-ink/85">Bewilligte Vorhaben sind innerhalb der im Bescheid genannten Frist umzusetzen</li>
               </ul>
             </div>
+            <div class="rounded-[var(--radius-tile)] kachel-verlauf-4 mit-korn kachel-polster">
+              <p class="datumsmarke t-eyebrow">Neu seit 21.07.2026</p>
+              <h3 class="mt-4 hyphens-auto break-words t-h4 text-blue-600">Was sich geändert hat</h3>
+              <ul class="mt-5 space-y-2.5">
+                <li class="t-body-tight text-ink/85">Der Effizienzbonus für Wärmepumpen ist entfallen</li>
+                <li class="t-body-tight text-ink/85">Der Emissions&shy;minderungs&shy;zuschlag für Biomasseheizungen ist entfallen</li>
+                <li class="t-body-tight text-ink/85">Energieeffiziente Innen&shy;beleuchtung in Nichtwohngebäuden wird nicht mehr gefördert – Alternativen unter Anlagentechnik</li>
+                <li class="t-body-tight text-ink/85">Für neue Anträge bei der KfW ist eine neue TPB-ID erforderlich</li>
+                <li class="t-body-tight text-ink/85">Die Antrag&shy;stellung bei der KfW ruhte vom 9. bis 20. Juli 2026, seit dem 21. Juli ist sie wieder möglich</li>
+                <li class="t-body-tight text-ink/85">Der Klima&shy;geschwindigkeits&shy;bonus sinkt ab dem 1. Februar 2027 halbjährlich</li>
+              </ul>
+            </div>
           </div>
-          <div class="mt-14 lg:mt-16">
-            <p class="t-intro font-bold text-ink">Sie planen eine Umrüstung und wissen nicht, was gefördert wird?</p>
-            <p class="mt-4">
-              <a href="index.html#kontakt" class="group inline-flex items-center gap-2 t-intro font-bold text-blue-600 transition-colors hover:text-ink">Jetzt Kontakt aufnehmen<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="transition-transform group-hover:translate-x-1"><path d="M9 6l6 6-6 6"></path></svg></a>
-            </p>
+          <div class="mt-16 lg:mt-20">
+            <details id="heizung" class="programm scroll-mt-[calc(var(--header-h)+24px)]">
+              <summary>
+                <span class="block t-eyebrow text-ink/80">Beantragt über die KfW</span>
+                <h3 class="mt-3 hyphens-auto break-words t-h3 text-blue-600">Heizungs&shy;förderung</h3>
+                <span class="mt-3 block t-body-tight text-ink/85">30&nbsp;% Grundförderung, für selbst nutzende Privatpersonen bis 70&nbsp;%</span><span class="programm-pfeil" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg></span>
+              </summary>
+              <div class="programm-inhalt">
+                <p class="max-w-[680px] t-body text-ink/85">Ein Umbau des vorhandenen Heizungssystems senkt mittel- bis langfristig die Energiekosten und verbessert die Energieausbeute. Die Heizungs&shy;förderung läuft nicht mehr über das BAFA, sondern über die KfW.</p>
+                <div class="mt-10 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3 lg:gap-x-10">
+                  <div class="border-t border-ink/20 pt-8">
+                    <h4 class="hyphens-auto break-words t-h4 text-blue-600">Förderhöhe</h4>
+                    <ul class="mt-5 space-y-2.5">
+                      <li class="t-body-tight text-ink/85">30 % Grundförderung auf die förderfähigen Kosten</li>
+                      <li class="t-body-tight text-ink/85">Klima&shy;geschwindigkeits&shy;bonus von 16 % und Einkommens&shy;bonus gelten nur für selbstnutzende Privatpersonen</li>
+                      <li class="t-body-tight text-ink/85">Für Unternehmen und vermietete Objekte bleibt es damit bei 30 %</li>
+                      <li class="t-body-tight text-ink/85">Die maximale Förderquote liegt bei 70 %, für die niedrigste Einkommensgruppe bei 80 %</li>
+                    </ul>
+                  </div>
+                  <div class="border-t border-ink/20 pt-8">
+                    <h4 class="hyphens-auto break-words t-h4 text-blue-600">Förderfähige Kosten</h4>
+                    <ul class="mt-5 space-y-2.5">
+                      <li class="t-body-tight text-ink/85">Bis 150 m² Nettoraumfläche: 28.000 €</li>
+                      <li class="t-body-tight text-ink/85">150 bis 400 m²: zusätzlich 197 € je m²</li>
+                      <li class="t-body-tight text-ink/85">400 bis 1.000 m²: zusätzlich 118 € je m²</li>
+                      <li class="t-body-tight text-ink/85">Über 1.000 m²: zusätzlich 79 € je m²</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </details>
+            <details id="gebaeudehuelle" class="programm scroll-mt-[calc(var(--header-h)+24px)]">
+              <summary>
+                <span class="block t-eyebrow text-ink/80">Beantragt über das BAFA</span>
+                <h3 class="mt-3 hyphens-auto break-words t-h3 text-blue-600">Gebäude&shy;hüllen&shy;förderung</h3>
+                <span class="mt-3 block t-body-tight text-ink/85">15&nbsp;% Zuschuss, Fachplanung und Baubegleitung 50&nbsp;%</span><span class="programm-pfeil" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg></span>
+              </summary>
+              <div class="programm-inhalt">
+                <p class="max-w-[680px] t-body text-ink/85">Eine gute Wärmedämmung gehört zum Klimaschutz genauso dazu wie eine effiziente Heizungsanlage. Es bringt selten etwas, allein die Heizung zu erneuern, wenn die Wärme dem Gebäude entweicht. Damit geht die Gebäude&shy;hüllen&shy;förderung meist Hand in Hand mit der Heizungs&shy;förderung, ist aber auch als Einzelmaßnahme sinnvoll.</p>
+                <div class="mt-10 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3 lg:gap-x-10">
+                  <div class="border-t border-ink/20 pt-8">
+                    <h4 class="hyphens-auto break-words t-h4 text-blue-600">Für wen</h4>
+                    <ul class="mt-5 space-y-2.5">
+                      <li class="t-body-tight text-ink/85">Unternehmen</li>
+                      <li class="t-body-tight text-ink/85">Juristische Personen</li>
+                      <li class="t-body-tight text-ink/85">Privatpersonen</li>
+                      <li class="t-body-tight text-ink/85">Wohnungseigentümer&shy;gemeinschaften</li>
+                      <li class="t-body-tight text-ink/85">Gebietskörperschaften und Gemeinden</li>
+                      <li class="t-body-tight text-ink/85">Gemeinnützige Organisationen</li>
+                    </ul>
+                  </div>
+                  <div class="border-t border-ink/20 pt-8">
+                    <h4 class="hyphens-auto break-words t-h4 text-blue-600">Förderinhalt und -höhe</h4>
+                    <ul class="mt-5 space-y-2.5">
+                      <li class="t-body-tight text-ink/85">Maßnahmen an der Gebäudehülle wie Dämmung von Außenwänden und Dachflächen sowie Erneuerung, Ersatz oder erstmaliger Einbau von Türen, Toren und Fenstern: 15 %</li>
+                      <li class="t-body-tight text-ink/85">iSFP-Bonus von 5 %, nur für Wohngebäude und nur auf Ausgaben oberhalb von 30.000 €</li>
+                      <li class="t-body-tight text-ink/85">Fachplanung und Baubegleitung: 50 %</li>
+                      <li class="t-body-tight text-ink/85">Die Bauteile müssen Mindest&shy;anforderungen erfüllen, abhängig von Bauteilart und Einbausituation</li>
+                    </ul>
+                  </div>
+                  <div class="border-t border-ink/20 pt-8">
+                    <h4 class="hyphens-auto break-words t-h4 text-blue-600">Förderfähige Kosten</h4>
+                    <ul class="mt-5 space-y-2.5">
+                      <li class="t-body-tight text-ink/85">30.000 € je Wohneinheit</li>
+                      <li class="t-body-tight text-ink/85">Mit individuellem Sanierungsfahrplan bis zu 60.000 € je Wohneinheit</li>
+                      <li class="t-body-tight text-ink/85">Für Nichtwohngebäude gelten eigene Obergrenzen – wir prüfen sie für Ihr Objekt</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </details>
+            <details id="anlagentechnik" class="programm scroll-mt-[calc(var(--header-h)+24px)]">
+              <summary>
+                <span class="block t-eyebrow text-ink/80">Beantragt über das BAFA</span>
+                <h3 class="mt-3 hyphens-auto break-words t-h3 text-blue-600">Anlagen&shy;technik</h3>
+                <span class="mt-3 block t-body-tight text-ink/85">15&nbsp;% Zuschuss, Heizungs&shy;optimierung 50&nbsp;%</span><span class="programm-pfeil" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg></span>
+              </summary>
+              <div class="programm-inhalt">
+                <p class="max-w-[680px] t-body text-ink/85">Neben Heizung und Gebäudehülle fördert der Bund die technische Ausstattung des Gebäudes. Das betrifft vor allem Lüftungs- und Kältetechnik sowie die Gebäude&shy;automation – also genau die Gewerke, die im laufenden Betrieb den größten Teil des Stromverbrauchs ausmachen.</p>
+                <div class="mt-10 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3 lg:gap-x-10">
+                  <div class="border-t border-ink/20 pt-8">
+                    <h4 class="hyphens-auto break-words t-h4 text-blue-600">Förderinhalt und -höhe</h4>
+                    <ul class="mt-5 space-y-2.5">
+                      <li class="t-body-tight text-ink/85">Lüftungstechnik, Kältetechnik und Gebäude&shy;automation: 15 %</li>
+                      <li class="t-body-tight text-ink/85">Heizungs&shy;optimierung zur Emissionsminderung: 50 %</li>
+                      <li class="t-body-tight text-ink/85">Fachplanung und Baubegleitung: 50 %</li>
+                    </ul>
+                  </div>
+                  <div class="border-t border-ink/20 pt-8">
+                    <h4 class="hyphens-auto break-words t-h4 text-blue-600">Beleuchtung: Förderung entfallen</h4>
+                    <ul class="mt-5 space-y-2.5">
+                      <li class="t-body-tight text-ink/85">Energieeffiziente Innen&shy;beleuchtung in Nichtwohngebäuden wird seit dem 21. Juli 2026 nicht mehr über die BEG gefördert</li>
+                      <li class="t-body-tight text-ink/85">Grund waren kurzfristige Haushaltsvorgaben; das Antragsportal wurde geschlossen</li>
+                      <li class="t-body-tight text-ink/85">Als Alternativen kommen die Nationale Klimaschutzinitiative, KfW-Kredite, Landesprogramme oder Contracting infrage</li>
+                      <li class="t-body-tight text-ink/85">Wir prüfen für Ihr Vorhaben, was davon trägt</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </details>
           </div>
         </div>
       </section>
       <section class="bg-white section-y">
         <div class="container-wide">
-          <h2 class="mx-auto max-w-[820px] text-balance hyphens-auto break-words t-h2 text-ink text-center">Interessieren Sie sich für Förderungen?</h2>
+          <h2 class="mx-auto max-w-[820px] text-balance hyphens-auto break-words t-h2 text-blue-600 text-center">Interessieren Sie sich für Förderungen?</h2>
           <p class="mx-auto mt-5 max-w-[680px] text-balance t-intro text-ink/80 text-center">Wir prüfen mit Ihnen, welches Programm zu Ihren Standorten passt – von der Antrag&shy;stellung bis zur Durchführung.</p>
           <p class="mt-10 text-center">
             <a href="index.html#kontakt" class="group inline-flex items-center gap-2 t-intro font-bold text-blue-600 transition-colors hover:text-ink">Kostenlose Erstberatung<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="transition-transform group-hover:translate-x-1"><path d="M9 6l6 6-6 6"></path></svg></a>
@@ -268,7 +325,7 @@
       </section>
     </main>
     <footer class="fuss-verlauf mit-korn text-white">
-      <div class="px-6 pt-[90px] pb-[60px] lg:px-8 lg:pt-[140px] lg:pb-[80px]">
+      <div class="rand-seite pt-[90px] pb-[60px] lg:pt-[140px] lg:pb-[80px]">
         <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr] lg:gap-8">
           <div class="max-w-[300px]">
             <img src="images/logo-white.svg" alt="taskrunner" width="2000" height="456" class="h-10 w-auto">
@@ -294,7 +351,7 @@
           <div>
             <h3 class="text-white">Unternehmen</h3>
             <ul class="mt-5 space-y-2.5">
-              <li><a href="/blog" class="text-white/75 transition-colors hover:text-white">Blog</a></li>
+              <li><a href="blog.html" class="text-white/75 transition-colors hover:text-white">Blog</a></li>
               <li><a href="https://taskrunner.jobs.personio.de/" class="text-white/75 transition-colors hover:text-white">Stellenangebote</a></li>
               <li><a href="index.html#kontakt" class="text-white/75 transition-colors hover:text-white">Kontakt</a></li>
             </ul>
@@ -319,5 +376,6 @@
       </div>
     </footer>
     <script src="assets/app.js" defer></script>
+    <script src="assets/foerdercheck.js" defer></script>
   </body>
 </html>
