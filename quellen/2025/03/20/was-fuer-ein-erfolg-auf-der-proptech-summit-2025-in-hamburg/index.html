@@ -1,0 +1,86 @@
+<!--werte
+titel:        Was für ein Erfolg auf der Proptech Summit 2025 in Hamburg! – taskrunner
+beschreibung: Unser erster eigener Stand auf der Proptech Summit 2025 in Hamburg: viele neue Kontakte und der 1. Platz beim Start-Up Award.
+menue:        blog.html
+-->
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<!--einbau: seitenkopf.html-->
+</head>
+<body class="variante-b">
+<a href="#inhalt" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-navy focus:px-5 focus:py-3 focus:text-white">Zum Inhalt springen</a>
+<!--einbau: kopfzeile.html-->
+<!-- Adresse wie im alten WordPress (/2025/03/20/…/), damit bestehende
+     Links und Suchtreffer nach dem Umzug weiter funktionieren. Relative
+     Pfade stehen hier wie im Wurzelverzeichnis; bauen.py setzt ../ davor. -->
+<main id="inhalt">
+      <article>
+        <!-- Kopfband wie auf Förderungen und Dienstleistungen, das Foto
+             aber als <img> (siehe img.kopf-foto-bild in input.css). Kein
+             <header>-Element: .variante-b header gilt der Kopfzeile. -->
+        <div class="seitenkopf kopf-voll kopf-foto verlauf-nacht mit-korn relative flex items-end overflow-hidden">
+          <img src="images/blog/proptech-2025-erfolg.jpg" srcset="images/blog/proptech-2025-erfolg-900.jpg 900w, images/blog/proptech-2025-erfolg.jpg 1800w" sizes="100vw" alt="Das Taskrunner-Team mit dem Scheck für den 1. Platz beim Start-Up Award an seinem Stand auf der Proptech Summit 2025" width="1800" height="1200" fetchpriority="high" decoding="async" class="kopf-foto-bild object-[50%_35%]">
+          <div class="rand-seite relative w-full pb-[60px] pt-[calc(var(--header-h)+72px)] lg:pb-[76px]">
+            <p class="t-eyebrow text-white/85"><a href="blog.html" class="underline-offset-4 hover:text-white hover:underline">Blog</a> · <time datetime="2025-03-20">20. März 2025</time></p>
+            <h1 class="mt-4 max-w-[900px] text-balance hyphens-auto break-words t-h1 text-white">Was für ein Erfolg auf der Proptech Summit 2025 in Hamburg!</h1>
+            <p class="mt-6 max-w-[620px] text-pretty t-intro text-white">Wir von Taskrunner GmbH sind überwältigt von den positiven Erfahrungen und dem Zuspruch, den wir auf der Messe erleben durften. Unser erster eigener Stand war ein voller Erfolg!</p>
+            <a href="#beitrag" class="kopf-pfeil mt-10" aria-label="Weiter zum Beitrag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a>
+          </div>
+        </div>
+        <div id="beitrag" class="bg-white section-y">
+          <div class="container-wide">
+            <div class="mx-auto max-w-[760px] hyphens-auto break-words">
+              <h2 class="max-w-[900px] text-balance hyphens-auto break-words t-h3 text-blue-600">Netzwerken und Austausch</h2>
+              <p class="mt-6 text-pretty t-body text-ink/85">Wir haben wertvolle neue Kontakte geknüpft und bestehende Beziehungen vertieft. Der Austausch mit Branchenkolleg:innen, Partner:innen und potenziellen Kund:innen war äußerst bereichernd.</p>
+              <h2 class="mt-12 max-w-[900px] text-balance hyphens-auto break-words t-h3 text-blue-600 lg:mt-16">Highlight der Messe</h2>
+              <p class="mt-6 text-pretty t-body text-ink/85">Der absolute Höhepunkt war der Gewinn des 1. Platzes beim Start-Up Award! Wir sind unglaublich stolz darauf, dass unsere innovativen Lösungen für das Facility Management so viel Anerkennung gefunden haben. Diese Auszeichnung bestätigt uns in unserem Bestreben, die Branche durch Digitalisierung und Nachhaltigkeit zu transformieren.</p>
+              <h2 class="mt-12 max-w-[900px] text-balance hyphens-auto break-words t-h3 text-blue-600 lg:mt-16">Unsere Mission</h2>
+              <p class="mt-6 text-pretty t-body text-ink/85">Als Scale-up aus Berlin und Essen revolutionieren wir das Facility Management mit digitalen Lösungen. Durch ein großes Handwerkernetzwerk in Deutschland sowie Österreich bieten wir schnelle, nachhaltige Lösungen für Reparaturen, Notdienste, Wartungen und Umbauten.</p>
+              <p class="mt-6 text-pretty t-body text-ink/85">Wir danken allen, die unseren Stand besucht haben, für die spannenden Gespräche und das rege Interesse an unseren Lösungen. Wir freuen uns auf die zukünftige Zusammenarbeit und darauf, gemeinsam die Zukunft des Facility Managements zu gestalten! 💚</p>
+            </div>
+          </div>
+          <!-- Bilder als Laufband nach Uncode (classic-saas, „Turn your
+               questions into intuitive growth plans“): Fotos gleich hoch,
+               jedes in seinem eigenen Format, die beim Scrollen nach links
+               wandern. Regeln unter .laufband in input.css; Ziehen,
+               Pfeiltasten und Lightbox macht assets/app.js. Jeder Link
+               zeigt auf die große Fassung – ohne JavaScript öffnet sie
+               sich einfach. Randlos, deshalb außerhalb von container-wide. -->
+          <div class="laufband mt-16 lg:mt-20" id="laufband-proptech" role="region" aria-label="Bilder von der Proptech Summit 2025" data-laufband data-lightbox>
+            <ul class="laufband-spur gap-5">
+              <li class="laufband-karte bg-stone"><a href="images/blog/proptech-2025-kundinnen-partnerinnen-gross.jpg"><img src="images/blog/proptech-2025-kundinnen-partnerinnen.jpg" alt="Besucher:innen im Gespräch mit dem Taskrunner-Team am Messestand" width="1000" height="1360" loading="lazy" decoding="async" draggable="false"><span class="laufband-plus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span class="sr-only">vergrößern</span></span></a></li>
+              <li class="laufband-karte bg-stone"><a href="images/blog/proptech-2025-pitch-gross.jpg"><img src="images/blog/proptech-2025-pitch.jpg" alt="Philipp Biel stellt Taskrunner beim Start-Up-Pitch vor" width="1200" height="800" loading="lazy" decoding="async" draggable="false"><span class="laufband-plus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span class="sr-only">vergrößern</span></span></a></li>
+              <li class="laufband-karte bg-stone"><a href="images/blog/proptech-2025-start-up-award-gross.jpg"><img src="images/blog/proptech-2025-start-up-award.jpg" alt="Scheck und Pokal für den 1. Platz beim Start-Up Award" width="1000" height="1776" loading="lazy" decoding="async" draggable="false"><span class="laufband-plus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span class="sr-only">vergrößern</span></span></a></li>
+              <li class="laufband-karte bg-stone"><a href="images/blog/proptech-2025-bierpong-gross.jpg"><img src="images/blog/proptech-2025-bierpong.jpg" alt="Christian Schuldais in der Messehalle" width="1200" height="800" loading="lazy" decoding="async" draggable="false"><span class="laufband-plus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span class="sr-only">vergrößern</span></span></a></li>
+            </ul>
+          </div>
+          <!-- Pfeile wie bei apple.com, für alle, die Ziehen und Pfeiltasten
+               nicht kennen. hidden, bis app.js sie verdrahtet hat. -->
+          <div class="rand-seite mt-6 flex justify-end gap-3 lg:mt-8" hidden>
+            <button type="button" class="laufband-pfeil" data-laufband-pfeil="zurueck" aria-controls="laufband-proptech" aria-label="Vorheriges Bild"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
+            <button type="button" class="laufband-pfeil" data-laufband-pfeil="vor" aria-controls="laufband-proptech" aria-label="Nächstes Bild"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+          </div>
+        </div>
+      </article>
+      <!-- Nächster Beitrag, nur Text – der Beitrag hat oben und im
+           Laufband genug Bilder. Die ganze Zeile ist der Link; beim
+           Überfahren wird der Titel unterstrichen und der Pfeil rückt. -->
+      <section class="bg-white pb-[60px] sm:pb-[90px] lg:pb-[120px]">
+        <div class="rand-seite">
+          <a href="2025/02/26/taskrunner-auf-der-proptech-summit-2025-in-hamburg/index.html" class="group grid items-end gap-8 border-t border-ink/10 pt-10 sm:grid-cols-[1fr_auto] lg:pt-14">
+            <div>
+              <p class="t-eyebrow text-ink/75">Nächster Beitrag · <time datetime="2025-02-26">26. Februar 2025</time></p>
+              <h2 class="mt-4 max-w-[1000px] text-balance hyphens-auto break-words t-h2 text-blue-600 decoration-2 underline-offset-[0.14em] group-hover:underline">Taskrunner auf der Proptech Summit 2025 in Hamburg!</h2>
+            </div>
+            <span class="flex size-16 shrink-0 items-center justify-center rounded-full bg-blue-600 text-white transition-transform duration-300 group-hover:translate-x-2 motion-reduce:transition-none" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-6"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </span>
+          </a>
+        </div>
+      </section>
+    </main>
+<!--einbau: fusszeile.html-->
+<script src="assets/app.js" defer></script>
+</body>
+</html>

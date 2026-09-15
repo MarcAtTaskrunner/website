@@ -21,7 +21,10 @@
     var mass = Math.min(this.b, this.h * 1.9);
     this.cx = this.b * 0.5;
     this.cy = this.h * 0.5;
-    this.kreuz = mass * 0.26;               /* Kantenlaenge des Kreuzes */
+    this.kreuz = mass * 0.33;               /* Kantenlaenge des Kreuzes */
+    /* Weiter darf der Schein nicht reichen: sonst schneidet ihn die
+       Canvas-Kante gerade ab, und er steht als Rechteck im Bild. */
+    this.scheinMax = Math.min(this.cx, this.cy);
     this.takt = 2.6;                        /* Sekunden je Pulsschlag */
     this.startZeit = null;
     this.beginn = this.kostenBeginn;
@@ -36,7 +39,7 @@
     var k = this.kreuz, s2 = k / 2, a = k * 0.17;
 
     /* weiter Schein */
-    var r = k * (0.92 + 0.22 * p);
+    var r = Math.min(k * (0.92 + 0.22 * p), this.scheinMax);
     var vv = g.createRadialGradient(this.cx, this.cy, k * 0.30, this.cx, this.cy, r);
     vv.addColorStop(0.00, "rgba(" + NOTROT + "," + (0.26 + 0.20 * p).toFixed(3) + ")");
     vv.addColorStop(0.45, "rgba(" + NOTROT + "," + (0.08 + 0.08 * p).toFixed(3) + ")");
@@ -49,7 +52,7 @@
     /* Kreuz mit engem Schein an der Kante */
     g.save();
     g.shadowColor = "rgba(" + NOTROT + "," + (0.55 + 0.30 * p).toFixed(3) + ")";
-    g.shadowBlur = k * (0.22 + 0.14 * p);
+    g.shadowBlur = Math.min(k * (0.22 + 0.14 * p), Math.max(0, (this.scheinMax - s2) * 0.8));
     g.fillStyle = "rgb(" + NOTROT + ")";
     g.beginPath();
     g.moveTo(this.cx - a, this.cy - s2);

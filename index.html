@@ -89,7 +89,7 @@
     <main id="inhalt">
       <section class="hero-b hero-voll mit-korn relative flex flex-col justify-end overflow-hidden bg-navy text-white">
         <canvas data-schaubild="rad" data-punkte="96" data-bild="images/headshot.webp" aria-hidden="true" class="pointer-events-none absolute inset-0 block h-full w-full"></canvas>
-        <div data-radlabel hidden class="pointer-events-none absolute z-20 rounded-[34px] border border-white/15 bg-navy/90 px-4 py-2.5 backdrop-blur-sm transition-opacity duration-150">
+        <div data-radlabel hidden class="pointer-events-none absolute z-20 rounded-[20px] border border-white/15 bg-navy/90 px-4 py-2.5 backdrop-blur-sm transition-opacity duration-150">
           <p data-radname class="text-[16px] font-medium leading-tight text-white"></p>
           <p data-radgewerk class="mt-1 font-mono text-[12px] uppercase leading-tight tracking-[0.08em] text-white/60"></p>
         </div>
@@ -101,96 +101,149 @@
       </section>
       <section class="bg-white section-y">
         <div class="container-wide">
-          <h2 data-auf class="text-center text-blue-600">Schnell, einfach und Transparent</h2>
-          <p data-auf class="mt-5 text-center t-intro text-ink">Taskrunner bündelt Wartung, Reparatur und Instandhaltung auf einer Plattform – deutschlandweit, mit fester Ansprechperson und vollem Überblick im Dashboard. Qualität und Abrechnung prüfen wir für Sie.</p>
-          <ul class="mt-12 grid gap-6 md:grid-cols-2 lg:mt-16 lg:gap-7">
-            <li data-auf class="flex min-h-[340px] flex-col overflow-hidden rounded-[var(--radius-tile)] kachel-verlauf-1 mit-korn kachel-polster sm:min-h-[380px]">
+          <div data-auf class="grid gap-6 lg:grid-cols-2 lg:items-end lg:gap-16">
+            <h2 class="max-w-[900px] text-balance hyphens-auto break-words t-h2 text-blue-600">Schnell, einfach <span class="block">und Transparent</span></h2>
+            <p class="max-w-[560px] text-pretty t-intro text-ink/80">Taskrunner bündelt Wartung, Reparatur und Instandhaltung auf einer Plattform – deutschlandweit, mit fester Ansprechperson und vollem Überblick im Dashboard. Qualität und Abrechnung prüfen wir für Sie.</p>
+          </div>
+        </div>
+        <!-- Kacheln in einer Reihe nach apple.com: seitlich wischen, mit der
+             Maus ziehen, Pfeiltasten oder die Knöpfe darunter – das macht
+             assets/app.js ([data-laufband]). Randlos, deshalb außerhalb von
+             container-wide; die erste Kachel fluchtet trotzdem mit der
+             Überschrift (.laufband-buendig). -->
+        <div data-auf class="laufband laufband-buendig mt-8 lg:mt-14" id="laufband-vorteile" role="region" aria-label="Was Taskrunner bietet" tabindex="0" data-laufband data-ohne-mitlauf>
+          <ul class="laufband-spur gap-5">
+            <li class="laufband-kachel flex min-h-[340px] flex-col overflow-hidden rounded-[var(--radius-tile)] kachel-verlauf-6 mit-korn kachel-polster sm:min-h-[380px]">
               <h3 class="t-h3 text-blue-600">Ein Task, alle Gewerke.</h3>
               <p class="mt-4 t-body text-ink/85">Reparatur, Wartung, Maler-, Elektro- oder IT-Arbeiten laufen über dieselbe Plattform. Sie geben den Task auf, wir koordinieren die Betriebe.</p>
               <canvas data-schaubild="gewerke" data-bild="images/headshot.webp" data-icon="images/icons/dokument.svg" aria-hidden="true" class="mt-8 block h-[300px] w-full sm:h-[360px]"></canvas>
             </li>
-            <li data-auf class="flex min-h-[340px] flex-col overflow-hidden rounded-[var(--radius-tile)] kachel-verlauf-2 mit-korn kachel-polster sm:min-h-[380px]">
+            <li class="laufband-kachel flex min-h-[340px] flex-col overflow-hidden rounded-[var(--radius-tile)] kachel-verlauf-7 mit-korn kachel-polster sm:min-h-[380px]">
               <h3 class="t-h3 text-blue-600">Nachvollziehbar abgerechnet.</h3>
               <p class="mt-4 t-body text-ink/85">Jeder Task wird über die Plattform abgerechnet – mit Abschlussbericht und Fotos zur erbrachten Leistung.</p>
               <canvas data-schaubild="kosten" data-posten="Anfahrt,Materialkosten,Arbeitszeit,Handlingfee" aria-hidden="true" class="mt-8 -mx-10 block h-[300px] w-[calc(100%+5rem)] max-w-none sm:h-[360px]"></canvas>
             </li>
-            <li data-auf class="flex min-h-[340px] flex-col overflow-hidden rounded-[var(--radius-tile)] kachel-verlauf-3 mit-korn kachel-polster sm:min-h-[380px]">
+            <li class="laufband-kachel flex min-h-[340px] flex-col overflow-hidden rounded-[var(--radius-tile)] kachel-verlauf-8 mit-korn kachel-polster sm:min-h-[380px]">
               <h3 class="t-h3 text-blue-600">Alle Standorte auf einem Dashboard.</h3>
               <p class="mt-4 t-body text-ink/85">Offene Tasks, Termine und Kosten je Objekt an einer Stelle.</p>
               <canvas data-schaubild="dashboard" data-icon="images/icons/tablet.svg" aria-hidden="true" class="mt-8 -mx-10 block h-[300px] w-[calc(100%+5rem)] max-w-none sm:h-[360px]"></canvas>
             </li>
-            <li data-auf class="flex min-h-[340px] flex-col overflow-hidden rounded-[var(--radius-tile)] kachel-verlauf-4 mit-korn kachel-polster sm:min-h-[380px]">
+            <li class="laufband-kachel flex min-h-[340px] flex-col overflow-hidden rounded-[var(--radius-tile)] kachel-verlauf-9 mit-korn kachel-polster sm:min-h-[380px]">
               <h3 class="t-h3 text-blue-600">Eine feste Ansprechperson.</h3>
               <p class="mt-4 t-body text-ink/85">Unser Operationsteam begleitet jeden Task und stellt die korrekte Durchführung sicher.</p>
               <canvas data-schaubild="team" data-bild="images/ansprechperson-portrait.webp" aria-hidden="true" class="mt-8 block h-[300px] w-full sm:h-[360px]"></canvas>
             </li>
-            <li data-auf class="flex min-h-[340px] flex-col overflow-hidden rounded-[var(--radius-tile)] kachel-verlauf-5 mit-korn kachel-polster sm:min-h-[380px]">
+            <li class="laufband-kachel flex min-h-[340px] flex-col overflow-hidden rounded-[var(--radius-tile)] kachel-verlauf-10 mit-korn kachel-polster sm:min-h-[380px]">
               <h3 class="t-h3 text-blue-600">Deutschlandweit verfügbar.</h3>
               <p class="mt-4 t-body text-ink/85">Über 20.000 erreichbare Techniker, im Einsatz an mehr als 21.000 betreuten Standorten.</p>
               <img src="images/germany-dots-standorte.svg" alt="" aria-hidden="true" width="360" height="460" loading="lazy" decoding="async" class="mx-auto mt-8 block h-[300px] w-auto sm:h-[360px]">
             </li>
-            <li data-auf class="flex min-h-[340px] flex-col overflow-hidden rounded-[var(--radius-tile)] kachel-verlauf-nacht mit-korn kachel-polster sm:min-h-[380px]">
+            <li class="laufband-kachel flex min-h-[340px] flex-col overflow-hidden rounded-[var(--radius-tile)] kachel-verlauf-nacht mit-korn kachel-polster text-white sm:min-h-[380px]">
               <h3 class="t-h3 text-white">Notdienst innerhalb von 4 Stunden.</h3>
-              <p class="mt-4 t-body text-white/75">Manchmal muss es schnell gehen. In 99,7&thinsp;% der Fälle haben wir innerhalb von 4 Stunden einen Spezialisten vor Ort, der sich um das Problem kümmert.</p>
+              <p class="mt-4 t-body">Manchmal muss es schnell gehen. In 99,7&thinsp;% der Fälle haben wir innerhalb von 4 Stunden einen Spezialisten vor Ort, der sich um das Problem kümmert.</p>
               <canvas data-schaubild="notdienst" aria-hidden="true" class="mt-8 block h-[300px] w-full sm:h-[360px]"></canvas>
             </li>
           </ul>
         </div>
-        </div></div>
+        <!-- Pfeile wie bei apple.com. hidden, bis app.js sie verdrahtet hat. -->
+        <div class="container-wide mt-6 flex justify-end gap-3 lg:mt-8" hidden>
+          <button type="button" class="laufband-pfeil" data-laufband-pfeil="zurueck" aria-controls="laufband-vorteile" aria-label="Vorherige Kachel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><button type="button" class="laufband-pfeil" data-laufband-pfeil="vor" aria-controls="laufband-vorteile" aria-label="Nächste Kachel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+        </div>
       </section>
-      <section class="bg-white section-y" aria-label="Taskrunner in Zahlen">
-        <div class="container-wide">
-          <ul data-auf class="zahlen-band grid grid-cols-1 sm:grid-cols-5">
-            <li class="zahl-zelle" data-feld="kunden"><button type="button" class="zahl-knopf flex w-full flex-col justify-center px-0 py-8 sm:px-7" aria-expanded="false" aria-controls="feld-kunden"><span class="t-h2 tabular-nums text-ink">53</span><span class="mt-2 t-caption">Kunden</span></button></li>
-            <li class="zahl-zelle flex flex-col justify-center px-0 py-8 sm:px-7">
-              <p class="t-h2 tabular-nums text-ink">20.241</p>
-              <p class="mt-2 t-caption">Erreichbare Techniker</p>
-            </li>
-            <li class="zahl-zelle flex flex-col justify-center px-0 py-8 sm:px-7">
-              <p class="t-h2 tabular-nums text-ink">41</p>
-              <p class="mt-2 t-caption">Mitarbeiter, davon 14&nbsp;Frauen</p>
-            </li>
-            <li class="zahl-zelle flex flex-col justify-center px-0 py-8 sm:px-7">
-              <p class="t-h2 tabular-nums text-ink">99,7&thinsp;%</p>
-              <p class="mt-2 t-caption">SLA-Rate</p>
-            </li>
-            <li class="zahl-zelle flex flex-col justify-center px-0 py-8 sm:px-7">
-              <p class="t-h2 tabular-nums text-ink">21.453</p>
-              <p class="mt-2 t-caption">Betreute Standorte</p>
-            </li>
-          </ul>
-          <div id="feld-kunden" class="zahlen-feld" data-feld-inhalt="kunden">
-            <div>
-              <p class="t-caption text-ink/55">Unternehmen, die mit Taskrunner arbeiten</p>
-              <div class="mt-6 flex flex-wrap items-center gap-x-7 gap-y-5 sm:gap-x-9">
-                <img src="images/kundenlogos/amplifon.svg" alt="Amplifon" loading="lazy" decoding="async" width="112" height="27" class="h-[var(--h)] w-auto shrink-0 object-contain brightness-0 opacity-45 sm:h-[var(--h-sm)] lg:h-[var(--h-lg)]" style="--h:15px;--h-sm:18px;--h-lg:22px">
-                <img src="images/kundenlogos/dm.svg" alt="dm-drogerie markt" loading="lazy" decoding="async" width="57" height="38" class="h-[var(--h)] w-auto shrink-0 object-contain brightness-0 opacity-45 sm:h-[var(--h-sm)] lg:h-[var(--h-lg)]" style="--h:21px;--h-sm:25px;--h-lg:31px">
-                <img src="images/kundenlogos/globus.svg" alt="Globus" loading="lazy" decoding="async" width="51" height="41" class="h-[var(--h)] w-auto shrink-0 object-contain brightness-0 opacity-45 sm:h-[var(--h-sm)] lg:h-[var(--h-lg)]" style="--h:22px;--h-sm:26px;--h-lg:33px">
-                <img src="images/kundenlogos/rossmann.svg" alt="Rossmann" loading="lazy" decoding="async" width="186" height="26" class="h-[var(--h)] w-auto shrink-0 object-contain brightness-0 opacity-45 sm:h-[var(--h-sm)] lg:h-[var(--h-lg)]" style="--h:14px;--h-sm:17px;--h-lg:21px">
-                <img src="images/kundenlogos/bonita.svg" alt="Bonita" loading="lazy" decoding="async" width="141" height="26" class="h-[var(--h)] w-auto shrink-0 object-contain brightness-0 opacity-45 sm:h-[var(--h-sm)] lg:h-[var(--h-lg)]" style="--h:14px;--h-sm:17px;--h-lg:21px">
-                <img src="images/kundenlogos/fressnapf.svg" alt="Fressnapf" loading="lazy" decoding="async" width="163" height="26" class="h-[var(--h)] w-auto shrink-0 object-contain brightness-0 opacity-45 sm:h-[var(--h-sm)] lg:h-[var(--h-lg)]" style="--h:14px;--h-sm:17px;--h-lg:21px">
-                <img src="images/kundenlogos/obi.svg" alt="OBI" loading="lazy" decoding="async" width="114" height="27" class="h-[var(--h)] w-auto shrink-0 object-contain brightness-0 opacity-45 sm:h-[var(--h-sm)] lg:h-[var(--h-lg)]" style="--h:15px;--h-sm:18px;--h-lg:22px">
-                <img src="images/kundenlogos/avis.svg" alt="Avis" loading="lazy" decoding="async" width="95" height="29" class="h-[var(--h)] w-auto shrink-0 object-contain brightness-0 opacity-45 sm:h-[var(--h-sm)] lg:h-[var(--h-lg)]" style="--h:16px;--h-sm:19px;--h-lg:24px">
-                <img src="images/kundenlogos/flink.svg" alt="Flink" loading="lazy" decoding="async" width="105" height="27" class="h-[var(--h)] w-auto shrink-0 object-contain brightness-0 opacity-45 sm:h-[var(--h-sm)] lg:h-[var(--h-lg)]" style="--h:15px;--h-sm:18px;--h-lg:22px">
+      <section class="bg-white section-y" aria-labelledby="netzwerk-titel">
+        <div class="container-breit">
+          <h2 id="netzwerk-titel" data-auf class="max-w-[820px] text-balance text-blue-600">Ein Netzwerk aus über 20.000 Technikern – und ein Team, das jeden Auftrag begleitet.</h2>
+          <div class="raster mt-8 lg:mt-14">
+            <div class="raster-spalte">
+              <div data-auf class="raster-kachel raster-hoch kachel-verlauf-nacht mit-korn kachel-polster text-white">
+                <div class="fortschritt">
+                  <svg viewBox="0 0 80 80" aria-hidden="true"><circle class="fortschritt-grund" cx="40" cy="40" r="36" pathLength="100"/><circle class="fortschritt-wert" cx="40" cy="40" r="36" pathLength="100"/></svg>
+                  <span class="fortschritt-zahl t-h3 font-bold tabular-nums">99,7&thinsp;%</span>
+                </div>
+                <div class="raster-fuss">
+                  <h3 class="t-h3 text-white">Vereinbart ist vereinbart.</h3>
+                  <p class="mt-4 t-body">So hoch ist unsere SLA-Rate: Termine und Reaktionszeiten halten wir so, wie sie mit Ihnen vereinbart sind.</p>
+                  <a href="dienstleistungen.html" class="raster-link mt-8 t-body font-bold text-white">Unsere Dienstleistungen</a>
+                </div>
+              </div>
+              <div data-auf class="raster-bild bild-quadrat">
+                <img src="images/raster/techniker-wand.jpg" alt="Techniker in blauer Arbeitsjacke tastet eine weiße Wandverkleidung ab" width="1200" height="1600" loading="lazy" decoding="async">
               </div>
             </div>
+            <div class="raster-spalte">
+              <div data-auf class="raster-bild bild-quadrat">
+                <img src="images/raster/operationsteam.jpg" alt="Zwei Mitarbeiter des Operationsteams am Schreibtisch vor ihren Bildschirmen" width="1650" height="1100" loading="lazy" decoding="async" class="object-[80%_50%]">
+              </div>
+              <div data-auf class="raster-kachel raster-hoch kachel-verlauf-4 mit-korn kachel-polster">
+                <p class="raster-marke t-eyebrow text-blue-600">Team</p>
+                <h3 class="mt-6 t-h3 text-blue-600">Das Team hinter jedem Auftrag.</h3>
+                <div class="raster-fuss">
+                  <p class="t-h2 tabular-nums text-ink">41</p>
+                  <p class="mt-2 t-caption">Mitarbeiter, davon 14&nbsp;Frauen</p>
+                  <ul class="portraet-reihe" aria-hidden="true">
+                    <li data-bild-folgt="images/raster/portraet-1.jpg"></li>
+                    <li data-bild-folgt="images/raster/portraet-2.jpg"></li>
+                    <li data-bild-folgt="images/raster/portraet-3.jpg"></li>
+                    <li data-bild-folgt="images/raster/portraet-4.jpg"></li>
+                    <li data-bild-folgt="images/raster/portraet-5.jpg"></li>
+                    <li data-bild-folgt="images/raster/portraet-6.jpg"></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="raster-spalte">
+              <div data-auf class="raster-kachel kachel-verlauf-2 mit-korn kachel-polster">
+                <p class="raster-marke t-eyebrow text-blue-600">Kunden</p>
+                <p class="mt-8 t-h2 tabular-nums text-ink">53</p>
+                <p class="mt-2 t-caption">Unternehmen, die mit Taskrunner arbeiten</p>
+                <div class="raster-fuss flex flex-wrap items-center gap-x-8 gap-y-6">
+                  <img src="images/kundenlogos/amplifon.svg" alt="Amplifon" loading="lazy" decoding="async" width="112" height="27" class="h-[var(--h)] w-auto shrink-0 object-contain logo-blau sm:h-[var(--h-sm)]" style="--h:20px;--h-sm:24px">
+                  <img src="images/kundenlogos/dm.svg" alt="dm-drogerie markt" loading="lazy" decoding="async" width="57" height="38" class="h-[var(--h)] w-auto shrink-0 object-contain logo-blau sm:h-[var(--h-sm)]" style="--h:28px;--h-sm:34px">
+                  <img src="images/kundenlogos/globus.svg" alt="Globus" loading="lazy" decoding="async" width="51" height="41" class="h-[var(--h)] w-auto shrink-0 object-contain logo-blau sm:h-[var(--h-sm)]" style="--h:30px;--h-sm:35px">
+                  <img src="images/kundenlogos/rossmann-blau.svg" alt="Rossmann" loading="lazy" decoding="async" width="186" height="26" class="h-[var(--h)] w-auto shrink-0 object-contain sm:h-[var(--h-sm)]" style="--h:19px;--h-sm:23px">
+                  <img src="images/kundenlogos/bonita.svg" alt="Bonita" loading="lazy" decoding="async" width="141" height="26" class="h-[var(--h)] w-auto shrink-0 object-contain logo-blau sm:h-[var(--h-sm)]" style="--h:19px;--h-sm:23px">
+                  <img src="images/kundenlogos/fressnapf.svg" alt="Fressnapf" loading="lazy" decoding="async" width="163" height="26" class="h-[var(--h)] w-auto shrink-0 object-contain logo-blau sm:h-[var(--h-sm)]" style="--h:19px;--h-sm:23px">
+                  <img src="images/kundenlogos/obi.svg" alt="OBI" loading="lazy" decoding="async" width="114" height="27" class="h-[var(--h)] w-auto shrink-0 object-contain logo-blau sm:h-[var(--h-sm)]" style="--h:20px;--h-sm:24px">
+                  <img src="images/kundenlogos/avis.svg" alt="Avis" loading="lazy" decoding="async" width="95" height="29" class="h-[var(--h)] w-auto shrink-0 object-contain logo-blau sm:h-[var(--h-sm)]" style="--h:22px;--h-sm:26px">
+                  <img src="images/kundenlogos/flink.svg" alt="Flink" loading="lazy" decoding="async" width="105" height="27" class="h-[var(--h)] w-auto shrink-0 object-contain logo-blau sm:h-[var(--h-sm)]" style="--h:20px;--h-sm:24px">
+                </div>
+              </div>
+              <div data-auf class="raster-bild bild-breit">
+                <img src="images/raster/standort.jpg" alt="Verkaufsraum einer Filiale mit türkis gefliester Theke und Regalen" width="1600" height="1066" loading="lazy" decoding="async">
+              </div>
+              <div data-auf class="raster-kachel bg-blue-600 mit-korn kachel-polster text-white">
+                <p class="raster-marke t-eyebrow">Netzwerk</p>
+                <div class="raster-fuss grid gap-8">
+                  <div>
+                    <p class="t-h2 tabular-nums">20.241</p>
+                    <p class="mt-2 t-caption">Erreichbare Techniker</p>
+                  </div>
+                  <div>
+                    <p class="t-h2 tabular-nums">21.453</p>
+                    <p class="mt-2 t-caption">Betreute Standorte</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
       <section class="verlauf-nacht mit-korn section-y">
         <div class="container-wide">
           <h2 data-auf class="t-h2 text-white">So funktioniert Taskrunner</h2>
           <p data-auf class="mt-5 max-w-[520px] t-intro text-white/75">Vom Auftrag bis zum Abschlussbericht – drei Schritte, kein Hinterhertelefonieren.</p>
-          <ol class="mt-16 grid gap-x-8 gap-y-12 md:grid-cols-3 lg:mt-20 lg:gap-x-10">
-            <li data-auf class="border-t border-white/15 pt-8">
+          <ol class="schritte mt-8 grid gap-x-5 gap-y-12 md:grid-cols-3 lg:mt-14">
+            <li data-auf class="border-t border-white/15 pt-8 md:border-t-0">
               <p class="t-eyebrow text-white/75">Schritt 1</p>
               <h3 class="mt-4 t-h4 text-white">Legen Sie Ihren Auftrag an.</h3>
               <p class="mt-5 t-body-tight text-white/75">Einfach die entsprechende Dienstleistung auswählen, den Auftragsort, -zeit und Notizen für Ihren Auftrag hinterlegen.</p>
             </li>
-            <li data-auf class="border-t border-white/15 pt-8">
+            <li data-auf class="border-t border-white/15 pt-8 md:border-t-0">
               <p class="t-eyebrow text-white/75">Schritt 2</p>
               <h3 class="mt-4 t-h4 text-white">Wir beauftragen den Betrieb.</h3>
               <p class="mt-5 t-body-tight text-white/75">Das Fachpersonal oder der Handwerksbetrieb wird digital und automatisiert beauftragt. Unser Operationsteam begleitet jeden Task und stellt die korrekte Durchführung sicher.</p>
             </li>
-            <li data-auf class="border-t border-white/15 pt-8">
+            <li data-auf class="border-t border-white/15 pt-8 md:border-t-0">
               <p class="t-eyebrow text-white/75">Schritt 3</p>
               <h3 class="mt-4 t-h4 text-white">Ihr Task ist abgeschlossen.</h3>
               <p class="mt-5 t-body-tight text-white/75">Sie erhalten einen Abschlussbericht mit Fotos und die Abrechnung – gebündelt auf der Taskrunner Plattform.</p>
@@ -205,7 +258,7 @@
         <div class="container-wide">
           <h2 data-auf class="mx-auto max-w-[820px] text-balance t-h2 text-ink text-center">Lieber kurz durchsprechen?</h2>
           <p data-auf class="mx-auto mt-5 max-w-[760px] text-balance t-intro text-ink/80 text-center">Ein Gespräch reicht, um zu klären, ob Taskrunner zu Ihren Objekten und Abläufen passt. Kein Verkaufsgespräch, keine Verpflichtung.</p>
-          <ul class="mt-16 grid gap-5 md:grid-cols-3 lg:mt-20">
+          <ul class="mt-8 grid gap-5 md:grid-cols-3 lg:mt-14">
             <li data-auf class="flex flex-col rounded-[var(--radius-tile)] kachel-verlauf-1 mit-korn kachel-polster">
               <span class="flex h-[42px] items-center text-blue-600"><svg width="34" height="36" viewBox="0 0 90.62 97.36" aria-hidden="true" focusable="false"><path fill="currentColor" d="M90.39,23.01c-.64-2.05-2.5-3.42-4.65-3.42-.49,0-.98.07-1.46.22l-6.7,2.09V6.14c0-3.88-2.41-6.14-6.08-6.14h-31.04c-3.74,0-6.37,2.19-6.37,6.14v30.15c-3.39,1.47-5.76,2.52-6.27,2.78-4.1,2.09-7.19,6.88-7.88,8.81-.85,1.93-19.95,49.47-19.95,49.47h39.58s9.59-4.02,14.69-9.59c2.15-2.34,3.87-5.52,5.06-8.14h12.5c3.29,0,5.77-2.12,5.77-6.35v-3.6h4.24c2.69,0,4.87-2.18,4.87-4.87s-2.18-4.87-4.87-4.87h-4.24v-1.62h4.36c2.68,0,4.87-2.19,4.87-4.87s-2.18-4.87-4.87-4.87h-4.36v-1.62h4.36c2.68,0,4.87-2.19,4.87-4.87s-2.18-4.87-4.87-4.87h-4.36v-5.11l9.61-3c1.24-.39,2.26-1.24,2.86-2.39.6-1.15.72-2.47.33-3.71ZM73.21,74.29h-27.17c-.16,1.03-.36,2.08-.64,3.17-1.81,6.94-7.76,10.86-8.01,11.02-.23.15-.49.22-.75.22-.46,0-.9-.22-1.17-.64-.42-.65-.23-1.5.41-1.93.05-.03,5.29-3.52,6.83-9.39,1.64-6.24.82-11.77.81-11.83-.02-.12-.01-.23,0-.35h15.84c3.25,0,6.49-1.96,6.49-5.8s-2.86-6.26-6.49-6.26h-26.9v-2.78h5.99V4.97h7.32c.03,1.78,1.15,2.77,2.75,2.77h14.64c1.57,0,2.6-1.02,2.62-2.77h7.43v69.32h0Z"/></svg></span>
               <h3 class="mt-6 t-h4 text-blue-600">Anrufen</h3>

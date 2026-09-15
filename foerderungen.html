@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="assets/style.css">
   </head>
   <body class="variante-b">
+    <script>document.documentElement.className+=" js-auf";</script>
     <a href="#inhalt" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-navy focus:px-5 focus:py-3 focus:text-white">Zum Inhalt springen</a>
     <header class="sticky top-0 z-50 border-b border-black/5 bg-white/95 backdrop-blur">
       <div class="grid h-[64px] w-full grid-cols-[auto_1fr_auto] items-center gap-6 rand-seite min-[1100px]:grid-cols-[1fr_auto_1fr]">
@@ -97,20 +98,20 @@
       <section class="bg-white section-y">
         <div class="container-wide">
           <h2 class="max-w-[900px] text-balance hyphens-auto break-words t-h2 text-blue-600">Klimaschutz ist längst Gesetz</h2>
-          <ol class="mt-10 grid gap-y-10 md:grid-cols-3 lg:mt-14" aria-label="Klimaziele Deutschlands">
-            <li class="klimaziel">
+          <ol class="klimaziele mt-8 grid gap-y-10 md:grid-cols-3 lg:mt-14" aria-label="Klimaziele Deutschlands">
+            <li data-auf class="klimaziel">
               <p class="t-eyebrow text-ink/80">bis 2030</p>
               <p class="klimaziel-wert t-h1 text-blue-600">−65&#8239;%</p>
               <p class="mt-3 max-w-[26ch] t-body-tight text-ink/85">Treibhausgas&shy;emissionen gegenüber 1990</p>
             </li>
-            <li class="klimaziel">
+            <li data-auf class="klimaziel">
               <p class="t-eyebrow text-ink/80">bis 2040</p>
               <p class="klimaziel-wert t-h1 text-blue-600">−88&#8239;%</p>
               <p class="mt-3 max-w-[26ch] t-body-tight text-ink/85">Treibhausgas&shy;emissionen gegenüber 1990</p>
             </li>
-            <li class="klimaziel klimaziel-ziel">
+            <li data-auf class="klimaziel">
               <p class="t-eyebrow text-ink/80">ab 2045</p>
-              <p class="klimaziel-wert t-h1 text-navy">netto 0</p>
+              <p class="klimaziel-wert t-h1 text-blue-600">netto 0</p>
               <p class="mt-3 max-w-[26ch] t-body-tight text-ink/85">Treibhausgas&shy;neutralität</p>
             </li>
           </ol>
@@ -187,7 +188,7 @@
         <div class="container-wide">
           <h2 class="max-w-[900px] text-balance hyphens-auto break-words t-h2 text-blue-600">Die Programme im Einzelnen</h2>
           <p class="mt-6 max-w-[680px] t-body text-ink/85">Was für alle Programme gilt und was sich im Juli 2026 geändert hat, steht hier einmal vorweg. Die Einzelheiten finden Sie im jeweiligen Programm.</p>
-          <div class="mt-12 grid gap-5 md:grid-cols-2 lg:mt-16">
+          <div class="mt-8 grid gap-5 md:grid-cols-2 lg:mt-14">
             <div class="rounded-[var(--radius-tile)] kachel-verlauf-2 mit-korn kachel-polster">
               <p class="datumsmarke t-eyebrow">Gilt für alle Programme</p>
               <h3 class="mt-4 hyphens-auto break-words t-h4 text-blue-600">Voraussetzungen</h3>
@@ -219,7 +220,7 @@
               </summary>
               <div class="programm-inhalt">
                 <p class="max-w-[680px] t-body text-ink/85">Ein Umbau des vorhandenen Heizungssystems senkt mittel- bis langfristig die Energiekosten und verbessert die Energieausbeute. Die Heizungs&shy;förderung läuft nicht mehr über das BAFA, sondern über die KfW.</p>
-                <div class="mt-10 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3 lg:gap-x-10">
+                <div class="mt-10 grid gap-x-5 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
                   <div class="border-t border-ink/20 pt-8">
                     <h4 class="hyphens-auto break-words t-h4 text-blue-600">Förderhöhe</h4>
                     <ul class="mt-5 space-y-2.5">
@@ -249,7 +250,7 @@
               </summary>
               <div class="programm-inhalt">
                 <p class="max-w-[680px] t-body text-ink/85">Eine gute Wärmedämmung gehört zum Klimaschutz genauso dazu wie eine effiziente Heizungsanlage. Es bringt selten etwas, allein die Heizung zu erneuern, wenn die Wärme dem Gebäude entweicht. Damit geht die Gebäude&shy;hüllen&shy;förderung meist Hand in Hand mit der Heizungs&shy;förderung, ist aber auch als Einzelmaßnahme sinnvoll.</p>
-                <div class="mt-10 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3 lg:gap-x-10">
+                <div class="mt-10 grid gap-x-5 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
                   <div class="border-t border-ink/20 pt-8">
                     <h4 class="hyphens-auto break-words t-h4 text-blue-600">Für wen</h4>
                     <ul class="mt-5 space-y-2.5">
@@ -289,7 +290,7 @@
               </summary>
               <div class="programm-inhalt">
                 <p class="max-w-[680px] t-body text-ink/85">Neben Heizung und Gebäudehülle fördert der Bund die technische Ausstattung des Gebäudes. Das betrifft vor allem Lüftungs- und Kältetechnik sowie die Gebäude&shy;automation – also genau die Gewerke, die im laufenden Betrieb den größten Teil des Stromverbrauchs ausmachen.</p>
-                <div class="mt-10 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3 lg:gap-x-10">
+                <div class="mt-10 grid gap-x-5 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
                   <div class="border-t border-ink/20 pt-8">
                     <h4 class="hyphens-auto break-words t-h4 text-blue-600">Förderinhalt und -höhe</h4>
                     <ul class="mt-5 space-y-2.5">

@@ -801,6 +801,10 @@
 
     this.einlauf = 1.15;                     /* Sekunden fuer den Strich */
     this.einlaufBis = this.einlauf + 0.14 * this.posten.length + 0.6;
+    /* Ohne Maus auf der Kachel zeigt immer ein Punkt seinen Hover-
+       Zustand, reihum: ab vorAb (alle Punkte sind da), je vorTakt s. */
+    this.vorAb = this.einlauf + 0.14 * this.posten.length + 0.3;
+    this.vorTakt = 2.4;
     this.startZeit = null;
     this.beginn = this.kostenBeginn;
 
@@ -840,7 +844,10 @@
 
   Schaubild.prototype.kostenRuht = function () {
     if (this.zeiger) { this.wachBis = this.t + 1.2; return false; }
-    if (this.kostenSek() < this.einlaufBis) return false;
+    var sek = this.kostenSek();
+    if (sek < this.einlaufBis) return false;
+    /* nach jedem Wechsel der Vorfuehrung weiterzeichnen, bis er durch ist */
+    if ((sek - this.vorAb) % this.vorTakt < 0.8) return false;
     return this.t > this.wachBis;
   };
 
@@ -875,7 +882,12 @@
     }
     g.stroke();
 
-    /* Kostenpunkte */
+    /* Kostenpunkte. vor: der Punkt, der gerade vorgefuehrt wird - nur
+       solange niemand mit der Maus auf der Kachel ist. */
+    var vor = -1;
+    if (!this.zeiger && sek >= this.vorAb) {
+      vor = Math.floor((sek - this.vorAb) / this.vorTakt) % this.posten.length;
+    }
     for (i = 0; i < this.posten.length; i++) {
       p = this.posten[i];
 
@@ -884,7 +896,7 @@
       auf = 1 - Math.pow(1 - auf, 3);                                /* easeOutCubic */
       if (auf <= 0.001) continue;
 
-      var ziel2 = 0;
+      var ziel2 = i === vor ? 1 : 0;
       if (this.zeiger) {
         var qx = this.zeiger.x - p.x, qy = this.zeiger.y - p.y;
         if (Math.sqrt(qx * qx + qy * qy) < p.r + 14) ziel2 = 1;
@@ -898,7 +910,7 @@
       g.shadowColor = "rgba(" + SCHATTEN + ",0.22)";
       g.shadowBlur = 18;
       g.shadowOffsetY = 6;
-      g.fillStyle = p.an > 0.5 ? "#1155cc" : "#ffffff";
+      g.fillStyle = "#ffffff";
       g.beginPath();
       g.arc(p.x, p.y, r, 0, 6.283);
       g.fill();
@@ -910,13 +922,15 @@
       g.fill();
       g.restore();
 
-      /* Farbwechsel weich ueberblenden */
+      /* Beruehrt: blauer Rand statt blauer Fuellung, weich eingeblendet.
+         Der Strich liegt innen, der Punkt waechst dadurch nicht. */
       if (p.an > 0.01) {
         g.globalAlpha = auf * p.an;
-        g.fillStyle = "#1155cc";
+        g.strokeStyle = "#1155cc";
+        g.lineWidth = 3;
         g.beginPath();
-        g.arc(p.x, p.y, r, 0, 6.283);
-        g.fill();
+        g.arc(p.x, p.y, r - 1.5, 0, 6.283);
+        g.stroke();
       }
 
       /* Beschriftung nur bei Beruehrung */
@@ -962,7 +976,10 @@
     var mass = Math.min(this.b, this.h * 1.9);
     this.cx = this.b * 0.5;
     this.cy = this.h * 0.5;
-    this.kreuz = mass * 0.26;               /* Kantenlaenge des Kreuzes */
+    this.kreuz = mass * 0.33;               /* Kantenlaenge des Kreuzes */
+    /* Weiter darf der Schein nicht reichen: sonst schneidet ihn die
+       Canvas-Kante gerade ab, und er steht als Rechteck im Bild. */
+    this.scheinMax = Math.min(this.cx, this.cy);
     this.takt = 2.6;                        /* Sekunden je Pulsschlag */
     this.startZeit = null;
     this.beginn = this.kostenBeginn;
@@ -977,7 +994,7 @@
     var k = this.kreuz, s2 = k / 2, a = k * 0.17;
 
     /* weiter Schein */
-    var r = k * (0.92 + 0.22 * p);
+    var r = Math.min(k * (0.92 + 0.22 * p), this.scheinMax);
     var vv = g.createRadialGradient(this.cx, this.cy, k * 0.30, this.cx, this.cy, r);
     vv.addColorStop(0.00, "rgba(" + NOTROT + "," + (0.26 + 0.20 * p).toFixed(3) + ")");
     vv.addColorStop(0.45, "rgba(" + NOTROT + "," + (0.08 + 0.08 * p).toFixed(3) + ")");
@@ -990,7 +1007,7 @@
     /* Kreuz mit engem Schein an der Kante */
     g.save();
     g.shadowColor = "rgba(" + NOTROT + "," + (0.55 + 0.30 * p).toFixed(3) + ")";
-    g.shadowBlur = k * (0.22 + 0.14 * p);
+    g.shadowBlur = Math.min(k * (0.22 + 0.14 * p), Math.max(0, (this.scheinMax - s2) * 0.8));
     g.fillStyle = "rgb(" + NOTROT + ")";
     g.beginPath();
     g.moveTo(this.cx - a, this.cy - s2);

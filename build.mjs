@@ -15,7 +15,12 @@ const DATEIEN = [
   'favicon.svg', 'favicon-96.png', 'apple-touch-icon.png',
   '_redirects', '_headers',
 ];
-const ORDNER = ['assets', 'images', 'videos'];
+// Dazu die Jahresordner: Blogbeitraege liegen wie im alten WordPress unter
+// JJJJ/MM/TT/titel/index.html, damit ihre Adressen gleich bleiben.
+const ORDNER = [
+  'assets', 'images', 'videos',
+  ...(await readdir('.')).filter((d) => /^\d{4}$/.test(d)).sort(),
+];
 
 try {
   await rm(AUS, { recursive: true, force: true });

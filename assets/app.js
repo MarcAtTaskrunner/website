@@ -286,6 +286,41 @@
   })();
 
   /* ------------------------------------------------------------------ *
+   *  Fortschrittsring (SLA-Kachel): CSS zieht den Ring auf, die Zahl
+   *  zaehlt hier mit. Gestartet wird am transitionstart des Rings - so
+   *  laufen beide gleichzeitig, egal welcher Verzug gerade gilt.
+   * ------------------------------------------------------------------ */
+  (function () {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    Array.prototype.forEach.call(document.querySelectorAll(".fortschritt"), function (ring) {
+      var wert = ring.querySelector(".fortschritt-wert");
+      var zahl = ring.querySelector(".fortschritt-zahl");
+      var teile = zahl && zahl.textContent.match(/^([\d.,]+)(.*)$/);
+      if (!wert || !teile) return;
+      var ziel = parseFloat(teile[1].replace(",", "."));
+      var rest = teile[2];                        /* " %" */
+      var stellen = (teile[1].split(",")[1] || "").length;
+      var schreibe = function (v) { zahl.textContent = v.toFixed(stellen).replace(".", ",") + rest; };
+
+      /* Schon da (Seite weiter unten neu geladen)? Dann nicht zuruecksetzen. */
+      if (ring.closest(".da")) return;
+      schreibe(0);
+
+      wert.addEventListener("transitionstart", function (e) {
+        if (e.propertyName !== "stroke-dashoffset") return;
+        var dauer = (parseFloat(getComputedStyle(wert).transitionDuration) || 1.6) * 1000;
+        var t0 = null;
+        (function schritt(jetzt) {
+          if (t0 === null) t0 = jetzt;
+          var f = Math.min(1, (jetzt - t0) / dauer);
+          schreibe(ziel * (1 - Math.pow(1 - f, 3)));   /* easeOutCubic, wie --kurve */
+          if (f < 1) requestAnimationFrame(schritt);
+        })(performance.now());
+      }, { once: true });
+    });
+  })();
+
+  /* ------------------------------------------------------------------ *
    *  Kopfleiste: feine Kante, sobald die Seite gescrollt ist
    * ------------------------------------------------------------------ */
   (function () {
@@ -307,110 +342,229 @@
 
 
   /* ---------------------------------------------------------------- *
-   *  Zahlenband: das Leuchten folgt dem Zeiger
-   *  Die beiden Linien tragen je eine Leuchtlage. Sie haengt am
-   *  Mauszeiger, nicht an der Zelle darunter - beim Wandern ueber das
-   *  Band laeuft sie also mit, statt von Feld zu Feld zu springen.
+   *  Laufband (Bildergalerie im Blogbeitrag, [data-laufband])
+   *  Ein seitlicher Scrollbereich nach Uncode: er laeuft beim Scrollen
+   *  der Seite nach links mit, laesst sich mit der Maus ziehen und
+   *  springt mit den Pfeiltasten bildweise, solange er gut zur Haelfte
+   *  im Blick ist. Auf Beruehrung wischt man nativ. Regeln unter
+   *  .laufband in tailwind/input.css.
    * ---------------------------------------------------------------- */
   (function () {
-    var band = document.querySelector(".zahlen-band");
-    if (!band) return;
-    var zellen = band.querySelectorAll(".zahl-zelle");
-    if (!zellen.length) return;
+    var baender = document.querySelectorAll("[data-laufband]");
+    if (!baender.length) return;
 
-    /* Nur im Nebeneinander: gestapelt liegen die Zellen untereinander,
-       eine waagerechte Lage koennte dort gar nicht auf sie zeigen. */
-    var reihe = window.matchMedia("(min-width: 640px) and (hover: hover) and (pointer: fine)");
+    var ruhig = window.matchMedia("(prefers-reduced-motion: reduce)");
+    var SCHWELLE = 6;       /* ab so vielen Pixeln wird aus Druecken Ziehen */
+    var MITLAUF = 0.6;      /* Pixel seitwaerts je Pixel Seitenscroll */
 
-    /* So breit wie eine Zelle - das gibt dem Schein ein Mass, das zum
-       Raster passt, ohne dass er daran haengt. */
-    band.style.setProperty("--leucht-b", (100 / zellen.length) + "%");
+    Array.prototype.forEach.call(baender, function (band) {
+      var spur = band.firstElementChild;
+      var anteil = 0;
+      var gedrueckt = false, gezogen = false, startX = 0, startScroll = 0;
 
-    /* Die Kante des Bandes wandert beim Scrollen nicht, nur beim
-       Aendern der Fenstergroesse. Einmal je Besuch messen reicht also,
-       statt bei jeder Zeigerbewegung. */
-    var links = 0, breite = 0;
-    var messen = function () {
-      var r = band.getBoundingClientRect();
-      links = r.left;
-      breite = r.width;
-    };
-
-    var setzen = function (e, sofort) {
-      var x = Math.max(0, Math.min(breite, e.clientX - links));
-      if (sofort) band.classList.add("ohne-lauf");
-      band.style.setProperty("--leucht-x", x + "px");
-      if (sofort) {
-        void band.offsetWidth;            /* Umbruch erzwingen */
-        band.classList.remove("ohne-lauf");
+      if ("IntersectionObserver" in window) {
+        new IntersectionObserver(function (e) {
+          anteil = e[e.length - 1].intersectionRatio;
+        }, { threshold: [0, 0.5] }).observe(band);
       }
-    };
 
-    band.addEventListener("pointerenter", function (e) {
-      if (!reihe.matches) return;
-      messen();
-      /* Aus dem Nichts nicht von links hereinfahren, sondern gleich an
-         der richtigen Stelle aufgehen. */
-      setzen(e, true);
-      band.style.setProperty("--leucht-an", "1");
-    }, { passive: true });
-
-    band.addEventListener("pointermove", function (e) {
-      if (!reihe.matches) return;
-      setzen(e, false);
-    }, { passive: true });
-
-    band.addEventListener("pointerleave", function () {
-      band.style.setProperty("--leucht-an", "0");
-    }, { passive: true });
-
-    window.addEventListener("resize", messen, { passive: true });
-
-    /* -------------------------------------------------------------- *
-     *  Felder unter dem Band
-     *  Zellen mit data-feld zeigen darunter einen Bereich. Mit Zeiger
-     *  beim Ueberfahren, sonst beim Antippen; die Tastatur erreicht
-     *  ihn ueber den Knopf in der Zelle.
-     * -------------------------------------------------------------- */
-    var fein = window.matchMedia("(hover: hover) and (pointer: fine)");
-    var block = band.parentElement;
-    var felder = block.querySelectorAll("[data-feld-inhalt]");
-    var offen = null;
-
-    var zeige = function (name) {
-      if (offen === name) return;
-      offen = name;
-      Array.prototype.forEach.call(felder, function (feld) {
-        if (feld.getAttribute("data-feld-inhalt") === name) feld.setAttribute("data-offen", "");
-        else feld.removeAttribute("data-offen");
-      });
-      Array.prototype.forEach.call(band.querySelectorAll("[data-feld]"), function (zelle) {
-        var knopf = zelle.querySelector(".zahl-knopf");
-        if (knopf) knopf.setAttribute("aria-expanded", zelle.getAttribute("data-feld") === name ? "true" : "false");
-      });
-    };
-
-    Array.prototype.forEach.call(band.querySelectorAll("[data-feld]"), function (zelle) {
-      var name = zelle.getAttribute("data-feld");
-      var knopf = zelle.querySelector(".zahl-knopf");
-      zelle.addEventListener("pointerenter", function () {
-        if (fein.matches) zeige(name);
+      /* Mitlaufen. scrollLeft kennt nur ganze Pixel - kleine Schritte
+         (Trackpad) werden gesammelt, sonst gingen sie verloren. Baender
+         mit data-ohne-mitlauf (Kacheln mit Text) bleiben stehen. */
+      var fest = band.hasAttribute("data-ohne-mitlauf");
+      var letzteY = window.scrollY, rest = 0;
+      window.addEventListener("scroll", function () {
+        var dy = window.scrollY - letzteY;
+        letzteY = window.scrollY;
+        if (fest || !anteil || gedrueckt || ruhig.matches) return;
+        rest += dy * MITLAUF;
+        var ganz = rest < 0 ? Math.ceil(rest) : Math.floor(rest);
+        if (!ganz) return;
+        band.scrollLeft += ganz;
+        rest -= ganz;
       }, { passive: true });
-      if (!knopf) return;
-      knopf.addEventListener("click", function () { zeige(offen === name ? null : name); });
-      /* Ohne Zeiger fuehrt der Weg ueber die Tastatur. */
-      knopf.addEventListener("focus", function () { if (!fein.matches) zeige(name); });
+
+      /* Ziehen mit der Maus; Finger und Stift wischen nativ. */
+      band.addEventListener("pointerdown", function (e) {
+        if (e.pointerType !== "mouse" || e.button !== 0) return;
+        gedrueckt = true;
+        gezogen = false;
+        startX = e.clientX;
+        startScroll = band.scrollLeft;
+      });
+
+      band.addEventListener("pointermove", function (e) {
+        if (!gedrueckt) return;
+        var weg = e.clientX - startX;
+        if (!gezogen) {
+          if (Math.abs(weg) < SCHWELLE) return;
+          gezogen = true;
+          band.classList.add("zieht");
+          if (band.setPointerCapture) band.setPointerCapture(e.pointerId);
+        }
+        band.scrollLeft = startScroll - weg;
+      });
+
+      var loslassen = function () {
+        gedrueckt = false;
+        band.classList.remove("zieht");
+      };
+      band.addEventListener("pointerup", loslassen);
+      band.addEventListener("pointercancel", loslassen);
+
+      /* Nach einem Ziehen den folgenden Klick verschlucken, sonst ginge
+         unter dem Zeiger die Lightbox auf. */
+      band.addEventListener("click", function (e) {
+        if (!gezogen) return;
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        gezogen = false;
+      }, true);
+
+      band.addEventListener("dragstart", function (e) { e.preventDefault(); });
+
+      /* Pfeiltasten: das naechste bzw. vorige Bild an den linken Rand. */
+      var schritt = function (richtung) {
+        var rand = parseFloat(getComputedStyle(spur).paddingLeft) || 0;
+        var x = band.scrollLeft;
+        var marken = Array.prototype.map.call(spur.children, function (li) {
+          return li.offsetLeft - rand;
+        });
+        var ziel = richtung > 0
+          ? marken.filter(function (m) { return m > x + 2; })[0]
+          : marken.filter(function (m) { return m < x - 2; }).pop();
+        if (ziel === undefined) ziel = richtung > 0 ? band.scrollWidth : 0;
+        band.scrollTo({ left: ziel, behavior: ruhig.matches ? "auto" : "smooth" });
+      };
+
+      document.addEventListener("keydown", function (e) {
+        if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+        if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+        if (document.querySelector("dialog[open]")) return;
+        var fokus = document.activeElement;
+        if (!band.contains(fokus)) {
+          if (anteil < 0.5) return;
+          if (fokus && fokus.closest && fokus.closest("input, textarea, select, [contenteditable]")) return;
+        }
+        e.preventDefault();
+        schritt(e.key === "ArrowRight" ? 1 : -1);
+      });
+
+      /* Pfeilknoepfe unter dem Band (nach apple.com), verknuepft ueber
+         aria-controls. Ohne JavaScript bleiben sie verborgen. */
+      var pfeile = band.id
+        ? document.querySelectorAll('[data-laufband-pfeil][aria-controls="' + band.id + '"]')
+        : [];
+      Array.prototype.forEach.call(pfeile, function (knopf) {
+        knopf.addEventListener("click", function () {
+          schritt(knopf.getAttribute("data-laufband-pfeil") === "vor" ? 1 : -1);
+        });
+        knopf.parentElement.hidden = false;
+      });
+      var abgleichen = function () {
+        var max = band.scrollWidth - band.clientWidth - 2;
+        Array.prototype.forEach.call(pfeile, function (knopf) {
+          var ende = knopf.getAttribute("data-laufband-pfeil") === "vor"
+            ? band.scrollLeft >= max
+            : band.scrollLeft <= 2;
+          knopf.setAttribute("aria-disabled", ende ? "true" : "false");
+        });
+      };
+      band.addEventListener("scroll", abgleichen, { passive: true });
+      window.addEventListener("resize", abgleichen, { passive: true });
+      abgleichen();
+    });
+  })();
+
+
+  /* ---------------------------------------------------------------- *
+   *  Lightbox ([data-lightbox])
+   *  Ein Klick auf einen Bildlink der Gruppe oeffnet dessen Ziel - die
+   *  grosse Fassung - in einem <dialog>. Knoepfe, Pfeiltasten und
+   *  Wischen blaettern, Esc und ein Klick neben das Bild schliessen.
+   *  Ohne JavaScript oeffnet der Link das Bild einfach selbst.
+   *  Aussehen unter .lightbox in tailwind/input.css.
+   * ---------------------------------------------------------------- */
+  (function () {
+    var gruppen = document.querySelectorAll("[data-lightbox]");
+    if (!gruppen.length || typeof HTMLDialogElement !== "function") return;
+
+    var zeichen = function (d) {
+      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ' +
+        'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + d + '"/></svg>';
+    };
+
+    var box = document.createElement("dialog");
+    box.className = "lightbox";
+    box.setAttribute("aria-label", "Bildansicht");
+    box.innerHTML =
+      '<img class="lightbox-bild" alt="">' +
+      '<button type="button" class="lightbox-knopf lightbox-zu" aria-label="Schließen" autofocus>' + zeichen("M18 6 6 18M6 6l12 12") + '</button>' +
+      '<button type="button" class="lightbox-knopf lightbox-zurueck" aria-label="Vorheriges Bild">' + zeichen("m15 18-6-6 6-6") + '</button>' +
+      '<button type="button" class="lightbox-knopf lightbox-vor" aria-label="Nächstes Bild">' + zeichen("m9 18 6-6-6-6") + '</button>' +
+      '<p class="lightbox-zahl" aria-live="polite"></p>';
+    document.body.appendChild(box);
+
+    var bild = box.querySelector(".lightbox-bild");
+    var zahl = box.querySelector(".lightbox-zahl");
+    var links = [], nr = 0;
+
+    var zeige = function (i) {
+      nr = (i + links.length) % links.length;
+      var klein = links[nr].querySelector("img");
+      bild.src = links[nr].href;
+      bild.alt = klein ? klein.alt : "";
+      zahl.textContent = (nr + 1) + " / " + links.length;
+      /* Die Nachbarn vorladen, damit das Blaettern nicht wartet. */
+      [nr - 1, nr + 1].forEach(function (j) {
+        new Image().src = links[(j + links.length) % links.length].href;
+      });
+    };
+
+    Array.prototype.forEach.call(gruppen, function (gruppe) {
+      gruppe.addEventListener("click", function (e) {
+        var a = e.target.closest("a[href]");
+        if (!a || e.defaultPrevented || e.button !== 0) return;
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+        e.preventDefault();
+        links = Array.prototype.slice.call(gruppe.querySelectorAll("a[href]"));
+        zeige(links.indexOf(a));
+        box.showModal();
+      });
     });
 
-    /* Erst ausserhalb von Band und Feld wieder zuklappen - sonst faellt
-       es zu, sobald der Zeiger vom Band nach unten ins Feld wandert. */
-    block.addEventListener("pointerleave", function () {
-      if (fein.matches) zeige(null);
-    }, { passive: true });
+    box.querySelector(".lightbox-zurueck").addEventListener("click", function () { zeige(nr - 1); });
+    box.querySelector(".lightbox-vor").addEventListener("click", function () { zeige(nr + 1); });
+    box.querySelector(".lightbox-zu").addEventListener("click", function () { box.close(); });
 
-    block.addEventListener("keydown", function (e) {
-      if (e.key === "Escape") zeige(null);
+    box.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowLeft") { e.preventDefault(); zeige(nr - 1); }
+      if (e.key === "ArrowRight") { e.preventDefault(); zeige(nr + 1); }
     });
+
+    /* Wischen mit dem Finger; danach den Klick nicht als "daneben"
+       werten, sonst schloesse die Box nach jedem Wischer. */
+    var tippX = null, gewischt = false;
+    box.addEventListener("pointerdown", function (e) {
+      if (e.pointerType !== "mouse") tippX = e.clientX;
+    });
+    box.addEventListener("pointerup", function (e) {
+      if (tippX === null) return;
+      var dx = e.clientX - tippX;
+      tippX = null;
+      if (Math.abs(dx) < 50) return;
+      gewischt = true;
+      zeige(nr + (dx < 0 ? 1 : -1));
+    });
+
+    /* Die Box fuellt das Fenster - ein Klick auf sie selbst ist einer
+       neben das Bild. */
+    box.addEventListener("click", function (e) {
+      if (gewischt) { gewischt = false; return; }
+      if (e.target === box) box.close();
+    });
+
+    box.addEventListener("close", function () { bild.removeAttribute("src"); });
   })();
 
 

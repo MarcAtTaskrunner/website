@@ -89,50 +89,54 @@
       <section class="bg-white pb-[60px] pt-8 sm:pb-[90px] lg:pb-[120px]">
         <div class="rand-seite">
           <h1 class="sr-only">Blog</h1>
-          <!-- Raster nach Vorbild undsgn.com/uncode (Blog Gazette): links der
-               neueste Beitrag als Aufmacher, rechts zwei versetzte Spalten.
-               Volle Breite wie die Kopfzeile, nicht container-wide. -->
-          <div class="grid gap-14 lg:grid-cols-[10fr_11fr] lg:gap-0">
+          <!-- Raster nach Vorbild undsgn.com/uncode (Blog Magazine): links der
+               neueste Beitrag als Aufmacher, rechts ein Leitsatz und darunter
+               ein gleichmaessiges Zweierraster - nur Bild, Datum, Titel, keine
+               Auszuege. Volle Breite wie die Kopfzeile, nicht container-wide. -->
+          <div class="grid gap-14 lg:grid-cols-2 lg:gap-x-12 xl:gap-x-18">
             <!-- Ab xl liegt der Text auf dem Foto, und die Kachel ist so hoch
                  wie das Fenster unter der Kopfzeile. Das Polster oben (pt-8)
                  ist gleich dem sticky-Abstand, deshalb steht sie von Anfang
                  an still. Darunter eine normale Karte - schmal deckte der
                  Text sonst fast das ganze Bild. -->
-            <article class="relative lg:mr-10 lg:self-start xl:sticky xl:top-[calc(var(--header-h)+32px)] xl:mr-14 xl:h-[calc(100dvh-var(--header-h)-64px)] xl:min-h-[560px] xl:overflow-hidden xl:rounded-[var(--radius-tile)] xl:bg-navy">
+            <article class="relative lg:self-start xl:sticky xl:top-[calc(var(--header-h)+32px)] xl:h-[calc(100dvh-var(--header-h)-64px)] xl:min-h-[560px] xl:overflow-hidden xl:rounded-[var(--radius-tile)] xl:bg-navy">
               <div class="aspect-[4/5] overflow-hidden rounded-[var(--radius-tile)] bg-stone xl:absolute xl:inset-0 xl:aspect-auto xl:rounded-none">
                 <img src="images/blog/proptech-2025-erfolg.jpg" srcset="images/blog/proptech-2025-erfolg-900.jpg 900w, images/blog/proptech-2025-erfolg.jpg 1800w" sizes="(min-width: 1024px) 50vw, 100vw" alt="" width="1800" height="1200" decoding="async" class="size-full object-cover">
               </div>
               <div class="blog-verlauf hidden xl:block" aria-hidden="true"></div>
               <div class="mt-6 xl:absolute xl:inset-x-0 xl:bottom-0 xl:z-10 xl:mt-0 xl:p-10">
                 <p class="t-caption text-ink/75 xl:text-white/85"><time datetime="2025-03-20">20. März 2025</time></p>
-                <h2 class="mt-3 text-balance hyphens-auto break-words t-h3 text-blue-600 xl:text-white">Was für ein Erfolg auf der Proptech Summit 2025 in Hamburg!</h2>
-                <p class="mt-4 max-w-[520px] text-pretty t-body-tight text-ink/85 xl:text-white/85">Wir von Taskrunner GmbH sind überwältigt von den positiven Erfahrungen und dem Zuspruch, den wir auf der Messe erleben durften. Unser erster eigener Stand war ein voller Erfolg!</p>
+                <h2 class="mt-3 max-w-[560px] text-balance hyphens-auto break-words t-h3 text-blue-600 xl:text-white"><a href="2025/03/20/was-fuer-ein-erfolg-auf-der-proptech-summit-2025-in-hamburg/index.html" class="after:absolute after:inset-0 after:z-20 hover:underline">Was für ein Erfolg auf der Proptech Summit 2025 in Hamburg!</a></h2>
               </div>
             </article>
-            <div class="grid content-start gap-14 md:grid-cols-2 md:gap-x-10 lg:border-l lg:border-ink/10 lg:pl-10 xl:pl-14">
-              <article class="md:col-start-1 md:row-start-1">
+            <!-- Titel in der 21-px-Stufe (Werte von t-h4 auf dem Handy):
+                 t-h4 ab 1069 px waere mit 28 px fuer die schmalen Kacheln
+                 zu gross, eine eigene Stufe gibt es nicht.
+                 Bilder im eigenen Format (quadratisch, 4:5), deshalb versetzt:
+                 die zweite Kachel reicht rechts ueber zwei Zeilen, die dritte
+                 rueckt links unter die erste. So bleibt die Lesefolge im
+                 Quelltext 1-2-3, auch einspaltig auf dem Handy. -->
+            <div class="grid content-start gap-x-5 gap-y-12 sm:grid-cols-2">
+              <article class="sm:col-start-1 sm:row-start-1">
                 <div class="aspect-square overflow-hidden rounded-[var(--radius-tile)] bg-stone">
                   <img src="images/blog/proptech-2025-ankuendigung.jpg" alt="" width="1000" height="1000" loading="lazy" decoding="async" class="size-full object-cover">
                 </div>
-                <p class="mt-6 t-caption text-ink/75"><time datetime="2025-02-26">26. Februar 2025</time></p>
-                <h2 class="mt-3 text-balance hyphens-auto break-words t-h4 text-blue-600">Taskrunner auf der Proptech Summit 2025 in Hamburg!</h2>
-                <p class="mt-4 text-pretty t-body-tight text-ink/85">Wir von der Taskrunner GmbH freuen uns, zum ersten Mal mit einem eigenen Stand auf der Proptech Summit 2025 vertreten zu sein!</p>
+                <p class="mt-5 t-caption text-ink/75"><time datetime="2025-02-26">26. Februar 2025</time></p>
+                <h2 class="mt-2 text-balance hyphens-auto break-words t-intro leading-[1.19048] text-blue-600">Taskrunner auf der Proptech Summit 2025 in Hamburg!</h2>
               </article>
-              <article class="self-start md:col-start-2 md:row-span-2 md:row-start-1">
+              <article class="self-start sm:col-start-2 sm:row-span-2 sm:row-start-1">
                 <div class="aspect-[4/5] overflow-hidden rounded-[var(--radius-tile)] bg-stone">
                   <img src="images/blog/dmexco-2024.jpg" alt="" width="800" height="1000" loading="lazy" decoding="async" class="size-full object-cover">
                 </div>
-                <p class="mt-6 t-caption text-ink/75"><time datetime="2024-09-19">19. September 2024</time></p>
-                <h2 class="mt-3 text-balance hyphens-auto break-words t-h4 text-blue-600">DMEXCO 2024: Über AI, sowie Austausch bis hin zum Autoscooter</h2>
-                <p class="mt-4 text-pretty t-body-tight text-ink/85">Der erste Tag der DMEXCO2024 war für uns bei Taskrunner eine inspirierende Erfahrung.</p>
+                <p class="mt-5 t-caption text-ink/75"><time datetime="2024-09-19">19. September 2024</time></p>
+                <h2 class="mt-2 text-balance hyphens-auto break-words t-intro leading-[1.19048] text-blue-600">DMEXCO 2024: Über AI, sowie Austausch bis hin zum Autoscooter</h2>
               </article>
-              <article class="md:col-start-1 md:row-start-2">
+              <article class="sm:col-start-1 sm:row-start-2">
                 <div class="aspect-[4/5] overflow-hidden rounded-[var(--radius-tile)] bg-stone">
                   <img src="images/blog/dmexco-digitalx-2024.jpg" alt="" width="800" height="1000" loading="lazy" decoding="async" class="size-full object-cover">
                 </div>
-                <p class="mt-6 t-caption text-ink/75"><time datetime="2024-09-11">11. September 2024</time></p>
-                <h2 class="mt-3 text-balance hyphens-auto break-words t-h4 text-blue-600">Grüne Welle für das Facility Management bei der DMEXCO &amp; DigitalX</h2>
-                <p class="mt-4 text-pretty t-body-tight text-ink/85">Wir freuen uns riesig, auch in diesem Jahr wieder auf der DMEXCO und der DigitalX in Köln vertreten zu sein! 18. &amp; 19. September.</p>
+                <p class="mt-5 t-caption text-ink/75"><time datetime="2024-09-11">11. September 2024</time></p>
+                <h2 class="mt-2 text-balance hyphens-auto break-words t-intro leading-[1.19048] text-blue-600">Grüne Welle für das Facility Management bei der DMEXCO &amp; DigitalX</h2>
               </article>
             </div>
           </div>

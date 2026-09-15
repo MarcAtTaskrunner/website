@@ -3,6 +3,7 @@
 /* Diese Seiten durchsucht Tailwind nach Klassen. Die Liste schreibt
    werkzeuge/bauen.py bei jedem Lauf neu - hier nichts von Hand aendern. */
 /* seiten:anfang */
+@source "../2025/03/20/was-fuer-ein-erfolg-auf-der-proptech-summit-2025-in-hamburg/index.html";
 @source "../agb.html";
 @source "../blog.html";
 @source "../datenschutz.html";
@@ -124,9 +125,9 @@
  *  Alles gilt nur unter .variante-b am body, also auf der Startseite.
  * ------------------------------------------------------------------ */
 .variante-b {
-  --radius-card: 34px;
-  --radius-tile: 34px;
-  --radius-xl:   34px;
+  --radius-card: 20px;
+  --radius-tile: 20px;
+  --radius-xl:   20px;
   --vb-text:     #54627a;    /* gedaempftes Blaugrau fuer Fliesstext */
   --vb-linie:    #e4e9f2;    /* Haarlinien */
 }
@@ -159,10 +160,10 @@
 /* --- Buttons: Rechteck mit 4px statt Pille --- */
 /* Rechteck mit 4 px statt Pille. Schriftgroesse, -schnitt und Laufweite
    bleiben wie auf der Startseite (DIN Pro Medium, 17 px). */
-/* 34 px wie alle Flaechen. Bei rund 50 px Knopfhoehe klammert der
-   Browser das auf die halbe Hoehe - der Knopf wird damit wieder rund. */
+/* 20 px wie alle Flaechen. Bei rund 50 px Knopfhoehe bleibt der Knopf
+   damit ein Rechteck mit deutlich gerundeten Ecken. */
 .variante-b .btn {
-  border-radius: 34px;
+  border-radius: 20px;
   padding: 0.94rem 1.5rem;
 }
 .variante-b .btn:hover { transform: none; }
@@ -225,12 +226,12 @@ html.js-auf .variante-b [data-auf].da { opacity: 1; translate: none; }
      das Rad rechnet ihn in rad.js aus der freien Hoehe heraus.
      dvh beruecksichtigt die Browserleisten auf dem Handy, vh ist der
      Rueckfall. */
-  --hero-ueberstand: 34px;
+  --hero-ueberstand: 20px;
   height: calc(100vh + var(--hero-ueberstand));
   height: calc(100dvh + var(--hero-ueberstand));
   min-height: calc(620px + var(--hero-ueberstand));
-  border-bottom-left-radius: 34px;
-  border-bottom-right-radius: 34px;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
 
   /* Farbverlauf aus dem Entwurf "Startseite B" (Variante Vorlage):
      sechs Lichter auf einer diagonalen Grundlage. Von unten rechts nach
@@ -382,12 +383,24 @@ header .logo-hell { opacity: 0; }
    es 1240/1192; daneben stand an
    einer Stelle dasselbe noch einmal als max-w-[1328px] und es gab eine
    dritte, engere Stufe. Jetzt gibt es nur diese - und die volle Breite
-   des Hero. */
+   des Hero. Einzige Ausnahme: .container-breit darunter. */
 @utility container-wide {
   width: 100%;
   max-width: calc(1280px + 2 * var(--rand));
   margin-inline: auto;
   padding-inline: var(--rand);
+}
+
+/* Breiter als die Inhaltsbreite, nur fuer das Raster "Netzwerk" auf der
+   Startseite: halber Seitenrand (auf dem Handy aber nie unter 24 px,
+   dort also wie oben), Inhalt hoechstens 1600 breit. pruefen.mjs misst
+   nur .container-wide, diese Klasse faellt bewusst nicht unter die
+   1280-Regel. */
+@utility container-breit {
+  width: 100%;
+  max-width: calc(1600px + 2 * max(24px, calc(var(--rand) / 2)));
+  margin-inline: auto;
+  padding-inline: max(24px, calc(var(--rand) / 2));
 }
 
 @layer base {
@@ -443,7 +456,13 @@ header .logo-hell { opacity: 0; }
   .btn-primary   { background: var(--color-blue-600); color: #fff; }
   .btn-primary:hover { background: var(--color-blue-base); }
 
-  .btn-white     { background: #fff; color: var(--color-blue-600); }
+  /* Schrift ausgestanzt: sie zeigt, was hinter dem Knopf liegt. Mit
+     screen ergibt Schwarz genau die Farbe dahinter, Weiss bleibt Weiss.
+     Gemischt wird nur mit dem, was im selben Stapelkontext liegt - in
+     einer eigenen Ebene ohne Grund (etwa der festen Kopfzeile) bliebe
+     die Schrift schwarz. Alle weissen Knoepfe stehen deshalb direkt in
+     Abschnitten mit dunklem Grund (Hero, Kopfband, .verlauf-nacht). */
+  .btn-white     { background: #fff; color: #000; mix-blend-mode: screen; }
   .btn-white:hover { background: var(--color-ice); }
 
   .btn-ghost     { background: transparent; color: #fff;
@@ -518,9 +537,9 @@ header .logo-hell { opacity: 0; }
  *  120/90/60 px ist Apples ueblicher Rhythmus fuer Marketing-Sektionen.
  * ------------------------------------------------------------------ */
 @layer components {
-  .section-y { padding-block: 60px; }
-  @media (min-width: 735px)  { .section-y { padding-block: 90px; } }
-  @media (min-width: 1069px) { .section-y { padding-block: 120px; } }
+  .section-y { padding-block: 56px; }
+  @media (min-width: 735px)  { .section-y { padding-block: 96px; } }
+  @media (min-width: 1069px) { .section-y { padding-block: 112px; } }
 
   /* Hero fuellt den sichtbaren Bereich unter dem 64 px hohen Header.
      Zwei Deklarationen: dvh beruecksichtigt die Browserleisten auf dem
@@ -672,109 +691,173 @@ header .logo-hell { opacity: 0; }
     #000031;
 }
 
-/* ------------------------------------------------------------------ *
- *  Zahlenband
- *
- *  Statt eines Rasters aus Trennstrichen nur zwei Linien: eine oben,
- *  eine unten, durchgezogen ueber die ganze Breite. Der Rahmen um die
- *  zweite Zelle ist entfallen, alle fuenf sind jetzt gleich.
- *
- *  Beim Ueberfahren leuchten die beiden Linien genau ueber der Zelle
- *  auf, in den Farben des Hero-Verlaufs (#024cff nach #00b1ff) und zu
- *  den Seiten auslaufend. Die Leuchtlage liegt bei -1px, also genau
- *  auf der Linie, und ist 2px hoch, damit sie sie sicher ueberdeckt.
- * ------------------------------------------------------------------ */
-.zahlen-band {
-  position: relative;          /* Bezug fuer die beiden Leuchtlagen */
-  border-top: 1px solid rgba(26, 64, 129, 0.12);
-  border-bottom: 1px solid rgba(26, 64, 129, 0.12);
+/* Laufband "Schnell, einfach und Transparent" (Startseite): dieselbe
+   Machart, aber abwechslungsreicher als 1-5 - neben Hellblau auch das
+   Cyan des Fortschrittsrings (#00b1ff) und kraeftiges Blau (#024cff),
+   teils zwei Lichter, teils ein leicht getoenter Grund. Die Lichter
+   sitzen unten und hinter dem Motiv, oben bei der Schrift bleibt es
+   hell. Eigene Nummern, weil 1-5 auch auf anderen Seiten stehen. */
+.kachel-verlauf-6 {                     /* Ein Task, alle Gewerke */
+  background:
+    radial-gradient(70% 60% at 0% 100%, rgba(0,177,255,0.28) 0%, rgba(0,177,255,0.08) 50%, rgba(0,177,255,0) 80%),
+    radial-gradient(80% 70% at 100% 90%, rgba(66,133,244,0.26) 0%, rgba(66,133,244,0.07) 50%, rgba(66,133,244,0) 80%),
+    #f7f8fa;
 }
-
-/* Untereinander stehende Zellen brauchen einen Strich dazwischen -
-   nebeneinander stehende nicht, dort waeren es die entfallenen
-   senkrechten Linien. */
-@media (max-width: 639px) {
-  .zahl-zelle + .zahl-zelle { border-top: 1px solid rgba(26, 64, 129, 0.12); }
+.kachel-verlauf-7 {                     /* Nachvollziehbar abgerechnet */
+  background:
+    radial-gradient(60% 55% at 70% 62%, rgba(0,177,255,0.22) 0%, rgba(0,177,255,0.06) 55%, rgba(0,177,255,0) 85%),
+    linear-gradient(180deg, #f7f8fa 35%, #e6effd 100%);
 }
-
-/* Das Leuchten ist eine einzige Lage je Linie, die dem Zeiger folgt -
-   nicht fuenf, die abwechselnd auf- und zugehen, und auch nicht von
-   Zelle zu Zelle springend. app.js schreibt die Zeigerstelle nach
-   --leucht-x; das -50% darin setzt die Lage mittig darauf.
-
-   Der kurze Uebergang ist Absicht: er buegelt das Zittern des Zeigers
-   aus und laesst das Licht dem Mauszeiger leicht nachlaufen. Ohne ihn
-   klebt es hart am Zeiger und wirkt nervoes. */
-.zahlen-band::before,
-.zahlen-band::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  height: 2px;
-  width: var(--leucht-b, 20%);
-  transform: translateX(calc(var(--leucht-x, 0px) - 50%));
-  opacity: var(--leucht-an, 0);
-  pointer-events: none;
-  background: linear-gradient(90deg,
-    rgba(2, 76, 255, 0) 0%,
-    rgba(2, 76, 255, 0.85) 20%,
-    #00b1ff 50%,
-    rgba(2, 76, 255, 0.85) 80%,
-    rgba(2, 76, 255, 0) 100%);
-  transition:
-    transform var(--dauer-kurz, .18s) var(--kurve, ease),
-    opacity var(--dauer-kurz, .18s) var(--kurve, ease);
+.kachel-verlauf-8 {                     /* Alle Standorte auf einem Dashboard */
+  background:
+    radial-gradient(95% 85% at 100% 0%, rgba(2,76,255,0.30) 0%, rgba(2,76,255,0.09) 50%, rgba(2,76,255,0) 80%),
+    radial-gradient(70% 60% at 0% 100%, rgba(0,177,255,0.22) 0%, rgba(0,177,255,0) 75%),
+    #f7f8fa;
 }
-.zahlen-band::before { top: -1px; }
-.zahlen-band::after  { bottom: -1px; }
-
-/* Beim ersten Auftauchen soll die Lage nicht von links hereinfahren:
-   app.js schaltet den Uebergang fuer dieses eine Bild ab. */
-.zahlen-band.ohne-lauf::before,
-.zahlen-band.ohne-lauf::after { transition: opacity var(--dauer-kurz, .18s) var(--kurve, ease); }
+.kachel-verlauf-9 {                     /* Eine feste Ansprechperson */
+  background:
+    radial-gradient(55% 45% at 50% 68%, rgba(66,133,244,0.30) 0%, rgba(66,133,244,0.10) 50%, rgba(66,133,244,0) 80%),
+    linear-gradient(160deg, #f7f8fa 40%, #edf2fb 100%);
+}
+.kachel-verlauf-10 {                    /* Deutschlandweit verfuegbar */
+  background:
+    radial-gradient(90% 75% at 15% 105%, rgba(0,177,255,0.34) 0%, rgba(0,177,255,0.10) 50%, rgba(0,177,255,0) 80%),
+    radial-gradient(70% 60% at 100% 10%, rgba(66,133,244,0.16) 0%, rgba(66,133,244,0) 75%),
+    linear-gradient(135deg, #f7f8fa 30%, #eaf1fc 100%);
+}
 
 /* ------------------------------------------------------------------ *
- *  Zahlenband: Felder unter dem Band
+ *  Raster „Netzwerk“ (Startseite, an Stelle des frueheren Zahlenbands)
  *
- *  Zellen mit data-feld klappen darunter einen Bereich auf - beim
- *  Ueberfahren mit dem Zeiger, beim Antippen und beim Anspringen mit
- *  der Tastatur. Aufgeklappt wird ueber grid-template-rows: eine Hoehe
- *  von auto laesst sich nicht ueberblenden, 0fr auf 1fr schon.
+ *  Drei Spalten, jede ein Stapel aus Kacheln und Bildern unterschied-
+ *  licher Hoehe. Die Spalten stehen im Markup, es braucht also kein
+ *  Skript fuer das Mauerwerk. Die letzte Lage jeder Spalte waechst,
+ *  damit alle drei unten buendig enden.
+ *
+ *  Schmaler als lg loesen sich die Spalten auf (display: contents):
+ *  Die Kacheln fliessen dann in der Reihenfolge des Markups in ein
+ *  ein- bzw. zweispaltiges Raster.
  * ------------------------------------------------------------------ */
-.zahlen-feld {
-  display: grid;
-  grid-template-rows: 0fr;
-  opacity: 0;
-  transition:
-    grid-template-rows var(--dauer-kurz, .18s) var(--kurve, ease),
-    opacity var(--dauer-kurz, .18s) var(--kurve, ease);
+.raster { display: grid; gap: 20px; }
+.raster-spalte { display: contents; }
+
+@media (min-width: 768px) {
+  .raster { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* Sieben Lagen auf zwei Spalten: die letzte bekommt die ganze Breite. */
+  .raster-spalte:last-child > :last-child { grid-column: 1 / -1; }
 }
-.zahlen-feld > * {
+
+/* Zweispaltig steht jedes Bild neben einer Kachel: dort fuellt es die
+   Zeile, statt mit Luecke darunter bei seinem Seitenverhaeltnis zu
+   bleiben. Nicht mit align-self: stretch loesen - dann rechnet der
+   Browser die Breite aus Hoehe mal Verhaeltnis und das Bild laeuft
+   seitlich aus dem Raster. Doppelte Klasse, weil .bild-quadrat und
+   .bild-breit weiter unten stehen und sonst gewinnen. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .raster .raster-bild { aspect-ratio: auto; min-height: 260px; }
+}
+
+@media (min-width: 1024px) {
+  .raster { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .raster-spalte { display: flex; flex-direction: column; gap: 20px; }
+  .raster-spalte > :last-child { flex-grow: 1; }
+  .raster-spalte:last-child > :last-child { grid-column: auto; }
+}
+
+.raster-kachel {
+  display: flex;
+  flex-direction: column;
+  min-height: 340px;
   overflow: hidden;
-  min-height: 0;             /* sonst laesst sich die Zeile nicht auf 0 ziehen */
-  padding-top: 2.25rem;      /* Abstand zum Band, wenn das Feld offen ist */
+  border-radius: var(--radius-tile);
 }
-.zahlen-feld[data-offen] {
-  grid-template-rows: 1fr;
-  opacity: 1;
+@media (min-width: 1024px) { .raster-hoch { min-height: 480px; } }
+
+/* Unterer Block einer Kachel: sitzt am Boden, egal wie hoch sie wird. */
+.raster-fuss { margin-top: auto; padding-top: 40px; }
+
+/* Kleines Etikett oben links in der Kachel. */
+.raster-marke {
+  align-self: flex-start;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: #fff;
+}
+.text-white .raster-marke { background: rgba(255, 255, 255, 0.14); }
+
+.raster-link {
+  display: inline-block;
+  text-decoration: underline;
+  text-underline-offset: 6px;
+  text-decoration-color: rgba(255, 255, 255, 0.4);
+  transition: text-decoration-color var(--dauer-kurz, .18s) var(--kurve, ease);
+}
+.raster-link:hover { text-decoration-color: currentColor; }
+.raster-link:focus-visible { outline: 2px solid #fff; outline-offset: 4px; border-radius: 4px; }
+
+/* Bildflaechen. Ist das Foto da, kommt ein <img> hinein und die Klasse
+   bild-platzhalter samt Hinweistext faellt weg. */
+.raster-bild {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-tile);
+  background: #eef2f8;
+}
+.raster-bild > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.bild-quadrat { aspect-ratio: 1 / 1; }
+.bild-breit   { aspect-ratio: 2 / 1; }
+.bild-platzhalter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  text-align: center;
+  border: 1.5px dashed rgba(26, 64, 129, 0.28);
 }
 
-/* Der Knopf traegt den Inhalt der Zelle und soll aussehen wie der Text
-   daneben, nicht wie ein Knopf. */
-.zahl-knopf {
-  appearance: none;
-  background: none;
-  border: 0;
-  color: inherit;
-  font: inherit;
-  text-align: left;          /* Knoepfe zentrieren von Haus aus */
-  cursor: pointer;
+/* Fortschrittsring der SLA-Kachel. pathLength=100 im SVG macht den
+   Strich in Prozent angebbar: 99.7 von 100. Nicht .ring nennen - das
+   ist eine Tailwind-Klasse und zeichnet einen eckigen Schattenrahmen. */
+.fortschritt { position: relative; width: 152px; height: 152px; flex-shrink: 0; }
+@media (min-width: 1024px) { .fortschritt { width: 192px; height: 192px; } }
+.fortschritt svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.fortschritt circle { fill: none; stroke-width: 2.5; }
+.fortschritt-grund { stroke: rgba(255, 255, 255, 0.18); }
+.fortschritt-wert  { stroke: #00b1ff; stroke-dasharray: 99.7 100; }
+.fortschritt-zahl  { position: absolute; inset: 0; display: grid; place-items: center; }
+
+/* Einblenden: der Ring zieht sich auf, sobald seine Kachel da ist (.da
+   von app.js), kurz nach der Kachel selbst. app.js laesst die Zahl im
+   selben Takt mitzaehlen. Ohne JS und bei reduzierter Bewegung steht der
+   Ring gleich voll da. */
+html.js-auf .variante-b .fortschritt-wert {
+  stroke-dashoffset: 99.7;
+  transition: stroke-dashoffset 1.6s var(--kurve);
+  transition-delay: calc(var(--verzug, 0s) + 0.25s);
 }
-.zahl-knopf:focus-visible {
-  outline: 2px solid var(--color-blue-medium);
-  outline-offset: 3px;
-  border-radius: 8px;
+html.js-auf .variante-b .da .fortschritt-wert { stroke-dashoffset: 0; }
+@media (prefers-reduced-motion: reduce) {
+  html.js-auf .variante-b .fortschritt-wert { stroke-dashoffset: 0; transition: none; }
 }
+
+/* Runde Portraets, leicht ueberlappend. */
+.portraet-reihe { display: flex; margin-top: 24px; padding-left: 12px; }
+.portraet-reihe > li {
+  width: 56px;
+  height: 56px;
+  margin-left: -12px;
+  overflow: hidden;
+  border-radius: 50%;
+  border: 3px solid #f7f8fa;
+  background: #d8e2f2;
+}
+.portraet-reihe img { width: 100%; height: 100%; object-fit: cover; }
 
 /* ------------------------------------------------------------------ *
  *  Menue: ein Blauton, die eigene Seite traegt einen Strich
@@ -847,8 +930,8 @@ header #mobile-nav a[aria-expanded="true"]::after { content: none; }
     radial-gradient(72% 150% at 0% 100%, #000724 0%, rgba(0, 7, 36, 0) 66%),
     linear-gradient(116deg, #000724 0%, #001a7d 58%, #0024bc 100%),
     #00016b;
-  border-top-left-radius: 34px;
-  border-top-right-radius: 34px;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
 }
 
 /* Die Fusszeile hat eine Schriftgroesse fuer alles - dieselben 17 px
@@ -885,8 +968,8 @@ footer h3 {
    abgerundet wie der Hero der Startseite. Die Hoehe kommt aus dem
    Polster im Markup, damit jede Seite ihr eigenes Mass haben kann. */
 .seitenkopf {
-  border-bottom-left-radius: 34px;
-  border-bottom-right-radius: 34px;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
 }
 
 /* Im Kopfband der Unterseiten steht der Vorspann voll in Weiss - wie im
@@ -907,6 +990,48 @@ footer h3 {
 }
 @media (max-height: 720px) {
   .kopf-hoch { min-height: 640px; }
+}
+
+/* ------------------------------------------------------------------ *
+ *  Volles Kopfband (Blogbeitraege)
+ *
+ *  So hoch wie der Hero der Startseite (.variante-b .hero-voll):
+ *  Bildschirmhoehe plus Ueberstand, die Rundung sitzt knapp unter der
+ *  Kante. Anders als dort min-height statt height - ein langer Titel
+ *  auf dem Handy darf das Band strecken, statt oben unter der
+ *  Kopfzeile abgeschnitten zu werden.
+ * ------------------------------------------------------------------ */
+.kopf-voll {
+  --hero-ueberstand: 34px;
+  min-height: calc(100vh + var(--hero-ueberstand));
+  min-height: calc(100dvh + var(--hero-ueberstand));
+}
+.kopf-voll > .rand-seite { margin-bottom: var(--hero-ueberstand); }
+
+/* Pfeil im Kopfband: springt zum Beitrag (weich ueber scroll-behavior
+   am html; bei reduzierter Bewegung sofort). Das leichte Wippen zeigt,
+   dass es darunter weitergeht - die Regel fuer reduzierte Bewegung
+   weiter oben haelt es an. */
+.kopf-pfeil {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  color: #ffffff;
+  transition: background-color .2s var(--kurve), border-color .2s var(--kurve);
+}
+.kopf-pfeil:hover { background: rgba(255, 255, 255, 0.12); border-color: #ffffff; }
+.kopf-pfeil:focus-visible { outline: 3px solid #ffffff; outline-offset: 3px; }
+.kopf-pfeil svg {
+  width: 24px;
+  height: 24px;
+  animation: kopf-pfeil-wippen 2.4s var(--kurve) infinite;
+}
+@keyframes kopf-pfeil-wippen {
+  0%, 60%, 100% { translate: 0 0; }
+  30%           { translate: 0 4px; }
 }
 
 /* ------------------------------------------------------------------ *
@@ -1064,7 +1189,7 @@ footer h3 {
 
 /* ------------------------------------------------------------------ *
  *  Mehr Luft fuer Handwerk und Beratung (Dienstleistungen): oben und
- *  unten 80 / 130 / 170 px statt 60 / 90 / 120 wie .section-y.
+ *  unten 80 / 130 / 170 px statt 56 / 96 / 112 wie .section-y.
  * ------------------------------------------------------------------ */
 .section-y-weit { padding-block: 80px; }
 @media (min-width: 735px)  { .section-y-weit { padding-block: 130px; } }
@@ -1177,34 +1302,73 @@ footer h3 {
   box-shadow: 0 0 0 6px #fff, 0 12px 24px -10px rgba(0, 1, 107, .45);
 }
 
-/* Klimaziele (Foerderungen): drei Etappen auf einer Zeitachse. Ab md
-   laeuft die Linie ohne Luecke ueber alle drei Spalten, jeder Punkt ist
-   ein Ziel, der gelbe das Endziel. Die Zahl nutzt .t-h1 aus der Skala,
-   keine eigene Groesse. */
+/* Klimaziele (Foerderungen): drei Etappen auf einer Zeitachse, jede mit
+   einem senkrechten Strich auf der Linie - wie die Schritte auf der
+   Startseite (.schritte). Die Zahl nutzt .t-h1 aus der Skala, keine
+   eigene Groesse. */
 .klimaziel {
   position: relative;
   padding: 28px 24px 0 0;
   border-top: 2px solid rgba(66, 133, 244, 0.28);
 }
+/* Strich mittig ueber der Linie. Die Linie liegt im 2 px hohen Rand,
+   top misst ab dem Polsterkasten darunter: Mitte also bei -1 px. */
 .klimaziel::before {
   content: "";
   position: absolute;
   left: 0;
-  top: -7px;
-  width: 12px;
-  height: 12px;
-  border-radius: 9999px;
-  background: #fff;
-  border: 3px solid var(--color-blue-light);
-}
-.klimaziel-ziel::before {
-  background: var(--color-orange);
-  border-color: var(--color-orange);
+  top: -10px;
+  width: 2px;
+  height: 18px;
+  background: rgba(66, 133, 244, 0.7);
 }
 .klimaziel-wert {
   margin-top: 6px;
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
+}
+
+/* Ab md wie die Schritte auf der Startseite (.schritte): statt einer
+   Linie je Spalte eine einzige, die am linken Fensterrand beginnt und
+   rechts mit dem Inhalt endet - dort laeuft sie ab 70 % ihrer Laenge
+   ins Durchsichtige aus. Der dritte Strich sitzt bei 768-1920 px
+   Fensterbreite bei 69-73 %, also noch auf der vollen Linie. Die
+   Raender der Spalten bleiben stehen, nur durchsichtig - so sitzen die
+   Striche weiter genau auf der Linie. Eigene Regeln statt geteilter mit
+   .schritte: andere Farbe, Staerke und das Ausblenden.
+   Einblenden: die Linie zieht sich auf, sobald app.js der ersten Etappe
+   .da gibt; die Striche wachsen nacheinander, wenn die Linie sie
+   erreicht. Nur mit JavaScript. */
+.klimaziele { position: relative; }
+@media (min-width: 768px) {
+  .klimaziele > .klimaziel { border-top-color: transparent; }
+  .klimaziele::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: calc(50% - 50vw);
+    height: 2px;
+    background: linear-gradient(to right, rgba(66, 133, 244, 0.28) 70%, rgba(66, 133, 244, 0));
+  }
+  html.js-auf .variante-b .klimaziele::before {
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 1.2s var(--kurve);
+  }
+  html.js-auf .variante-b .klimaziele:has(> .da)::before { transform: none; }
+  html.js-auf .variante-b .klimaziele > .klimaziel::before {
+    scale: 1 0;
+    transition: scale 0.4s var(--kurve);
+  }
+  html.js-auf .variante-b .klimaziele > .klimaziel.da::before { scale: none; }
+  html.js-auf .variante-b .klimaziele > .klimaziel:nth-child(1).da::before { transition-delay: 0.25s; }
+  html.js-auf .variante-b .klimaziele > .klimaziel:nth-child(2).da::before { transition-delay: 0.55s; }
+  html.js-auf .variante-b .klimaziele > .klimaziel:nth-child(3).da::before { transition-delay: 0.85s; }
+}
+@media (min-width: 768px) and (prefers-reduced-motion: reduce) {
+  html.js-auf .variante-b .klimaziele::before,
+  html.js-auf .variante-b .klimaziele > .klimaziel::before { transform: none; scale: none; transition: none; }
 }
 
 /* Datumsmarke ueber den Titeln der Gesetzeskacheln (Foerderungen). */
@@ -1280,6 +1444,17 @@ footer h3 {
   }
 }
 
+/* Blogbeitraege: das Foto steht als <img class="kopf-foto-bild"> in der
+   Seite statt als Hintergrund hier. So setzt bauen.py den Pfad fuer die
+   Unterordner, srcset waehlt die Groesse, und ein neuer Beitrag braucht
+   kein eigenes CSS. Den Ausschnitt waehlt object-[x_y] am Bild. */
+img.kopf-foto-bild {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: none;
+}
+
 /* Blog: der Aufmacher links. Ab xl fuellt das Foto die Kachel, Datum,
    Titel und Auszug liegen unten auf diesem Verlauf in Nachtblau, der
    nach oben ausblendet, damit das Bild oben frei bleibt. */
@@ -1288,6 +1463,208 @@ footer h3 {
   inset: 0;
   pointer-events: none;
   background: linear-gradient(0deg, rgba(0, 7, 36, 0.92) 0%, rgba(0, 7, 36, 0.78) 40%, rgba(0, 7, 36, 0) 72%);
+}
+
+/* ------------------------------------------------------------------ *
+ *  Laufband (Blogbeitrag, Bildergalerie)
+ *
+ *  Nach Uncode (classic-saas, "Turn your questions into intuitive
+ *  growth plans"): Fotos nebeneinander, randlos, alle gleich hoch und
+ *  jedes so breit, wie sein eigenes Format es verlangt - ungeschnitten.
+ *  Die Reihe ist ein gewoehnlicher seitlicher Scrollbereich (auf dem
+ *  Handy wischt man nativ). assets/app.js schiebt ihn beim Scrollen der
+ *  Seite nach links mit (nicht bei reduzierter Bewegung), laesst ihn
+ *  mit der Maus ziehen und mit den Pfeiltasten bildweise springen; ein
+ *  Klick auf ein Bild oeffnet die Lightbox (.lightbox, weiter unten).
+ * ------------------------------------------------------------------ */
+.laufband {
+  position: relative;               /* Bezug fuer offsetLeft in app.js */
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.laufband.zieht { cursor: grabbing; }
+.laufband.zieht a { pointer-events: none; }
+.laufband::-webkit-scrollbar { display: none; }
+.laufband-spur {
+  display: flex;
+  width: max-content;
+  padding-inline: var(--rand);
+}
+/* Die Hoehe ist fest, die Breite ergibt das Foto selbst ueber seine
+   width/height-Angaben. max-width: none, sonst begrenzte die
+   Grundregel img { max-width: 100% } das Bild auf die Karte, deren
+   Breite wiederum vom Bild kommt. */
+.laufband-karte {
+  flex: none;
+  height: 60vw;
+  overflow: clip;
+  border-radius: var(--radius-tile);
+}
+.laufband-karte a { position: relative; display: block; height: 100%; }
+/* Plus unten links: zeigt beim Ueberfahren (und mit der Tastatur), dass
+   sich das Bild vergroessern laesst. Ohne Hover (Touch) steht es fest. */
+.laufband-plus {
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  color: #fff;
+  /* Nur ein Hauch Nachtblau mit Unschaerfe dahinter - genug, damit das
+     weisse Plus auch auf hellen Fotos (Scheck, Wand) stehen bleibt. */
+  background: rgba(0, 7, 36, 0.28);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  transform: scale(.8);
+  transition: opacity .2s var(--kurve), transform .2s var(--kurve);
+  pointer-events: none;
+}
+/* stroke-width hier schlaegt das Attribut im Markup */
+.laufband-plus svg { width: 22px; height: 22px; stroke-width: 3; }
+.laufband-karte a:hover .laufband-plus,
+.laufband-karte a:focus-visible .laufband-plus { opacity: 1; transform: none; }
+@media (hover: none) {
+  .laufband-plus { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .laufband-plus { transition: none; }
+}
+.laufband-karte a:focus-visible {
+  outline: 3px solid var(--color-blue-600);
+  outline-offset: -3px;
+  border-radius: var(--radius-tile);
+}
+.laufband-karte img {
+  height: 100%;
+  width: auto;
+  max-width: none;
+}
+@media (min-width: 735px)  { .laufband-karte { height: 40vw; } }
+@media (min-width: 1069px) { .laufband-karte { height: min(34vw, 560px); } }
+
+/* Pfeile unter dem Laufband, nach apple.com: runde graue Knoepfe,
+   rechtsbuendig, fuer alle, die Ziehen und Pfeiltasten nicht kennen.
+   Am Anfang bzw. Ende blass - ueber aria-disabled statt disabled, damit
+   der Fokus beim Durchklicken nicht verloren geht. */
+.laufband-pfeil {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 9999px;
+  color: var(--color-ink);
+  background: rgba(0, 7, 36, 0.07);
+  transition: background-color .2s var(--kurve), opacity .2s var(--kurve);
+}
+.laufband-pfeil:hover { background: rgba(0, 7, 36, 0.13); }
+.laufband-pfeil:focus-visible { outline: 3px solid var(--color-blue-600); outline-offset: 2px; }
+.laufband-pfeil[aria-disabled="true"] { opacity: .4; cursor: default; }
+.laufband-pfeil[aria-disabled="true"]:hover { background: rgba(0, 7, 36, 0.07); }
+.laufband-pfeil svg { width: 20px; height: 20px; }
+
+/* Laufband mit Kacheln statt Fotos (Startseite, "Schnell, einfach und
+   Transparent"). Die Breite ist fest; die Hoehe gleicht die Spur an,
+   alle Kacheln werden so hoch wie die hoechste. Querformat nach
+   apple.com (rund 1,4 : 1 auf dem Desktop): breiter als im alten
+   Raster, dafuer sind die Schaubilder niedriger. Diese Regel steht
+   ausserhalb der Tailwind-Lagen und schlaegt deshalb h-[360px] am
+   Canvas. Auf dem Handy bleibt alles wie gehabt. */
+.laufband-kachel { flex: none; width: 85vw; }
+@media (min-width: 735px) {
+  .laufband-kachel { width: 72vw; }
+  .laufband-kachel > canvas,
+  .laufband-kachel > img { height: 260px; }
+}
+@media (min-width: 1069px) {
+  .laufband-kachel { width: min(54vw, 780px); }
+  .laufband-kachel > canvas,
+  .laufband-kachel > img { height: 280px; }
+}
+
+/* Erste Kachel buendig mit dem Inhalt von .container-wide - auch dann,
+   wenn das Fenster breiter ist als 1280 plus Rand und der Inhalt zur
+   Mitte rueckt. Die 100% sind die Breite des Bandes, also des Fensters. */
+.laufband-buendig .laufband-spur { padding-inline: max(var(--rand), calc((100% - 1280px) / 2)); }
+
+/* Ohne Links in den Kacheln erreicht die Tastatur das Band nur ueber
+   tabindex="0" am Band selbst; dann soll man auch sehen, dass es den
+   Fokus hat (die Pfeiltasten schieben es danach). */
+.laufband:focus-visible { outline: 3px solid var(--color-blue-600); outline-offset: -3px; }
+
+/* ------------------------------------------------------------------ *
+ *  Lightbox
+ *
+ *  Ein <dialog>, das assets/app.js fuer jede Gruppe [data-lightbox]
+ *  anlegt: das Bild so gross wie moeglich auf Nachtblau, Knoepfe fuer
+ *  zurueck, weiter und schliessen, darunter "2 / 4". Esc schliesst
+ *  (nativ), die Pfeiltasten blaettern, ein Klick neben das Bild
+ *  schliesst ebenfalls.
+ * ------------------------------------------------------------------ */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  overflow: hidden;
+}
+.lightbox[open] { display: grid; place-items: center; }
+.lightbox::backdrop { background: rgba(0, 7, 36, 0.94); }
+html:has(.lightbox[open]) { overflow: hidden; }
+.lightbox-bild {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: calc(100vw - 176px);
+  max-height: calc(100dvh - 128px);
+  border-radius: var(--radius-tile);
+}
+.lightbox-knopf {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 9999px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+  transition: background-color .2s var(--kurve);
+}
+.lightbox-knopf:hover { background: rgba(255, 255, 255, 0.24); }
+.lightbox-knopf:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.lightbox-knopf svg { width: 22px; height: 22px; }
+.lightbox-zu      { top: 20px; right: 20px; }
+.lightbox-zurueck { left: 24px; top: 50%; translate: 0 -50%; }
+.lightbox-vor     { right: 24px; top: 50%; translate: 0 -50%; }
+.lightbox-zahl {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  translate: -50% 0;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+/* Handy: Bild fast randlos, die Pfeile unten neben der Zahl */
+@media (max-width: 734px) {
+  .lightbox-bild { max-width: calc(100vw - 24px); max-height: calc(100dvh - 176px); }
+  .lightbox-zurueck, .lightbox-vor { top: auto; bottom: 12px; translate: none; }
+  .lightbox-zurueck { left: 12px; }
+  .lightbox-vor     { right: 12px; }
+  .lightbox-zahl    { bottom: 26px; }
 }
 
 /* ------------------------------------------------------------------ *
@@ -1501,4 +1878,65 @@ footer h3 {
 }
 @media (prefers-reduced-motion: reduce) {
   .programm::details-content, .programm-pfeil { transition: none; }
+}
+
+/* Kundenlogos in der Kachel "Kunden": die Vorlagen sind weiss, brightness(0)
+   macht sie schwarz, der Rest faerbt Schwarz auf #1155cc (--color-blue-medium,
+   wie das Etikett "Kunden"). Gerechnet, nicht geschaetzt: das Ergebnis liegt
+   bei rgb(15,86,207). */
+.logo-blau {
+  filter: brightness(0) invert(21%) sepia(100%) saturate(1824%) hue-rotate(208deg);
+}
+
+/* "So funktioniert Taskrunner": ab md eine durchgehende Linie ueber allen
+   drei Schritten statt je einer pro Schritt. Sie beginnt am linken
+   Fensterrand (ohne Seitenrand) und endet rechts mit dem Inhalt. Links
+   ueber den Rand hinaus erzeugt keinen Scrollbalken. Auf dem Handy stehen
+   die Schritte untereinander und behalten ihre eigenen Trennlinien. */
+.schritte { position: relative; }
+@media (min-width: 768px) {
+  .schritte::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: calc(50% - 50vw);
+    height: 1px;
+    background: rgba(255, 255, 255, 0.15);
+  }
+  /* Senkrechter Strich auf der Linie am Anfang jedes Schritts, mittig
+     ueber der Linie. */
+  .schritte > li { position: relative; }
+  .schritte > li::before {
+    content: "";
+    position: absolute;
+    top: -8px;
+    left: 0;
+    width: 1px;
+    height: 17px;
+    background: rgba(255, 255, 255, 0.5);
+  }
+
+  /* Einblenden: die Linie zieht sich vom linken Fensterrand nach rechts
+     auf, sobald app.js dem ersten Schritt .da gibt. Die Striche wachsen
+     nacheinander aus der Linie, ungefaehr wenn die Linie sie erreicht.
+     Nur mit JavaScript, sonst stuende die Linie nie da. */
+  html.js-auf .variante-b .schritte::before {
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 1.2s var(--kurve);
+  }
+  html.js-auf .variante-b .schritte:has(> .da)::before { transform: none; }
+  html.js-auf .variante-b .schritte > li::before {
+    scale: 1 0;
+    transition: scale 0.4s var(--kurve);
+  }
+  html.js-auf .variante-b .schritte > li.da::before { scale: none; }
+  html.js-auf .variante-b .schritte > li:nth-child(1).da::before { transition-delay: 0.25s; }
+  html.js-auf .variante-b .schritte > li:nth-child(2).da::before { transition-delay: 0.55s; }
+  html.js-auf .variante-b .schritte > li:nth-child(3).da::before { transition-delay: 0.85s; }
+}
+@media (min-width: 768px) and (prefers-reduced-motion: reduce) {
+  html.js-auf .variante-b .schritte::before,
+  html.js-auf .variante-b .schritte > li::before { transform: none; scale: none; transition: none; }
 }

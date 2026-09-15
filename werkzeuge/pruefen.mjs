@@ -31,7 +31,7 @@ const TYPEN = {
 
 const server = createServer(async (anfrage, antwort) => {
   const pfad = decodeURIComponent(anfrage.url.split('?')[0]);
-  const datei = path.join(WURZEL, pfad === '/' ? 'index.html' : pfad);
+  const datei = path.join(WURZEL, pfad.endsWith('/') ? pfad + 'index.html' : pfad);
   try {
     const inhalt = await readFile(datei);
     antwort.writeHead(200, { 'Content-Type': TYPEN[path.extname(datei)] || 'application/octet-stream' });
@@ -51,7 +51,14 @@ const INTERN = { 'entwuerfe.html': 'Werkbank mit fester Breite, nicht verlinkt' 
 
 const seiten = process.argv.slice(2).length
   ? process.argv.slice(2)
-  : readdirSync(WURZEL).filter((d) => d.endsWith('.html')).sort();
+  : [
+      ...readdirSync(WURZEL).filter((d) => d.endsWith('.html')).sort(),
+      /* Blogbeitraege in den Jahresordnern (JJJJ/MM/TT/titel/index.html) */
+      ...readdirSync(WURZEL).filter((d) => /^\d{4}$/.test(d)).sort()
+        .flatMap((j) => readdirSync(path.join(WURZEL, j), { recursive: true })
+          .filter((d) => d.endsWith('.html'))
+          .map((d) => j + '/' + d.split(path.sep).join('/'))),
+    ];
 
 const browser = await chromium.launch();
 let probleme = 0;

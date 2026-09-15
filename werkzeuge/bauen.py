@@ -20,6 +20,11 @@ Der Kopfblock steht am Anfang der Quelldatei:
   titel:        Beispielseite - taskrunner
   beschreibung: Ein Satz fuer Google und die Vorschau in sozialen Netzen.
   -->
+
+Seiten duerfen in Unterordnern liegen (Blogbeitraege unter
+JJJJ/MM/TT/titel/index.html, wie im alten WordPress). Relative Pfade
+schreibt man dort trotzdem so, als laege die Seite im Wurzelverzeichnis;
+der Bau stellt ihnen die passende Zahl ../ voran.
 """
 import os
 import re
@@ -29,6 +34,8 @@ HIER = os.path.dirname(os.path.abspath(__file__))
 WURZEL = os.path.dirname(HIER)
 QUELLEN = os.path.join(WURZEL, 'quellen')
 BAUSTEINE = os.path.join(QUELLEN, 'bausteine')
+# Ordner unter quellen/, die keine Seiten enthalten.
+KEINE_SEITEN = {'bausteine', 'schaubilder'}
 
 sys.path.insert(0, HIER)
 from htmlformat import formatiere  # noqa: E402
@@ -83,16 +90,45 @@ def werte_einsetzen(text, werte, datei):
     return re.sub(r'\{\{([a-z0-9_-]+)\}\}', ersetzen, text)
 
 
-def menue_markieren(text, datei):
-    """Auf der eigenen Seite bekommt der Menuepunkt aria-current und die
-    hervorgehobenen Klassen aus data-aktiv."""
+def menue_markieren(text, datei, bereich):
+    """Der Menuepunkt, der auf `bereich` zeigt, bekommt die hervorgehobenen
+    Klassen aus data-aktiv. `bereich` ist die Seite selbst, ausser der
+    Kopfblock sagt mit `menue:` etwas anderes (ein Blogbeitrag gehoert zu
+    blog.html). aria-current="page" nur auf der Seite selbst."""
     def ersetzen(m):
         ziel, aktivklassen, rest = m.group(1), m.group(2), m.group(3)
-        if ziel == datei:
+        if ziel == bereich:
             rest = re.sub(r'class="[^"]*"', 'class="%s"' % aktivklassen, rest, count=1)
-            return '<a href="%s" aria-current="page"%s' % (ziel, rest)
+            aktuell = 'page' if ziel == datei else 'true'
+            return '<a href="%s" aria-current="%s"%s' % (ziel, aktuell, rest)
         return '<a href="%s"%s' % (ziel, rest)
     return re.sub(r'<a href="([^"]*)" data-aktiv="([^"]*)"([^>]*)', ersetzen, text)
+
+
+# Schon absolut oder kein Dateipfad: https:, mailto:, tel:, /kontakt, #inhalt
+NICHT_RELATIV = re.compile(r'^(?:[a-z][a-z0-9+.-]*:|/|#|$)', re.I)
+
+
+def pfade_anpassen(text, datei):
+    """Fuer Seiten in Unterordnern: relative Pfade in href, src, srcset und
+    poster zeigen im Quelltext auf das Wurzelverzeichnis und bekommen hier
+    je Ordnerebene ein ../ vorangestellt."""
+    tiefe = datei.count('/')
+    if not tiefe:
+        return text
+    hoch = '../' * tiefe
+
+    def pfad(p):
+        return p if NICHT_RELATIV.match(p) else hoch + p
+
+    def ersetzen(m):
+        name, wert = m.group(1), m.group(2)
+        if name == 'srcset':
+            wert = ', '.join(pfad(teil.strip()) for teil in wert.split(','))
+        else:
+            wert = pfad(wert)
+        return '%s="%s"' % (name, wert)
+    return re.sub(r'(?<![\w-])(href|src|srcset|poster)="([^"]*)"', ersetzen, text)
 
 
 def seite_bauen(datei):
@@ -101,7 +137,8 @@ def seite_bauen(datei):
     werte, text = werte_lesen(text)
     text = einbauen(text)
     text = werte_einsetzen(text, werte, datei)
-    text = menue_markieren(text, datei)
+    text = menue_markieren(text, datei, werte.get('menue', datei))
+    text = pfade_anpassen(text, datei)
     text = formatiere(text)
     marke = HINWEIS % datei
     if text.lstrip().lower().startswith('<!doctype'):
@@ -109,9 +146,25 @@ def seite_bauen(datei):
         text = kopf + '\n' + marke + '\n' + rest
     else:
         text = marke + '\n' + text
-    with open(os.path.join(WURZEL, datei), 'w', encoding='utf-8') as d:
+    ziel = os.path.join(WURZEL, datei)
+    os.makedirs(os.path.dirname(ziel), exist_ok=True)
+    with open(ziel, 'w', encoding='utf-8') as d:
         d.write(text)
     return len(text)
+
+
+def seiten_finden():
+    """Alle .html unter quellen/ ausser in bausteine/ und schaubilder/,
+    als Pfad relativ zu quellen/ mit / als Trenner."""
+    seiten = []
+    for ordner, unterordner, dateien in os.walk(QUELLEN):
+        if ordner == QUELLEN:
+            unterordner[:] = [u for u in unterordner if u not in KEINE_SEITEN]
+        for d in dateien:
+            if d.endswith('.html'):
+                pfad = os.path.relpath(os.path.join(ordner, d), QUELLEN)
+                seiten.append(pfad.replace(os.sep, '/'))
+    return sorted(seiten)
 
 
 def schaubilder_bauen():
@@ -157,7 +210,7 @@ def quellenliste_schreiben(seiten):
 
 
 def main():
-    seiten = sorted(d for d in os.listdir(QUELLEN) if d.endswith('.html'))
+    seiten = seiten_finden()
     for s in seiten:
         print('  %-26s %6d Zeichen' % (s, seite_bauen(s)))
     # Nur Seiten, die das Tailwind-CSS ueberhaupt einbinden.

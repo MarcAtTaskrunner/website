@@ -35,6 +35,7 @@ mit im Git.
 | Farben, Schrift, Komponentenklassen | `tailwind/input.css` |
 | Schriftgrößen | **eine** Skala in `input.css` (`@layer components`), dokumentiert in `TYPOGRAFIE.md` – es gibt keine zweite mehr |
 | Mobilmenü-Verhalten, Karussell | `assets/app.js` (keine Quelle, direkt bearbeiten) |
+| Bildergalerie im Blogbeitrag (Laufband, Lightbox) | Aussehen: `.laufband`/`.lightbox` in `tailwind/input.css`; Ziehen, Pfeiltasten, Mitlaufen, Lightbox: `assets/app.js` (`[data-laufband]`, `[data-lightbox]`) |
 | Förder-Check (Förderungen): Fragen | `quellen/foerderungen.html` |
 | Förder-Check: Quoten, Obergrenzen, Ergebnistexte | `assets/foerdercheck.js` (keine Quelle, direkt bearbeiten). Dieselben Werte stehen als Text in `quellen/foerderungen.html` unter „Die Programme im Einzelnen“ – bei neuen Richtlinien **beide** anpassen |
 
@@ -76,8 +77,11 @@ Vorgabe `index.html`), `kontakt` (Vorgabe `index.html#kontakt`), `robots`
 Der `<body>`-Tag steht bewusst in der Seite selbst, weil er sich je Seite
 unterscheidet. Die Startseite trägt `class="variante-b"` – daran hängen ihre
 eigene Typografie-Skala, die durchsichtige Kopfzeile mit Logowechsel und die
-Einblendungen (alles in `tailwind/input.css`). Die Unterseiten haben das nicht.
-Sie benutzt außerdem `bausteine/kopfzeile-start.html` statt `kopfzeile.html`.
+Einblendungen (alles in `tailwind/input.css`). Inzwischen tragen es auch alle
+Unterseiten außer `blog.html` – dazu das dunkle Kopfband `seitenkopf
+verlauf-nacht mit-korn` (Muster ohne Foto: `quellen/impressum.html`). Die
+Startseite benutzt außerdem `bausteine/kopfzeile-start.html` statt
+`kopfzeile.html`.
 
 Menüpunkte tragen in der Kopfzeile ein `data-aktiv="…"`. Baut `bauen.py` die
 Seite, auf die ein Punkt zeigt, ersetzt es dessen `class` durch diesen Wert
@@ -90,6 +94,27 @@ Klassenlisten dort eintragen, sonst nichts.
 2. `python3 werkzeuge/bauen.py` – trägt die Seite auch in `tailwind/input.css`
    für die Klassensuche ein
 3. Link in `quellen/bausteine/kopfzeile.html` und/oder `fusszeile.html`
+
+## Blogbeitrag anlegen
+
+Beiträge behalten die Adresse aus dem alten WordPress, damit Links und
+Suchtreffer nach dem Umzug weiter funktionieren:
+`/2025/03/20/was-fuer-ein-erfolg-auf-der-proptech-summit-2025-in-hamburg/`.
+
+1. `quellen/JJJJ/MM/TT/<titel>/index.html` nach dem Muster des ersten
+   Beitrags; Datum und Titel exakt wie in der alten URL
+2. Relative Pfade (`images/…`, `blog.html`) so schreiben, als läge die
+   Seite im Wurzelverzeichnis – `bauen.py` setzt je Ordnerebene `../` davor
+3. `menue: blog.html` im Kopfblock markiert „Blog“ in der Kopfzeile
+4. Kachel in `quellen/blog.html` auf `JJJJ/MM/TT/<titel>/index.html`
+   verlinken – mit `index.html`, sonst zeigt der Doppelklick-Aufruf
+   (`file://`) nur den Ordnerinhalt. Cloudflare leitet live auf
+   `…/<titel>/` um, genau wie `blog.html` auf `/blog`.
+
+Die gebauten Jahresordner im Wurzelverzeichnis (`2025/` …) sind Bauergebnis
+wie die übrigen Seiten; `build.mjs` und `pruefen.mjs` nehmen sie mit.
+Auf Cloudflare liefert `…/titel/` die `index.html` aus, `…/titel` ohne
+Schrägstrich leitet dorthin um.
 
 ## Neues Schaubild anlegen
 
