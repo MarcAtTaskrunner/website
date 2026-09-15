@@ -703,11 +703,28 @@ header .logo-hell { opacity: 0; }
     radial-gradient(80% 70% at 100% 90%, rgba(66,133,244,0.26) 0%, rgba(66,133,244,0.07) 50%, rgba(66,133,244,0) 80%),
     #f7f8fa;
 }
-.kachel-verlauf-7 {                     /* Nachvollziehbar abgerechnet */
-  background:
-    radial-gradient(60% 55% at 70% 62%, rgba(0,177,255,0.22) 0%, rgba(0,177,255,0.06) 55%, rgba(0,177,255,0) 85%),
-    linear-gradient(180deg, #f7f8fa 35%, #e6effd 100%);
+/* Nachvollziehbar abgerechnet: je Kostenpunkt ein Foto, das mit dem
+   aktiven Punkt wechselt (kosten.js setzt .ist-aktiv). Die Fotos liegen
+   ueber .kachel-verlauf-nacht (zu sehen, solange sie laden) und unter
+   dem Korn von .mit-korn (z -1), ohne eigenen Verlauf darueber.
+   Sie stecken in einem eigenen Rahmen, weil .laufband-kachel > img
+   sonst ihre Hoehe festlegte. */
+.kachel-fotos {
+  position: absolute;
+  inset: 0;
+  z-index: -3;
+  pointer-events: none;
 }
+.kachel-fotos img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+.kachel-fotos img.ist-aktiv { opacity: 1; }
 .kachel-verlauf-8 {                     /* Alle Standorte auf einem Dashboard */
   background:
     radial-gradient(95% 85% at 100% 0%, rgba(2,76,255,0.30) 0%, rgba(2,76,255,0.09) 50%, rgba(2,76,255,0) 80%),
@@ -1431,16 +1448,18 @@ footer h3 {
   }
 }
 
-/* Dienstleistungen: Handwerker steht rechts im Bild, der Text links auf
-   dem Verlauf. Auf dem Handy rueckt der Ausschnitt auf sein Gesicht. */
+/* Dienstleistungen: Handwerker auf der Leiter rechts der Mitte, der Text
+   links auf dem Himmel. Das Handy bekommt einen eigenen Hochkant-
+   Ausschnitt (1000 x 1622): das Kopfband ist dort hoeher als breit, und
+   ein Querformat wuerde auf die Hoehe hochgerechnet und unscharf. */
 .kopf-foto-bild.foto-handwerk {
-  background-image: url("../images/handwerker-montage.jpg");
-  background-position: 70% 35%;
+  background-image: url("../images/anderson-schmig-e_XSlpOR4pc-unsplash.webp");
+  background-position: 50% 55%;
 }
 @media (max-width: 734px) {
   .kopf-foto-bild.foto-handwerk {
-    background-image: url("../images/handwerker-montage-1200.jpg");
-    background-position: 80% 30%;
+    background-image: url("../images/anderson-schmig-e_XSlpOR4pc-unsplash-hoch.jpg");
+    background-position: 50% 30%;
   }
 }
 

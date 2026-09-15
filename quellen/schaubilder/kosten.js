@@ -19,6 +19,10 @@
    *  Der Verlauf an den Raendern steckt im Strichmuster selbst: der
    *  Strich ist ein Farbverlauf, der aussen auf null geht. Eine Maske
    *  darueber waere teurer und wuerde die Punkte mit ausblenden.
+   *
+   *  Liegen neben dem Canvas Bilder mit data-postenbild (eines je
+   *  Posten), wird das des aktiven Punkts eingeblendet. data-dunkel
+   *  am Canvas zeichnet Linie und Beschriftung hell fuer Fotogrund.
    * ---------------------------------------------------------------- */
   Schaubild.prototype.saeenKosten = function () {
     var i;
@@ -78,9 +82,13 @@
     /* Ohne Maus auf der Kachel zeigt immer ein Punkt seinen Hover-
        Zustand, reihum: ab vorAb (alle Punkte sind da), je vorTakt s. */
     this.vorAb = this.einlauf + 0.14 * this.posten.length + 0.3;
-    this.vorTakt = 2.4;
+    this.vorTakt = 5;
     this.startZeit = null;
     this.beginn = this.kostenBeginn;
+
+    this.dunkel = "dunkel" in this.flaeche.dataset;
+    this.fotos = this.flaeche.parentNode.querySelectorAll("[data-postenbild]");
+    if (this.fotoNr == null) this.fotoNr = 0;   /* im HTML vorbelegt */
 
     /* Canvas nimmt keine Ruecksicht auf noch ladende Schriften: es misst
        und zeichnet dann den Rueckfall. Deshalb einmal anfordern. */
@@ -116,6 +124,15 @@
     return l[l.length - 1].y;
   };
 
+  /* Foto zum aktiven Posten; die Ueberblendung macht das CSS */
+  Schaubild.prototype.kostenFoto = function (nr) {
+    if (nr === this.fotoNr || !this.fotos[nr]) return;
+    this.fotoNr = nr;
+    for (var i = 0; i < this.fotos.length; i++) {
+      this.fotos[i].classList.toggle("ist-aktiv", i === nr);
+    }
+  };
+
   Schaubild.prototype.kostenRuht = function () {
     if (this.zeiger) { this.wachBis = this.t + 1.2; return false; }
     var sek = this.kostenSek();
@@ -133,11 +150,12 @@
     var e = Math.min(1, sek / this.einlauf);
     e = e < 0.5 ? 4 * e * e * e : 1 - Math.pow(-2 * e + 2, 3) / 2;   /* easeInOutCubic */
 
+    var farbe = this.dunkel ? "255,255,255" : "66,133,244";
     var vl = g.createLinearGradient(0, 0, this.b, 0);
-    vl.addColorStop(0.000, "rgba(66,133,244,0)");
-    vl.addColorStop(0.022, "rgba(66,133,244,0.85)");
-    vl.addColorStop(0.978, "rgba(66,133,244,0.85)");
-    vl.addColorStop(1.000, "rgba(66,133,244,0)");
+    vl.addColorStop(0.000, "rgba(" + farbe + ",0)");
+    vl.addColorStop(0.022, "rgba(" + farbe + ",0.85)");
+    vl.addColorStop(0.978, "rgba(" + farbe + ",0.85)");
+    vl.addColorStop(1.000, "rgba(" + farbe + ",0)");
     g.strokeStyle = vl;
     g.lineWidth = 1.8;
     g.lineJoin = "round";
@@ -158,7 +176,7 @@
 
     /* Kostenpunkte. vor: der Punkt, der gerade vorgefuehrt wird - nur
        solange niemand mit der Maus auf der Kachel ist. */
-    var vor = -1;
+    var vor = -1, treffer = -1;
     if (!this.zeiger && sek >= this.vorAb) {
       vor = Math.floor((sek - this.vorAb) / this.vorTakt) % this.posten.length;
     }
@@ -173,7 +191,7 @@
       var ziel2 = i === vor ? 1 : 0;
       if (this.zeiger) {
         var qx = this.zeiger.x - p.x, qy = this.zeiger.y - p.y;
-        if (Math.sqrt(qx * qx + qy * qy) < p.r + 14) ziel2 = 1;
+        if (Math.sqrt(qx * qx + qy * qy) < p.r + 14) { ziel2 = 1; treffer = i; }
       }
       p.an += (ziel2 - p.an) * 0.2;
 
@@ -210,7 +228,7 @@
       /* Beschriftung nur bei Beruehrung */
       if (p.an > 0.02) {
         g.globalAlpha = auf * Math.min(1, p.an * 1.4);
-        g.fillStyle = "#1155cc";
+        g.fillStyle = this.dunkel ? "#ffffff" : "#1155cc";
         g.font = '900 15px "DIN Pro Cond", "DIN Pro", ui-sans-serif, sans-serif';
         try { g.letterSpacing = "0.06em"; } catch (e3) {}
         g.textBaseline = "middle";
@@ -223,5 +241,10 @@
       }
       g.globalAlpha = 1;
     }
+
+    /* Ohne Treffer und ohne Vorfuehrung (Maus neben den Punkten) bleibt
+       das letzte Foto stehen, statt zurueckzuspringen. */
+    var wahl = treffer >= 0 ? treffer : vor;
+    if (wahl >= 0) this.kostenFoto(wahl);
   };
 })();

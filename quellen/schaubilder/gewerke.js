@@ -37,39 +37,60 @@
 
     /* Lage in Anteilen der Flaeche, uebernommen aus dem Entwurf */
     var lage = [
-      [0.235, 0.175, 0.068],
-      [0.095, 0.505, 0.060],
-      [0.295, 0.855, 0.067],
-      [0.795, 0.160, 0.067],
-      [0.878, 0.545, 0.064],
-      [0.757, 0.805, 0.067]
+      [0.235, 0.175, 0.082],
+      [0.095, 0.505, 0.072],
+      [0.295, 0.855, 0.080],
+      [0.795, 0.160, 0.080],
+      [0.878, 0.545, 0.077],
+      [0.757, 0.805, 0.080]
     ];
     var mass = Math.min(this.b, this.h * 1.9);   /* damit flache Kacheln nicht ausufern */
 
+    /* Jeder Kreis bleibt samt weissem Ring (3 px) und Schatten in der
+       Flaeche - was darueber hinausragt, schneidet der Canvas ab. Der
+       Schatten faellt nach unten (Versatz 9, Unschaerfe 26), deshalb
+       braucht es dort am meisten Luft. Die Ruhelage wird in diese
+       Grenzen gerueckt, und beim Ausweichen vor dem Zeiger haelt
+       zeichnenGewerke den Kreis an der Grenze fest. */
+    var klemm = function (v, lo, hi) { return lo > hi ? (lo + hi) / 2 : Math.min(Math.max(v, lo), hi); };
     this.knoten = [];
     for (i = 0; i < lage.length; i++) {
+      var r = Math.max(19, mass * lage[i][2]);
+      var minX = r + 16, maxX = this.b - r - 16;
+      var minY = r + 8,  maxY = this.h - r - 25;
       this.knoten.push({
-        rx: this.b * lage[i][0],
-        ry: this.h * lage[i][1],
-        r: Math.max(16, mass * lage[i][2]),
+        rx: klemm(this.b * lage[i][0], minX, maxX),
+        ry: klemm(this.h * lage[i][1], minY, maxY),
+        r: r,
+        minX: minX, maxX: Math.max(minX, maxX),
+        minY: minY, maxY: Math.max(minY, maxY),
         x: 0, y: 0, dx: 0, dy: 0, vx: 0, vy: 0
       });
     }
 
     this.cx = this.b * 0.5;
     this.cy = this.h * 0.5;
-    this.sq = Math.max(64, mass * 0.205);        /* Kantenlaenge */
+    this.sq = Math.max(60, mass * 0.195);        /* Kantenlaenge */
 
+    /* Portraits aus data-bilder (Liste) bzw. data-bild, je Kreis das
+       naechste. Geladen wird erst, wenn die Kachel ins Bild kommt
+       (this.gesehen, siehe start() in kern.js) - vorher kostet sie nichts. */
     var nachLaden = function () { s.zeichnen(); };
-    this.avatar = new Image();
-    this.avatar.decoding = "async";
-    this.avatar.onload = nachLaden;
-    this.avatar.src = this.flaeche.dataset.bild || "images/headshot.webp";
+    this.avatare = (this.flaeche.dataset.bilder || this.flaeche.dataset.bild || "images/headshot.webp")
+      .split(",").map(function (q) { return q.trim(); }).filter(Boolean)
+      .map(function (q) {
+        var im = new Image();
+        im.decoding = "async";
+        im.onload = nachLaden;
+        im.dataset.quelle = q;
+        return im;
+      });
 
+    /* App-Symbol in der Mitte (Icon Composer), geladen wie die Portraits */
     this.icon = new Image();
     this.icon.decoding = "async";
-    this.icon.onload = function () { s.ikoMitteMessen(); nachLaden(); };
-    this.icon.src = this.flaeche.dataset.icon || "images/icons/dokument.svg";
+    this.icon.onload = nachLaden;
+    this.icon.dataset.quelle = this.flaeche.dataset.icon || "images/icons/auftrag-app-icon.png";
   };
 
   /* Superellipse. n = 5 kommt der stetigen Ecke von iOS sehr nahe. */
@@ -148,8 +169,12 @@
       k.vy = (k.vy - STEIF * k.dy) * DAEMPF;
       k.dx += k.vx;
       k.dy += k.vy;
-      k.x = k.rx + k.dx;
-      k.y = k.ry + k.dy;
+      /* An der Grenze stehen bleiben statt hinauszurutschen (siehe
+         saeenGewerke); die Feder zieht den Kreis danach zurueck. */
+      k.x = Math.min(Math.max(k.rx + k.dx, k.minX), k.maxX);
+      k.y = Math.min(Math.max(k.ry + k.dy, k.minY), k.maxY);
+      if (k.x !== k.rx + k.dx) { k.dx = k.x - k.rx; k.vx = 0; }
+      if (k.y !== k.ry + k.dy) { k.dy = k.y - k.ry; k.vy = 0; }
     }
 
     /* Bogen vom Auftrag zu jedem Handwerker */
@@ -174,29 +199,27 @@
       g.stroke();
     }
 
-    /* Auftrag: Squircle mit zweilagigem Schatten */
-    g.save();
-    g.shadowColor = "rgba(" + SCHATTEN + ",0.20)";
-    g.shadowBlur = 42;
-    g.shadowOffsetY = 18;
-    g.fillStyle = "#ffffff";
-    this.pfadSquircle(this.cx, this.cy, halb, halb, 5);
-    g.fill();
-    g.shadowColor = "rgba(" + SCHATTEN + ",0.15)";
-    g.shadowBlur = 12;
-    g.shadowOffsetY = 4;
-    this.pfadSquircle(this.cx, this.cy, halb, halb, 5);
-    g.fill();
-    g.restore();
-
-    if (this.icon.complete && this.icon.naturalWidth) {
-      var ih = this.sq * 0.58;
-      var iw = ih * (this.icon.naturalWidth / this.icon.naturalHeight);
-      /* Nicht die Bildmitte auf die Squircle-Mitte legen, sondern den
-         Schwerpunkt der Deckung - das ist die optische Mitte. */
-      var mx = this.ikoMitte ? this.ikoMitte.x : 0.5;
-      var my = this.ikoMitte ? this.ikoMitte.y : 0.5;
-      g.drawImage(this.icon, this.cx - iw * mx, this.cy - ih * my, iw, ih);
+    /* Auftrag: das App-Symbol aus dem Icon Composer (data-icon), mit
+       zweilagigem Schatten. Die Ecken des Bildes sind durchsichtig, der
+       Schatten folgt deshalb seiner Form. Bis es geladen ist, steht an
+       seiner Stelle ein schlichtes hellblaues Squircle. */
+    var ik = this.icon;
+    if (this.gesehen) Schaubild.ladeBild(ik);
+    var fertig = ik.complete && ik.naturalWidth;
+    var lagen = [[0.18, 40, 16], [0.12, 10, 3]];
+    for (i = 0; i < lagen.length; i++) {
+      g.save();
+      g.shadowColor = "rgba(" + SCHATTEN + "," + lagen[i][0] + ")";
+      g.shadowBlur = lagen[i][1];
+      g.shadowOffsetY = lagen[i][2];
+      if (fertig) {
+        g.drawImage(ik, this.cx - halb, this.cy - halb, halb * 2, halb * 2);
+      } else {
+        g.fillStyle = "#e8f0fe";
+        this.pfadSquircle(this.cx, this.cy, halb, halb, 5);
+        g.fill();
+      }
+      g.restore();
     }
 
     /* Handwerker */
@@ -219,15 +242,17 @@
       g.fill();
       g.restore();
 
-      if (this.avatar.complete && this.avatar.naturalWidth) {
+      var bild = this.avatare[i % this.avatare.length];
+      if (this.gesehen) Schaubild.ladeBild(bild);
+      if (bild.complete && bild.naturalWidth) {
         g.save();
         g.beginPath();
         g.arc(k.x, k.y, k.r, 0, 6.283);
         g.clip();
-        var sk = Math.max((k.r * 2) / this.avatar.naturalWidth,
-                          (k.r * 2) / this.avatar.naturalHeight);
-        var bw = this.avatar.naturalWidth * sk, bh = this.avatar.naturalHeight * sk;
-        g.drawImage(this.avatar, k.x - bw / 2, k.y - bh / 2, bw, bh);
+        var sk = Math.max((k.r * 2) / bild.naturalWidth,
+                          (k.r * 2) / bild.naturalHeight);
+        var bw = bild.naturalWidth * sk, bh = bild.naturalHeight * sk;
+        g.drawImage(bild, k.x - bw / 2, k.y - bh / 2, bw, bh);
         g.restore();
       }
     }

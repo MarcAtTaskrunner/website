@@ -144,7 +144,14 @@
     else if (ruhig.addListener) ruhig.addListener(aufRuhe);
   };
 
+  /* Setzt die Adresse eines vorbereiteten Bildes (data-quelle), einmal.
+     Damit laden Schaubilder ihre Fotos erst, wenn sie gebraucht werden. */
+  Schaubild.ladeBild = function (im) {
+    if (!im.src && im.dataset.quelle) im.src = im.dataset.quelle;
+  };
+
   Schaubild.prototype.start = function () {
+    this.gesehen = true;                   /* war einmal im Bild: Fotos laden */
     if (this.beginn) this.beginn();
     this.zeichnen();                       /* nie eine leere Flaeche */
     if (this.laeuft || ruhig.matches) return;

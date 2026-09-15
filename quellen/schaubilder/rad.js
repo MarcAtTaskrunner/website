@@ -181,22 +181,41 @@
     var buehne0 = this.flaeche.closest("section");
     this.label = buehne0 ? buehne0.querySelector("[data-radlabel]") : null;
 
+    /* Ein Eintrag darf als drittes Feld sein Portrait mitbringen:
+       data-leute="Name|Gewerk|bild.webp,…". Dann gehoeren Name, Gewerk
+       und Gesicht fest zusammen - Label und Bild waehlen beide ueber
+       aktiv % Anzahl, bei gleich langen Listen also denselben Eintrag. */
     this.leute = ((this.flaeche.dataset.leute || LEUTE.join(","))).split(",")
       .map(function (z) {
         var teil = z.split("|");
-        return { name: (teil[0] || "").trim(), gewerk: (teil[1] || "").trim() };
+        return { name: (teil[0] || "").trim(), gewerk: (teil[1] || "").trim(),
+                 bild: (teil[2] || "").trim() };
       })
       .filter(function (e) { return e.name; });
 
-    /* Bilder fuer die geoeffneten Punkte, aus data-bild bzw. data-bilder */
-    var quellen = (this.flaeche.dataset.bilder || this.flaeche.dataset.bild || "")
-      .split(",").map(function (q) { return q.trim(); }).filter(Boolean);
-    this.bilder = quellen.map(function (q) {
+    /* Bilder fuer die geoeffneten Punkte: aus data-leute (drittes Feld),
+       sonst aus data-bilder bzw. data-bild.
+       Die Adresse bekommt ein Bild erst, wenn sein Punkt aufgeht (siehe
+       zeichnenRad) - auf Geraeten mit Maus schon nach dem Laden der
+       Seite, damit es beim Darueberfahren bereitliegt. So bremsen auch
+       viele Portraits den Seitenaufbau nicht, und auf dem Handy, wo ohne
+       Zeiger kaum ein Punkt aufgeht, laedt fast nichts. */
+    var mitBild = this.leute.every(function (e) { return e.bild; });
+    var quellen = mitBild
+      ? this.leute.map(function (e) { return e.bild; })
+      : (this.flaeche.dataset.bilder || this.flaeche.dataset.bild || "")
+          .split(",").map(function (q) { return q.trim(); }).filter(Boolean);
+    var bilder = this.bilder = quellen.map(function (q) {
       var im = new Image();
       im.decoding = "async";
-      im.src = q;
+      im.dataset.quelle = q;
       return im;
     });
+    if (window.matchMedia && window.matchMedia("(hover: hover)").matches) {
+      var vorladen = function () { bilder.forEach(Schaubild.ladeBild); };
+      if (document.readyState === "complete") setTimeout(vorladen, 0);
+      else window.addEventListener("load", vorladen, { once: true });
+    }
 
     /* Saiten */
     var a1 = w() * 6.283, a2 = w() * 6.283, a3 = w() * 6.283;
@@ -385,6 +404,7 @@
       rp = this.rand[i];
       if (rp.gr < 0.02 || !this.bilder.length) continue;
       var bild = this.bilder[i % this.bilder.length];
+      Schaubild.ladeBild(bild);
       if (!bild.complete || !bild.naturalWidth) continue;
 
       g.save();
