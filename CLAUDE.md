@@ -33,10 +33,12 @@ mit im Git.
 | Inhalt einer Seite | `quellen/<seite>.html` |
 | Ein Canvas-Schaubild | `quellen/schaubilder/<motiv>.js` |
 | Farben, Schrift, Komponentenklassen | `tailwind/input.css` |
+| Eckenradius | Überall 20 px über `--radius-card`/`--radius-tile`/`--radius-xl` im `@theme` von `tailwind/input.css`. Ausnahmen: Buttons (`.btn`) sind Pillen, Kreise bleiben Kreise |
 | Schriftgrößen | **eine** Skala in `input.css` (`@layer components`), dokumentiert in `TYPOGRAFIE.md` – es gibt keine zweite mehr |
 | Mobilmenü-Verhalten, Karussell | `assets/app.js` (keine Quelle, direkt bearbeiten) |
 | Bildergalerie im Blogbeitrag (Laufband, Lightbox) | Aussehen: `.laufband`/`.lightbox` in `tailwind/input.css`; Ziehen, Pfeiltasten, Mitlaufen, Lightbox: `assets/app.js` (`[data-laufband]`, `[data-lightbox]`) |
 | Förder-Check (Förderungen): Fragen | `quellen/foerderungen.html` |
+| Kontaktseite (Vertrieb links hell, Techniker rechts dunkel) | Texte, Telefon, Adressen: `quellen/kontakt.html`; Aufteilung 2/3 zu 1/3: `.kontakt-teilung`/`.kontakt-flaeche` in `tailwind/input.css` |
 | Förder-Check: Quoten, Obergrenzen, Ergebnistexte | `assets/foerdercheck.js` (keine Quelle, direkt bearbeiten). Dieselben Werte stehen als Text in `quellen/foerderungen.html` unter „Die Programme im Einzelnen“ – bei neuen Richtlinien **beide** anpassen |
 
 Suchen statt lesen: die Seiten sind zeilenweise umgebrochen, `grep -n` findet
@@ -70,7 +72,7 @@ beschreibung: Ein Satz für Google und die Vorschau in sozialen Netzen.
 ```
 
 Werte mit Vorgabe, nur bei Abweichung nötig: `start` (Ziel des Logos,
-Vorgabe `index.html`), `kontakt` (Vorgabe `index.html#kontakt`), `robots`
+Vorgabe `index.html`), `kontakt` (Vorgabe `kontakt.html`), `robots`
 (leer; für Vorschauseiten das komplette `<meta name="robots" …>`),
 `ogbeschreibung` (Vorgabe: wie `beschreibung`).
 
@@ -78,7 +80,7 @@ Der `<body>`-Tag steht bewusst in der Seite selbst, weil er sich je Seite
 unterscheidet. Die Startseite trägt `class="variante-b"` – daran hängen ihre
 eigene Typografie-Skala, die durchsichtige Kopfzeile mit Logowechsel und die
 Einblendungen (alles in `tailwind/input.css`). Inzwischen tragen es auch alle
-Unterseiten außer `blog.html` – dazu das dunkle Kopfband `seitenkopf
+Unterseiten außer `blog.html` und `kontakt.html` (beide ohne dunkles Kopfband) – dazu das dunkle Kopfband `seitenkopf
 verlauf-nacht mit-korn` (Muster ohne Foto: `quellen/impressum.html`). Die
 Startseite benutzt außerdem `bausteine/kopfzeile-start.html` statt
 `kopfzeile.html`.

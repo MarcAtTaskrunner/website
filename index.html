@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>taskrunner – Facility Management leicht gemacht</title>
-    <meta name="description" content="Taskrunner bündelt Wartung, Reparatur und Instandhaltung auf einer Plattform – deutschlandweit, mit fester Ansprechperson und vollem Überblick im Dashboard.">
+    <meta name="description" content="Wartung, Reparatur und Instandhaltung für Ihre Standorte, deutschlandweit. Sie geben den Auftrag auf, wir organisieren den Rest. Jeden Schritt sehen Sie im Dashboard.">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="icon" type="image/png" sizes="96x96" href="favicon-96.png">
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
@@ -13,7 +13,7 @@
     <!-- Open Graph -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="taskrunner – Facility Management leicht gemacht">
-    <meta property="og:description" content="Taskrunner bündelt Wartung, Reparatur und Instandhaltung auf einer Plattform – deutschlandweit, mit fester Ansprechperson und vollem Überblick im Dashboard.">
+    <meta property="og:description" content="Wartung, Reparatur und Instandhaltung für Ihre Standorte, deutschlandweit. Sie geben den Auftrag auf, wir organisieren den Rest. Jeden Schritt sehen Sie im Dashboard.">
     <meta property="og:locale" content="de_DE">
     <link rel="stylesheet" href="assets/style.css">
   </head>
@@ -29,11 +29,11 @@
             <li><a href="dienstleistungen.html" class="t-body text-blue-600 transition-colors">Dienstleistungen</a></li>
             <li><a href="foerderungen.html" class="t-body text-blue-600 transition-colors">Förderungen</a></li>
             <li><a href="blog.html" class="t-body text-blue-600 transition-colors">Blog</a></li>
-            <li><a href="/kontakt" class="t-body text-blue-600 transition-colors" data-kontakt-auf aria-haspopup="dialog" aria-controls="kontakt-fenster" aria-expanded="false">Kontakt</a></li>
+            <li><a href="kontakt.html" class="t-body text-blue-600 transition-colors">Kontakt</a></li>
             <li><a href="https://taskrunner.jobs.personio.de/" class="t-body text-blue-600 transition-colors">Jobs</a></li>
           </ul>
         </nav>
-        <div class="hidden items-center gap-5 justify-self-end lg:flex"><a href="/kontakt" class="btn btn-primary !py-2.5 !px-5">Kostenlos Testen</a><a href="https://app.taskrunner.de" class="t-body text-blue-600 transition-colors">Login</a></div>
+        <div class="hidden items-center gap-5 justify-self-end lg:flex"><a href="kontakt.html#kunden" class="btn btn-primary !py-2.5 !px-5">Kostenlos Testen</a><a href="https://app.taskrunner.de" class="t-body text-blue-600 transition-colors">Login</a></div>
         <!-- Mobile-Toggle --><button type="button" id="nav-toggle" class="justify-self-end lg:hidden inline-flex h-11 w-11 items-center justify-center rounded-full text-blue-600" aria-expanded="false" aria-controls="mobile-nav"><span class="sr-only">Menü öffnen</span><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg></button>
       </div>
       <!-- Mobile-Navigation -->
@@ -42,50 +42,12 @@
           <li><a href="dienstleistungen.html" class="block rounded-xl px-3 py-3 t-body font-medium text-blue-600 hover:bg-ice">Dienstleistungen</a></li>
           <li><a href="foerderungen.html" class="block rounded-xl px-3 py-3 t-body font-medium text-blue-600 hover:bg-ice">Förderungen</a></li>
           <li><a href="blog.html" class="block rounded-xl px-3 py-3 t-body font-medium text-blue-600 hover:bg-ice">Blog</a></li>
-          <li><a href="/kontakt" class="block rounded-xl px-3 py-3 t-body font-medium text-blue-600 hover:bg-ice" data-kontakt-auf aria-haspopup="dialog" aria-controls="kontakt-fenster" aria-expanded="false">Kontakt</a></li>
+          <li><a href="kontakt.html" class="block rounded-xl px-3 py-3 t-body font-medium text-blue-600 hover:bg-ice">Kontakt</a></li>
           <li><a href="https://taskrunner.jobs.personio.de/" class="block rounded-xl px-3 py-3 t-body font-medium text-blue-600 hover:bg-ice">Jobs</a></li>
-          <li class="mt-3 flex flex-col gap-3"><a href="/kontakt" class="btn btn-primary w-full">Kostenlos Testen</a><a href="https://app.taskrunner.de" class="btn w-full border border-navy/15 text-blue-600">Login</a></li>
+          <li class="mt-3 flex flex-col gap-3"><a href="kontakt.html#kunden" class="btn btn-primary w-full">Kostenlos Testen</a><a href="https://app.taskrunner.de" class="btn w-full border border-navy/15 text-blue-600">Login</a></li>
         </ul>
       </nav>
     </header>
-    <!-- Kontaktfenster: klappt unter der Kopfleiste auf, sobald "Kontakt"
-     angeklickt wird (assets/app.js, Vorbild serviceplan.com). Inhalt wie
-     der Kontaktbereich der Startseite - dort mit aendern. -->
-    <div id="kontakt-fenster" class="kontakt-fenster verlauf-nacht mit-korn" role="dialog" aria-labelledby="kontakt-titel" inert>
-      <div class="kontakt-innen container-wide">
-        <div class="flex items-start justify-between gap-6">
-          <h2 id="kontakt-titel" class="text-balance t-h2 text-white">Lieber kurz durchsprechen?</h2>
-          <button type="button" class="kontakt-zu" data-kontakt-zu><span class="sr-only">Kontakt schließen</span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
-        </div>
-        <p class="mt-5 max-w-[640px] text-pretty t-intro">Ein Gespräch reicht, um zu klären, ob Taskrunner zu Ihren Objekten und Abläufen passt. Kein Verkaufsgespräch, keine Verpflichtung.</p>
-        <ul class="mt-10 grid lg:mt-16 lg:grid-cols-3">
-          <li class="kontakt-weg">
-            <svg class="kontakt-bild" aria-hidden="true" focusable="false" viewBox="0 0 90.62 97.36"><path fill="currentColor" d="M90.39,23.01c-.64-2.05-2.5-3.42-4.65-3.42-.49,0-.98.07-1.46.22l-6.7,2.09V6.14c0-3.88-2.41-6.14-6.08-6.14h-31.04c-3.74,0-6.37,2.19-6.37,6.14v30.15c-3.39,1.47-5.76,2.52-6.27,2.78-4.1,2.09-7.19,6.88-7.88,8.81-.85,1.93-19.95,49.47-19.95,49.47h39.58s9.59-4.02,14.69-9.59c2.15-2.34,3.87-5.52,5.06-8.14h12.5c3.29,0,5.77-2.12,5.77-6.35v-3.6h4.24c2.69,0,4.87-2.18,4.87-4.87s-2.18-4.87-4.87-4.87h-4.24v-1.62h4.36c2.68,0,4.87-2.19,4.87-4.87s-2.18-4.87-4.87-4.87h-4.36v-1.62h4.36c2.68,0,4.87-2.19,4.87-4.87s-2.18-4.87-4.87-4.87h-4.36v-5.11l9.61-3c1.24-.39,2.26-1.24,2.86-2.39.6-1.15.72-2.47.33-3.71ZM73.21,74.29h-27.17c-.16,1.03-.36,2.08-.64,3.17-1.81,6.94-7.76,10.86-8.01,11.02-.23.15-.49.22-.75.22-.46,0-.9-.22-1.17-.64-.42-.65-.23-1.5.41-1.93.05-.03,5.29-3.52,6.83-9.39,1.64-6.24.82-11.77.81-11.83-.02-.12-.01-.23,0-.35h15.84c3.25,0,6.49-1.96,6.49-5.8s-2.86-6.26-6.49-6.26h-26.9v-2.78h5.99V4.97h7.32c.03,1.78,1.15,2.77,2.75,2.77h14.64c1.57,0,2.6-1.02,2.62-2.77h7.43v69.32h0Z"/></svg>
-            <h3 class="mt-8 t-h4 text-white">Anrufen</h3>
-            <p class="mt-3 t-body-tight">Sie schildern uns Ihre Situation, wir sagen Ihnen ehrlich, wo wir Ihnen Arbeit abnehmen – und wo nicht.</p>
-            <p class="mt-auto pt-8">
-              <a href="tel:+4920199999201" class="kontakt-link group inline-flex items-center gap-2 t-body font-bold">+49 201 99999-201<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="transition-transform group-hover:translate-x-1"><path d="M9 6l6 6-6 6"></path></svg></a>
-            </p>
-          </li>
-          <li class="kontakt-weg">
-            <svg class="kontakt-bild" aria-hidden="true" focusable="false" viewBox="0 0 67.67 97.79"><rect fill="currentColor" x="28.91" y="43.96" width="10.25" height="53.83"/> <polygon fill="currentColor" points="27.14 12.02 27.14 6.41 35.5 6.41 35.5 0 23.65 0 23.65 5.05 23.65 6.41 23.65 12.02 27.14 12.02"/> <path fill="currentColor" d="M10.71,41.54v-22.2h.01c0-2.96-2.4-5.36-5.36-5.36S0,16.37,0,19.33v22.21h10.71Z"/> <path fill="currentColor" d="M13.76,17.46h-.01v24.08h53.91v-23.1h.01c0-3.07-2.49-5.55-5.55-5.55v-.05H27.14v7.35h-3.5v-7.35h-12.35c1.49,1,2.46,2.7,2.46,4.63Z"/></svg>
-            <h3 class="mt-8 t-h4 text-white">Schreiben</h3>
-            <p class="mt-3 t-body-tight">Kurz beschreiben, worum es geht. Wir melden uns mit einer Einschätzung zurück.</p>
-            <p class="mt-auto pt-8">
-              <a href="mailto:sales@taskrunner.de" class="kontakt-link group inline-flex items-center gap-2 t-body font-bold">sales@taskrunner.de<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="transition-transform group-hover:translate-x-1"><path d="M9 6l6 6-6 6"></path></svg></a>
-            </p>
-          </li>
-          <li class="kontakt-weg">
-            <svg class="kontakt-bild" aria-hidden="true" focusable="false" viewBox="0 0 97.55 65.03"><path fill="currentColor" d="M66.78,65.05h30.77s-4.31-20.04-14.97-35.8c-3-4.69-10.81-8.96-16.59-2.4-5.54,6.28-10.9,27.55-10.9,27.55,0,0-4.2,0-9.01,0l-9.24-19.59c-.87-2.15-3.17-3.76-5.38-3.76H3.78c-1.32,0-2.47.57-3.15,1.57-.71,1.04-.83,2.41-.31,3.75l11.7,24.82c.87,2.15,3.17,3.79,5.39,3.79l46.05.09,11.63-25.44c.35-.76,1.24-1.09,2-.75.76.35,1.09,1.24.75,2l-11.06,24.19ZM15.82,59.62l-11.55-24.49h27.18c.51,0,1.34.56,1.59,1.22l8.5,18.03c-5.03,0-9.54,0-9.54,0-2.92,0-5.47,2.36-5.48,5.28,0,.41.06.8.14,1.18h-9.26c-.5,0-1.34-.56-1.59-1.21Z"/> <path fill="currentColor" d="M51.59,24.09h.02c1.93.96,11.71,3.9,21.28-7,3.81-4.71,5.17-11.45,5.17-11.45,0,0-4.3,2.47-7.94,1.45-2.47-.69-5.11-3.3-5.62-3.82-1.22-1.13-2.67-2.05-4.34-2.61-6.47-2.21-13.5,1.32-15.71,7.85-2.14,6.36,1.05,13.14,7.14,15.58Z"/></svg>
-            <h3 class="mt-8 t-h4 text-white">Ausprobieren</h3>
-            <p class="mt-3 t-body-tight">Die Plattform unverbindlich testen und einen ersten Auftrag anlegen.</p>
-            <p class="mt-auto pt-8">
-              <a href="/kontakt" class="kontakt-link group inline-flex items-center gap-2 t-body font-bold">Kostenlos testen<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="transition-transform group-hover:translate-x-1"><path d="M9 6l6 6-6 6"></path></svg></a>
-            </p>
-          </li>
-        </ul>
-      </div>
-    </div>
     <main id="inhalt">
       <section class="hero-b hero-voll mit-korn relative flex flex-col justify-end overflow-hidden bg-navy text-white">
         <canvas data-schaubild="rad" data-punkte="96" data-leute="
@@ -159,15 +121,15 @@
         </div>
         <div data-hero-text class="rand-seite relative w-full pb-[60px] lg:pb-[76px]">
           <h1 class="max-w-[620px] text-balance">Facility Management leicht gemacht!</h1>
-          <p class="mt-6 max-w-[520px] text-pretty t-intro text-white">Wir helfen Ihnen deutschlandweit Wartungen, Reparaturen, Instandhaltungsarbeiten zu vereinfachen und Ihre Firmenprozesse zu digitalisieren.</p>
-          <div class="mt-8 flex flex-wrap items-center gap-4"><a href="/kontakt" class="btn btn-ghost">Kostenlos Testen</a><a href="/kontakt" class="btn btn-white">Kontakt Aufnehmen</a></div>
+          <p class="mt-6 max-w-[520px] text-pretty t-intro text-white">Sie geben den Auftrag auf, wir organisieren den Rest: Wartung, Reparatur, Instandhaltung, deutschlandweit. Und Sie haben immer dieselbe Ansprechperson am Telefon.</p>
+          <div class="mt-8 flex flex-wrap items-center gap-4"><a href="kontakt.html#kunden" class="btn btn-ghost">Kostenlos testen</a><a href="kontakt.html" class="btn btn-white">Kontakt aufnehmen</a></div>
         </div>
       </section>
       <section class="bg-white section-y">
         <div class="container-wide">
           <div data-auf class="grid gap-6 lg:grid-cols-2 lg:items-end lg:gap-16">
-            <h2 class="max-w-[900px] text-balance hyphens-auto break-words t-h2 text-blue-600">Schnell, einfach <span class="block">und Transparent</span></h2>
-            <p class="max-w-[560px] text-pretty t-intro text-ink/80">Taskrunner bündelt Wartung, Reparatur und Instandhaltung auf einer Plattform – deutschlandweit, mit fester Ansprechperson und vollem Überblick im Dashboard. Qualität und Abrechnung prüfen wir für Sie.</p>
+            <h2 class="max-w-[900px] text-balance hyphens-auto break-words t-h2 text-blue-600">Wir nehmen Ihnen die <span class="block">Koordination ab.</span></h2>
+            <p class="max-w-[560px] text-pretty t-intro text-ink/80">Sie sagen uns, was gemacht werden muss. Wir suchen den Betrieb, holen den Preis ein und prüfen am Ende die Rechnung. Im Dashboard sehen Sie jederzeit, wie weit Ihr Auftrag ist.</p>
           </div>
         </div>
         <!-- Kacheln in einer Reihe nach apple.com: seitlich wischen, mit der
@@ -188,11 +150,11 @@
               <div class="kachel-fotos" aria-hidden="true">
                 <img data-postenbild src="images/jay-wennington-IAvRp28YMOE-unsplash.webp" alt="" width="1500" height="1000" loading="lazy" decoding="async" class="ist-aktiv">
                 <img data-postenbild src="images/patrick-robert-doyle-yVRn-d6JGzo-unsplash_edited.webp" alt="" width="1500" height="1000" loading="lazy" decoding="async">
-                <img data-postenbild src="images/anderson-schmig-e_XSlpOR4pc-unsplash.webp" alt="" width="2400" height="1622" loading="lazy" decoding="async">
+                <img data-postenbild src="images/kevin-ache-opLWncnTUmM-unsplash_edited.webp" alt="" width="1500" height="948" loading="lazy" decoding="async">
                 <img data-postenbild src="images/tim-van-der-kuip-CPs2X8JYmS8-unsplash.webp" alt="" width="1500" height="1000" loading="lazy" decoding="async">
               </div>
               <h3 class="t-h3 text-white">Nachvollziehbar abgerechnet.</h3>
-              <p class="mt-4 t-body">Jeder Task wird über die Plattform abgerechnet – mit Abschlussbericht und Fotos zur erbrachten Leistung.</p>
+              <p class="mt-4 t-body">Anfahrt, Material und Arbeitszeit stehen einzeln auf der Rechnung. Dazu bekommen Sie einen Abschlussbericht mit Fotos von der fertigen Arbeit.</p>
               <canvas data-schaubild="kosten" data-dunkel data-posten="Anfahrt,Materialkosten,Arbeitszeit,Handlingfee" aria-hidden="true" class="mt-8 -mx-10 block h-[300px] w-[calc(100%+5rem)] max-w-none sm:h-[360px]"></canvas>
             </li>
             <li class="laufband-kachel flex min-h-[340px] flex-col overflow-hidden rounded-[var(--radius-tile)] kachel-verlauf-8 mit-korn kachel-polster sm:min-h-[380px]">
@@ -202,7 +164,7 @@
             </li>
             <li class="laufband-kachel flex min-h-[340px] flex-col overflow-hidden rounded-[var(--radius-tile)] kachel-verlauf-9 mit-korn kachel-polster sm:min-h-[380px]">
               <h3 class="t-h3 text-blue-600">Eine feste Ansprechperson.</h3>
-              <p class="mt-4 t-body text-ink/85">Unser Operationsteam begleitet jeden Task und stellt die korrekte Durchführung sicher.</p>
+              <p class="mt-4 t-body text-ink/85">Sie rufen an und müssen nicht erklären, wer Sie sind. Ihre Ansprechperson kennt Ihre Objekte und bleibt am Auftrag, bis der Abschlussbericht da ist.</p>
               <canvas data-schaubild="team" data-bild="images/ansprechperson-portrait.webp" aria-hidden="true" class="mt-8 block h-[300px] w-full sm:h-[360px]"></canvas>
             </li>
             <li class="laufband-kachel flex min-h-[340px] flex-col overflow-hidden rounded-[var(--radius-tile)] kachel-verlauf-10 mit-korn kachel-polster sm:min-h-[380px]">
@@ -224,7 +186,7 @@
       </section>
       <section class="bg-white section-y" aria-labelledby="netzwerk-titel">
         <div class="container-breit">
-          <h2 id="netzwerk-titel" data-auf class="max-w-[820px] text-balance text-blue-600">Ein Netzwerk aus über 20.000 Technikern – und ein Team, das jeden Auftrag begleitet.</h2>
+          <h2 id="netzwerk-titel" data-auf class="max-w-[820px] text-balance text-blue-600">Über 20.000 Techniker im Netzwerk. Und ein Team, das jeden Auftrag begleitet.</h2>
           <div class="raster mt-8 lg:mt-14">
             <div class="raster-spalte">
               <div data-auf class="raster-kachel raster-hoch kachel-verlauf-nacht mit-korn kachel-polster text-white">
@@ -234,7 +196,7 @@
                 </div>
                 <div class="raster-fuss">
                   <h3 class="t-h3 text-white">Vereinbart ist vereinbart.</h3>
-                  <p class="mt-4 t-body">So hoch ist unsere SLA-Rate: Termine und Reaktionszeiten halten wir so, wie sie mit Ihnen vereinbart sind.</p>
+                  <p class="mt-4 t-body">So oft haben wir Termin und Reaktionszeit gehalten.</p>
                   <a href="dienstleistungen.html" class="raster-link mt-8 t-body font-bold text-white">Unsere Dienstleistungen</a>
                 </div>
               </div>
@@ -253,12 +215,24 @@
                   <p class="t-h2 tabular-nums text-ink">41</p>
                   <p class="mt-2 t-caption">Mitarbeiter, davon 14&nbsp;Frauen</p>
                   <ul class="portraet-reihe" aria-hidden="true">
-                    <li data-bild-folgt="images/raster/portraet-1.jpg"></li>
-                    <li data-bild-folgt="images/raster/portraet-2.jpg"></li>
-                    <li data-bild-folgt="images/raster/portraet-3.jpg"></li>
-                    <li data-bild-folgt="images/raster/portraet-4.jpg"></li>
-                    <li data-bild-folgt="images/raster/portraet-5.jpg"></li>
-                    <li data-bild-folgt="images/raster/portraet-6.jpg"></li>
+                    <li>
+                      <img src="images/Heads/Office/Cropped/allgo-an-app-for-plus-size-people-jsx4qvopjG4-unsplash.webp" alt="" width="200" height="200" loading="lazy" decoding="async">
+                    </li>
+                    <li>
+                      <img src="images/Heads/Office/Cropped/christina-wocintechchat-com-m-0Zx1bDv5BNY-unsplash.webp" alt="" width="200" height="200" loading="lazy" decoding="async">
+                    </li>
+                    <li>
+                      <img src="images/Heads/Office/Cropped/clay-elliot-mpDV4xaFP8c-unsplash.webp" alt="" width="200" height="200" loading="lazy" decoding="async">
+                    </li>
+                    <li>
+                      <img src="images/Heads/Office/Cropped/fotos-r77Buio2tds-unsplash.webp" alt="" width="200" height="200" loading="lazy" decoding="async">
+                    </li>
+                    <li>
+                      <img src="images/Heads/Office/Cropped/icons8-team-m0oSTE_MjsI-unsplash.webp" alt="" width="200" height="200" loading="lazy" decoding="async">
+                    </li>
+                    <li>
+                      <img src="images/Heads/Office/Cropped/vitaly-gariev-AhZvzGUeLvs-unsplash.webp" alt="" width="200" height="200" loading="lazy" decoding="async">
+                    </li>
                   </ul>
                 </div>
               </div>
@@ -303,22 +277,22 @@
       <section class="verlauf-nacht mit-korn section-y">
         <div class="container-wide">
           <h2 data-auf class="t-h2 text-white">So funktioniert Taskrunner</h2>
-          <p data-auf class="mt-5 max-w-[520px] t-intro text-white/75">Vom Auftrag bis zum Abschlussbericht – drei Schritte, kein Hinterhertelefonieren.</p>
+          <p data-auf class="mt-5 max-w-[520px] t-intro text-white/75">Vom Auftrag bis zum Abschlussbericht sind es drei Schritte. Hinterhertelefonieren muss dabei niemand.</p>
           <ol class="schritte mt-8 grid gap-x-5 gap-y-12 md:grid-cols-3 lg:mt-14">
             <li data-auf class="border-t border-white/15 pt-8 md:border-t-0">
               <p class="t-eyebrow text-white/75">Schritt 1</p>
               <h3 class="mt-4 t-h4 text-white">Legen Sie Ihren Auftrag an.</h3>
-              <p class="mt-5 t-body-tight text-white/75">Einfach die entsprechende Dienstleistung auswählen, den Auftragsort, -zeit und Notizen für Ihren Auftrag hinterlegen.</p>
+              <p class="mt-5 t-body-tight text-white/75">Leistung auswählen, Objekt und Wunschtermin eintragen. Wenn es etwas zu beachten gibt, schreiben Sie es in die Notizen.</p>
             </li>
             <li data-auf class="border-t border-white/15 pt-8 md:border-t-0">
               <p class="t-eyebrow text-white/75">Schritt 2</p>
               <h3 class="mt-4 t-h4 text-white">Wir beauftragen den Betrieb.</h3>
-              <p class="mt-5 t-body-tight text-white/75">Das Fachpersonal oder der Handwerksbetrieb wird digital und automatisiert beauftragt. Unser Operationsteam begleitet jeden Task und stellt die korrekte Durchführung sicher.</p>
+              <p class="mt-5 t-body-tight text-white/75">Den passenden Betrieb beauftragen wir automatisch. Ihre Ansprechperson sieht sich trotzdem an, ob Termin und Ausführung passen. Kann der Handwerker den Auftrag nicht abschließen, bekommen Sie einen Durchführungsbericht und wissen, woran es hängt.</p>
             </li>
             <li data-auf class="border-t border-white/15 pt-8 md:border-t-0">
               <p class="t-eyebrow text-white/75">Schritt 3</p>
               <h3 class="mt-4 t-h4 text-white">Ihr Task ist abgeschlossen.</h3>
-              <p class="mt-5 t-body-tight text-white/75">Sie erhalten einen Abschlussbericht mit Fotos und die Abrechnung – gebündelt auf der Taskrunner Plattform.</p>
+              <p class="mt-5 t-body-tight text-white/75">Sie bekommen den Abschlussbericht mit Fotos und die Abrechnung. Beides liegt auf der Taskrunner-Plattform.</p>
             </li>
           </ol>
           <p class="mt-14 lg:mt-16">
@@ -334,7 +308,7 @@
             <li data-auf class="flex flex-col rounded-[var(--radius-tile)] kachel-verlauf-1 mit-korn kachel-polster">
               <span class="flex h-[42px] items-center text-blue-600"><svg width="34" height="36" viewBox="0 0 90.62 97.36" aria-hidden="true" focusable="false"><path fill="currentColor" d="M90.39,23.01c-.64-2.05-2.5-3.42-4.65-3.42-.49,0-.98.07-1.46.22l-6.7,2.09V6.14c0-3.88-2.41-6.14-6.08-6.14h-31.04c-3.74,0-6.37,2.19-6.37,6.14v30.15c-3.39,1.47-5.76,2.52-6.27,2.78-4.1,2.09-7.19,6.88-7.88,8.81-.85,1.93-19.95,49.47-19.95,49.47h39.58s9.59-4.02,14.69-9.59c2.15-2.34,3.87-5.52,5.06-8.14h12.5c3.29,0,5.77-2.12,5.77-6.35v-3.6h4.24c2.69,0,4.87-2.18,4.87-4.87s-2.18-4.87-4.87-4.87h-4.24v-1.62h4.36c2.68,0,4.87-2.19,4.87-4.87s-2.18-4.87-4.87-4.87h-4.36v-1.62h4.36c2.68,0,4.87-2.19,4.87-4.87s-2.18-4.87-4.87-4.87h-4.36v-5.11l9.61-3c1.24-.39,2.26-1.24,2.86-2.39.6-1.15.72-2.47.33-3.71ZM73.21,74.29h-27.17c-.16,1.03-.36,2.08-.64,3.17-1.81,6.94-7.76,10.86-8.01,11.02-.23.15-.49.22-.75.22-.46,0-.9-.22-1.17-.64-.42-.65-.23-1.5.41-1.93.05-.03,5.29-3.52,6.83-9.39,1.64-6.24.82-11.77.81-11.83-.02-.12-.01-.23,0-.35h15.84c3.25,0,6.49-1.96,6.49-5.8s-2.86-6.26-6.49-6.26h-26.9v-2.78h5.99V4.97h7.32c.03,1.78,1.15,2.77,2.75,2.77h14.64c1.57,0,2.6-1.02,2.62-2.77h7.43v69.32h0Z"/></svg></span>
               <h3 class="mt-6 t-h4 text-blue-600">Anrufen</h3>
-              <p class="mt-3 t-body-tight text-ink/85">Sie schildern uns Ihre Situation, wir sagen Ihnen ehrlich, wo wir Ihnen Arbeit abnehmen – und wo nicht.</p>
+              <p class="mt-3 t-body-tight text-ink/85">Sie schildern uns Ihre Situation, wir sagen Ihnen ehrlich, wo wir Ihnen Arbeit abnehmen. Und wo nicht.</p>
               <p class="mt-auto pt-8">
                 <a href="tel:+4920199999201" class="group inline-flex items-center gap-2 t-body font-bold text-blue-600 transition-colors hover:text-ink">+49 201 99999-201<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="transition-transform group-hover:translate-x-1"><path d="M9 6l6 6-6 6"></path></svg></a>
               </p>
@@ -352,10 +326,11 @@
               <h3 class="mt-6 t-h4 text-blue-600">Ausprobieren</h3>
               <p class="mt-3 t-body-tight text-ink/85">Die Plattform unverbindlich testen und einen ersten Auftrag anlegen.</p>
               <p class="mt-auto pt-8">
-                <a href="/kontakt" class="group inline-flex items-center gap-2 t-body font-bold text-blue-600 transition-colors hover:text-ink">Kostenlos testen<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="transition-transform group-hover:translate-x-1"><path d="M9 6l6 6-6 6"></path></svg></a>
+                <a href="kontakt.html#kunden" class="group inline-flex items-center gap-2 t-body font-bold text-blue-600 transition-colors hover:text-ink">Kostenlos testen<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="transition-transform group-hover:translate-x-1"><path d="M9 6l6 6-6 6"></path></svg></a>
               </p>
             </li>
           </ul>
+          <p data-auf class="mt-10 text-center t-body text-ink/85">Sie sind Techniker und möchten Aufträge übernehmen? <a href="kontakt.html#techniker" class="font-bold text-blue-600 underline decoration-blue-600/30 underline-offset-4 transition-colors hover:decoration-blue-600">Zum Kontakt für Techniker</a></p>
         </div>
       </section>
     </main>
@@ -364,7 +339,7 @@
         <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr] lg:gap-8">
           <div class="max-w-[300px]">
             <img src="images/logo-white.svg" alt="taskrunner" width="2000" height="456" class="h-10 w-auto">
-            <p class="mt-5 text-white/75">Ein Auftrag, alle Gewerke – Wartung, Reparatur und Instandhaltung für Standorte in ganz Deutschland.</p>
+            <p class="mt-5 text-white/75">Ein Auftrag, alle Gewerke. Wartung, Reparatur und Instandhaltung für Standorte in ganz Deutschland.</p>
             <ul class="mt-5 -ml-2.5 flex items-center gap-1">
               <li>
                 <a href="https://www.linkedin.com/company/taskrunner-gmbh/" aria-label="taskrunner auf LinkedIn" target="_blank" rel="noopener noreferrer" class="inline-flex h-10 w-10 items-center justify-center rounded-full text-white/75 transition-colors hover:bg-white/10 hover:text-white"><svg width="18" height="18" viewBox="0 0 128.24 128.36" aria-hidden="true" focusable="false"><path fill="currentColor" d="M0,119.77L.06,8.55C.06,3.96,4.16.64,8.51,0h111.21c4.53.64,8.52,4.12,8.52,8.9v110.59c0,5.22-4.71,8.86-9.64,8.86H9.64C4.53,128.36.36,124.74,0,119.77ZM39.5,28.76c0-6.07-4.92-10.98-10.99-10.98s-10.99,4.92-10.99,10.98,4.92,10.98,10.99,10.98,10.99-4.92,10.99-10.98ZM88.98,68.69c.96,2.41,1.14,4.83,1.3,7.52v33.1s18.94,0,18.94,0l.02-21.37-.07-16.11c-.41-10.48-3-20.89-13.94-24.03-2.8-.8-5.52-1.05-8.49-1.15-7.59-.25-14.44,3.41-18.45,10.15l-.17-8.59-18.15.03v61.06s18.98.02,18.98.02l.02-32.86c.3-5.55,1.85-11.08,7.38-12.6,5.13-1.41,10.56-.37,12.62,4.84ZM37.99,48.2h-18.99s0,61.09,0,61.09h18.99s0-61.09,0-61.09Z"/></svg></a>
@@ -379,7 +354,7 @@
             <ul class="mt-5 space-y-2.5">
               <li><a href="dienstleistungen.html" class="text-white/75 transition-colors hover:text-white">Dienstleistungen</a></li>
               <li><a href="foerderungen.html" class="text-white/75 transition-colors hover:text-white">Förderungen</a></li>
-              <li><a href="/kontakt" class="text-white/75 transition-colors hover:text-white">Kostenlos testen</a></li>
+              <li><a href="kontakt.html#kunden" class="text-white/75 transition-colors hover:text-white">Kostenlos testen</a></li>
               <li><a href="https://app.taskrunner.de" class="text-white/75 transition-colors hover:text-white">Login</a></li>
             </ul>
           </div>
@@ -396,6 +371,7 @@
             <ul class="mt-5 space-y-2.5">
               <li><a href="tel:+4920199999201" class="text-white/75 transition-colors hover:text-white">+49 201 99999-201</a></li>
               <li><a href="mailto:sales@taskrunner.de" class="text-white/75 transition-colors hover:text-white">sales@taskrunner.de</a></li>
+              <li><a href="kontakt.html#techniker" class="text-white/75 transition-colors hover:text-white">Kontakt für Techniker</a></li>
             </ul>
           </div>
         </div>

@@ -43,7 +43,7 @@ from htmlformat import formatiere  # noqa: E402
 # Werte, die jede Seite hat, solange sie nichts anderes sagt.
 VORGABEN = {
     'start': 'index.html',        # Ziel des Logos oben links
-    'kontakt': 'index.html#kontakt',
+    'kontakt': 'kontakt.html',
     'robots': '',                 # z.B. <meta name="robots" content="noindex, nofollow">
 }
 HINWEIS = '<!-- Erzeugt aus quellen/%s - Aenderungen bitte dort vornehmen. -->'

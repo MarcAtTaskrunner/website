@@ -356,6 +356,7 @@
     var ruhig = window.matchMedia("(prefers-reduced-motion: reduce)");
     var SCHWELLE = 6;       /* ab so vielen Pixeln wird aus Druecken Ziehen */
     var MITLAUF = 0.6;      /* Pixel seitwaerts je Pixel Seitenscroll */
+    var DAUER = 450;        /* ms je Pfeilschritt, nur fuer die eigene Animation */
 
     Array.prototype.forEach.call(baender, function (band) {
       var spur = band.firstElementChild;
@@ -386,6 +387,7 @@
 
       /* Ziehen mit der Maus; Finger und Stift wischen nativ. */
       band.addEventListener("pointerdown", function (e) {
+        anhalten();
         if (e.pointerType !== "mouse" || e.button !== 0) return;
         gedrueckt = true;
         gezogen = false;
@@ -423,10 +425,47 @@
 
       band.addEventListener("dragstart", function (e) { e.preventDefault(); });
 
-      /* Pfeiltasten: das naechste bzw. vorige Bild an den linken Rand. */
+      /* Pfeiltasten: das naechste bzw. vorige Bild an den linken Rand.
+         Wie auf apple.com scrollt der Browser selbst weich (behavior:
+         "smooth"): das laeuft neben JavaScript her und ruckelt nicht,
+         wenn die Schaubilder zeichnen; die Dauer legt der Browser fest
+         (Chrome ~0,5 s). Kann er das nicht, uebernimmt eine eigene
+         Animation mit DAUER ms und flacher Kurve. Wer das Band selbst
+         anfasst oder am Rad dreht, haelt die Bewegung an. */
+      var nativWeich = "scrollBehavior" in document.documentElement.style;
+      var laufNr = 0, laufZiel = null;
+      function anhalten() {
+        if (laufNr) cancelAnimationFrame(laufNr);
+        laufNr = 0;
+        laufZiel = null;
+      }
+      var gleiten = function (ziel) {
+        anhalten();
+        ziel = Math.max(0, Math.min(band.scrollWidth - band.clientWidth, ziel));
+        if (ruhig.matches) { band.scrollLeft = ziel; return; }
+        laufZiel = ziel;
+        if (nativWeich) { band.scrollTo({ left: ziel, behavior: "smooth" }); return; }
+        var von = band.scrollLeft, t0 = null;
+        var bild = function (jetzt) {
+          if (t0 === null) t0 = jetzt;
+          var f = Math.min(1, (jetzt - t0) / DAUER);
+          f = -(Math.cos(Math.PI * f) - 1) / 2;                          /* easeInOutSine */
+          band.scrollLeft = von + (ziel - von) * f;
+          if (f < 1) laufNr = requestAnimationFrame(bild);
+          else laufNr = 0;
+        };
+        laufNr = requestAnimationFrame(bild);
+      };
+      band.addEventListener("wheel", anhalten, { passive: true });
+      /* Das Ziel gilt, bis das Band dort steht */
+      band.addEventListener("scroll", function () {
+        if (laufZiel !== null && !laufNr && Math.abs(band.scrollLeft - laufZiel) < 1.5) laufZiel = null;
+      }, { passive: true });
+
       var schritt = function (richtung) {
         var rand = parseFloat(getComputedStyle(spur).paddingLeft) || 0;
-        var x = band.scrollLeft;
+        /* Schnell nacheinander geklickt: vom laufenden Ziel aus weiter */
+        var x = laufZiel !== null ? laufZiel : band.scrollLeft;
         var marken = Array.prototype.map.call(spur.children, function (li) {
           return li.offsetLeft - rand;
         });
@@ -434,7 +473,7 @@
           ? marken.filter(function (m) { return m > x + 2; })[0]
           : marken.filter(function (m) { return m < x - 2; }).pop();
         if (ziel === undefined) ziel = richtung > 0 ? band.scrollWidth : 0;
-        band.scrollTo({ left: ziel, behavior: ruhig.matches ? "auto" : "smooth" });
+        gleiten(ziel);
       };
 
       document.addEventListener("keydown", function (e) {

@@ -56,8 +56,10 @@ menue:        blog.html
             </ul>
           </div>
           <!-- Pfeile wie bei apple.com, für alle, die Ziehen und Pfeiltasten
-               nicht kennen. hidden, bis app.js sie verdrahtet hat. -->
-          <div class="rand-seite mt-6 flex justify-end gap-3 lg:mt-8" hidden>
+               nicht kennen. In container-wide wie auf der Startseite,
+               damit sie mit der Inhaltsbreite fluchten statt mit dem
+               Fensterrand. hidden, bis app.js sie verdrahtet hat. -->
+          <div class="container-wide mt-6 flex justify-end gap-3 lg:mt-8" hidden>
             <button type="button" class="laufband-pfeil" data-laufband-pfeil="zurueck" aria-controls="laufband-proptech" aria-label="Vorheriges Bild"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
             <button type="button" class="laufband-pfeil" data-laufband-pfeil="vor" aria-controls="laufband-proptech" aria-label="Nächstes Bild"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
           </div>

@@ -89,14 +89,6 @@
     this.dunkel = "dunkel" in this.flaeche.dataset;
     this.fotos = this.flaeche.parentNode.querySelectorAll("[data-postenbild]");
     if (this.fotoNr == null) this.fotoNr = 0;   /* im HTML vorbelegt */
-
-    /* Canvas nimmt keine Ruecksicht auf noch ladende Schriften: es misst
-       und zeichnet dann den Rueckfall. Deshalb einmal anfordern. */
-    var s2 = this;
-    if (document.fonts && document.fonts.load) {
-      document.fonts.load('900 15px "DIN Pro Cond"').then(function () { s2.zeichnen(); },
-                                                          function () {});
-    }
   };
 
   /* Der Einlauf haengt an der echten Uhr, nicht am Bildzaehler: sonst
@@ -229,8 +221,9 @@
       if (p.an > 0.02) {
         g.globalAlpha = auf * Math.min(1, p.an * 1.4);
         g.fillStyle = this.dunkel ? "#ffffff" : "#1155cc";
-        g.font = '900 15px "DIN Pro Cond", "DIN Pro", ui-sans-serif, sans-serif';
-        try { g.letterSpacing = "0.06em"; } catch (e3) {}
+        /* wie das Gewerk im Kopfband (data-radgewerk): font-mono 12px, Versalien */
+        g.font = '500 12px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace';
+        try { g.letterSpacing = "0.08em"; } catch (e3) {}
         g.textBaseline = "middle";
         var txt = p.name.toUpperCase();
         var br = g.measureText(txt).width;
