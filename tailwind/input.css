@@ -1844,8 +1844,8 @@ html:has(.lightbox[open]) { overflow: hidden; }
  *  geschlossenen Zeile nicht an, dass sich darunter etwas verbirgt.
  *  Links auf #heizung usw. klappen das Programm auf (foerdercheck.js).
  * ------------------------------------------------------------------ */
-.programm { border-top: 1px solid var(--vb-linie); }
-.programm:last-child { border-bottom: 1px solid var(--vb-linie); }
+.programm { border-top: 1px solid var(--vb-linie, #e4e9f2); }
+.programm:last-child { border-bottom: 1px solid var(--vb-linie, #e4e9f2); }
 .programm > summary {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
