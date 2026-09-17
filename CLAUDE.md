@@ -31,6 +31,7 @@ mit im Git.
 | Meta-Tags, Favicon, Open Graph | `quellen/bausteine/seitenkopf.html` |
 | Domain für Canonical und `og:url` | `DOMAIN` in `werkzeuge/bauen.py` |
 | Sicherheits-Header, Content-Security-Policy | `_headers`. Die CSP erlaubt nur Skripte aus eigenen Dateien plus das eine Inline-Skript `js-auf` per Hash. Ein neues Inline-Skript oder eine fremde Quelle (Analytics, Karten, Videos) wird live blockiert, bis es dort eingetragen ist |
+| Welche Bilder live gehen | `build.mjs` nimmt nur Bilder mit, deren Pfad `images/…` in einer Seite, im CSS oder in einem Skript ausgeschrieben steht |
 | Links `kontakt.html` → `/kontakt` für live | `build.mjs` schreibt sie nur in `dist/` um; die Seiten im Wurzelverzeichnis behalten `.html` für die Vorschau |
 | Titel/Beschreibung einer Seite | Kopfblock `<!--werte …-->` in `quellen/<seite>.html` |
 | Inhalt einer Seite | `quellen/<seite>.html` |

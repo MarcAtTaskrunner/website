@@ -17,8 +17,11 @@ const DATEIEN = [
 ];
 // Dazu die Jahresordner: Blogbeitraege liegen wie im alten WordPress unter
 // JJJJ/MM/TT/titel/index.html, damit ihre Adressen gleich bleiben.
+// images/ fehlt hier absichtlich: Mit geht nur, was eine Seite, das CSS oder
+// ein Skript tatsaechlich verwendet (siehe unten). Unbenutzte Originale
+// bleiben so lokal und werden nicht oeffentlich.
 const ORDNER = [
-  'assets', 'images', 'videos',
+  'assets', 'videos',
   ...(await readdir('.')).filter((d) => /^\d{4}$/.test(d)).sort(),
 ];
 
@@ -70,4 +73,28 @@ for (const d of DATEIEN) {
   await (d.endsWith('.html') ? kopiereSeite : kopiere)(d, path.join(AUS, d)); n++;
 }
 for (const o of ORDNER) await kopiereOrdner(o, path.join(AUS, o));
-console.log(`dist/ gebaut (${n} Einzeldateien + ${ORDNER.join(', ')}).`);
+
+// Verwendete Bilder: jeder Pfad images/… in den ausgelieferten HTML-, CSS-
+// und JS-Dateien. Ein Bild, das nur per zusammengesetztem String geladen
+// wird, fehlt live - dann den vollen Pfad irgendwo ausschreiben.
+async function textdateien(ordner) {
+  const aus = [];
+  for (const e of await readdir(ordner, { withFileTypes: true })) {
+    const p = path.join(ordner, e.name);
+    if (e.isDirectory()) aus.push(...await textdateien(p));
+    else if (/\.(html|css|js)$/.test(e.name)) aus.push(p);
+  }
+  return aus;
+}
+const bilder = new Set();
+for (const d of await textdateien(AUS)) {
+  for (const m of (await readFile(d, 'utf8')).matchAll(/images\/[^"'\s,)|;<>]+/g)) {
+    bilder.add(decodeURIComponent(m[0].replace(/[?#].*$/, '')));
+  }
+}
+let b = 0;
+for (const bild of [...bilder].sort()) {
+  try { await stat(bild); } catch { console.warn('Bild fehlt:', bild); continue; }
+  await kopiere(bild, path.join(AUS, bild)); b++;
+}
+console.log(`dist/ gebaut (${n} Einzeldateien + ${ORDNER.join(', ')} + ${b} Bilder).`);
