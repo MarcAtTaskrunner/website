@@ -1,0 +1,65 @@
+# Holt stuendlich die offenen Stellen aus Personio. Hat sich etwas
+# geaendert, baut es die Seiten neu, committet und pusht - der Push
+# loest wie jeder andere den Cloudflare-Build aus.
+#
+# Von Hand starten: GitHub -> Actions -> "Stellen aus Personio" -> Run workflow.
+#
+# GitHub schaltet Zeitplaene ab, wenn 60 Tage lang nichts im Repo passiert.
+# Dann kommt eine E-Mail; unter Actions laesst sich der Workflow wieder
+# einschalten.
+name: Stellen aus Personio
+
+on:
+  schedule:
+    - cron: '17 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: stellen
+  cancel-in-progress: false
+
+jobs:
+  stellen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Stellen abholen
+        run: python3 werkzeuge/stellen.py
+
+      - name: Geaendert?
+        id: pruefen
+        run: |
+          if git diff --quiet -- quellen/bausteine/stellen.html; then
+            echo "neu=nein" >> "$GITHUB_OUTPUT"
+          else
+            echo "neu=ja" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/setup-node@v4
+        if: steps.pruefen.outputs.neu == 'ja'
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Seiten bauen
+        if: steps.pruefen.outputs.neu == 'ja'
+        run: |
+          npm ci
+          python3 werkzeuge/bauen.py
+          npm run css
+
+      - name: Committen und pushen
+        if: steps.pruefen.outputs.neu == 'ja'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Stellen aus Personio aktualisiert"
+          # Falls in der Zwischenzeit jemand gepusht hat
+          git pull --rebase
+          git push

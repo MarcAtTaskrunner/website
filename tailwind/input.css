@@ -11,6 +11,7 @@
 @source "../foerderungen.html";
 @source "../impressum.html";
 @source "../index.html";
+@source "../karriere.html";
 @source "../kontakt.html";
 @source "../nutzungsbedingungen.html";
 /* seiten:ende */
@@ -1999,3 +2000,74 @@ html:has(.lightbox[open]) { overflow: hidden; }
   object-fit: cover;
 }
 .kontakt-kopf + .kontakt-kopf { margin-left: calc(var(--kopf) * -0.19); }
+
+/* ------------------------------------------------------------------
+ *  Stellen (karriere.html). Das Markup erzeugt werkzeuge/stellen.py aus
+ *  dem Personio-Feed; die Texte darin haben keine Klassen, deshalb
+ *  greifen die Regeln hier ueber .stelle-text auf nackte p/ul/li.
+ *  Aufklappen wie bei .gewerk-karte.
+ * ------------------------------------------------------------------ */
+.stellen-liste { border-bottom: 1px solid var(--vb-linie, #e4e9f2); }
+.stelle {
+  border-top: 1px solid var(--vb-linie, #e4e9f2);
+  transition: border-color 0.25s ease;
+}
+.stelle[open] { border-top-color: rgba(0,70,137,0.35); }
+.stelle > summary {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 22px 0;
+  cursor: pointer;
+  list-style: none;
+}
+.stelle > summary::-webkit-details-marker { display: none; }
+.stelle > summary::after {
+  content: "";
+  flex: none;
+  width: 12px;
+  height: 12px;
+  margin: 0 6px 6px auto;
+  border-right: 2px solid var(--color-blue-medium);
+  border-bottom: 2px solid var(--color-blue-medium);
+  transform: rotate(45deg);
+  transition: transform 0.25s ease, margin 0.25s ease;
+}
+.stelle[open] > summary::after { transform: rotate(225deg); margin-bottom: -6px; }
+.stelle > summary:focus-visible {
+  outline: 2px solid var(--color-blue-medium);
+  outline-offset: 3px;
+}
+.stelle-kopf { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.stelle h3 { color: var(--color-blue-medium); transition: color 0.2s ease; }
+.stelle > summary:hover h3 { color: var(--color-ink); }
+.stelle-inhalt { padding: 4px 0 32px; max-width: 760px; }
+.stelle-abschnitt { margin-top: 28px; font-weight: 600; color: var(--color-blue-600); }
+.stelle-abschnitt:first-child { margin-top: 0; }
+.stelle-text { margin-top: 10px; color: var(--color-ink); }
+.stelle-text p + p, .stelle-text ul + p, .stelle-text p + ul,
+.stelle-text ol + p, .stelle-text p + ol { margin-top: 12px; }
+.stelle-text ul, .stelle-text ol { display: grid; gap: 6px; }
+.stelle-text ul li { position: relative; padding-left: 16px; }
+.stelle-text ul li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-blue-light);
+}
+.stelle-text ol { list-style: decimal; padding-left: 20px; }
+.stelle-text strong { font-weight: 600; }
+.stelle-text a { color: var(--color-blue-600); text-decoration: underline; text-underline-offset: 4px; }
+@supports selector(::details-content) {
+  .stelle { interpolate-size: allow-keywords; }
+  .stelle::details-content {
+    block-size: 0;
+    overflow: hidden;
+    transition: block-size 0.3s ease, content-visibility 0.3s allow-discrete;
+  }
+  .stelle[open]::details-content { block-size: auto; }
+}

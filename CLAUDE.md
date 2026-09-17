@@ -40,6 +40,7 @@ mit im Git.
 | Eckenradius | Überall 20 px über `--radius-card`/`--radius-tile`/`--radius-xl` im `@theme` von `tailwind/input.css`. Ausnahmen: Buttons (`.btn`) sind Pillen, Kreise bleiben Kreise |
 | Schriftgrößen | **eine** Skala in `input.css` (`@layer components`), dokumentiert in `TYPOGRAFIE.md` – es gibt keine zweite mehr |
 | Mobilmenü-Verhalten, Karussell | `assets/app.js` (keine Quelle, direkt bearbeiten) |
+| Stellenangebote (Jobs) | Titel und Texte **in Personio** pflegen. `werkzeuge/stellen.py` holt sie nach `quellen/bausteine/stellen.html` (Bauergebnis, nicht von Hand ändern); Rahmen der Seite: `quellen/karriere.html`; Aussehen: `.stelle` in `tailwind/input.css` |
 | Bildergalerie im Blogbeitrag (Laufband, Lightbox) | Aussehen: `.laufband`/`.lightbox` in `tailwind/input.css`; Ziehen, Pfeiltasten, Mitlaufen, Lightbox: `assets/app.js` (`[data-laufband]`, `[data-lightbox]`) |
 | Förder-Check (Förderungen): Fragen | `quellen/foerderungen.html` |
 | Kontaktseite (Vertrieb links hell, Techniker rechts dunkel) | Texte, Telefon, Adressen: `quellen/kontakt.html`; Aufteilung 2/3 zu 1/3: `.kontakt-teilung`/`.kontakt-flaeche` in `tailwind/input.css` |
@@ -121,6 +122,18 @@ Die gebauten Jahresordner im Wurzelverzeichnis (`2025/` …) sind Bauergebnis
 wie die übrigen Seiten; `build.mjs` und `pruefen.mjs` nehmen sie mit.
 Auf Cloudflare liefert `…/titel/` die `index.html` aus, `…/titel` ohne
 Schrägstrich leitet dorthin um.
+
+## Stellen aus Personio
+
+Ein GitHub-Zeitplan (`.github/workflows/stellen.yml`) ruft stündlich
+`werkzeuge/stellen.py` auf. Nur wenn sich `quellen/bausteine/stellen.html`
+dadurch ändert, baut er die Seiten, committet als `github-actions[bot]`
+und pusht – Cloudflare veröffentlicht dann wie gewohnt.
+
+Deshalb **vor jeder Arbeit `git pull`**, sonst wird der eigene Push
+abgelehnt. Von Hand abholen geht lokal mit `python3 werkzeuge/stellen.py`
+(danach wie immer bauen) oder auf GitHub unter Actions → „Stellen aus
+Personio“ → Run workflow.
 
 ## Neues Schaubild anlegen
 

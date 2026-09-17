@@ -22,6 +22,10 @@ Launch loeschen.
 
 ## Git
 
+GitHub committet selbst, sobald sich bei Personio die Stellen aendern
+(siehe `.github/workflows/stellen.yml`). Vor dem Arbeiten deshalb immer
+erst `git pull`.
+
 Das Repository liegt in diesem Ordner, Remote ist
 `https://github.com/MarcAtTaskrunner/website.git` (Branch `main`).
 
