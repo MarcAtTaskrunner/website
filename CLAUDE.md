@@ -40,7 +40,7 @@ mit im Git.
 | Eckenradius | Überall 20 px über `--radius-card`/`--radius-tile`/`--radius-xl` im `@theme` von `tailwind/input.css`. Ausnahmen: Buttons (`.btn`) sind Pillen, Kreise bleiben Kreise |
 | Schriftgrößen | **eine** Skala in `input.css` (`@layer components`), dokumentiert in `TYPOGRAFIE.md` – es gibt keine zweite mehr |
 | Mobilmenü-Verhalten, Karussell | `assets/app.js` (keine Quelle, direkt bearbeiten) |
-| Stellenangebote (Jobs) | Titel und Texte **in Personio** pflegen. `werkzeuge/stellen.py` holt sie nach `quellen/bausteine/stellen.html` (Bauergebnis, nicht von Hand ändern); Rahmen der Seite: `quellen/karriere.html`; Aussehen: `.stelle` in `tailwind/input.css` |
+| Stellenangebote (Jobs) | Nur die Liste steht auf der Website, jeder Eintrag verlinkt zu Personio. Titel **in Personio** pflegen. `werkzeuge/stellen.py` holt sie nach `quellen/bausteine/stellen.html` (Bauergebnis, nicht von Hand ändern); Rahmen der Seite: `quellen/karriere.html`; Aussehen: `.stelle` in `tailwind/input.css` |
 | Bildergalerie im Blogbeitrag (Laufband, Lightbox) | Aussehen: `.laufband`/`.lightbox` in `tailwind/input.css`; Ziehen, Pfeiltasten, Mitlaufen, Lightbox: `assets/app.js` (`[data-laufband]`, `[data-lightbox]`) |
 | Förder-Check (Förderungen): Fragen | `quellen/foerderungen.html` |
 | Kontaktseite (Vertrieb links hell, Techniker rechts dunkel) | Texte, Telefon, Adressen: `quellen/kontakt.html`; Aufteilung 2/3 zu 1/3: `.kontakt-teilung`/`.kontakt-flaeche` in `tailwind/input.css` |
