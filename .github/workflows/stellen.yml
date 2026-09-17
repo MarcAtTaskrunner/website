@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Stellen abholen
         run: python3 werkzeuge/stellen.py
@@ -40,7 +40,7 @@ jobs:
             echo "neu=ja" >> "$GITHUB_OUTPUT"
           fi
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         if: steps.pruefen.outputs.neu == 'ja'
         with:
           node-version: 24
