@@ -69,30 +69,26 @@ beschreibung: Kontakt zu Taskrunner: als Kunde direkt zum Vertrieb, als Technike
           </div>
         </section>
       </div>
-      <!-- Fragen von Technikern. Aufbau und Aussehen wie die Programme auf
-           foerderungen.html (.programm in tailwind/input.css): mehrere
-           duerfen offen sein, der Pfeil dreht sich beim Oeffnen. -->
+      <!-- Fragen von Technikern. Aufbau und Aussehen wie die Gewerke auf
+           dienstleistungen.html (.gewerk-karte in tailwind/input.css):
+           name= haelt nur eine Frage offen, die erste startet offen. -->
       <section class="mt-20 lg:mt-28" aria-labelledby="faq-techniker-titel">
         <p class="t-eyebrow text-ink/80">Für Techniker</p>
         <h2 id="faq-techniker-titel" class="mt-4 max-w-[720px] text-balance hyphens-auto break-words t-h2 text-blue-600">Häufige Fragen</h2>
-        <div class="mt-10 lg:mt-14">
-          <details class="programm">
+        <div class="mt-10 max-w-[760px] lg:mt-14">
+          <details class="gewerk-karte" name="faq-techniker" open>
             <summary>
-              <h3 class="hyphens-auto break-words t-h4 text-blue-600">Ich habe mein Geld noch nicht bekommen. Wann erhalte ich es?</h3>
-              <span class="programm-pfeil" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg></span>
+              <span class="gewerk-symbol" aria-hidden="true"><img src="images/icons/dokument.svg" alt=""></span>
+              <h3 class="hyphens-auto break-words t-h4">Ich habe mein Geld noch nicht bekommen. Wann erhalte ich es?</h3>
             </summary>
-            <div class="programm-inhalt">
-              <p class="max-w-[680px] t-body text-ink/85">Unser Zahlungsziel liegt bei 14 Tagen. Jede Rechnung geht bei uns durch zwei Abteilungen und wird mehrfach freigegeben, bevor wir sie überweisen können.</p>
-            </div>
+            <p class="max-w-[680px] pb-6 t-body text-ink sm:pb-7">Unser Zahlungsziel liegt bei 14 Tagen. Jede Rechnung geht bei uns durch zwei Abteilungen und wird mehrfach freigegeben, bevor wir sie überweisen können.</p>
           </details>
-          <details class="programm">
+          <details class="gewerk-karte" name="faq-techniker">
             <summary>
-              <h3 class="hyphens-auto break-words t-h4 text-blue-600">Wieso habe ich eine Gutschrift per E-Mail bekommen, obwohl ich bereits selbst eine Rechnung geschickt habe?</h3>
-              <span class="programm-pfeil" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg></span>
+              <span class="gewerk-symbol" aria-hidden="true"><img src="images/icons/dokument.svg" alt=""></span>
+              <h3 class="hyphens-auto break-words t-h4">Wieso habe ich eine Gutschrift per E-Mail bekommen, obwohl ich bereits selbst eine Rechnung geschickt habe?</h3>
             </summary>
-            <div class="programm-inhalt">
-              <p class="max-w-[680px] t-body text-ink/85">Sie müssen damit nichts tun. Wenn wir Ihre Rechnung bearbeiten, erstellt unser System automatisch eine Gutschrift und verbucht sie später zusammen mit der Überweisung. Zuschicken müssen wir sie Ihnen trotzdem, dazu sind wir verpflichtet.</p>
-            </div>
+            <p class="max-w-[680px] pb-6 t-body text-ink sm:pb-7">Sie müssen damit nichts tun. Wenn wir Ihre Rechnung bearbeiten, erstellt unser System automatisch eine Gutschrift und verbucht sie später zusammen mit der Überweisung. Zuschicken müssen wir sie Ihnen trotzdem, dazu sind wir verpflichtet.</p>
           </details>
         </div>
       </section>

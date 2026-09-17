@@ -1070,7 +1070,7 @@ footer h3 {
  * ------------------------------------------------------------------ */
 
 .gewerk-karte {
-  border-top: 1px solid var(--vb-linie);
+  border-top: 1px solid var(--vb-linie, #e4e9f2);
   transition: border-color 0.25s ease;
 }
 .gewerk-karte[open] { border-top-color: rgba(0,70,137,0.35); }

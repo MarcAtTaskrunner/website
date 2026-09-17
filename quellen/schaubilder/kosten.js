@@ -62,7 +62,7 @@
 
     /* Kostenpunkte: an der Stuetzstelle, y von der abgetasteten Kurve */
     var namen = (this.flaeche.dataset.posten ||
-      "Anfahrt,Materialkosten,Arbeitszeit,Handlingfee").split(",");
+      "Anfahrt,Materialkosten,Arbeitszeit,Taskfee").split(",");
     var stellen = [0.111, 0.354, 0.678, 0.887];
     var mass = Math.min(this.b, this.h * 1.9);
     this.posten = [];
