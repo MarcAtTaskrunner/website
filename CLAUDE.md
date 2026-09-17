@@ -29,6 +29,9 @@ mit im Git.
 | Navigation, Logo, Mobilmenü | `quellen/bausteine/kopfzeile.html` |
 | Fußzeile, Rechtslinks, Telefonnummer | `quellen/bausteine/fusszeile.html` |
 | Meta-Tags, Favicon, Open Graph | `quellen/bausteine/seitenkopf.html` |
+| Domain für Canonical und `og:url` | `DOMAIN` in `werkzeuge/bauen.py` |
+| Sicherheits-Header, Content-Security-Policy | `_headers`. Die CSP erlaubt nur Skripte aus eigenen Dateien plus das eine Inline-Skript `js-auf` per Hash. Ein neues Inline-Skript oder eine fremde Quelle (Analytics, Karten, Videos) wird live blockiert, bis es dort eingetragen ist |
+| Links `kontakt.html` → `/kontakt` für live | `build.mjs` schreibt sie nur in `dist/` um; die Seiten im Wurzelverzeichnis behalten `.html` für die Vorschau |
 | Titel/Beschreibung einer Seite | Kopfblock `<!--werte …-->` in `quellen/<seite>.html` |
 | Inhalt einer Seite | `quellen/<seite>.html` |
 | Ein Canvas-Schaubild | `quellen/schaubilder/<motiv>.js` |
@@ -184,5 +187,8 @@ und veröffentlicht. Einzelheiten in `DEPLOY.md`.
   ohne Fenster (Playwright + axe-core), Ausgabe nur als Text
 - `werkzeuge/schriftbild.mjs` – zeigt, welche Größe und Stärke jede
   Textklasse auf welcher Seite bekommt; zum Vergleichen zweier Seiten
+- `werkzeuge/bilder.mjs` – verkleinert neue Fotos vor dem Einbau
+  (`node werkzeuge/bilder.mjs images/…jpg`); JPEG/WebP, max. 2400 px,
+  Dateiname bleibt
 - `werkzeuge/bild.mjs` – Ausschnitt einer Seite als Bild, standardmäßig
   in halber Auflösung

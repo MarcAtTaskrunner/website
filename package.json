@@ -12,6 +12,7 @@
     "@axe-core/playwright": "^4.13.0",
     "@tailwindcss/cli": "^4.3.3",
     "playwright": "^1.63.0",
+    "sharp": "^0.35.4",
     "tailwindcss": "^4.3.3"
   }
 }

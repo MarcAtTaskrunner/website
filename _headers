@@ -1,3 +1,16 @@
+# Sicherheit, fuer alle Adressen. HSTS bewusst ohne includeSubDomains:
+# fm., app. und jobs.taskrunner.de sind nicht Teil dieser Website.
+# Der sha256-Wert erlaubt genau das eine Inline-Skript
+#   document.documentElement.className+=" js-auf";
+# auf Start- und Foerderseite. Wer es aendert, muss den Wert neu berechnen:
+#   printf '%s' '<skript>' | openssl dgst -sha256 -binary | base64
+/*
+  Strict-Transport-Security: max-age=31536000
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-zQ0LhYqn7/VKhTcM095L9PPNSUmRtn69aJGsJiZwZdk='; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; media-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'
+
 /images/*
   Cache-Control: public, max-age=3600
 /assets/fonts/*

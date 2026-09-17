@@ -46,6 +46,8 @@ VORGABEN = {
     'kontakt': 'kontakt.html',
     'robots': '',                 # z.B. <meta name="robots" content="noindex, nofollow">
 }
+# Live-Adresse; daraus entstehen Canonical und og:url jeder Seite.
+DOMAIN = 'https://www.taskrunner.de'
 HINWEIS = '<!-- Erzeugt aus quellen/%s - Aenderungen bitte dort vornehmen. -->'
 
 
@@ -131,10 +133,19 @@ def pfade_anpassen(text, datei):
     return re.sub(r'(?<![\w-])(href|src|srcset|poster)="([^"]*)"', ersetzen, text)
 
 
+def adresse(datei):
+    """Oeffentliche Adresse einer Seite, so wie Cloudflare sie ausliefert:
+    index.html -> /, kontakt.html -> /kontakt, a/b/index.html -> /a/b/"""
+    if datei == 'index.html' or datei.endswith('/index.html'):
+        return DOMAIN + '/' + datei[:-len('index.html')]
+    return DOMAIN + '/' + datei[:-len('.html')]
+
+
 def seite_bauen(datei):
     with open(os.path.join(QUELLEN, datei), encoding='utf-8') as d:
         text = d.read()
     werte, text = werte_lesen(text)
+    werte.setdefault('adresse', adresse(datei))
     text = einbauen(text)
     text = werte_einsetzen(text, werte, datei)
     text = menue_markieren(text, datei, werte.get('menue', datei))
