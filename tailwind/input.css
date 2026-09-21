@@ -14,6 +14,7 @@
 @source "../karriere.html";
 @source "../kontakt.html";
 @source "../nutzungsbedingungen.html";
+@source "../winter-is-coming.html";
 /* seiten:ende */
 /* Die Ergebniskarten des Foerder-Checks entstehen erst im Browser. */
 @source "../assets/foerdercheck.js";
@@ -2033,3 +2034,46 @@ html:has(.lightbox[open]) { overflow: hidden; }
 .stelle-kopf { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .stelle-titel { color: var(--color-blue-medium); transition: color 0.2s ease; }
 .stelle:hover .stelle-titel { color: var(--color-ink); }
+
+
+/* ------------------------------------------------------------------ *
+ *  Kopfband "Winter is Coming" (/winter-is-coming)
+ *
+ *  Kein Verlauf, sondern die dunkelste Markenfarbe als Flaeche: auf ihr
+ *  stehen die weissen Flocken am ruhigsten, und der Schriftzug im Bild
+ *  ist freigestellt, braucht also einen gleichmaessigen Grund.
+ *
+ *  Die Hoehe kommt aus dem Polster im Markup; min-height faengt nur
+ *  sehr flache Fenster ab. Das Bild bekommt eine Hoechstbreite statt
+ *  einer festen: darunter schrumpft es mit der Seite mit.
+ * ------------------------------------------------------------------ */
+.winter-kopf {
+  background: var(--color-blue-darker);
+  min-height: 72vh;
+  min-height: 72dvh;
+}
+@media (max-height: 720px) {
+  .winter-kopf { min-height: 560px; }
+}
+
+/* Die Schneeflaeche liegt ueber dem Grund, aber unter allem Inhalt -
+   der steht im Markup mit .relative daneben. pointer-events: none,
+   damit Knoepfe und Links darunter anklickbar bleiben. */
+.schnee-flaeche {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.winter-titel img {
+  display: block;
+  width: 100%;
+  max-width: 880px;
+  height: auto;
+  margin-inline: auto;
+}
+@media (min-width: 1069px) {
+  .winter-titel img { max-width: 1040px; }
+}
