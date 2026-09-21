@@ -2049,8 +2049,19 @@ html:has(.lightbox[open]) { overflow: hidden; }
  *  laeuft. Das Bild bekommt eine Hoechstbreite statt einer festen:
  *  darunter schrumpft es mit der Seite mit.
  * ------------------------------------------------------------------ */
+/* Vignette: dunkle Raender, heller Kern hinter dem Schriftzug. Sie
+   liegt im Hintergrund des Bandes, also unter Korn, Schriftzug und
+   Schnee - sie dunkelt den Grund ab, nicht den Inhalt. Die Mitte sitzt
+   etwas ueber der Bildmitte, dort steht das Motiv. Die Grundfarbe
+   bleibt als letzte Lage stehen, sonst setzt der Kurzschreiber sie auf
+   durchsichtig zurueck (wie bei .verlauf-nacht). */
 .winter-kopf {
-  background: var(--color-blue-darker);
+  background:
+    radial-gradient(115% 85% at 50% 42%,
+      rgba(0, 0, 0, 0) 30%,
+      rgba(0, 0, 0, 0.26) 62%,
+      rgba(0, 0, 0, 0.66) 100%),
+    var(--color-blue-darker);
   height: 100vh;
   height: 100dvh;
   min-height: fit-content;
