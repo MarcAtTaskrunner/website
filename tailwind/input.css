@@ -2043,25 +2043,27 @@ html:has(.lightbox[open]) { overflow: hidden; }
  *  stehen die weissen Flocken am ruhigsten, und der Schriftzug im Bild
  *  ist freigestellt, braucht also einen gleichmaessigen Grund.
  *
- *  Die Hoehe kommt aus dem Polster im Markup; min-height faengt nur
- *  sehr flache Fenster ab. Das Bild bekommt eine Hoechstbreite statt
- *  einer festen: darunter schrumpft es mit der Seite mit.
+ *  Das Band fuellt den Bildschirm. dvh statt vh, damit die Leisten auf
+ *  dem Handy mitzaehlen; fit-content als Notbremse, damit in sehr
+ *  flachen Fenstern nichts aus dem Band in den naechsten Abschnitt
+ *  laeuft. Das Bild bekommt eine Hoechstbreite statt einer festen:
+ *  darunter schrumpft es mit der Seite mit.
  * ------------------------------------------------------------------ */
 .winter-kopf {
   background: var(--color-blue-darker);
-  min-height: 72vh;
-  min-height: 72dvh;
-}
-@media (max-height: 720px) {
-  .winter-kopf { min-height: 560px; }
+  height: 100vh;
+  height: 100dvh;
+  min-height: fit-content;
 }
 
-/* Die Schneeflaeche liegt ueber dem Grund, aber unter allem Inhalt -
-   der steht im Markup mit .relative daneben. pointer-events: none,
-   damit Knoepfe und Links darunter anklickbar bleiben. */
+/* Der Schnee liegt vor allem, was im Band steht - auch vor dem
+   Schriftzug, sonst fiele er sichtbar hinter das Bild. Der Inhalt
+   daneben steht auf z-index auto, eine 1 hier genuegt also.
+   pointer-events: none, damit Links darunter anklickbar bleiben. */
 .schnee-flaeche {
   position: absolute;
   inset: 0;
+  z-index: 1;
   width: 100%;
   height: 100%;
   pointer-events: none;
@@ -2076,4 +2078,15 @@ html:has(.lightbox[open]) { overflow: hidden; }
 }
 @media (min-width: 1069px) {
   .winter-titel img { max-width: 1040px; }
+}
+
+/* Flaches Fenster (Handy quer): sonst fuellt allein der Schriftzug den
+   Schirm und der Spruch rutscht darunter aus dem Bild. object-fit haelt
+   dabei die Seitenverhaeltnisse - der Kasten wird flacher, das Bild
+   steht mittig darin. */
+@media (max-height: 700px) {
+  .winter-titel img {
+    max-height: 46dvh;
+    object-fit: contain;
+  }
 }

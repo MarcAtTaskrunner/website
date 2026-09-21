@@ -52,11 +52,12 @@
     this.stift.setTransform(d, 0, 0, d, 0, 0);
   };
 
-  /* Anzahl aus der Flaeche: auf dem Handy rund 40 Flocken, auf einem
-     breiten Bildschirm rund 130. Ueber 160 wird es Nebel statt Schnee. */
+  /* Anzahl aus der Flaeche: auf dem Handy rund 90 Flocken, auf einem
+     breiten Bildschirm rund 320. Feiner Schnee vertraegt viel mehr
+     Koerner als grober - erst darueber wird daraus Nebel. */
   Schnee.prototype.anzahl = function () {
     if (this.wunsch) return this.wunsch;
-    return Math.max(36, Math.min(160, Math.round((this.b * this.h) / 9000)));
+    return Math.max(80, Math.min(340, Math.round((this.b * this.h) / 3400)));
   };
 
   /* Drei Ebenen: kleine Flocken hinten (langsam, blass), grosse vorn
@@ -67,9 +68,9 @@
     return {
       x: Math.random() * this.b,
       y: obenRein ? -Math.random() * 40 - 8 : Math.random() * this.h,
-      r: 0.8 + tiefe * 2.6,
+      r: 0.4 + tiefe * 1.5,
       tempo: 16 + tiefe * 46,            /* px je Sekunde */
-      deckung: 0.32 + tiefe * 0.55,
+      deckung: 0.34 + tiefe * 0.54,
       /* Seitliches Pendeln: eigene Weite, eigener Takt, eigene Lage -
          sonst wiegen alle Flocken im Gleichschritt. */
       weite: 6 + tiefe * 16,
@@ -110,7 +111,10 @@
     for (var i = 0; i < this.flocken.length; i++) {
       var f = this.flocken[i];
       f.y += f.tempo * dt;
-      f.x += this.wind * dt * (f.r / 3);
+      /* Grosse Flocken nehmen mehr Wind mit als kleine. Der Teiler haengt
+         an der Groesse aus flocke() - wird die geaendert, aendert sich
+         sonst ungewollt auch die Seitwaertsdrift. */
+      f.x += this.wind * dt * (f.r / 1.6);
       if (f.y - f.r > this.h) {
         this.flocken[i] = this.flocke(true);
       } else if (f.x < -30) {
