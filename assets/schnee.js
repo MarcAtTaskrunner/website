@@ -31,6 +31,12 @@
     this.zuletzt = 0;
     this.wind = 0;
     this.t = 0;
+    /* Boeen: Wartezeit bis zur naechsten, Dauer und Staerke der
+       laufenden. dauer 0 heisst: gerade ist Ruhe. */
+    this.boeWarten = 3 + Math.random() * 6;
+    this.boeDauer = 0;
+    this.boeZeit = 0;
+    this.boeStaerke = 0;
     this.messen();
     this.saeen();
     this.binden();
@@ -100,6 +106,29 @@
     g.globalAlpha = 1;
   };
 
+  /* Eine Boe faehrt als halbe Sinuswelle hoch und wieder herunter -
+     ohne Kante am Anfang und am Ende. Dazwischen liegt eine zufaellige
+     Ruhe von sechs bis sechzehn Sekunden. Richtung und Staerke wuerfelt
+     jede Boe neu, damit keine wie die vorige aussieht. */
+  Schnee.prototype.boe = function (dt) {
+    if (this.boeDauer > 0) {
+      this.boeZeit += dt;
+      if (this.boeZeit >= this.boeDauer) {
+        this.boeDauer = 0;
+        this.boeWarten = 6 + Math.random() * 10;
+        return 0;
+      }
+      return Math.sin(Math.PI * this.boeZeit / this.boeDauer) * this.boeStaerke;
+    }
+    this.boeWarten -= dt;
+    if (this.boeWarten <= 0) {
+      this.boeDauer = 3 + Math.random() * 3.5;
+      this.boeZeit = 0;
+      this.boeStaerke = (Math.random() < 0.5 ? -1 : 1) * (26 + Math.random() * 34);
+    }
+    return 0;
+  };
+
   /* dt in Sekunden, gedeckelt: kommt die Seite aus dem Hintergrund
      zurueck, liegt sonst eine Sekunde oder mehr zwischen zwei Bildern
      und der Schnee springt nach unten. */
@@ -108,9 +137,13 @@
     /* Der Wind dreht langsam; zwei ungleiche Takte, damit sich das
        Muster nicht hoerbar wiederholt. */
     this.wind = Math.sin(this.t * 0.13) * 10 + Math.sin(this.t * 0.31) * 4;
+    this.wind += this.boe(dt);
+    /* In der Boe faellt der Schnee auch schneller, sonst sieht das
+       seitliche Treiben aus wie ein Ruck zur Seite. */
+    var eile = 1 + Math.abs(this.wind) / 110;
     for (var i = 0; i < this.flocken.length; i++) {
       var f = this.flocken[i];
-      f.y += f.tempo * dt;
+      f.y += f.tempo * eile * dt;
       /* Grosse Flocken nehmen mehr Wind mit als kleine. Der Teiler haengt
          an der Groesse aus flocke() - wird die geaendert, aendert sich
          sonst ungewollt auch die Seitwaertsdrift. */

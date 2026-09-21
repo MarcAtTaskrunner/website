@@ -2061,6 +2061,13 @@ html:has(.lightbox[open]) { overflow: hidden; }
       rgba(0, 0, 0, 0) 30%,
       rgba(0, 0, 0, 0.26) 62%,
       rgba(0, 0, 0, 0.66) 100%),
+    /* Eiskaltes Gegenlicht hinter dem Schriftzug: dieselbe Mitte wie die
+       Vignette, damit sich beide nicht gegeneinander arbeiten. Die Farbe
+       ist das Hellblau der Marke, nach Weiss gezogen. */
+    radial-gradient(48% 44% at 50% 42%,
+      rgba(158, 196, 255, 0.20) 0%,
+      rgba(120, 170, 255, 0.08) 46%,
+      rgba(0, 0, 49, 0) 78%),
     var(--color-blue-darker);
   height: 100vh;
   height: 100dvh;
@@ -2089,6 +2096,81 @@ html:has(.lightbox[open]) { overflow: hidden; }
 }
 @media (min-width: 1069px) {
   .winter-titel img { max-width: 1040px; }
+}
+
+/* Der Spruch steht wie die Worte eines Hauses im Vorspann: gesperrte
+   Versalien unter einer Haarlinie. Die Groesse kommt weiter aus der
+   Skala (t-h4 am Element), hier stehen nur Schnitt und Sperrung. Die
+   Sperrung faellt auf kleinen Schirmen kleiner aus, sonst braucht der
+   Satz dort vier Zeilen. */
+.winter-spruch {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  /* Sperrung schiebt auch hinter das letzte Zeichen - das Wegnehmen
+     haelt die Zeile optisch mittig. */
+  text-indent: 0.12em;
+}
+@media (min-width: 735px) {
+  .winter-spruch { letter-spacing: 0.18em; text-indent: 0.18em; }
+}
+.winter-spruch::before {
+  content: "";
+  display: block;
+  width: 56px;
+  height: 1px;
+  margin: 0 auto 26px;
+  background: rgba(255, 255, 255, 0.45);
+}
+
+/* ------------------------------------------------------------------ *
+ *  Bodennebel im Kopfband
+ *
+ *  Drei weiche Lichter am unteren Rand, die langsam quer ziehen. Zwei
+ *  Lagen mit ungleichen Dauern laufen gegeneinander, dadurch
+ *  wiederholt sich das Bild erst nach Minuten.
+ *
+ *  alternate statt endloser Wiederholung: eine Lage, die am Ende
+ *  zurueckspringt, zeigt genau dort eine sichtbare Naht.
+ *
+ *  Der Nebel liegt hinter Schriftzug und Spruch (z-index 0, der Inhalt
+ *  steht spaeter im Markup) und damit auch hinter dem Schnee.
+ * ------------------------------------------------------------------ */
+.winter-nebel {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 0;
+  height: 46%;
+  overflow: hidden;
+  pointer-events: none;
+}
+.winter-nebel::before,
+.winter-nebel::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: -50%;
+  width: 200%;
+  height: 100%;
+  background:
+    radial-gradient(58% 72% at 18% 104%, rgba(188, 214, 255, 0.17) 0%, rgba(188, 214, 255, 0) 70%),
+    radial-gradient(46% 62% at 58% 108%, rgba(188, 214, 255, 0.13) 0%, rgba(188, 214, 255, 0) 72%),
+    radial-gradient(64% 58% at 88% 106%, rgba(188, 214, 255, 0.11) 0%, rgba(188, 214, 255, 0) 70%);
+  animation: nebel-zug 68s ease-in-out infinite alternate;
+}
+.winter-nebel::after {
+  opacity: 0.66;
+  animation-duration: 103s;
+  animation-direction: alternate-reverse;
+}
+@keyframes nebel-zug {
+  from { transform: translateX(-7%); }
+  to   { transform: translateX(7%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .winter-nebel::before,
+  .winter-nebel::after { animation: none; }
 }
 
 /* Flaches Fenster (Handy quer): sonst fuellt allein der Schriftzug den
