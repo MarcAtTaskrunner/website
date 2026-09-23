@@ -2433,6 +2433,17 @@ body .vertriebsteam p.vertriebsteam-text { color: color-mix(in oklab, var(--colo
 }
 .registrierung select option { color: var(--color-ink); }
 .registrierung select:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+/* Nach dem Absenden (assets/app.js): Formular weg, nur die Meldung */
+.registrierung.ist-gesendet .schritt-buehne,
+.registrierung.ist-gesendet .schritt-knoepfe,
+.registrierung.ist-gesendet .schritt-anzeige { display: none; }
+.registrierung-meldung { font-size: 17px; line-height: 1.5; color: #fff; }
+.registrierung-meldung[hidden] { display: none; }
+.registrierung-meldung.ist-ok strong { display: block; margin-bottom: 6px; font-size: 24px; font-weight: 500; }
+.registrierung-meldung.ist-fehler { color: #ffd27a; }
+.registrierung-meldung a { color: #fff; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+.schritt-knoepfe button:disabled { opacity: 0.7; cursor: progress; }
+
 /* Einsatzradius als Auswahlknoepfe statt Tippen */
 .feld-titel { font-size: 15px; font-weight: 500; color: #fff; margin-bottom: -6px; }
 .auswahl-reihe { display: flex; flex-wrap: wrap; gap: 6px; }

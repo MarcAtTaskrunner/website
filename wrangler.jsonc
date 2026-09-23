@@ -1,12 +1,25 @@
 {
-  // Statische Website. Kein Worker-Skript noetig - Cloudflare liefert
-  // einfach die Dateien aus dist/ aus. _redirects und _headers dort
-  // werden nativ unterstuetzt.
+  // Statische Website aus dist/, dazu ein kleines Worker-Skript nur fuer
+  // /api/* (das Handwerker-Formular auf kontakt.html verschickt darueber
+  // seine Mail). Alle anderen Adressen liefert Cloudflare direkt aus
+  // dist/ aus, ohne das Skript - _redirects und _headers gelten dort wie
+  // bisher.
   //
   // "name" muss dem Worker entsprechen, der in Cloudflare angelegt ist.
   "name": "taskrunner",
   "compatibility_date": "2026-09-03",
+  "main": "worker/index.js",
   "assets": {
-    "directory": "./dist"
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*"]
+  },
+  // Empfaenger und Absender der Formular-Mails. Zum Testen an Marc; fuer
+  // den Betrieb auf operations@taskrunner.de umstellen. Der Schluessel
+  // fuer den Maildienst (RESEND_API_KEY) ist ein Secret im Dashboard und
+  // steht bewusst nicht hier.
+  "vars": {
+    "EMPFAENGER": "m.gronenberg@taskrunner.de",
+    "ABSENDER": "taskrunner Website <onboarding@resend.dev>"
   }
 }

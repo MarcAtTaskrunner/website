@@ -676,6 +676,44 @@
       }
     });
 
+    /* Absenden: direkt an den Worker (worker/index.js), der die Mail
+       verschickt. Klappt das nicht, bleibt das Formular stehen und die
+       Meldung nennt die Mailadresse als Ausweg. */
+    var meldung = form.querySelector("[data-senden-meldung]");
+    var ziel = form.getAttribute("data-senden");
+    form.addEventListener("submit", function (e) {
+      if (jetzt < schritte.length - 1) { e.preventDefault(); return; }
+      if (!ziel || !window.fetch) return; /* ohne fetch: Mailprogramm wie bisher */
+      e.preventDefault();
+      if (!gueltig()) return;
+      var daten = {};
+      new FormData(form).forEach(function (wert, name) { daten[name] = String(wert); });
+      senden.disabled = true;
+      senden.textContent = "Wird gesendet …";
+      meldung.hidden = true;
+      fetch(ziel, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(daten)
+      }).then(function (r) {
+        return r.json().catch(function () { return {}; }).then(function (j) {
+          if (!r.ok || !j.ok) throw new Error(j.fehler || r.status);
+        });
+      }).then(function () {
+        form.classList.add("ist-gesendet");
+        meldung.className = "registrierung-meldung ist-ok";
+        meldung.innerHTML = "<strong>Danke, Ihre Registrierung ist angekommen.</strong> Wir melden uns in den nächsten Tagen telefonisch bei Ihnen.";
+        meldung.hidden = false;
+        form.dispatchEvent(new CustomEvent("gesendet"));
+      }).catch(function () {
+        senden.disabled = false;
+        senden.textContent = "Kostenlos registrieren";
+        meldung.className = "registrierung-meldung ist-fehler";
+        meldung.innerHTML = 'Das hat leider nicht geklappt. Bitte versuchen Sie es noch einmal oder schreiben Sie uns an <a href="mailto:operations@taskrunner.de">operations@taskrunner.de</a>.';
+        meldung.hidden = false;
+      });
+    });
+
     form.classList.add("in-schritten");
     zeige(0, false);
   });

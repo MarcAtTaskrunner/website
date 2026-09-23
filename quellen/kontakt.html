@@ -69,9 +69,15 @@ beschreibung: Als Kunde sprechen Sie direkt mit dem Vertrieb, als Handwerker ode
                Drei Schritte, je ein <fieldset data-schritt>. assets/app.js
                ([data-schritte]) zeigt immer nur einen, blendet Fortschritt
                und Weiter/Zurueck ein und prueft die Pflichtfelder je Schritt.
-               Ohne JavaScript stehen alle drei untereinander. -->
-          <form class="registrierung mt-8" action="mailto:operations@taskrunner.de?subject=Registrierung%20Handwerker" method="post" enctype="text/plain" data-schritte>
+               Ohne JavaScript stehen alle untereinander.
+               Mit JavaScript schickt der letzte Schritt die Angaben direkt an
+               /api/registrierung (worker/index.js), der sie per Mail
+               weiterleitet - ohne Mailprogramm. Die mailto-Adresse oben
+               bleibt nur fuer Browser ohne JavaScript. -->
+          <form class="registrierung mt-8" action="mailto:operations@taskrunner.de?subject=Registrierung%20Handwerker" method="post" enctype="text/plain" data-schritte data-senden="/api/registrierung">
             <p class="schritt-anzeige t-caption" data-schritt-anzeige hidden aria-live="polite"></p>
+            <!-- Falle fuer Bots: fuer Menschen unsichtbar, Bots fuellen es aus -->
+            <label class="sr-only" aria-hidden="true">Webseite<input type="text" name="Webseite" tabindex="-1" autocomplete="off"></label>
             <div class="schritt-buehne">
             <fieldset data-schritt>
               <legend class="t-h4 text-white">Was machen Sie?</legend>
@@ -286,6 +292,7 @@ beschreibung: Als Kunde sprechen Sie direkt mit dem Vertrieb, als Handwerker ode
               <button type="button" class="btn btn-white" data-schritt-weiter hidden>Weiter</button>
               <button type="submit" class="btn btn-white" data-schritt-senden>Kostenlos registrieren</button>
             </div>
+            <p class="registrierung-meldung" data-senden-meldung role="status" hidden></p>
           </form>
           </div>
           <!-- Karte rechts in der weiten Kachel (ab Schritt 2): Linien von
