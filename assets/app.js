@@ -614,13 +614,22 @@
    *  data-vorschlag nennt die Quelle: die id einer <datalist> oder ein
    *  Skript (endet auf .js), das window.taskrunnerOrte setzt und erst
    *  beim ersten Klick ins Feld geladen wird. Mit data-mehrfach gilt der
-   *  Vorschlag fuer den Teil nach dem letzten Komma. Ohne JavaScript ist
-   *  es ein normales Textfeld.
+   *  Vorschlag fuer den Teil nach dem letzten Komma. Umlaute duerfen
+   *  fehlen: "sanitaer", "sanitar" und "Sanitär" treffen dasselbe.
+   *  Steht ein Eintrag schon ganz da, kommt kein laengerer Vorschlag
+   *  ("Maler" bleibt Maler). Ohne JavaScript ist es ein normales Textfeld.
    * ---------------------------------------------------------------- */
+  var vereinfache = function (text) {
+    return text.toLocaleLowerCase("de")
+      .replace(/ä/g, "a").replace(/ö/g, "o").replace(/ü/g, "u").replace(/ß/g, "ss")
+      /* erst danach: so wird auch das "äe" aus "sanitä" + "e" zu "a" */
+      .replace(/ae/g, "a").replace(/oe/g, "o").replace(/ue/g, "u");
+  };
   Array.prototype.forEach.call(document.querySelectorAll("[data-vorschlag]"), function (feld) {
     var quelle = feld.getAttribute("data-vorschlag");
     var mehrfach = feld.hasAttribute("data-mehrfach");
     var eintraege = [];
+    var einfach = null;
 
     if (/\.js$/.test(quelle)) {
       feld.addEventListener("focus", function () {
@@ -641,19 +650,26 @@
       var wert = feld.value;
       if (!wert || feld.selectionEnd !== wert.length) return;
       var liste = eintraege.length ? eintraege : (window.taskrunnerOrte || []);
+      if (!liste.length) return;
+      /* Vereinfachte Fassung einmal fuer die ganze Liste, nicht je Taste */
+      if (!einfach || einfach.length !== liste.length) einfach = liste.map(vereinfache);
       /* Bei mehreren Eintraegen nur das Stueck nach dem letzten Komma */
       var anfang = mehrfach ? wert.lastIndexOf(",") + 1 : 0;
       while (anfang < wert.length && wert.charAt(anfang) === " ") anfang++;
-      var getippt = wert.slice(anfang);
+      var getippt = vereinfache(wert.slice(anfang));
       if (!getippt) return;
-      var schon = mehrfach ? wert.slice(0, anfang).toLocaleLowerCase("de").split(",").map(function (t) { return t.trim(); }) : [];
-      var klein = getippt.toLocaleLowerCase("de");
-      for (var i = 0; i < liste.length; i++) {
-        var kandidat = liste[i].toLocaleLowerCase("de");
-        if (kandidat.indexOf(klein) === 0 && liste[i].length > getippt.length && schon.indexOf(kandidat) < 0) {
-          /* Schreibweise des Eintrags uebernehmen: "ber" wird zu "Berlin" */
+      if (einfach.indexOf(getippt) >= 0) return;
+      var schon = mehrfach ? wert.slice(0, anfang).split(",").map(function (t) { return vereinfache(t.trim()); }) : [];
+      for (var i = 0; i < einfach.length; i++) {
+        if (einfach[i].indexOf(getippt) === 0 && schon.indexOf(einfach[i]) < 0) {
+          /* Schreibweise des Eintrags uebernehmen: "ber" wird zu "Berlin".
+             Markiert wird ab der Stelle, bis zu der schon getippt ist -
+             bei "sanitae" also nur noch das "r". */
+          var bis = 0;
+          while (bis < liste[i].length && vereinfache(liste[i].slice(0, bis)).length < getippt.length) bis++;
+          if (bis >= liste[i].length) return;
           feld.value = wert.slice(0, anfang) + liste[i];
-          feld.setSelectionRange(wert.length, feld.value.length);
+          feld.setSelectionRange(anfang + bis, feld.value.length);
           return;
         }
       }
