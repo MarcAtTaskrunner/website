@@ -2007,6 +2007,19 @@ html:has(.lightbox[open]) { overflow: hidden; }
   object-fit: cover;
 }
 .kontakt-kopf + .kontakt-kopf { margin-left: calc(var(--kopf) * -0.19); }
+/* Vertriebsteam: das Portrait unter der Maus waechst und legt sich
+   ueber seinen Nachbarn. Nur mit Maus, ohne Bewegung bei
+   "Bewegung reduzieren". */
+@media (hover: hover) {
+  #kunden .kontakt-kopf {
+    position: relative;
+    transition: scale 0.25s var(--kurve);
+  }
+  #kunden .kontakt-kopf:hover { scale: 1.25; z-index: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #kunden .kontakt-kopf { transition: none; }
+}
 
 /* ------------------------------------------------------------------
  *  Stellen (karriere.html). Das Markup erzeugt werkzeuge/stellen.py aus
