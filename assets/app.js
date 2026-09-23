@@ -636,6 +636,7 @@
       senden.hidden = !letzter;
       anzeige.hidden = false;
       anzeige.innerHTML = "<b>Schritt " + (nr + 1) + "</b> von " + schritte.length;
+      form.dispatchEvent(new CustomEvent("schrittwechsel", { detail: { nr: nr } }));
       if (fokus) {
         var erstes = schritte[nr].querySelector("input:not([type=radio]), input:checked");
         if (erstes) erstes.focus();
@@ -925,6 +926,14 @@
     var svg, punkt, puls, kreis, K, lage = null;
     var sicht = null, ziel = null, anim = 0;
     var aktuell = null;
+    /* Schritt des Formulars: 1 = PLZ (nur Punkt), ab 2 = Einsatzradius
+       (Kreis). Die Nummern folgen der Reihenfolge der fieldsets. */
+    var stufe = 0, RADIUS_AB = 2;
+    /* Ganze Karte mit Rand, damit sie nicht in den weichen Auslauf am
+       Rand der Flaeche (mask-image im CSS, 12 % bzw. 10 %) faellt */
+    var gesamt = function () {
+      return [-K.breite * 0.17, -K.hoehe * 0.14, K.breite * 1.34, K.hoehe * 1.28];
+    };
     var ruhig = window.matchMedia("(prefers-reduced-motion: reduce)");
 
     var element = function (name, attr) {
@@ -936,7 +945,7 @@
     var baue = function () {
       if (svg || !window.taskrunnerKarte) return;
       K = window.taskrunnerKarte;
-      sicht = [0, 0, K.breite, K.hoehe];
+      sicht = gesamt();
       svg = element("svg", { viewBox: sicht.join(" "), preserveAspectRatio: "xMidYMid meet", focusable: "false" });
       svg.appendChild(element("path", { d: K.innen, "class": "karte-innen" }));
       svg.appendChild(element("path", { d: K.aussen, "class": "karte-aussen" }));
@@ -1010,25 +1019,33 @@
       if (!ll) {
         aktuellePos = null;
         huelle.classList.remove("hat-punkt");
-        fahre([0, 0, K.breite, K.hoehe]);
+        fahre(gesamt());
         return;
       }
+      var neu = !aktuellePos || aktuellePos[0] !== projiziere(ll[0], ll[1])[0];
       var p = projiziere(ll[0], ll[1]);
       aktuellePos = p;
-      aktuellerRadius = radiusKm() * K.massstab / 111.2;
+      var mitRadius = stufe >= RADIUS_AB;
+      aktuellerRadius = mitRadius ? radiusKm() * K.massstab / 111.2 : 0;
       [punkt, puls, kreis].forEach(function (e) { e.setAttribute("cx", p[0]); e.setAttribute("cy", p[1]); });
-      huelle.classList.remove("hat-punkt");
-      void huelle.offsetWidth; /* Puls-Animation neu starten */
-      huelle.classList.add("hat-punkt");
-      /* Ausschnitt: der Radiuskreis mit Luft drumherum, mindestens so
-         gross, dass die Umgebung erkennbar bleibt; Bundesweit = alles */
-      if (!radiusKm()) { fahre([0, 0, K.breite, K.hoehe]); return; }
-      var seite = Math.max(aktuellerRadius * 2.8, K.breite * 0.22);
+      if (neu) {
+        huelle.classList.remove("hat-punkt");
+        void huelle.offsetWidth; /* Puls-Animation neu starten */
+        huelle.classList.add("hat-punkt");
+      }
+      /* Ausschnitt: im PLZ-Schritt die Umgebung des Punkts, danach der
+         Radiuskreis mit Luft drumherum; Bundesweit = alles */
+      if (mitRadius && !radiusKm()) { fahre(gesamt()); return; }
+      var seite = mitRadius ? Math.max(aktuellerRadius * 2.8, K.breite * 0.22) : K.breite * 0.32;
       var hoehe = seite * K.hoehe / K.breite;
       fahre([p[0] - seite / 2, p[1] - hoehe / 2, seite, hoehe]);
     };
 
     form.addEventListener("plzwechsel", function (e) { setze(e.detail.plz); });
+    form.addEventListener("schrittwechsel", function (e) {
+      stufe = e.detail.nr;
+      if (svg && aktuell) setze(aktuell);
+    });
     form.addEventListener("change", function (e) {
       if (e.target.name === "Einsatzradius" && aktuell) setze(aktuell);
     });
