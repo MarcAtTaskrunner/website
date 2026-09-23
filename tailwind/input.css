@@ -2260,6 +2260,23 @@ body .vertriebsteam p.vertriebsteam-text { color: color-mix(in oklab, var(--colo
 .schritt-knoepfe [hidden] { display: none; }
 .schritt-zurueck { font-weight: 700; color: #fff; text-decoration: underline; text-underline-offset: 4px; text-decoration-color: rgba(255, 255, 255, 0.4); }
 .schritt-zurueck:hover { text-decoration-color: #fff; }
+/* Ort zur Postleitzahl, direkt unter dem Feld (assets/app.js) */
+.plz-ort { margin-top: -6px; min-height: 1.4em; font-size: 15px; color: #fff; }
+.plz-ort:empty { display: none; }
+.plz-ort.ist-ok span { color: #8ab4f8; font-weight: 700; }
+.plz-ort.ist-fehler { color: #ffd27a; }
+.plz-ort label { display: grid; gap: 4px; }
+.registrierung select {
+  width: 100%;
+  padding: 9px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--radius-card);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font: inherit;
+}
+.registrierung select option { color: var(--color-ink); }
+.registrierung select:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
 /* Einsatzradius als Auswahlknoepfe statt Tippen */
 .feld-titel { font-size: 15px; font-weight: 500; color: #fff; margin-bottom: -6px; }
 .auswahl-reihe { display: flex; flex-wrap: wrap; gap: 6px; }

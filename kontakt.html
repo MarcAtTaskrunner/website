@@ -132,9 +132,7 @@
                     <!-- Vorschlag im Feld: ab dem ersten Buchstaben ergaenzt
                    assets/app.js den Rest markiert ([data-vorschlag]).
                    Gewerke: die Liste #gewerke darunter, mehrere durch Komma.
-                   Orte: alle Gemeinden in DE und AT aus assets/orte.js
-                   (Bauergebnis von werkzeuge/orte.py), geladen erst beim
-                   Klick ins Feld. Freie Eingaben gehen trotzdem. --><label>Gewerke<input type="text" name="Gewerke" data-vorschlag="gewerke" data-mehrfach autocomplete="off" placeholder="z. B. Maler, Sanitär" required></label><!-- Gewerke nach der Gewerks- und Preisuebersicht, dazu
+                   Freie Eingaben gehen trotzdem. --><label>Gewerke<input type="text" name="Gewerke" data-vorschlag="gewerke" data-mehrfach autocomplete="off" placeholder="z. B. Maler, Sanitär" required></label><!-- Gewerke nach der Gewerks- und Preisuebersicht, dazu
                    Winterdienst, gaengige andere Bezeichnungen (Klempner,
                    Spengler, Anstreicher ...) und englische Begriffe mit der
                    deutschen Entsprechung in Klammern - nicht jeder Handwerker
@@ -143,7 +141,13 @@
                   </fieldset>
                   <fieldset data-schritt>
                     <legend class="t-h4 text-white">Wo sind Sie im Einsatz?</legend>
-                    <label>Standort (Ort)<input type="text" name="Standort" data-vorschlag="assets/orte.js" autocomplete="off" placeholder="z. B. Essen" required></label>
+                    <!-- Postleitzahl: assets/app.js ([data-plz]) laedt beim Klick
+                   assets/plz.js (Bauergebnis von werkzeuge/plz.py) und zeigt
+                   den Ort zur Bestaetigung; bei mehreren Orten eine Auswahl.
+                   DE fuenfstellig, AT vierstellig. Ohne JavaScript steht
+                   stattdessen ein Feld fuer den Ort da. --><label>Postleitzahl<input type="text" name="PLZ" data-plz="assets/plz.js" inputmode="numeric" pattern="[0-9]{4,5}" maxlength="5" autocomplete="postal-code" placeholder="z. B. 45127" required></label>
+                    <p class="plz-ort" data-plz-ort aria-live="polite"></p>
+                    <label data-plz-ohne-js>Ort<input type="text" name="Ort" autocomplete="address-level2" placeholder="z. B. Essen"></label>
                     <p class="feld-titel">Einsatzradius</p>
                     <div class="auswahl-reihe"><label class="auswahl"><input type="radio" name="Einsatzradius" value="25 km"><span>25 km</span></label><label class="auswahl"><input type="radio" name="Einsatzradius" value="50 km" checked><span>50 km</span></label><label class="auswahl"><input type="radio" name="Einsatzradius" value="100 km"><span>100 km</span></label><label class="auswahl"><input type="radio" name="Einsatzradius" value="200 km"><span>200 km</span></label><label class="auswahl"><input type="radio" name="Einsatzradius" value="Bundesweit"><span>Bundesweit</span></label></div>
                   </fieldset>

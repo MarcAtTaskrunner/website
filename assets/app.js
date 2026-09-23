@@ -671,13 +671,81 @@
   });
 
   /* ---------------------------------------------------------------- *
+   *  Postleitzahl mit Ort (kontakt.html, [data-plz])
+   *  Beim ersten Klick ins Feld wird die Liste (assets/plz.js, setzt
+   *  window.taskrunnerPlz) nachgeladen. Ist die PLZ vollstaendig - DE
+   *  fuenf, AT vier Stellen -, steht darunter der Ort zur Bestaetigung;
+   *  gehoeren mehrere Orte dazu, eine Auswahl. Der Ort geht als Feld
+   *  "Ort" mit in die Mail. Ohne JavaScript bleibt ein freies Ortsfeld.
+   * ---------------------------------------------------------------- */
+  Array.prototype.forEach.call(document.querySelectorAll("[data-plz]"), function (feld) {
+    var form = feld.form;
+    var ausgabe = form.querySelector("[data-plz-ort]");
+    var ohneJs = form.querySelector("[data-plz-ohne-js]");
+    if (ohneJs) ohneJs.remove();
+    var quelle = feld.getAttribute("data-plz");
+
+    var lade = function () {
+      if (window.taskrunnerPlz || document.querySelector('script[src="' + quelle + '"]')) return;
+      var skript = document.createElement("script");
+      skript.src = quelle;
+      skript.onload = zeige;
+      document.head.appendChild(skript);
+    };
+
+    var zeige = function () {
+      var plz = feld.value.replace(/\D/g, "");
+      if (plz !== feld.value) feld.value = plz;
+      ausgabe.textContent = "";
+      feld.setCustomValidity("");
+      if (plz.length < 4 || !window.taskrunnerPlz) return;
+      var orte = window.taskrunnerPlz[plz];
+      /* Vier Ziffern koennen eine oesterreichische PLZ sein oder der
+         Anfang einer deutschen - erst bei fuenf ist es sicher deutsch. */
+      if (!orte) {
+        if (plz.length === 5) {
+          ausgabe.textContent = "Diese Postleitzahl kennen wir nicht. Bitte prüfen.";
+          ausgabe.className = "plz-ort ist-fehler";
+        }
+        return;
+      }
+      orte = orte.split("|");
+      var land = plz.length === 4 ? " (Österreich)" : "";
+      ausgabe.className = "plz-ort ist-ok";
+      if (orte.length === 1) {
+        ausgabe.innerHTML = '<span aria-hidden="true">✓</span> ';
+        ausgabe.appendChild(document.createTextNode(plz + " " + orte[0] + land));
+        var versteckt = document.createElement("input");
+        versteckt.type = "hidden";
+        versteckt.name = "Ort";
+        versteckt.value = orte[0];
+        ausgabe.appendChild(versteckt);
+      } else {
+        var beschriftung = document.createElement("label");
+        beschriftung.textContent = orte.length + " Orte mit " + plz + land + ":";
+        var auswahl = document.createElement("select");
+        auswahl.name = "Ort";
+        orte.forEach(function (ort) {
+          var o = document.createElement("option");
+          o.value = o.textContent = ort;
+          auswahl.appendChild(o);
+        });
+        beschriftung.appendChild(auswahl);
+        ausgabe.appendChild(beschriftung);
+      }
+    };
+
+    feld.addEventListener("focus", lade);
+    feld.addEventListener("input", zeige);
+  });
+
+  /* ---------------------------------------------------------------- *
    *  Vorschlag im Feld (kontakt.html, [data-vorschlag])
    *  Ab dem ersten Buchstaben steht der Rest des ersten passenden
    *  Eintrags markiert im Feld: weitertippen ueberschreibt ihn, Enter,
    *  Tab oder Pfeil rechts uebernimmt ihn, Loeschen entfernt ihn.
-   *  data-vorschlag nennt die Quelle: die id einer <datalist> oder ein
-   *  Skript (endet auf .js), das window.taskrunnerOrte setzt und erst
-   *  beim ersten Klick ins Feld geladen wird. Mit data-mehrfach gilt der
+   *  data-vorschlag nennt die id der <datalist> mit den Eintraegen.
+   *  Mit data-mehrfach gilt der
    *  Vorschlag fuer den Teil nach dem letzten Komma. Umlaute duerfen
    *  fehlen: "sanitaer", "sanitar" und "Sanitär" treffen dasselbe.
    *  Steht ein Eintrag schon ganz da, kommt kein laengerer Vorschlag
@@ -695,25 +763,16 @@
     var eintraege = [];
     var einfach = null;
 
-    if (/\.js$/.test(quelle)) {
-      feld.addEventListener("focus", function () {
-        if (window.taskrunnerOrte || document.querySelector('script[src="' + quelle + '"]')) return;
-        var skript = document.createElement("script");
-        skript.src = quelle;
-        document.head.appendChild(skript);
-      });
-    } else {
-      var liste = document.getElementById(quelle);
-      if (!liste) return;
-      eintraege = Array.prototype.map.call(liste.options, function (o) { return o.value; });
-    }
+    var datalist = document.getElementById(quelle);
+    if (!datalist) return;
+    eintraege = Array.prototype.map.call(datalist.options, function (o) { return o.value; });
 
     feld.addEventListener("input", function (e) {
       /* Nur beim Tippen ergaenzen, nicht beim Loeschen oder Einfuegen */
       if (e.isComposing || (e.inputType && e.inputType !== "insertText")) return;
       var wert = feld.value;
       if (!wert || feld.selectionEnd !== wert.length) return;
-      var liste = eintraege.length ? eintraege : (window.taskrunnerOrte || []);
+      var liste = eintraege;
       if (!liste.length) return;
       /* Vereinfachte Fassung einmal fuer die ganze Liste, nicht je Taste */
       if (!einfach || einfach.length !== liste.length) einfach = liste.map(vereinfache);
