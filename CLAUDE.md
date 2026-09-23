@@ -44,6 +44,7 @@ mit im Git.
 | Bildergalerie im Blogbeitrag (Laufband, Lightbox) | Aussehen: `.laufband`/`.lightbox` in `tailwind/input.css`; Ziehen, Pfeiltasten, Mitlaufen, Lightbox: `assets/app.js` (`[data-laufband]`, `[data-lightbox]`) |
 | Förder-Check (Förderungen): Fragen | `quellen/foerderungen.html` |
 | Kontaktseite (Vertrieb links hell, Handwerker rechts dunkel) | Texte, Telefon, Adressen: `quellen/kontakt.html`; Aufteilung 3/5 zu 2/5: `.kontakt-teilung`/`.kontakt-flaeche` in `tailwind/input.css` |
+| Vertriebsteam (Porträts + „Unser Vertriebsteam“), auf jeder Seite gleich | `quellen/bausteine/vertriebsteam.html`, einbauen mit `<!--einbau: vertriebsteam.html-->`; neue Person: eine `<img>`-Zeile und die Anzahl im Text. Aussehen/Hover: `.kontakt-koepfe`/`.kontakt-kopf` in `tailwind/input.css` |
 | Handwerker-Formular (Kontakt): Vorschläge im Feld | Verhalten: `[data-vorschlag]` in `assets/app.js`; Gewerke-Liste: `<datalist id="gewerke">` in `quellen/kontakt.html`; Orte: `assets/orte.js` ist Bauergebnis von `werkzeuge/orte.py` (alle Gemeinden DE/AT, Quellen und Aufruf im Kopf des Skripts) |
 | Förder-Check: Quoten, Obergrenzen, Ergebnistexte | `assets/foerdercheck.js` (keine Quelle, direkt bearbeiten). Dieselben Werte stehen als Text in `quellen/foerderungen.html` unter „Die Programme im Einzelnen“ – bei neuen Richtlinien **beide** anpassen |
 

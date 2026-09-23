@@ -2023,27 +2023,28 @@ html:has(.lightbox[open]) { overflow: hidden; }
   object-fit: cover;
 }
 .kontakt-kopf + .kontakt-kopf { margin-left: calc(var(--kopf) * -0.19); }
-/* Vertriebsteam: das Portrait unter der Maus waechst langsam auf das
+/* Alle Portraitkreise (Vertriebsteam-Baustein, Ansprechperson fuer
+   Handwerker): das Portrait unter der Maus waechst langsam auf das
    Anderthalbfache und schiebt dabei seinen Nachbarn zur Seite. Deshalb
    waechst die Breite und nicht scale - scale nimmt keinen Platz ein.
    Der Rand bleibt gleich dick, er haengt an --kopf. Nur mit Maus, ohne
    Bewegung bei "Bewegung reduzieren". */
 @media (hover: hover) {
-  #kunden .kontakt-kopf {
+  .kontakt-koepfe .kontakt-kopf {
     position: relative;
     /* Kurve ausgeschrieben: --kurve gibt es nur unter .variante-b, und
        kontakt.html traegt die Klasse nicht - mit var(--kurve) war der
        Uebergang ungueltig und der Kopf sprang sofort auf die volle Groesse. */
     transition: width 0.5s cubic-bezier(.22, .61, .36, 1), height 0.5s cubic-bezier(.22, .61, .36, 1);
   }
-  #kunden .kontakt-kopf:hover {
+  .kontakt-koepfe .kontakt-kopf:hover {
     width: calc(var(--kopf) * 1.5);
     height: calc(var(--kopf) * 1.5);
     z-index: 1;
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  #kunden .kontakt-kopf { transition: none; }
+  .kontakt-koepfe .kontakt-kopf { transition: none; }
 }
 
 /* ------------------------------------------------------------------
