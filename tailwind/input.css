@@ -2260,6 +2260,52 @@ body .vertriebsteam p.vertriebsteam-text { color: color-mix(in oklab, var(--colo
 .schritt-knoepfe [hidden] { display: none; }
 .schritt-zurueck { font-weight: 700; color: #fff; text-decoration: underline; text-underline-offset: 4px; text-decoration-color: rgba(255, 255, 255, 0.4); }
 .schritt-zurueck:hover { text-decoration-color: #fff; }
+/* PLZ in fuenf Kaesten wie ein Bestaetigungscode. Ein einziges, durch-
+   sichtiges Feld liegt ueber fuenf Kaesten; die Ziffern landen per
+   Zeichenabstand genau in den Kaesten. Das geht, weil die Ziffern mit
+   tabular-nums alle gleich breit sind (1ch = Breite der "0").
+   Das Feld ist eine Kastenbreite breiter als der Rahmen, der Rest wird
+   abgeschnitten - sonst scrollte der Text im Feld nach der fuenften
+   Ziffer. */
+.plz-kaesten {
+  --zelle: 48px;
+  --abstand: 8px;
+  position: relative;
+  display: block;
+  width: calc(5 * var(--zelle) + 4 * var(--abstand));
+  height: 56px;
+  /* clip statt hidden: bei hidden scrollt der Browser den Rahmen zum
+     Cursor, und nach der fuenften Ziffer verrutschten alle Kaesten. */
+  overflow: clip;
+}
+.plz-raster { position: absolute; inset: 0; display: flex; gap: var(--abstand); pointer-events: none; }
+.plz-raster > span {
+  flex: none;
+  width: var(--zelle);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+.plz-raster > span.ist-voll { border-color: rgba(255, 255, 255, 0.6); }
+.plz-raster > span.ist-aktiv { border-color: #fff; background: rgba(255, 255, 255, 0.14); box-shadow: 0 0 0 1px #fff; }
+.registrierung .plz-kaesten input {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: calc(100% + var(--zelle));
+  padding: 0 0 0 calc((var(--zelle) - 1ch) / 2);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  font-size: 26px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: calc(var(--zelle) + var(--abstand) - 1ch);
+  caret-color: #fff;
+}
+.registrierung .plz-kaesten input:focus-visible { outline: none; }
+.plz-hinweis { font-size: 13px; font-weight: 400; color: rgba(255, 255, 255, 0.7); }
+
 /* Knopf "Standort verwenden" unter dem PLZ-Feld: klein, wie ein Link */
 .plz-orten {
   display: inline-flex;

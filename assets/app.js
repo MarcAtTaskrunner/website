@@ -749,6 +749,18 @@
     feld.addEventListener("focus", lade);
     feld.addEventListener("input", zeige);
 
+    /* Kaesten hinter dem Feld: gefuellte und der naechste freie markieren */
+    var kaesten = form.querySelectorAll(".plz-raster > span");
+    var kaestenAuffrischen = function () {
+      var n = feld.value.length;
+      var fokus = document.activeElement === feld;
+      Array.prototype.forEach.call(kaesten, function (k, i) {
+        k.classList.toggle("ist-voll", i < n);
+        k.classList.toggle("ist-aktiv", fokus && i === Math.min(n, kaesten.length - 1));
+      });
+    };
+    ["input", "focus", "blur"].forEach(function (typ) { feld.addEventListener(typ, kaestenAuffrischen); });
+
     var orten = form.querySelector("[data-plz-orten]");
     if (!orten || !("geolocation" in navigator) || !window.isSecureContext) return;
     orten.hidden = false;
@@ -792,6 +804,7 @@
             feld.value = plz;
             zeige();
             feld.focus();
+            kaestenAuffrischen();
           });
         });
       }, function (fehler) {
