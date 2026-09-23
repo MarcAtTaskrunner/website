@@ -2228,14 +2228,51 @@ html:has(.lightbox[open]) { overflow: hidden; }
   }
 }
 
-/* Registrierung fuer Handwerker (kontakt.html, dunkle Kachel): Beschriftung
-   ueber dem Feld; ist die Kachel breit genug, zwei Felder nebeneinander. */
-.registrierung { display: grid; gap: 12px 16px; }
-@container (min-width: 360px) {
-  .registrierung { grid-template-columns: 1fr 1fr; }
-  .registrierung > button { grid-column: 1 / -1; }
+/* Registrierung fuer Handwerker (kontakt.html, dunkle Kachel) in drei
+   Schritten (assets/app.js, [data-schritte]). Je Schritt eine Frage als
+   Ueberschrift, darunter die Felder, Beschriftung ueber dem Feld. */
+.registrierung { display: grid; gap: 24px; }
+.registrierung fieldset { display: grid; gap: 14px; min-width: 0; }
+.registrierung legend { float: left; width: 100%; margin-bottom: 4px; }
+/* Mit JavaScript (.in-schritten) liegen alle Schritte uebereinander in
+   derselben Rasterzelle, sichtbar ist nur der aktive. So ist die Kachel
+   immer so hoch wie der hoechste Schritt und springt beim Wechsel nicht. */
+.in-schritten .schritt-buehne { display: grid; }
+.in-schritten [data-schritt] { grid-area: 1 / 1; align-content: start; visibility: hidden; }
+.in-schritten [data-schritt].ist-aktiv { visibility: visible; }
+.schritt-buehne:not(.in-schritten *) { display: grid; gap: 24px; }
+/* Der sichtbare Schritt blendet kurz ein */
+.registrierung fieldset.ist-aktiv { animation: schritt-ein 0.35s cubic-bezier(.22, .61, .36, 1); }
+@keyframes schritt-ein { from { opacity: 0; transform: translateX(12px); } }
+@media (prefers-reduced-motion: reduce) { .registrierung fieldset.ist-aktiv { animation: none; } }
+.feld-paar { display: grid; gap: 14px 16px; }
+@container (min-width: 360px) { .feld-paar { grid-template-columns: 1fr 1fr; } }
+.schritt-anzeige { color: rgba(255, 255, 255, 0.75); }
+.schritt-anzeige b { color: #fff; }
+.schritt-knoepfe { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; }
+.schritt-knoepfe [hidden] { display: none; }
+.schritt-zurueck { font-weight: 700; color: #fff; text-decoration: underline; text-underline-offset: 4px; text-decoration-color: rgba(255, 255, 255, 0.4); }
+.schritt-zurueck:hover { text-decoration-color: #fff; }
+/* Einsatzradius als Auswahlknoepfe statt Tippen */
+.feld-titel { font-size: 15px; font-weight: 500; color: #fff; margin-bottom: -6px; }
+.auswahl-reihe { display: flex; flex-wrap: wrap; gap: 6px; }
+.auswahl { position: relative; }
+.auswahl input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.auswahl span {
+  display: block;
+  padding: 6px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 9999px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
-.registrierung label { display: grid; gap: 4px; font-size: 15px; font-weight: 500; color: #fff; }
+.auswahl span:hover { background: rgba(255, 255, 255, 0.12); }
+.auswahl input:checked + span { background: #fff; color: var(--color-blue-dark); border-color: #fff; }
+.auswahl input:focus-visible + span { outline: 2px solid #fff; outline-offset: 2px; }
+.registrierung label:not(.auswahl) { display: grid; gap: 4px; font-size: 15px; font-weight: 500; color: #fff; }
 .registrierung input {
   width: 100%;
   padding: 9px 14px;

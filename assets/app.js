@@ -607,6 +607,70 @@
   })();
 
   /* ---------------------------------------------------------------- *
+   *  Formular in Schritten (kontakt.html, [data-schritte])
+   *  Je <fieldset data-schritt> ein Schritt; sichtbar ist immer nur
+   *  einer. Weiter prueft erst die Pflichtfelder des Schritts. Enter in
+   *  einem Feld heisst Weiter, erst im letzten Schritt Absenden. Ohne
+   *  JavaScript stehen alle Schritte untereinander.
+   * ---------------------------------------------------------------- */
+  Array.prototype.forEach.call(document.querySelectorAll("[data-schritte]"), function (form) {
+    var schritte = form.querySelectorAll("[data-schritt]");
+    var anzeige = form.querySelector("[data-schritt-anzeige]");
+    var zurueck = form.querySelector("[data-schritt-zurueck]");
+    var weiter = form.querySelector("[data-schritt-weiter]");
+    var senden = form.querySelector("[data-schritt-senden]");
+    var jetzt = 0;
+
+    var zeige = function (nr, fokus) {
+      jetzt = nr;
+      /* Nicht hidden, sondern unsichtbar und inert: die Schritte liegen
+         uebereinander (.in-schritten im CSS), die Kachel behaelt so die
+         Hoehe des hoechsten Schritts. */
+      Array.prototype.forEach.call(schritte, function (s, i) {
+        s.inert = i !== nr;
+        s.classList.toggle("ist-aktiv", i === nr);
+      });
+      var letzter = nr === schritte.length - 1;
+      zurueck.hidden = nr === 0;
+      weiter.hidden = letzter;
+      senden.hidden = !letzter;
+      anzeige.hidden = false;
+      anzeige.innerHTML = "<b>Schritt " + (nr + 1) + "</b> von " + schritte.length;
+      if (fokus) {
+        var erstes = schritte[nr].querySelector("input:not([type=radio]), input:checked");
+        if (erstes) erstes.focus();
+      }
+    };
+
+    var gueltig = function () {
+      var felder = schritte[jetzt].querySelectorAll("input");
+      for (var i = 0; i < felder.length; i++) {
+        if (!felder[i].checkValidity()) { felder[i].reportValidity(); return false; }
+      }
+      return true;
+    };
+
+    weiter.addEventListener("click", function () {
+      if (gueltig()) zeige(jetzt + 1, true);
+    });
+    zurueck.addEventListener("click", function () { zeige(jetzt - 1, true); });
+    /* Enter selbst abfangen: der Absende-Knopf ist bis zum letzten
+       Schritt ausgeblendet, dann schickt der Browser bei Enter nichts ab.
+       Hat der Vorschlag im Feld Enter schon verbraucht (uebernommen),
+       bleibt es dabei. */
+    form.addEventListener("keydown", function (e) {
+      if (e.key !== "Enter" || e.defaultPrevented || e.target.tagName !== "INPUT") return;
+      if (jetzt < schritte.length - 1) {
+        e.preventDefault();
+        if (gueltig()) zeige(jetzt + 1, true);
+      }
+    });
+
+    form.classList.add("in-schritten");
+    zeige(0, false);
+  });
+
+  /* ---------------------------------------------------------------- *
    *  Vorschlag im Feld (kontakt.html, [data-vorschlag])
    *  Ab dem ersten Buchstaben steht der Rest des ersten passenden
    *  Eintrags markiert im Feld: weitertippen ueberschreibt ihn, Enter,
