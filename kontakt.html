@@ -4,8 +4,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Kontakt für Kunden und Techniker – taskrunner</title>
-    <meta name="description" content="Als Kunde sprechen Sie direkt mit dem Vertrieb, als Techniker oder Handwerksbetrieb mit unserem Partner-Team. Mit Telefon, E-Mail und Adresse.">
+    <title>Kontakt für Kunden und Handwerker – taskrunner</title>
+    <meta name="description" content="Als Kunde sprechen Sie direkt mit dem Vertrieb, als Handwerker oder Handwerksbetrieb mit unserem Partner-Team. Mit Telefon, E-Mail und Adresse.">
     <link rel="canonical" href="https://www.taskrunner.de/kontakt">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="icon" type="image/png" sizes="96x96" href="favicon-96.png">
@@ -14,8 +14,8 @@
     <!-- Open Graph -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://www.taskrunner.de/kontakt">
-    <meta property="og:title" content="Kontakt für Kunden und Techniker – taskrunner">
-    <meta property="og:description" content="Als Kunde sprechen Sie direkt mit dem Vertrieb, als Techniker oder Handwerksbetrieb mit unserem Partner-Team. Mit Telefon, E-Mail und Adresse.">
+    <meta property="og:title" content="Kontakt für Kunden und Handwerker – taskrunner">
+    <meta property="og:description" content="Als Kunde sprechen Sie direkt mit dem Vertrieb, als Handwerker oder Handwerksbetrieb mit unserem Partner-Team. Mit Telefon, E-Mail und Adresse.">
     <meta property="og:locale" content="de_DE">
     <link rel="stylesheet" href="assets/style.css">
   </head>
@@ -54,7 +54,7 @@
     <main id="inhalt">
       <h1 class="sr-only">Kontakt</h1>
       <!-- Zwei Kacheln: links hell fuer Kunden (2/3), rechts dunkel fuer
-           Techniker (1/3). Auf dem Handy untereinander. -->
+           Handwerker (1/3). Auf dem Handy untereinander. -->
       <div class="bg-white">
         <div class="container-breit section-y">
           <div class="kontakt-teilung">
@@ -99,44 +99,28 @@
                 </div>
                 <div>
                   <p class="t-body font-bold text-white">Ihre Ansprechperson</p>
-                  <p class="mt-1 t-body-tight">Für Techniker und Partnerbetriebe</p>
+                  <p class="mt-1 t-body-tight">Für Handwerker und Partnerbetriebe</p>
                 </div>
               </div>
-              <p class="mt-10 t-eyebrow text-white/75 lg:mt-12">Für Techniker</p>
-              <h2 id="techniker-titel" class="mt-4 text-balance hyphens-auto break-words t-h3 text-white">Übernehmen Sie Aufträge in Ihrer Region.</h2>
-              <p class="mt-6 t-body">Über 20.000 Techniker sind schon über taskrunner erreichbar. Schreiben Sie uns, welche Gewerke Sie abdecken und in welcher Region Sie arbeiten. Als Partner können Sie hier auch Fragen zu einem laufenden Auftrag stellen.</p>
+              <p class="mt-10 t-eyebrow text-white/75 lg:mt-12">Für Handwerker</p>
+              <h2 id="techniker-titel" class="mt-4 text-balance hyphens-auto break-words t-h3 text-white">Übernehmen Sie Tasks in Ihrer Region.</h2>
+              <p class="mt-6 t-body">Über 20.000 Handwerker sind schon über taskrunner erreichbar. Registrieren Sie sich kostenlos: Sagen Sie uns, wo Sie arbeiten und welche Gewerke Sie abdecken. Fragen zu einem laufenden Task beantworten wir unter derselben Adresse.</p>
+              <!-- Kein Server: das Formular oeffnet das Mailprogramm mit fertiger
+               Mail an operations@. Dafuer steht mailto: in _headers unter
+               form-action. -->
+              <form class="registrierung mt-10" action="mailto:operations@taskrunner.de?subject=Registrierung%20Handwerker" method="post" enctype="text/plain">
+                <label>Name<input type="text" name="Name" autocomplete="name" required></label><label>Firma<input type="text" name="Firma" autocomplete="organization"></label><label>Telefon<input type="tel" name="Telefon" autocomplete="tel" required></label><label>Standort (PLZ und Ort)<input type="text" name="Standort" autocomplete="postal-code" required></label><label>Gewerke<input type="text" name="Gewerke" placeholder="z. B. Elektro, Sanitär" required></label><label>Einsatzradius<input type="text" name="Einsatzradius" placeholder="z. B. 50 km"></label><button type="submit" class="btn btn-white mt-2 justify-self-start">Kostenlos registrieren</button>
+                <p class="t-caption text-white/75">Ihr Mailprogramm öffnet sich mit einer fertigen Nachricht an uns.</p>
+              </form>
               <div class="mt-12 lg:mt-16">
                 <span class="flex h-[42px] items-center text-[#8ab4f8]"><svg width="29" height="42" viewBox="0 0 67.67 97.79" aria-hidden="true" focusable="false"><rect fill="currentColor" x="28.91" y="43.96" width="10.25" height="53.83"/> <polygon fill="currentColor" points="27.14 12.02 27.14 6.41 35.5 6.41 35.5 0 23.65 0 23.65 5.05 23.65 6.41 23.65 12.02 27.14 12.02"/> <path fill="currentColor" d="M10.71,41.54v-22.2h.01c0-2.96-2.4-5.36-5.36-5.36S0,16.37,0,19.33v22.21h10.71Z"/> <path fill="currentColor" d="M13.76,17.46h-.01v24.08h53.91v-23.1h.01c0-3.07-2.49-5.55-5.55-5.55v-.05H27.14v7.35h-3.5v-7.35h-12.35c1.49,1,2.46,2.7,2.46,4.63Z"/></svg></span>
                 <h3 class="mt-6 t-h4 text-white">Schreiben</h3>
                 <p class="mt-6">
-                  <a href="mailto:techniker@taskrunner.de" class="kontakt-link group inline-flex items-center gap-2 t-body font-bold">techniker@taskrunner.de<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="transition-transform group-hover:translate-x-1"><path d="M9 6l6 6-6 6"></path></svg></a>
+                  <a href="mailto:operations@taskrunner.de" class="kontakt-link group inline-flex items-center gap-2 t-body font-bold">operations@taskrunner.de<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="transition-transform group-hover:translate-x-1"><path d="M9 6l6 6-6 6"></path></svg></a>
                 </p>
               </div>
             </section>
           </div>
-          <!-- Fragen von Technikern. Aufbau und Aussehen wie die Gewerke auf
-           dienstleistungen.html (.gewerk-karte in tailwind/input.css):
-           name= haelt nur eine Frage offen, die erste startet offen. -->
-          <section class="mt-20 lg:mt-28" aria-labelledby="faq-techniker-titel">
-            <p class="t-eyebrow text-ink/80">Für Techniker</p>
-            <h2 id="faq-techniker-titel" class="mt-4 max-w-[720px] text-balance hyphens-auto break-words t-h2 text-blue-600">Häufige Fragen</h2>
-            <div class="mt-10 max-w-[760px] lg:mt-14">
-              <details class="gewerk-karte" name="faq-techniker" open>
-                <summary>
-                  <span class="gewerk-symbol" aria-hidden="true"><img src="images/icons/dokument.svg" alt="" width="28" height="28"></span>
-                  <h3 class="hyphens-auto break-words t-h4">Ich habe mein Geld noch nicht bekommen. Wann erhalte ich es?</h3>
-                </summary>
-                <p class="max-w-[680px] pb-6 t-body text-ink sm:pb-7">Unser Zahlungsziel liegt bei 14 Tagen. Jede Rechnung geht bei uns durch zwei Abteilungen und wird mehrfach freigegeben, bevor wir sie überweisen können.</p>
-              </details>
-              <details class="gewerk-karte" name="faq-techniker">
-                <summary>
-                  <span class="gewerk-symbol" aria-hidden="true"><img src="images/icons/dokument.svg" alt="" width="28" height="28"></span>
-                  <h3 class="hyphens-auto break-words t-h4">Wieso habe ich eine Gutschrift per E-Mail bekommen, obwohl ich bereits selbst eine Rechnung geschickt habe?</h3>
-                </summary>
-                <p class="max-w-[680px] pb-6 t-body text-ink sm:pb-7">Sie müssen damit nichts tun. Wenn wir Ihre Rechnung bearbeiten, erstellt unser System automatisch eine Gutschrift und verbucht sie später zusammen mit der Überweisung. Zuschicken müssen wir sie Ihnen trotzdem, dazu sind wir verpflichtet.</p>
-              </details>
-            </div>
-          </section>
         </div>
       </div>
     </main>
@@ -177,7 +161,7 @@
             <ul class="mt-5 space-y-2.5">
               <li><a href="tel:+4920199999201" class="text-white/75 transition-colors hover:text-white">+49 201 99999-201</a></li>
               <li><a href="mailto:sales@taskrunner.de" class="text-white/75 transition-colors hover:text-white">sales@taskrunner.de</a></li>
-              <li><a href="kontakt.html#techniker" class="text-white/75 transition-colors hover:text-white">Kontakt für Techniker</a></li>
+              <li><a href="kontakt.html#techniker" class="text-white/75 transition-colors hover:text-white">Kontakt für Handwerker</a></li>
             </ul>
           </div>
         </div>

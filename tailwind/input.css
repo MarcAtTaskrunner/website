@@ -1128,10 +1128,15 @@ footer h3 {
 }
 @media (min-width: 40rem) {
   .gewerk-karte > summary { padding: 22px 0; }
+  /* Spaltensatz statt Raster: im Raster bekam ein einzeiliger Eintrag
+     die Hoehe seines zweizeiligen Nachbarn (Glaser neben Rollladen). */
   .gewerk-liste {
-    grid-template-columns: 1fr 1fr;
+    display: block;
+    columns: 2;
+    column-gap: 24px;
     padding: 0 0 28px;
   }
+  .gewerk-liste li { break-inside: avoid; margin-bottom: 6px; }
 }
 @supports selector(::details-content) {
   .gewerk-karte { interpolate-size: allow-keywords; }
@@ -1183,25 +1188,25 @@ footer h3 {
 }
 
 /* ------------------------------------------------------------------ *
- *  Beratung (Dienstleistungen)
+ *  Projekte (Dienstleistungen)
  *
- *  Dunkles Band wie das Kopfband (.verlauf-nacht). Die vier Themen
+ *  Dunkles Band wie das Kopfband (.verlauf-nacht). Die Punkte
  *  stehen als Zeilen zwischen Haarlinien: links Symbol und Titel,
  *  rechts der Text - im selben Raster 7:5 wie die Kopfzeile darueber,
  *  so fluchtet er mit dem Einleitungssatz. Symbole statt Nummern, weil
- *  die Themen keine Reihenfolge sind. Keine Kaesten: im dunklen Band
+ *  die Punkte keine Reihenfolge sind. Keine Kaesten: im dunklen Band
  *  wirkten sie zu schwer.
  *
  *  Die Symbole in #8ab4f8 statt Light Blue (#4285f4): das waere auf
  *  dem Verlauf zu dunkel. Sie sind reiner Schmuck (aria-hidden).
  * ------------------------------------------------------------------ */
-.beratung-zeile { border-top: 1px solid rgba(255,255,255,0.2); }
-.beratung-zeile:last-child { border-bottom: 1px solid rgba(255,255,255,0.2); }
-.beratung-symbol { flex: none; color: #8ab4f8; }
-.beratung-symbol svg { display: block; width: 32px; height: 32px; }
-/* Im Beratungsabschnitt steht aller Text in vollem Weiss statt der 75 %
+.projekt-zeile { border-top: 1px solid rgba(255,255,255,0.2); }
+.projekt-zeile:last-child { border-bottom: 1px solid rgba(255,255,255,0.2); }
+.projekt-symbol { flex: none; color: #8ab4f8; }
+.projekt-symbol svg { display: block; width: 32px; height: 32px; }
+/* Im Projektabschnitt steht aller Text in vollem Weiss statt der 75 %
    von .verlauf-nacht p - die ID schlaegt die Klassenregel. */
-#beratung p { color: #fff; }
+#projekte p { color: #fff; }
 
 /* ------------------------------------------------------------------ *
  *  Mehr Luft fuer Handwerk und Beratung (Dienstleistungen): oben und
@@ -1344,7 +1349,7 @@ footer h3 {
   font-variant-numeric: tabular-nums;
 }
 
-/* Ab md wie die Schritte auf der Startseite (.schritte): statt einer
+/* Ab md wie die Schritte auf der Startseite (.schritte, dort ab lg): statt einer
    Linie je Spalte eine einzige, die am linken Fensterrand beginnt und
    rechts mit dem Inhalt endet - dort laeuft sie ab 70 % ihrer Laenge
    ins Durchsichtige aus. Der dritte Strich sitzt bei 768-1920 px
@@ -1906,13 +1911,13 @@ html:has(.lightbox[open]) { overflow: hidden; }
   filter: brightness(0) invert(21%) sepia(100%) saturate(1824%) hue-rotate(208deg);
 }
 
-/* "So funktioniert Taskrunner": ab md eine durchgehende Linie ueber allen
-   drei Schritten statt je einer pro Schritt. Sie beginnt am linken
+/* "So funktioniert ein Task": ab lg eine durchgehende Linie ueber allen
+   vier Schritten statt je einer pro Schritt. Sie beginnt am linken
    Fensterrand (ohne Seitenrand) und endet rechts mit dem Inhalt. Links
    ueber den Rand hinaus erzeugt keinen Scrollbalken. Auf dem Handy stehen
    die Schritte untereinander und behalten ihre eigenen Trennlinien. */
 .schritte { position: relative; }
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .schritte::before {
     content: "";
     position: absolute;
@@ -1953,8 +1958,9 @@ html:has(.lightbox[open]) { overflow: hidden; }
   html.js-auf .variante-b .schritte > li:nth-child(1).da::before { transition-delay: 0.25s; }
   html.js-auf .variante-b .schritte > li:nth-child(2).da::before { transition-delay: 0.55s; }
   html.js-auf .variante-b .schritte > li:nth-child(3).da::before { transition-delay: 0.85s; }
+  html.js-auf .variante-b .schritte > li:nth-child(4).da::before { transition-delay: 1.1s; }
 }
-@media (min-width: 768px) and (prefers-reduced-motion: reduce) {
+@media (min-width: 1024px) and (prefers-reduced-motion: reduce) {
   html.js-auf .variante-b .schritte::before,
   html.js-auf .variante-b .schritte > li::before { transform: none; scale: none; transition: none; }
 }
@@ -1962,7 +1968,7 @@ html:has(.lightbox[open]) { overflow: hidden; }
 /* ------------------------------------------------------------------ *
  *  Kontaktseite (quellen/kontakt.html)
  *  Zwei Kacheln mit runden Ecken in der Inhaltsbreite: links hell fuer
- *  Kunden (2/3), rechts dunkel fuer Techniker (1/3). Beide gleich hoch,
+ *  Kunden (2/3), rechts dunkel fuer Handwerker (1/3). Beide gleich hoch,
  *  Inhalt oben. Auf dem Handy untereinander. Das Korn (.mit-korn)
  *  uebernimmt die Rundung selbst (border-radius: inherit).
  * ------------------------------------------------------------------ */
@@ -2183,3 +2189,20 @@ html:has(.lightbox[open]) { overflow: hidden; }
     object-fit: contain;
   }
 }
+
+/* Registrierung fuer Handwerker (kontakt.html, dunkle Kachel): Felder
+   untereinander, Beschriftung ueber dem Feld. */
+.registrierung { display: grid; gap: 16px; }
+.registrierung label { display: grid; gap: 6px; font-size: 15px; font-weight: 500; color: #fff; }
+.registrierung input {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--radius-card);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font: inherit;
+  font-weight: 400;
+}
+.registrierung input::placeholder { color: rgba(255, 255, 255, 0.55); }
+.registrierung input:focus-visible { outline: 2px solid #fff; outline-offset: 2px; border-color: transparent; }

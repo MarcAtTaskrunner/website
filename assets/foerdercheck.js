@@ -101,7 +101,7 @@
     k.posten.push(["50&nbsp;%", "Fachplanung und Baubegleitung"]);
 
     if (gebaeude === "nichtwohn") {
-      k.hinweise.push("Für Nichtwohngebäude gelten eigene Obergrenzen – wir prüfen sie für Ihr Objekt.");
+      k.hinweise.push("Für Nichtwohngebäude gelten eigene Obergrenzen.");
     } else if (einheiten) {
       var kosten = einheiten * HUELLE.jeEinheit;
       k.betrag = "Bei " + (einheiten === 1 ? "einer Wohneinheit" : zahl(einheiten) + " Wohneinheiten") +
@@ -138,7 +138,7 @@
       ziel: "#anlagentechnik",
       posten: [],
       text: "Energieeffiziente Innen&shy;beleuchtung in Nichtwohngebäuden wird seit dem 21. Juli 2026 nicht mehr über die BEG gefördert.",
-      hinweise: ["Infrage kommen die Nationale Klimaschutz&shy;initiative, KfW-Kredite, Landesprogramme oder Contracting – wir prüfen, was davon für Ihr Vorhaben trägt."]
+      hinweise: ["Infrage kommen die Nationale Klimaschutz&shy;initiative, KfW-Kredite, Landesprogramme oder Contracting."]
     };
   };
 
