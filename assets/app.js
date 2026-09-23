@@ -607,29 +607,53 @@
   })();
 
   /* ---------------------------------------------------------------- *
-   *  Ortsvorschlag im Feld (kontakt.html, [data-ortsvorschlag])
-   *  Ab dem ersten Buchstaben steht der Rest des ersten passenden Orts
-   *  markiert im Feld: weitertippen ueberschreibt ihn, Enter, Tab oder
-   *  Pfeil rechts uebernimmt ihn, Loeschen entfernt ihn. Die Orte kommen
-   *  aus der <datalist>, deren id im Attribut steht. Ohne JavaScript ist
+   *  Vorschlag im Feld (kontakt.html, [data-vorschlag])
+   *  Ab dem ersten Buchstaben steht der Rest des ersten passenden
+   *  Eintrags markiert im Feld: weitertippen ueberschreibt ihn, Enter,
+   *  Tab oder Pfeil rechts uebernimmt ihn, Loeschen entfernt ihn.
+   *  data-vorschlag nennt die Quelle: die id einer <datalist> oder ein
+   *  Skript (endet auf .js), das window.taskrunnerOrte setzt und erst
+   *  beim ersten Klick ins Feld geladen wird. Mit data-mehrfach gilt der
+   *  Vorschlag fuer den Teil nach dem letzten Komma. Ohne JavaScript ist
    *  es ein normales Textfeld.
    * ---------------------------------------------------------------- */
-  Array.prototype.forEach.call(document.querySelectorAll("[data-ortsvorschlag]"), function (feld) {
-    var liste = document.getElementById(feld.getAttribute("data-ortsvorschlag"));
-    if (!liste) return;
-    var orte = Array.prototype.map.call(liste.options, function (o) { return o.value; });
+  Array.prototype.forEach.call(document.querySelectorAll("[data-vorschlag]"), function (feld) {
+    var quelle = feld.getAttribute("data-vorschlag");
+    var mehrfach = feld.hasAttribute("data-mehrfach");
+    var eintraege = [];
+
+    if (/\.js$/.test(quelle)) {
+      feld.addEventListener("focus", function () {
+        if (window.taskrunnerOrte || document.querySelector('script[src="' + quelle + '"]')) return;
+        var skript = document.createElement("script");
+        skript.src = quelle;
+        document.head.appendChild(skript);
+      });
+    } else {
+      var liste = document.getElementById(quelle);
+      if (!liste) return;
+      eintraege = Array.prototype.map.call(liste.options, function (o) { return o.value; });
+    }
 
     feld.addEventListener("input", function (e) {
       /* Nur beim Tippen ergaenzen, nicht beim Loeschen oder Einfuegen */
       if (e.isComposing || (e.inputType && e.inputType !== "insertText")) return;
-      var getippt = feld.value;
-      if (!getippt || feld.selectionEnd !== getippt.length) return;
+      var wert = feld.value;
+      if (!wert || feld.selectionEnd !== wert.length) return;
+      var liste = eintraege.length ? eintraege : (window.taskrunnerOrte || []);
+      /* Bei mehreren Eintraegen nur das Stueck nach dem letzten Komma */
+      var anfang = mehrfach ? wert.lastIndexOf(",") + 1 : 0;
+      while (anfang < wert.length && wert.charAt(anfang) === " ") anfang++;
+      var getippt = wert.slice(anfang);
+      if (!getippt) return;
+      var schon = mehrfach ? wert.slice(0, anfang).toLocaleLowerCase("de").split(",").map(function (t) { return t.trim(); }) : [];
       var klein = getippt.toLocaleLowerCase("de");
-      for (var i = 0; i < orte.length; i++) {
-        if (orte[i].toLocaleLowerCase("de").indexOf(klein) === 0 && orte[i].length > getippt.length) {
-          /* Schreibweise des Orts uebernehmen: "ber" wird zu "Berlin" */
-          feld.value = orte[i];
-          feld.setSelectionRange(getippt.length, feld.value.length);
+      for (var i = 0; i < liste.length; i++) {
+        var kandidat = liste[i].toLocaleLowerCase("de");
+        if (kandidat.indexOf(klein) === 0 && liste[i].length > getippt.length && schon.indexOf(kandidat) < 0) {
+          /* Schreibweise des Eintrags uebernehmen: "ber" wird zu "Berlin" */
+          feld.value = wert.slice(0, anfang) + liste[i];
+          feld.setSelectionRange(wert.length, feld.value.length);
           return;
         }
       }
@@ -646,9 +670,5 @@
       }
     });
   });
-
-
-
-
 
 })();

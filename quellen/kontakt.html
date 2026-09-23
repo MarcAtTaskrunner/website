@@ -69,162 +69,58 @@ beschreibung: Als Kunde sprechen Sie direkt mit dem Vertrieb, als Handwerker ode
             <label>Name<input type="text" name="Name" autocomplete="name" placeholder="z. B. Max Mustermann" required></label>
             <label>Firma<input type="text" name="Firma" autocomplete="organization" placeholder="z. B. Mustermann Elektro GmbH"></label>
             <label>Telefon<input type="tel" name="Telefon" autocomplete="tel" placeholder="z. B. 0201 1234567" required></label>
-            <!-- Ortsvorschlag: ab dem ersten Buchstaben ergaenzt assets/app.js
-                 den Rest des ersten passenden Orts markiert im Feld selbst
-                 ([data-ortsvorschlag]). Die Liste ist nur Datenquelle, ohne
-                 list= zeigt der Browser sie nicht an. Reihenfolge ungefaehr
-                 nach Einwohnern: "Ber" ergibt Berlin, "Wie" Wien. Jeder
-                 andere Ort laesst sich trotzdem eintragen. -->
-            <label>Standort (Ort)<input type="text" name="Standort" data-ortsvorschlag="orte" autocomplete="off" placeholder="z. B. Essen" required></label>
-            <datalist id="orte">
-              <option value="Berlin"></option>
-              <option value="Wien"></option>
-              <option value="Hamburg"></option>
-              <option value="München"></option>
-              <option value="Köln"></option>
-              <option value="Frankfurt am Main"></option>
-              <option value="Stuttgart"></option>
-              <option value="Düsseldorf"></option>
-              <option value="Leipzig"></option>
-              <option value="Dortmund"></option>
-              <option value="Essen"></option>
-              <option value="Bremen"></option>
-              <option value="Dresden"></option>
-              <option value="Hannover"></option>
-              <option value="Nürnberg"></option>
-              <option value="Duisburg"></option>
-              <option value="Bochum"></option>
-              <option value="Graz"></option>
-              <option value="Wuppertal"></option>
-              <option value="Bielefeld"></option>
-              <option value="Bonn"></option>
-              <option value="Münster"></option>
-              <option value="Mannheim"></option>
-              <option value="Karlsruhe"></option>
-              <option value="Augsburg"></option>
-              <option value="Wiesbaden"></option>
-              <option value="Linz"></option>
-              <option value="Mönchengladbach"></option>
-              <option value="Gelsenkirchen"></option>
-              <option value="Aachen"></option>
-              <option value="Braunschweig"></option>
-              <option value="Kiel"></option>
-              <option value="Chemnitz"></option>
-              <option value="Halle (Saale)"></option>
-              <option value="Magdeburg"></option>
-              <option value="Freiburg im Breisgau"></option>
-              <option value="Krefeld"></option>
-              <option value="Mainz"></option>
-              <option value="Lübeck"></option>
-              <option value="Erfurt"></option>
-              <option value="Salzburg"></option>
-              <option value="Oberhausen"></option>
-              <option value="Rostock"></option>
-              <option value="Kassel"></option>
-              <option value="Hagen"></option>
-              <option value="Potsdam"></option>
-              <option value="Saarbrücken"></option>
-              <option value="Hamm"></option>
-              <option value="Innsbruck"></option>
-              <option value="Ludwigshafen am Rhein"></option>
-              <option value="Oldenburg"></option>
-              <option value="Mülheim an der Ruhr"></option>
-              <option value="Osnabrück"></option>
-              <option value="Leverkusen"></option>
-              <option value="Darmstadt"></option>
-              <option value="Heidelberg"></option>
-              <option value="Solingen"></option>
-              <option value="Herne"></option>
-              <option value="Neuss"></option>
-              <option value="Regensburg"></option>
-              <option value="Paderborn"></option>
-              <option value="Ingolstadt"></option>
-              <option value="Offenbach am Main"></option>
-              <option value="Fürth"></option>
-              <option value="Würzburg"></option>
-              <option value="Ulm"></option>
-              <option value="Heilbronn"></option>
-              <option value="Pforzheim"></option>
-              <option value="Wolfsburg"></option>
-              <option value="Göttingen"></option>
-              <option value="Bottrop"></option>
-              <option value="Klagenfurt"></option>
-              <option value="Reutlingen"></option>
-              <option value="Koblenz"></option>
-              <option value="Bremerhaven"></option>
-              <option value="Recklinghausen"></option>
-              <option value="Bergisch Gladbach"></option>
-              <option value="Erlangen"></option>
-              <option value="Jena"></option>
-              <option value="Remscheid"></option>
-              <option value="Trier"></option>
-              <option value="Salzgitter"></option>
-              <option value="Moers"></option>
-              <option value="Siegen"></option>
-              <option value="Hildesheim"></option>
-              <option value="Cottbus"></option>
-              <option value="Gütersloh"></option>
-              <option value="Kaiserslautern"></option>
-              <option value="Witten"></option>
-              <option value="Schwerin"></option>
-              <option value="Gera"></option>
-              <option value="Iserlohn"></option>
-              <option value="Zwickau"></option>
-              <option value="Düren"></option>
-              <option value="Esslingen am Neckar"></option>
-              <option value="Ratingen"></option>
-              <option value="Flensburg"></option>
-              <option value="Ludwigsburg"></option>
-              <option value="Lünen"></option>
-              <option value="Hanau"></option>
-              <option value="Velbert"></option>
-              <option value="Marl"></option>
-              <option value="Dessau-Roßlau"></option>
-              <option value="Minden"></option>
-              <option value="Wilhelmshaven"></option>
-              <option value="Konstanz"></option>
-              <option value="Rosenheim"></option>
-              <option value="Bamberg"></option>
-              <option value="Bayreuth"></option>
-              <option value="Passau"></option>
-              <option value="Kempten"></option>
-              <option value="Landshut"></option>
-              <option value="Neubrandenburg"></option>
-              <option value="Stralsund"></option>
-              <option value="Greifswald"></option>
-              <option value="Fulda"></option>
-              <option value="Gießen"></option>
-              <option value="Marburg"></option>
-              <option value="Lüneburg"></option>
-              <option value="Celle"></option>
-              <option value="Emden"></option>
-              <option value="Wetzlar"></option>
-              <option value="Villach"></option>
-              <option value="Wels"></option>
-              <option value="St. Pölten"></option>
-              <option value="Dornbirn"></option>
-              <option value="Wiener Neustadt"></option>
-              <option value="Steyr"></option>
-              <option value="Feldkirch"></option>
-              <option value="Bregenz"></option>
-              <option value="Leonding"></option>
-              <option value="Klosterneuburg"></option>
-              <option value="Baden bei Wien"></option>
-              <option value="Wolfsberg"></option>
-              <option value="Leoben"></option>
-              <option value="Krems an der Donau"></option>
-              <option value="Traun"></option>
-              <option value="Amstetten"></option>
-              <option value="Kapfenberg"></option>
-              <option value="Mödling"></option>
-              <option value="Lustenau"></option>
-              <option value="Hallein"></option>
-              <option value="Braunau am Inn"></option>
-              <option value="Schwechat"></option>
-              <option value="Spittal an der Drau"></option>
-              <option value="Saalfelden"></option>
+            <!-- Vorschlag im Feld: ab dem ersten Buchstaben ergaenzt
+                 assets/app.js den Rest markiert ([data-vorschlag]). Orte:
+                 alle Gemeinden in DE und AT aus assets/orte.js (Bauergebnis
+                 von werkzeuge/orte.py), geladen erst beim Klick ins Feld.
+                 Gewerke: die Liste #gewerke darunter, mehrere durch Komma.
+                 Freie Eingaben gehen in beiden Feldern trotzdem. -->
+            <label>Standort (Ort)<input type="text" name="Standort" data-vorschlag="assets/orte.js" autocomplete="off" placeholder="z. B. Essen" required></label>
+            <label>Gewerke<input type="text" name="Gewerke" data-vorschlag="gewerke" data-mehrfach autocomplete="off" placeholder="z. B. Elektriker, Sanitär" required></label>
+            <!-- Nach der Gewerks- und Preisuebersicht, in den Woertern, die
+                 Handwerker tippen; dazu Winterdienst. -->
+            <datalist id="gewerke">
+              <option value="Alarmanlagen"></option>
+              <option value="Automatiktüren"></option>
+              <option value="Bodenleger"></option>
+              <option value="Brandschutztechnik"></option>
+              <option value="Dachdecker"></option>
+              <option value="Elektriker"></option>
+              <option value="Fassadenreinigung"></option>
+              <option value="Fensterbauer"></option>
+              <option value="Fliesenleger"></option>
+              <option value="Garten- und Landschaftsbau"></option>
+              <option value="Gastronomietechnik"></option>
+              <option value="Glaser"></option>
+              <option value="Graffitientfernung"></option>
+              <option value="Heizung"></option>
+              <option value="IT / EDV"></option>
+              <option value="Kanalreinigung"></option>
+              <option value="Klimatechnik"></option>
+              <option value="Kühltechnik"></option>
+              <option value="Lüftungstechnik"></option>
+              <option value="Maler"></option>
+              <option value="Maurer"></option>
+              <option value="Reinigung"></option>
+              <option value="Rohrreinigung"></option>
+              <option value="Rollläden"></option>
+              <option value="Sanitär"></option>
+              <option value="Schlosser"></option>
+              <option value="Schlüsseldienst"></option>
+              <option value="Schreiner"></option>
+              <option value="Schwachstromtechnik"></option>
+              <option value="Sicherheitstechnik"></option>
+              <option value="Sonnenschutz"></option>
+              <option value="Tischler"></option>
+              <option value="Tore"></option>
+              <option value="Transporte / Umzug"></option>
+              <option value="Tresoröffnung"></option>
+              <option value="Trockenbau"></option>
+              <option value="Verputzarbeiten"></option>
+              <option value="Wachdienst"></option>
+              <option value="Werbetechnik"></option>
+              <option value="Winterdienst"></option>
             </datalist>
-            <label>Gewerke<input type="text" name="Gewerke" placeholder="z. B. Elektro, Sanitär" required></label>
             <label>Einsatzradius<input type="text" name="Einsatzradius" placeholder="z. B. 50 km"></label>
             <button type="submit" class="btn btn-white mt-2 justify-self-start">Kostenlos registrieren</button>
           </form>
