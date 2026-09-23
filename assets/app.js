@@ -785,7 +785,16 @@
       if (!window.taskrunnerPlz) ladeSkript(quelle, zeige);
     };
 
+    /* Nach jeder Aenderung meldet das Feld "plzwechsel" mit der PLZ,
+       wenn sie bekannt ist, sonst mit null - darauf hoert die Karte. */
     var zeige = function () {
+      zeigeOrt();
+      var plz = feld.value;
+      var bekannt = window.taskrunnerPlz && window.taskrunnerPlz[plz] ? plz : null;
+      feld.dispatchEvent(new CustomEvent("plzwechsel", { bubbles: true, detail: { plz: bekannt } }));
+    };
+
+    var zeigeOrt = function () {
       var plz = feld.value.replace(/\D/g, "");
       if (plz !== feld.value) feld.value = plz;
       ausgabe.textContent = "";
@@ -896,6 +905,138 @@
       }, { enableHighAccuracy: false, timeout: 15000, maximumAge: 600000 });
     });
   });
+
+  /* ---------------------------------------------------------------- *
+   *  Karte zur PLZ (kontakt.html, [data-karte])
+   *  Rechts in der weiten Handwerker-Kachel: Linienkarte von Deutschland
+   *  und Oesterreich (assets/karte.js, Bauergebnis von werkzeuge/karte.py).
+   *  Ist die PLZ bekannt, erscheint dort ein Punkt (Mittelpunkt aus
+   *  assets/plz-lage.js) mit dem gewaehlten Einsatzradius, und die Karte
+   *  zoomt heran; "Bundesweit" oder keine PLZ zeigt wieder alles.
+   *  Beide Dateien werden erst geladen, wenn die Kachel weit wird.
+   * ---------------------------------------------------------------- */
+  (function () {
+    var huelle = document.querySelector("[data-karte]");
+    if (!huelle) return;
+    var teilung = huelle.closest("[data-weiten]");
+    var form = teilung && teilung.querySelector("[data-schritte]");
+    if (!form) return;
+    var NS = "http://www.w3.org/2000/svg";
+    var svg, punkt, puls, kreis, K, lage = null;
+    var sicht = null, ziel = null, anim = 0;
+    var aktuell = null;
+    var ruhig = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    var element = function (name, attr) {
+      var e = document.createElementNS(NS, name);
+      for (var k in attr) e.setAttribute(k, attr[k]);
+      return e;
+    };
+
+    var baue = function () {
+      if (svg || !window.taskrunnerKarte) return;
+      K = window.taskrunnerKarte;
+      sicht = [0, 0, K.breite, K.hoehe];
+      svg = element("svg", { viewBox: sicht.join(" "), preserveAspectRatio: "xMidYMid meet", focusable: "false" });
+      svg.appendChild(element("path", { d: K.innen, "class": "karte-innen" }));
+      svg.appendChild(element("path", { d: K.aussen, "class": "karte-aussen" }));
+      kreis = element("circle", { "class": "karte-radius", r: 0 });
+      puls = element("circle", { "class": "karte-puls", r: 0 });
+      punkt = element("circle", { "class": "karte-punkt", r: 0 });
+      [kreis, puls, punkt].forEach(function (e) { svg.appendChild(e); });
+      huelle.appendChild(svg);
+      zeichne();
+      if (aktuell) setze(aktuell);
+    };
+
+    var lade = function () {
+      ladeSkript(huelle.getAttribute("data-karte"), baue);
+      ladeSkript(huelle.getAttribute("data-lage"), function () { if (aktuell) setze(aktuell); });
+    };
+
+    var projiziere = function (breite, laenge) {
+      return [(laenge - K.lonMin) * K.cos0 * K.massstab, (K.latMax - breite) * K.massstab];
+    };
+
+    var mittelpunkt = function (plz) {
+      if (!window.taskrunnerPlzLage) return null;
+      if (!lage) {
+        lage = {};
+        window.taskrunnerPlzLage.split(";").forEach(function (t) {
+          var z = t.split(",");
+          lage[z[0]] = [z[1] / 100, z[2] / 100];
+        });
+      }
+      return lage[plz] || null;
+    };
+
+    var radiusKm = function () {
+      var gewaehlt = form.querySelector('input[name="Einsatzradius"]:checked');
+      var km = gewaehlt ? parseInt(gewaehlt.value, 10) : NaN;
+      return isNaN(km) ? 0 : km;
+    };
+
+    /* Punkt, Puls und Kreis haengen an der aktuellen Sicht: der Punkt
+       soll auf dem Bildschirm gleich gross bleiben, egal wie weit gezoomt. */
+    var zeichne = function () {
+      svg.setAttribute("viewBox", sicht.join(" "));
+      var einheit = sicht[2] / 100;
+      punkt.setAttribute("r", aktuellePos ? einheit * 1.1 : 0);
+      puls.setAttribute("r", aktuellePos ? einheit * 2.6 : 0);
+      kreis.setAttribute("r", aktuellePos && aktuellerRadius ? aktuellerRadius : 0);
+    };
+    var aktuellePos = null, aktuellerRadius = 0;
+
+    var fahre = function (nach) {
+      ziel = nach;
+      window.cancelAnimationFrame(anim);
+      if (ruhig.matches) { sicht = nach.slice(); zeichne(); return; }
+      var von = sicht.slice(), start = null, DAUER = 900;
+      var schritt = function (t) {
+        if (start === null) start = t;
+        var f = Math.min(1, (t - start) / DAUER);
+        var e = f < 0.5 ? 4 * f * f * f : 1 - Math.pow(-2 * f + 2, 3) / 2;
+        sicht = von.map(function (v, i) { return v + (ziel[i] - v) * e; });
+        zeichne();
+        if (f < 1) anim = window.requestAnimationFrame(schritt);
+      };
+      anim = window.requestAnimationFrame(schritt);
+    };
+
+    var setze = function (plz) {
+      aktuell = plz;
+      if (!svg) return;
+      var ll = plz && mittelpunkt(plz);
+      if (!ll) {
+        aktuellePos = null;
+        huelle.classList.remove("hat-punkt");
+        fahre([0, 0, K.breite, K.hoehe]);
+        return;
+      }
+      var p = projiziere(ll[0], ll[1]);
+      aktuellePos = p;
+      aktuellerRadius = radiusKm() * K.massstab / 111.2;
+      [punkt, puls, kreis].forEach(function (e) { e.setAttribute("cx", p[0]); e.setAttribute("cy", p[1]); });
+      huelle.classList.remove("hat-punkt");
+      void huelle.offsetWidth; /* Puls-Animation neu starten */
+      huelle.classList.add("hat-punkt");
+      /* Ausschnitt: der Radiuskreis mit Luft drumherum, mindestens so
+         gross, dass die Umgebung erkennbar bleibt; Bundesweit = alles */
+      if (!radiusKm()) { fahre([0, 0, K.breite, K.hoehe]); return; }
+      var seite = Math.max(aktuellerRadius * 2.8, K.breite * 0.22);
+      var hoehe = seite * K.hoehe / K.breite;
+      fahre([p[0] - seite / 2, p[1] - hoehe / 2, seite, hoehe]);
+    };
+
+    form.addEventListener("plzwechsel", function (e) { setze(e.detail.plz); });
+    form.addEventListener("change", function (e) {
+      if (e.target.name === "Einsatzradius" && aktuell) setze(aktuell);
+    });
+    /* laden, sobald die Kachel weit wird (Klasse an der Teilung) */
+    new MutationObserver(function () {
+      if (teilung.classList.contains("ist-weit")) lade();
+    }).observe(teilung, { attributes: true, attributeFilter: ["class"] });
+  })();
 
   /* ---------------------------------------------------------------- *
    *  Vorschlag im Feld (kontakt.html, [data-vorschlag])

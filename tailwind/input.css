@@ -2019,7 +2019,63 @@ html:has(.lightbox[open]) { overflow: hidden; }
   .kontakt-teilung.ist-weit > #kunden { opacity: 0; padding-inline: 0; }
   .kontakt-teilung.kunden-weg > #kunden { visibility: hidden; }
   .kontakt-teilung.ist-weit .handwerker-kopf { display: none; }
-  .kontakt-teilung.ist-weit .registrierung { width: calc(50% - 36px); margin-top: 0; }
+  /* Weit: Formular mittig in der linken Haelfte, Karte rechts */
+  .kontakt-teilung > #techniker { position: relative; }
+  .kontakt-teilung.ist-weit .handwerker-innen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50%;
+    height: 100%;
+  }
+  .kontakt-teilung.ist-weit .registrierung { width: min(440px, 100%); margin-top: 0; }
+  .handwerker-karte {
+    position: absolute;
+    top: 56px;
+    right: 56px;
+    bottom: 56px;
+    width: calc(50% - 56px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease, visibility 0s linear 0.5s;
+  }
+  .kontakt-teilung.ist-weit:not(.blendet) .handwerker-karte {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.5s ease;
+  }
+}
+.handwerker-karte { display: none; }
+@media (min-width: 64rem) { .handwerker-karte { display: block; } }
+/* Beim Heranzoomen reicht die Karte ueber ihren Bereich hinaus: dort
+   abschneiden und die Raender weich auslaufen lassen, statt die Linien
+   hinter das Formular laufen zu lassen. */
+.handwerker-karte {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent), linear-gradient(to bottom, transparent, #000 10%, #000 90%, transparent);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent), linear-gradient(to bottom, transparent, #000 10%, #000 90%, transparent);
+  mask-composite: intersect;
+}
+.handwerker-karte svg { display: block; width: 100%; height: 100%; overflow: hidden; }
+/* Linien bleiben beim Zoomen gleich dick (non-scaling-stroke) */
+.karte-aussen, .karte-innen, .karte-radius { fill: none; vector-effect: non-scaling-stroke; }
+.karte-aussen { stroke: rgba(255, 255, 255, 0.85); stroke-width: 1.5; stroke-linejoin: round; }
+.karte-innen { stroke: #8ab4f8; stroke-opacity: 0.35; stroke-width: 1; stroke-linejoin: round; }
+.karte-radius {
+  fill: rgba(138, 180, 248, 0.12);
+  stroke: #8ab4f8;
+  stroke-width: 1.5;
+  stroke-dasharray: 5 5;
+  transition: r 0.6s cubic-bezier(.22, .61, .36, 1);
+}
+.karte-punkt { fill: var(--color-orange); }
+.karte-puls { fill: none; stroke: var(--color-orange); stroke-width: 2; vector-effect: non-scaling-stroke; opacity: 0; }
+.hat-punkt .karte-puls { animation: karte-puls 1.6s ease-out 0.3s 2; transform-box: fill-box; transform-origin: center; }
+.hat-punkt .karte-punkt { animation: karte-punkt 0.45s cubic-bezier(.34, 1.56, .64, 1); transform-box: fill-box; transform-origin: center; }
+@keyframes karte-puls { from { opacity: 0.9; transform: scale(0.4); } to { opacity: 0; transform: scale(1.6); } }
+@keyframes karte-punkt { from { transform: scale(0); } }
+@media (prefers-reduced-motion: reduce) {
+  .hat-punkt .karte-puls, .hat-punkt .karte-punkt { animation: none; }
 }
 
 /* Unter der Kopfzeile nur ein kurzer Abstand statt der vollen

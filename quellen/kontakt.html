@@ -285,6 +285,12 @@ beschreibung: Als Kunde sprechen Sie direkt mit dem Vertrieb, als Handwerker ode
             </div>
           </form>
           </div>
+          <!-- Karte rechts in der weiten Kachel (ab Schritt 2): Linien von
+               Deutschland und Oesterreich, Punkt und Einsatzradius zur PLZ.
+               Aufbau in assets/app.js ([data-karte]), Daten aus
+               assets/karte.js (werkzeuge/karte.py, Natural Earth) und
+               assets/plz-lage.js. Nur Schmuck fuer Screenreader. -->
+          <div class="handwerker-karte" data-karte="assets/karte.js" data-lage="assets/plz-lage.js" aria-hidden="true"></div>
         </section>
       </div>
       </div>
