@@ -2304,7 +2304,6 @@ body .vertriebsteam p.vertriebsteam-text { color: color-mix(in oklab, var(--colo
   caret-color: #fff;
 }
 .registrierung .plz-kaesten input:focus-visible { outline: none; }
-.plz-hinweis { font-size: 13px; font-weight: 400; color: rgba(255, 255, 255, 0.7); }
 
 /* Knopf "Standort verwenden" unter dem PLZ-Feld: klein, wie ein Link */
 .plz-orten {
