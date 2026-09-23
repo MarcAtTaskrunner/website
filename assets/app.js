@@ -677,7 +677,22 @@
    *  fuenf, AT vier Stellen -, steht darunter der Ort zur Bestaetigung;
    *  gehoeren mehrere Orte dazu, eine Auswahl. Der Ort geht als Feld
    *  "Ort" mit in die Mail. Ohne JavaScript bleibt ein freies Ortsfeld.
+   *  "Standort verwenden" ([data-plz-orten]) fragt den Browser nach dem
+   *  Standort und setzt die PLZ mit dem naechsten Mittelpunkt aus
+   *  assets/plz-lage.js ein. Der Standort verlaesst den Browser nicht.
    * ---------------------------------------------------------------- */
+  var ladeSkript = function (src, fertig) {
+    var da = document.querySelector('script[src="' + src + '"]');
+    if (da && da.getAttribute("data-geladen")) { fertig(); return; }
+    if (!da) {
+      da = document.createElement("script");
+      da.src = src;
+      da.addEventListener("load", function () { da.setAttribute("data-geladen", "1"); });
+      document.head.appendChild(da);
+    }
+    da.addEventListener("load", fertig);
+  };
+
   Array.prototype.forEach.call(document.querySelectorAll("[data-plz]"), function (feld) {
     var form = feld.form;
     var ausgabe = form.querySelector("[data-plz-ort]");
@@ -686,11 +701,7 @@
     var quelle = feld.getAttribute("data-plz");
 
     var lade = function () {
-      if (window.taskrunnerPlz || document.querySelector('script[src="' + quelle + '"]')) return;
-      var skript = document.createElement("script");
-      skript.src = quelle;
-      skript.onload = zeige;
-      document.head.appendChild(skript);
+      if (!window.taskrunnerPlz) ladeSkript(quelle, zeige);
     };
 
     var zeige = function () {
@@ -737,6 +748,59 @@
 
     feld.addEventListener("focus", lade);
     feld.addEventListener("input", zeige);
+
+    var orten = form.querySelector("[data-plz-orten]");
+    if (!orten || !("geolocation" in navigator) || !window.isSecureContext) return;
+    orten.hidden = false;
+    var punkte = null;
+
+    var meldung = function (text) {
+      ausgabe.className = "plz-ort ist-fehler";
+      ausgabe.textContent = text;
+    };
+
+    var naechste = function (breite, laenge) {
+      if (!punkte) {
+        punkte = window.taskrunnerPlzLage.split(";").map(function (t) {
+          var z = t.split(",");
+          return [z[0], z[1] / 100, z[2] / 100];
+        });
+      }
+      /* Abstand in km, flach gerechnet - auf diese Entfernungen genau genug */
+      var faktor = Math.cos(breite * Math.PI / 180);
+      var beste = null, bestAbstand = Infinity;
+      for (var i = 0; i < punkte.length; i++) {
+        var db = (punkte[i][1] - breite) * 111.2;
+        var dl = (punkte[i][2] - laenge) * 111.2 * faktor;
+        var d = db * db + dl * dl;
+        if (d < bestAbstand) { bestAbstand = d; beste = punkte[i][0]; }
+      }
+      return Math.sqrt(bestAbstand) <= 30 ? beste : null;
+    };
+
+    orten.addEventListener("click", function () {
+      orten.disabled = true;
+      ausgabe.className = "plz-ort";
+      ausgabe.textContent = "Standort wird ermittelt …";
+      var fertig = function () { orten.disabled = false; };
+      navigator.geolocation.getCurrentPosition(function (position) {
+        ladeSkript(quelle, function () {
+          ladeSkript(orten.getAttribute("data-plz-orten"), function () {
+            fertig();
+            var plz = naechste(position.coords.latitude, position.coords.longitude);
+            if (!plz) { meldung("In Ihrer Nähe haben wir keine Postleitzahl in Deutschland oder Österreich gefunden. Bitte tippen Sie sie ein."); return; }
+            feld.value = plz;
+            zeige();
+            feld.focus();
+          });
+        });
+      }, function (fehler) {
+        fertig();
+        meldung(fehler.code === 1
+          ? "Die Ortung ist im Browser nicht erlaubt. Bitte tippen Sie die Postleitzahl ein."
+          : "Ihr Standort war nicht zu ermitteln. Bitte tippen Sie die Postleitzahl ein.");
+      }, { enableHighAccuracy: false, timeout: 15000, maximumAge: 600000 });
+    });
   });
 
   /* ---------------------------------------------------------------- *

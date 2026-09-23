@@ -2260,6 +2260,23 @@ body .vertriebsteam p.vertriebsteam-text { color: color-mix(in oklab, var(--colo
 .schritt-knoepfe [hidden] { display: none; }
 .schritt-zurueck { font-weight: 700; color: #fff; text-decoration: underline; text-underline-offset: 4px; text-decoration-color: rgba(255, 255, 255, 0.4); }
 .schritt-zurueck:hover { text-decoration-color: #fff; }
+/* Knopf "Standort verwenden" unter dem PLZ-Feld: klein, wie ein Link */
+.plz-orten {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  justify-self: start;
+  margin-top: -4px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #8ab4f8;
+  cursor: pointer;
+}
+.plz-orten svg { width: 18px; height: 18px; }
+.plz-orten:hover { color: #fff; }
+.plz-orten:disabled { opacity: 0.6; cursor: progress; }
+.plz-orten:focus-visible { outline: 2px solid #fff; outline-offset: 3px; border-radius: 4px; }
+.plz-orten[hidden] { display: none; }
 /* Ort zur Postleitzahl, direkt unter dem Feld (assets/app.js) */
 .plz-ort { margin-top: -6px; min-height: 1.4em; font-size: 15px; color: #fff; }
 .plz-ort:empty { display: none; }
