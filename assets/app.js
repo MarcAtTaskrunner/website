@@ -788,8 +788,33 @@
 
     /* Nach jeder Aenderung meldet das Feld "plzwechsel" mit der PLZ,
        wenn sie bekannt ist, sonst mit null - darauf hoert die Karte. */
+    /* Anfaenge deutscher PLZ (erste vier Ziffern), einmal aus der Liste */
+    var deAnfaenge = null;
+    var istDeAnfang = function (vier) {
+      if (!deAnfaenge) {
+        deAnfaenge = {};
+        Object.keys(window.taskrunnerPlz).forEach(function (k) {
+          if (k.length === 5) deAnfaenge[k.slice(0, 4)] = true;
+        });
+      }
+      return !!deAnfaenge[vier];
+    };
+
+    /* Vier Ziffern, die eine oesterreichische PLZ sind und mit denen keine
+       deutsche anfaengt: die PLZ ist fertig, der fuenfte Kasten verschwindet
+       und das Feld nimmt keine fuenfte Ziffer mehr an. */
+    var kastenFuenf = function () {
+      var plz = feld.value;
+      var nurVier = plz.length === 4 && !!window.taskrunnerPlz &&
+        !!window.taskrunnerPlz[plz] && !istDeAnfang(plz);
+      var huelle = feld.closest(".plz-kaesten");
+      if (huelle) huelle.classList.toggle("ist-vier", nurVier);
+      feld.maxLength = nurVier ? 4 : 5;
+    };
+
     var zeige = function () {
       zeigeOrt();
+      if (window.taskrunnerPlz) kastenFuenf();
       var plz = feld.value;
       var bekannt = window.taskrunnerPlz && window.taskrunnerPlz[plz] ? plz : null;
       feld.dispatchEvent(new CustomEvent("plzwechsel", { bubbles: true, detail: { plz: bekannt } }));
@@ -805,7 +830,9 @@
       /* Vier Ziffern koennen eine oesterreichische PLZ sein oder der
          Anfang einer deutschen - erst bei fuenf ist es sicher deutsch. */
       if (!orte) {
-        if (plz.length === 5) {
+        /* Fehler bei fuenf Ziffern - oder schon bei vier, wenn weder eine
+           oesterreichische PLZ noch der Anfang einer deutschen passt */
+        if (plz.length === 5 || !istDeAnfang(plz)) {
           ausgabe.textContent = "Diese Postleitzahl kennen wir nicht. Bitte prüfen.";
           ausgabe.className = "plz-ort ist-fehler";
         }
@@ -847,7 +874,8 @@
       var fokus = document.activeElement === feld;
       Array.prototype.forEach.call(kaesten, function (k, i) {
         k.classList.toggle("ist-voll", i < n);
-        k.classList.toggle("ist-aktiv", fokus && i === Math.min(n, kaesten.length - 1));
+        var anzahl = feld.maxLength === 4 ? 4 : kaesten.length;
+        k.classList.toggle("ist-aktiv", fokus && i === Math.min(n, anzahl - 1));
       });
     };
     ["input", "focus", "blur"].forEach(function (typ) { feld.addEventListener(typ, kaestenAuffrischen); });
