@@ -94,7 +94,11 @@ for (const d of await textdateien(AUS)) {
 }
 let b = 0;
 for (const bild of [...bilder].sort()) {
-  try { await stat(bild); } catch { console.warn('Bild fehlt:', bild); continue; }
+  let info;
+  try { info = await stat(bild); } catch { console.warn('Bild fehlt:', bild); continue; }
+  // Ein Ordnerpfad (etwa "images/mitarbeiter/" in einem Kommentar) ist kein
+  // Bild - ohne diese Pruefung brach der Build mit EISDIR ab.
+  if (!info.isFile()) continue;
   await kopiere(bild, path.join(AUS, bild)); b++;
 }
 console.log(`dist/ gebaut (${n} Einzeldateien + ${ORDNER.join(', ')} + ${b} Bilder).`);

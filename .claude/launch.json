@@ -3,7 +3,8 @@
   "configurations": [
     {
       "name": "website",
-      "url": "http://localhost:8766",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["-e", "const h=require('http'),f=require('fs'),p=require('path');const r='/Users/taskrunner/Desktop/Website Taskrunner/website';const t={'.html':'text/html; charset=utf-8','.css':'text/css','.js':'text/javascript','.svg':'image/svg+xml','.webp':'image/webp','.jpg':'image/jpeg','.png':'image/png','.woff2':'font/woff2','.json':'application/json'};h.createServer((q,s)=>{let u=decodeURIComponent(q.url.split('?')[0]);if(u.endsWith('/'))u+='index.html';const d=p.join(r,p.normalize(u));if(!d.startsWith(r))return s.writeHead(403).end();f.readFile(d,(e,b)=>{if(e)return s.writeHead(404).end('404');s.writeHead(200,{'Content-Type':t[p.extname(d)]||'application/octet-stream','Cache-Control':'no-store'});s.end(b)})}).listen(8766)"],
       "port": 8766
     }
   ]
