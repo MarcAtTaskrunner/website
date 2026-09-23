@@ -83,6 +83,26 @@
             </li>
           </ul>
           <div class="mt-14 border-t border-ink/10 pt-12 text-center lg:mt-20 lg:pt-16">
+            <div class="mb-10 flex justify-center text-left">
+              <!-- Vertriebsteam: Portraits im Kreis und zwei Zeilen Text. Einbauen mit
+     einem einbau-Kommentar fuer vertriebsteam.html (Syntax in CLAUDE.md),
+     auf jeder Seite gleich. Abstand nach
+     oben/unten setzt die Seite drumherum. Fuer helle Flaechen gemacht
+     (blaue Schrift). Aussehen und Wachsen beim Hovern: .kontakt-koepfe /
+     .kontakt-kopf in tailwind/input.css.
+     Neue Person: eine <img>-Zeile mehr (Bild 1000 x 1000 nach
+     images/mitarbeiter/) und die Anzahl im Text anpassen. -->
+              <div class="vertriebsteam flex flex-wrap items-center gap-x-6 gap-y-4">
+                <div class="kontakt-koepfe">
+                  <img src="images/mitarbeiter/bernd.webp" alt="" width="200" height="200" class="kontakt-kopf" decoding="async">
+                  <img src="images/mitarbeiter/eric.webp" alt="" width="200" height="200" class="kontakt-kopf" decoding="async">
+                </div>
+                <div>
+                  <p class="vertriebsteam-name t-body font-bold text-blue-600">Unser Vertriebsteam</p>
+                  <p class="vertriebsteam-text mt-1 t-body-tight text-ink/85">Zwei Ansprechpersonen für Ihre Anfrage</p>
+                </div>
+              </div>
+            </div>
             <h3 class="mx-auto max-w-[700px] text-balance hyphens-auto break-words t-h3 text-blue-600">Sichern Sie sich Ihren Winterdienst</h3>
             <p class="mx-auto mt-5 max-w-[620px] text-balance t-intro text-ink/80">Unser Vertrieb klärt mit Ihnen Flächen, Räumzeiten und Preis – meistens reicht dafür ein Telefonat. Danach steht der Winter, und Sie müssen bis zum Frühjahr nicht mehr daran denken.</p>
             <div class="mt-9 flex flex-wrap justify-center gap-4"><a href="kontakt.html#kunden" class="btn btn-primary">Winterdienst anfragen</a><a href="tel:+4920199999201" class="btn border border-navy/15 text-blue-600">+49 201 99999-201</a></div>
