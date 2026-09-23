@@ -606,6 +606,47 @@
     box.addEventListener("close", function () { bild.removeAttribute("src"); });
   })();
 
+  /* ---------------------------------------------------------------- *
+   *  Ortsvorschlag im Feld (kontakt.html, [data-ortsvorschlag])
+   *  Ab dem ersten Buchstaben steht der Rest des ersten passenden Orts
+   *  markiert im Feld: weitertippen ueberschreibt ihn, Enter, Tab oder
+   *  Pfeil rechts uebernimmt ihn, Loeschen entfernt ihn. Die Orte kommen
+   *  aus der <datalist>, deren id im Attribut steht. Ohne JavaScript ist
+   *  es ein normales Textfeld.
+   * ---------------------------------------------------------------- */
+  Array.prototype.forEach.call(document.querySelectorAll("[data-ortsvorschlag]"), function (feld) {
+    var liste = document.getElementById(feld.getAttribute("data-ortsvorschlag"));
+    if (!liste) return;
+    var orte = Array.prototype.map.call(liste.options, function (o) { return o.value; });
+
+    feld.addEventListener("input", function (e) {
+      /* Nur beim Tippen ergaenzen, nicht beim Loeschen oder Einfuegen */
+      if (e.isComposing || (e.inputType && e.inputType !== "insertText")) return;
+      var getippt = feld.value;
+      if (!getippt || feld.selectionEnd !== getippt.length) return;
+      var klein = getippt.toLocaleLowerCase("de");
+      for (var i = 0; i < orte.length; i++) {
+        if (orte[i].toLocaleLowerCase("de").indexOf(klein) === 0 && orte[i].length > getippt.length) {
+          /* Schreibweise des Orts uebernehmen: "ber" wird zu "Berlin" */
+          feld.value = orte[i];
+          feld.setSelectionRange(getippt.length, feld.value.length);
+          return;
+        }
+      }
+    });
+
+    feld.addEventListener("keydown", function (e) {
+      var offen = feld.selectionStart < feld.selectionEnd && feld.selectionEnd === feld.value.length;
+      if (!offen) return;
+      if (e.key === "Enter" || e.key === "ArrowRight") {
+        e.preventDefault();
+        feld.setSelectionRange(feld.value.length, feld.value.length);
+      } else if (e.key === "Tab") {
+        feld.setSelectionRange(feld.value.length, feld.value.length);
+      }
+    });
+  });
+
 
 
 
