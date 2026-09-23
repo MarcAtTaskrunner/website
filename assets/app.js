@@ -642,6 +642,15 @@
       }
     };
 
+    /* Schrittwechsel ueber gehe(): form.vorWechsel (gesetzt vom Weiten
+       der Kachel weiter unten) darf den Wechsel verzoegern, um ihn in
+       seine Animation einzubetten - dann ruft es dann() selbst auf. */
+    var gehe = function (nr) {
+      var dann = function () { zeige(nr, true); };
+      if (form.vorWechsel && form.vorWechsel(jetzt, nr, dann)) return;
+      dann();
+    };
+
     var gueltig = function () {
       var felder = schritte[jetzt].querySelectorAll("input");
       for (var i = 0; i < felder.length; i++) {
@@ -651,9 +660,9 @@
     };
 
     weiter.addEventListener("click", function () {
-      if (gueltig()) zeige(jetzt + 1, true);
+      if (gueltig()) gehe(jetzt + 1);
     });
-    zurueck.addEventListener("click", function () { zeige(jetzt - 1, true); });
+    zurueck.addEventListener("click", function () { gehe(jetzt - 1); });
     /* Enter selbst abfangen: der Absende-Knopf ist bis zum letzten
        Schritt ausgeblendet, dann schickt der Browser bei Enter nichts ab.
        Hat der Vorschlag im Feld Enter schon verbraucht (uebernommen),
@@ -662,13 +671,71 @@
       if (e.key !== "Enter" || e.defaultPrevented || e.target.tagName !== "INPUT") return;
       if (jetzt < schritte.length - 1) {
         e.preventDefault();
-        if (gueltig()) zeige(jetzt + 1, true);
+        if (gueltig()) gehe(jetzt + 1);
       }
     });
 
     form.classList.add("in-schritten");
     zeige(0, false);
   });
+
+  /* ---------------------------------------------------------------- *
+   *  Kachel weiten (kontakt.html, [data-weiten])
+   *  Nach Schritt 1 des Handwerker-Formulars waechst die dunkle Kachel
+   *  nach links ueber die ganze Breite, die helle Kundenkachel
+   *  verschwindet; zurueck zu Schritt 1 geht es umgekehrt. Ablauf:
+   *  Inhalt ausblenden (.blendet) -> Spalten verschieben (.ist-weit,
+   *  Kunden aus dem Fluss: .kunden-weg) -> Inhalt im neuen Aufbau
+   *  einblenden. Nur ab 1024 px (darunter stehen die Kacheln
+   *  untereinander); bei "Bewegung reduzieren" ohne Animation.
+   * ---------------------------------------------------------------- */
+  (function () {
+    var teilung = document.querySelector("[data-weiten]");
+    if (!teilung) return;
+    var form = teilung.querySelector("[data-schritte]");
+    var kunden = teilung.querySelector("#kunden");
+    if (!form || !kunden) return;
+    var breit = window.matchMedia("(min-width: 64rem)");
+    var ruhig = window.matchMedia("(prefers-reduced-motion: reduce)");
+    var AUS = 250, SCHIEBEN = 750;
+
+    var setze = function (weit) {
+      teilung.classList.toggle("ist-weit", weit);
+      kunden.inert = weit;
+    };
+
+    form.vorWechsel = function (von, nach, dann) {
+      var weit = nach >= 1;
+      if (!breit.matches || weit === teilung.classList.contains("ist-weit")) return false;
+      if (ruhig.matches) {
+        teilung.classList.toggle("kunden-weg", weit);
+        setze(weit);
+        dann();
+        return true;
+      }
+      teilung.classList.add("blendet");
+      window.setTimeout(function () {
+        if (weit) teilung.classList.add("kunden-weg");
+        setze(weit);
+        dann();
+        window.setTimeout(function () {
+          if (!weit) teilung.classList.remove("kunden-weg");
+          /* ein Bild spaeter einblenden, damit die Kunden-Kachel erst
+             wieder im Fluss steht und dann sichtbar wird */
+          window.requestAnimationFrame(function () { teilung.classList.remove("blendet"); });
+        }, SCHIEBEN);
+      }, AUS);
+      return true;
+    };
+
+    /* Fenster unter 1024 px gezogen: zurueck zum normalen Aufbau */
+    breit.addEventListener("change", function () {
+      if (!breit.matches) {
+        teilung.classList.remove("blendet", "kunden-weg");
+        setze(false);
+      }
+    });
+  })();
 
   /* ---------------------------------------------------------------- *
    *  Postleitzahl mit Ort (kontakt.html, [data-plz])

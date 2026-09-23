@@ -18,7 +18,10 @@ beschreibung: Als Kunde sprechen Sie direkt mit dem Vertrieb, als Handwerker ode
            Handwerker (2/5). Auf dem Handy untereinander. -->
       <div class="bg-white">
       <div class="container-breit section-y kontakt-oben">
-      <div class="kontakt-teilung">
+      <!-- data-weiten: nach Schritt 1 des Handwerker-Formulars waechst die
+           dunkle Kachel ueber die ganze Breite, die helle verschwindet
+           (assets/app.js, .ist-weit in tailwind/input.css). Nur ab 1024 px. -->
+      <div class="kontakt-teilung" data-weiten>
         <section id="kunden" class="kontakt-flaeche kachel-verlauf-1 mit-korn" aria-labelledby="kunden-titel">
           <p class="t-eyebrow text-ink/80">Für Kunden</p>
           <div class="mt-8">
@@ -42,6 +45,8 @@ beschreibung: Als Kunde sprechen Sie direkt mit dem Vertrieb, als Handwerker ode
           </ul>
         </section>
         <section id="techniker" class="kontakt-flaeche verlauf-nacht mit-korn text-white" aria-labelledby="techniker-titel">
+          <div class="handwerker-innen">
+          <div class="handwerker-kopf">
           <p class="t-eyebrow text-white/75">Für Handwerker</p>
           <div class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
             <div class="kontakt-koepfe">
@@ -55,6 +60,7 @@ beschreibung: Als Kunde sprechen Sie direkt mit dem Vertrieb, als Handwerker ode
           <h2 id="techniker-titel" class="mt-8 text-balance hyphens-auto break-words t-h3 text-white">Übernehmen Sie Tasks in Ihrer Region.</h2>
           <p class="mt-4 t-body">Über 20.000 Handwerker sind schon über taskrunner erreichbar. Registrieren Sie sich kostenlos: Sagen Sie uns, wo Sie arbeiten und welche Gewerke Sie abdecken. Fragen zu einem laufenden Task beantworten wir unter dieser Adresse:</p>
           <p class="mt-4"><a href="mailto:operations@taskrunner.de" class="kontakt-link group inline-flex items-center gap-2 t-body font-bold">operations@taskrunner.de<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="transition-transform group-hover:translate-x-1"><path d="M9 6l6 6-6 6"></path></svg></a></p>
+          </div>
           <!-- Kein Server: das Formular oeffnet das Mailprogramm mit fertiger
                Mail an operations@. Dafuer steht mailto: in _headers unter
                form-action.
@@ -276,6 +282,7 @@ beschreibung: Als Kunde sprechen Sie direkt mit dem Vertrieb, als Handwerker ode
               <button type="submit" class="btn btn-white" data-schritt-senden>Kostenlos registrieren</button>
             </div>
           </form>
+          </div>
         </section>
       </div>
       </div>

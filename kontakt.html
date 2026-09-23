@@ -57,7 +57,10 @@
            Handwerker (2/5). Auf dem Handy untereinander. -->
       <div class="bg-white">
         <div class="container-breit section-y kontakt-oben">
-          <div class="kontakt-teilung">
+          <!-- data-weiten: nach Schritt 1 des Handwerker-Formulars waechst die
+           dunkle Kachel ueber die ganze Breite, die helle verschwindet
+           (assets/app.js, .ist-weit in tailwind/input.css). Nur ab 1024 px. -->
+          <div class="kontakt-teilung" data-weiten>
             <section id="kunden" class="kontakt-flaeche kachel-verlauf-1 mit-korn" aria-labelledby="kunden-titel">
               <p class="t-eyebrow text-ink/80">Für Kunden</p>
               <div class="mt-8">
@@ -102,34 +105,37 @@
               </ul>
             </section>
             <section id="techniker" class="kontakt-flaeche verlauf-nacht mit-korn text-white" aria-labelledby="techniker-titel">
-              <p class="t-eyebrow text-white/75">Für Handwerker</p>
-              <div class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
-                <div class="kontakt-koepfe">
-                  <img src="images/Heads/Office/Cropped/vitaly-gariev-AhZvzGUeLvs-unsplash.webp" alt="" width="200" height="200" class="kontakt-kopf" decoding="async">
+              <div class="handwerker-innen">
+                <div class="handwerker-kopf">
+                  <p class="t-eyebrow text-white/75">Für Handwerker</p>
+                  <div class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
+                    <div class="kontakt-koepfe">
+                      <img src="images/Heads/Office/Cropped/vitaly-gariev-AhZvzGUeLvs-unsplash.webp" alt="" width="200" height="200" class="kontakt-kopf" decoding="async">
+                    </div>
+                    <div>
+                      <p class="t-body font-bold text-white">Ihre Ansprechperson</p>
+                      <p class="mt-1 t-body-tight">Für Handwerker und Partnerbetriebe</p>
+                    </div>
+                  </div>
+                  <h2 id="techniker-titel" class="mt-8 text-balance hyphens-auto break-words t-h3 text-white">Übernehmen Sie Tasks in Ihrer Region.</h2>
+                  <p class="mt-4 t-body">Über 20.000 Handwerker sind schon über taskrunner erreichbar. Registrieren Sie sich kostenlos: Sagen Sie uns, wo Sie arbeiten und welche Gewerke Sie abdecken. Fragen zu einem laufenden Task beantworten wir unter dieser Adresse:</p>
+                  <p class="mt-4">
+                    <a href="mailto:operations@taskrunner.de" class="kontakt-link group inline-flex items-center gap-2 t-body font-bold">operations@taskrunner.de<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="transition-transform group-hover:translate-x-1"><path d="M9 6l6 6-6 6"></path></svg></a>
+                  </p>
                 </div>
-                <div>
-                  <p class="t-body font-bold text-white">Ihre Ansprechperson</p>
-                  <p class="mt-1 t-body-tight">Für Handwerker und Partnerbetriebe</p>
-                </div>
-              </div>
-              <h2 id="techniker-titel" class="mt-8 text-balance hyphens-auto break-words t-h3 text-white">Übernehmen Sie Tasks in Ihrer Region.</h2>
-              <p class="mt-4 t-body">Über 20.000 Handwerker sind schon über taskrunner erreichbar. Registrieren Sie sich kostenlos: Sagen Sie uns, wo Sie arbeiten und welche Gewerke Sie abdecken. Fragen zu einem laufenden Task beantworten wir unter dieser Adresse:</p>
-              <p class="mt-4">
-                <a href="mailto:operations@taskrunner.de" class="kontakt-link group inline-flex items-center gap-2 t-body font-bold">operations@taskrunner.de<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="transition-transform group-hover:translate-x-1"><path d="M9 6l6 6-6 6"></path></svg></a>
-              </p>
-              <!-- Kein Server: das Formular oeffnet das Mailprogramm mit fertiger
+                <!-- Kein Server: das Formular oeffnet das Mailprogramm mit fertiger
                Mail an operations@. Dafuer steht mailto: in _headers unter
                form-action.
                Drei Schritte, je ein <fieldset data-schritt>. assets/app.js
                ([data-schritte]) zeigt immer nur einen, blendet Fortschritt
                und Weiter/Zurueck ein und prueft die Pflichtfelder je Schritt.
                Ohne JavaScript stehen alle drei untereinander. -->
-              <form class="registrierung mt-8" action="mailto:operations@taskrunner.de?subject=Registrierung%20Handwerker" method="post" enctype="text/plain" data-schritte>
-                <p class="schritt-anzeige t-caption" data-schritt-anzeige hidden aria-live="polite"></p>
-                <div class="schritt-buehne">
-                  <fieldset data-schritt>
-                    <legend class="t-h4 text-white">Was machen Sie?</legend>
-                    <!-- Vorschlag im Feld: ab dem ersten Buchstaben ergaenzt
+                <form class="registrierung mt-8" action="mailto:operations@taskrunner.de?subject=Registrierung%20Handwerker" method="post" enctype="text/plain" data-schritte>
+                  <p class="schritt-anzeige t-caption" data-schritt-anzeige hidden aria-live="polite"></p>
+                  <div class="schritt-buehne">
+                    <fieldset data-schritt>
+                      <legend class="t-h4 text-white">Was machen Sie?</legend>
+                      <!-- Vorschlag im Feld: ab dem ersten Buchstaben ergaenzt
                    assets/app.js den Rest markiert ([data-vorschlag]).
                    Gewerke: die Liste #gewerke darunter, mehrere durch Komma.
                    Freie Eingaben gehen trotzdem. --><label>Gewerke<input type="text" name="Gewerke" data-vorschlag="gewerke" data-mehrfach autocomplete="off" placeholder="z. B. Maler, Sanitär" required></label><!-- Gewerke nach der Gewerks- und Preisuebersicht, dazu
@@ -138,10 +144,10 @@
                    deutschen Entsprechung in Klammern - nicht jeder Handwerker
                    spricht gut Deutsch. Reihenfolge = Vorrang: bei mehreren
                    Treffern schlaegt das Feld den oberen Begriff vor. --><datalist id="gewerke"><option value="Elektriker"></option><option value="Sanitär"></option><option value="Heizung"></option><option value="Maler"></option><option value="Hausmeister"></option><option value="Reinigung"></option><option value="Schlosser"></option><option value="Schlüsseldienst"></option><option value="Tischler"></option><option value="Trockenbau"></option><option value="Fliesenleger"></option><option value="Bodenleger"></option><option value="Dachdecker"></option><option value="Maurer"></option><option value="Glaser"></option><option value="Klimatechnik"></option><option value="Kältetechnik"></option><option value="Lüftungstechnik"></option><option value="Rohrreinigung"></option><option value="Gartenbau"></option><option value="Winterdienst"></option><option value="Umzug"></option><option value="Transporte"></option><option value="Montage"></option><option value="Tore"></option><option value="Automatiktüren"></option><option value="Brandschutz"></option><option value="Sicherheitstechnik"></option><option value="Alarmanlagen"></option><option value="IT / EDV"></option><option value="Werbetechnik"></option><option value="Gastronomietechnik"></option><option value="Kühltechnik"></option><option value="Wachdienst"></option><option value="Fassadenreinigung"></option><option value="Graffitientfernung"></option><option value="Rollläden"></option><option value="Sonnenschutz"></option><option value="Markisen"></option><option value="Fensterbauer"></option><option value="Fensterreinigung"></option><option value="Gebäudereinigung"></option><option value="Unterhaltsreinigung"></option><option value="Glasreinigung"></option><option value="Kanalreinigung"></option><option value="Tresoröffnung"></option><option value="Verputzarbeiten"></option><option value="Schreiner"></option><option value="Elektro"></option><option value="Elektroinstallation"></option><option value="Elektroniker"></option><option value="Elektrotechnik"></option><option value="Schwachstromtechnik"></option><option value="Netzwerktechnik"></option><option value="Installateur"></option><option value="Klempner"></option><option value="Spengler"></option><option value="Heizungsbauer"></option><option value="Gas-Wasser-Installation"></option><option value="SHK (Sanitär, Heizung, Klima)"></option><option value="Klimaanlagen"></option><option value="Kälteanlagen"></option><option value="Maler und Lackierer"></option><option value="Lackierer"></option><option value="Anstreicher"></option><option value="Tapezierer"></option><option value="Stuckateur"></option><option value="Putzer"></option><option value="Zimmerer"></option><option value="Parkett"></option><option value="Teppichboden"></option><option value="Estrich"></option><option value="Pflasterarbeiten"></option><option value="Gerüstbau"></option><option value="Dämmung"></option><option value="Abdichtung"></option><option value="Metallbau"></option><option value="Schweißer"></option><option value="Stahlbau"></option><option value="Möbelmontage"></option><option value="Küchenmontage"></option><option value="Entrümpelung"></option><option value="Entsorgung"></option><option value="Abriss"></option><option value="Bauhelfer"></option><option value="Helfer"></option><option value="Hausmeisterservice"></option><option value="Garten- und Landschaftsbau"></option><option value="Landschaftsbau"></option><option value="Gärtner"></option><option value="Grünpflege"></option><option value="Baumpflege"></option><option value="Schneeräumung"></option><option value="Streudienst"></option><option value="Rollladenreparatur"></option><option value="Jalousien"></option><option value="Fenster"></option><option value="Türen"></option><option value="Photovoltaik"></option><option value="Solaranlagen"></option><option value="Wallbox"></option><option value="Blitzschutz"></option><option value="Feuerlöscher"></option><option value="Rauchmelder"></option><option value="Videoüberwachung"></option><option value="Zutrittskontrolle"></option><option value="Schilder"></option><option value="Beschriftung"></option><option value="Schädlingsbekämpfung"></option><option value="Electrician (Elektriker)"></option><option value="Plumber (Sanitär)"></option><option value="Heating (Heizung)"></option><option value="HVAC (Heizung, Klima, Lüftung)"></option><option value="Air conditioning (Klimatechnik)"></option><option value="Refrigeration (Kältetechnik)"></option><option value="Painter (Maler)"></option><option value="Cleaning (Reinigung)"></option><option value="Cleaner (Reinigung)"></option><option value="Window cleaning (Fensterreinigung)"></option><option value="Carpenter (Tischler)"></option><option value="Joiner (Tischler)"></option><option value="Locksmith (Schlüsseldienst)"></option><option value="Roofer (Dachdecker)"></option><option value="Tiler (Fliesenleger)"></option><option value="Flooring (Bodenleger)"></option><option value="Bricklayer (Maurer)"></option><option value="Mason (Maurer)"></option><option value="Drywall (Trockenbau)"></option><option value="Glazier (Glaser)"></option><option value="Gardener (Gärtner)"></option><option value="Landscaping (Garten- und Landschaftsbau)"></option><option value="Moving (Umzug)"></option><option value="Removals (Umzug)"></option><option value="Handyman (Hausmeister)"></option><option value="Caretaker (Hausmeister)"></option><option value="Security (Wachdienst)"></option><option value="Fire protection (Brandschutz)"></option><option value="Alarm systems (Alarmanlagen)"></option><option value="Welder (Schweißer)"></option><option value="Metalwork (Metallbau)"></option><option value="Snow removal (Winterdienst)"></option><option value="Drain cleaning (Rohrreinigung)"></option><option value="Doors (Türen)"></option><option value="Gates (Tore)"></option><option value="Solar (Photovoltaik)"></option><option value="Pest control (Schädlingsbekämpfung)"></option><option value="Helper (Helfer)"></option></datalist>
-                  </fieldset>
-                  <fieldset data-schritt>
-                    <legend class="t-h4 text-white">Wo sind Sie im Einsatz?</legend>
-                    <!-- Postleitzahl: assets/app.js ([data-plz]) laedt beim Klick
+                    </fieldset>
+                    <fieldset data-schritt>
+                      <legend class="t-h4 text-white">Wo sind Sie im Einsatz?</legend>
+                      <!-- Postleitzahl: assets/app.js ([data-plz]) laedt beim Klick
                    assets/plz.js (Bauergebnis von werkzeuge/plz.py) und zeigt
                    den Ort zur Bestaetigung; bei mehreren Orten eine Auswahl.
                    DE fuenfstellig, AT vierstellig. Ohne JavaScript steht
@@ -153,19 +159,20 @@
                    Ortung anbietet (https). --><!-- Fuenf Kaesten wie bei einem Bestaetigungscode. Technisch ein
                    einziges Feld (Einfuegen, Autofill, Screenreader gehen
                    normal), die Kaesten liegen nur dahinter (.plz-kaesten). --><label>Postleitzahl<span class="plz-kaesten"><span class="plz-raster" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></span><input type="text" name="PLZ" data-plz="assets/plz.js" inputmode="numeric" pattern="[0-9]{4,5}" maxlength="5" autocomplete="postal-code" required></span></label><button type="button" class="plz-orten" data-plz-orten="assets/plz-lage.js" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.1-7-11.5a7 7 0 0 1 14 0C19 14.9 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Standort verwenden</button>
-                    <p class="plz-ort" data-plz-ort aria-live="polite"></p>
-                    <label data-plz-ohne-js>Ort<input type="text" name="Ort" autocomplete="address-level2" placeholder="z. B. Essen"></label>
-                    <p class="feld-titel">Einsatzradius</p>
-                    <div class="auswahl-reihe"><label class="auswahl"><input type="radio" name="Einsatzradius" value="25 km"><span>25 km</span></label><label class="auswahl"><input type="radio" name="Einsatzradius" value="50 km" checked><span>50 km</span></label><label class="auswahl"><input type="radio" name="Einsatzradius" value="100 km"><span>100 km</span></label><label class="auswahl"><input type="radio" name="Einsatzradius" value="200 km"><span>200 km</span></label><label class="auswahl"><input type="radio" name="Einsatzradius" value="Bundesweit"><span>Bundesweit</span></label></div>
-                  </fieldset>
-                  <fieldset data-schritt>
-                    <legend class="t-h4 text-white">Wie erreichen wir Sie?</legend>
-                    <div class="feld-paar"><label>Name<input type="text" name="Name" autocomplete="name" placeholder="z. B. Max Mustermann" required></label><label>Firma (optional)<input type="text" name="Firma" autocomplete="organization" placeholder="z. B. Muster GmbH"></label></div>
-                    <label>Telefon<input type="tel" name="Telefon" autocomplete="tel" placeholder="z. B. 0201 1234567" required></label>
-                  </fieldset>
-                </div>
-                <div class="schritt-knoepfe"><button type="button" class="schritt-zurueck" data-schritt-zurueck hidden>Zurück</button><button type="button" class="btn btn-white" data-schritt-weiter hidden>Weiter</button><button type="submit" class="btn btn-white" data-schritt-senden>Kostenlos registrieren</button></div>
-              </form>
+                      <p class="plz-ort" data-plz-ort aria-live="polite"></p>
+                      <label data-plz-ohne-js>Ort<input type="text" name="Ort" autocomplete="address-level2" placeholder="z. B. Essen"></label>
+                      <p class="feld-titel">Einsatzradius</p>
+                      <div class="auswahl-reihe"><label class="auswahl"><input type="radio" name="Einsatzradius" value="25 km"><span>25 km</span></label><label class="auswahl"><input type="radio" name="Einsatzradius" value="50 km" checked><span>50 km</span></label><label class="auswahl"><input type="radio" name="Einsatzradius" value="100 km"><span>100 km</span></label><label class="auswahl"><input type="radio" name="Einsatzradius" value="200 km"><span>200 km</span></label><label class="auswahl"><input type="radio" name="Einsatzradius" value="Bundesweit"><span>Bundesweit</span></label></div>
+                    </fieldset>
+                    <fieldset data-schritt>
+                      <legend class="t-h4 text-white">Wie erreichen wir Sie?</legend>
+                      <div class="feld-paar"><label>Name<input type="text" name="Name" autocomplete="name" placeholder="z. B. Max Mustermann" required></label><label>Firma (optional)<input type="text" name="Firma" autocomplete="organization" placeholder="z. B. Muster GmbH"></label></div>
+                      <label>Telefon<input type="tel" name="Telefon" autocomplete="tel" placeholder="z. B. 0201 1234567" required></label>
+                    </fieldset>
+                  </div>
+                  <div class="schritt-knoepfe"><button type="button" class="schritt-zurueck" data-schritt-zurueck hidden>Zurück</button><button type="button" class="btn btn-white" data-schritt-weiter hidden>Weiter</button><button type="submit" class="btn btn-white" data-schritt-senden>Kostenlos registrieren</button></div>
+                </form>
+              </div>
             </section>
           </div>
         </div>
