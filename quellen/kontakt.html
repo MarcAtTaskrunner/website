@@ -79,7 +79,7 @@ beschreibung: Als Kunde sprechen Sie direkt mit dem Vertrieb, als Handwerker ode
                    assets/app.js den Rest markiert ([data-vorschlag]).
                    Gewerke: die Liste #gewerke darunter, mehrere durch Komma.
                    Freie Eingaben gehen trotzdem. -->
-              <label>Gewerke<input type="text" name="Gewerke" data-vorschlag="gewerke" data-mehrfach autocomplete="off" placeholder="z. B. Maler, Sanitär" required></label>
+              <label>Gewerke<input type="text" name="Gewerke" data-vorschlag="gewerke" data-mehrfach autocomplete="off" placeholder="Maler, Sanitär" required></label>
               <!-- Gewerke nach der Gewerks- und Preisuebersicht, dazu
                    Winterdienst, gaengige andere Bezeichnungen (Klempner,
                    Spengler, Anstreicher ...) und englische Begriffe mit der
@@ -259,7 +259,7 @@ beschreibung: Als Kunde sprechen Sie direkt mit dem Vertrieb, als Handwerker ode
               </label>
               <button type="button" class="plz-orten" data-plz-orten="assets/plz-lage.js" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.1-7-11.5a7 7 0 0 1 14 0C19 14.9 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Standort verwenden</button>
               <p class="plz-ort" data-plz-ort aria-live="polite"></p>
-              <label data-plz-ohne-js>Ort<input type="text" name="Ort" autocomplete="address-level2" placeholder="z. B. Essen"></label>
+              <label data-plz-ohne-js>Ort<input type="text" name="Ort" autocomplete="address-level2" placeholder="Essen"></label>
             </fieldset>
             <fieldset data-schritt>
               <legend class="t-h4 text-white">Wie weit fahren Sie zu Einsätzen?</legend>
@@ -275,10 +275,10 @@ beschreibung: Als Kunde sprechen Sie direkt mit dem Vertrieb, als Handwerker ode
             <fieldset data-schritt>
               <legend class="t-h4 text-white">Wie erreichen wir Sie?</legend>
               <div class="feld-paar">
-                <label>Name<input type="text" name="Name" autocomplete="name" placeholder="z. B. Max Mustermann" required></label>
-                <label>Firma (optional)<input type="text" name="Firma" autocomplete="organization" placeholder="z. B. Muster GmbH"></label>
+                <label>Name<input type="text" name="Name" autocomplete="name" placeholder="Max Mustermann" required></label>
+                <label>Firma (optional)<input type="text" name="Firma" autocomplete="organization" placeholder="Muster GmbH"></label>
               </div>
-              <label>Telefon<input type="tel" name="Telefon" autocomplete="tel" placeholder="z. B. 0201 1234567" required></label>
+              <label>Telefon<input type="tel" name="Telefon" autocomplete="tel" placeholder="0201 1234567" required></label>
             </fieldset>
             </div>
             <div class="schritt-knoepfe">

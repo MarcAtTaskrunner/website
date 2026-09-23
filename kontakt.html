@@ -33,7 +33,6 @@
             <li><a href="foerderungen.html" class="t-body text-blue-600 transition-colors">Förderungen</a></li>
             <li><a href="blog.html" class="t-body text-blue-600 transition-colors">Blog</a></li>
             <li><a href="kontakt.html" aria-current="page" class="t-body text-blue-600 transition-colors">Kontakt</a></li>
-            <li><a href="karriere.html" class="t-body text-blue-600 transition-colors">Jobs</a></li>
           </ul>
         </nav>
         <div class="hidden items-center gap-5 justify-self-end lg:flex"><a href="kontakt.html#kunden" class="btn btn-primary !py-2.5 !px-5">Kostenlos Testen</a><a href="https://fm.taskrunner.de" class="t-body text-blue-600 transition-colors">Login</a></div>
@@ -46,7 +45,6 @@
           <li><a href="foerderungen.html" class="block rounded-xl px-3 py-3 t-body font-medium text-blue-600 hover:bg-ice">Förderungen</a></li>
           <li><a href="blog.html" class="block rounded-xl px-3 py-3 t-body font-medium text-blue-600 hover:bg-ice">Blog</a></li>
           <li><a href="kontakt.html" aria-current="page" class="block rounded-xl px-3 py-3 t-body font-medium text-blue-600 hover:bg-ice">Kontakt</a></li>
-          <li><a href="karriere.html" class="block rounded-xl px-3 py-3 t-body font-medium text-blue-600 hover:bg-ice">Jobs</a></li>
           <li class="mt-3 flex flex-col gap-3"><a href="kontakt.html#kunden" class="btn btn-primary w-full">Kostenlos Testen</a><a href="https://fm.taskrunner.de" class="btn w-full border border-navy/15 text-blue-600">Login</a></li>
         </ul>
       </nav>
@@ -140,7 +138,7 @@
                       <!-- Vorschlag im Feld: ab dem ersten Buchstaben ergaenzt
                    assets/app.js den Rest markiert ([data-vorschlag]).
                    Gewerke: die Liste #gewerke darunter, mehrere durch Komma.
-                   Freie Eingaben gehen trotzdem. --><label>Gewerke<input type="text" name="Gewerke" data-vorschlag="gewerke" data-mehrfach autocomplete="off" placeholder="z. B. Maler, Sanitär" required></label><!-- Gewerke nach der Gewerks- und Preisuebersicht, dazu
+                   Freie Eingaben gehen trotzdem. --><label>Gewerke<input type="text" name="Gewerke" data-vorschlag="gewerke" data-mehrfach autocomplete="off" placeholder="Maler, Sanitär" required></label><!-- Gewerke nach der Gewerks- und Preisuebersicht, dazu
                    Winterdienst, gaengige andere Bezeichnungen (Klempner,
                    Spengler, Anstreicher ...) und englische Begriffe mit der
                    deutschen Entsprechung in Klammern - nicht jeder Handwerker
@@ -162,7 +160,7 @@
                    einziges Feld (Einfuegen, Autofill, Screenreader gehen
                    normal), die Kaesten liegen nur dahinter (.plz-kaesten). --><label>Postleitzahl<span class="plz-kaesten"><span class="plz-raster" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></span><input type="text" name="PLZ" data-plz="assets/plz.js" inputmode="numeric" pattern="[0-9]{4,5}" maxlength="5" autocomplete="postal-code" required></span></label><button type="button" class="plz-orten" data-plz-orten="assets/plz-lage.js" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.1-7-11.5a7 7 0 0 1 14 0C19 14.9 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Standort verwenden</button>
                       <p class="plz-ort" data-plz-ort aria-live="polite"></p>
-                      <label data-plz-ohne-js>Ort<input type="text" name="Ort" autocomplete="address-level2" placeholder="z. B. Essen"></label>
+                      <label data-plz-ohne-js>Ort<input type="text" name="Ort" autocomplete="address-level2" placeholder="Essen"></label>
                     </fieldset>
                     <fieldset data-schritt>
                       <legend class="t-h4 text-white">Wie weit fahren Sie zu Einsätzen?</legend>
@@ -171,8 +169,8 @@
                     </fieldset>
                     <fieldset data-schritt>
                       <legend class="t-h4 text-white">Wie erreichen wir Sie?</legend>
-                      <div class="feld-paar"><label>Name<input type="text" name="Name" autocomplete="name" placeholder="z. B. Max Mustermann" required></label><label>Firma (optional)<input type="text" name="Firma" autocomplete="organization" placeholder="z. B. Muster GmbH"></label></div>
-                      <label>Telefon<input type="tel" name="Telefon" autocomplete="tel" placeholder="z. B. 0201 1234567" required></label>
+                      <div class="feld-paar"><label>Name<input type="text" name="Name" autocomplete="name" placeholder="Max Mustermann" required></label><label>Firma (optional)<input type="text" name="Firma" autocomplete="organization" placeholder="Muster GmbH"></label></div>
+                      <label>Telefon<input type="tel" name="Telefon" autocomplete="tel" placeholder="0201 1234567" required></label>
                     </fieldset>
                   </div>
                   <div class="schritt-knoepfe"><button type="button" class="schritt-zurueck" data-schritt-zurueck hidden>Zurück</button><button type="button" class="btn btn-white" data-schritt-weiter hidden>Weiter</button><button type="submit" class="btn btn-white" data-schritt-senden>Kostenlos registrieren</button></div>
