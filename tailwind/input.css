@@ -1968,7 +1968,9 @@ html:has(.lightbox[open]) { overflow: hidden; }
 /* ------------------------------------------------------------------ *
  *  Kontaktseite (quellen/kontakt.html)
  *  Zwei Kacheln mit runden Ecken in der Inhaltsbreite: links hell fuer
- *  Kunden (2/3), rechts dunkel fuer Handwerker (1/3). Beide gleich hoch,
+ *  Kunden (3/5, bis 1280 px halb/halb), rechts dunkel fuer Handwerker
+ *  (2/5) - bei 1/3 war die
+ *  rechte mit dem Formular fast doppelt so hoch wie die linke. Beide gleich hoch,
  *  Inhalt oben. Auf dem Handy untereinander. Das Korn (.mit-korn)
  *  uebernimmt die Rundung selbst (border-radius: inherit).
  * ------------------------------------------------------------------ */
@@ -1977,12 +1979,22 @@ html:has(.lightbox[open]) { overflow: hidden; }
   padding: 40px 24px;
   border-radius: var(--radius-tile);
   scroll-margin-top: calc(var(--header-h) + 24px);
+  container-type: inline-size;
 }
 @media (min-width: 735px) { .kontakt-flaeche { padding: 48px; } }
+/* Zwischen 1024 und 1280 px halb und halb: bei 3:2 waere die rechte
+   Kachel dort zu schmal fuer zwei Formularfelder nebeneinander. */
 @media (min-width: 64rem) {
-  .kontakt-teilung { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); }
-  .kontakt-flaeche { padding: 56px; }
+  .kontakt-teilung { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
 }
+@media (min-width: 80rem) {
+  .kontakt-teilung { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); }
+}
+/* Unter der Kopfzeile nur ein kurzer Abstand statt der vollen
+   Sektionshoehe (.section-y oben 56/96/112 px) - die Seite beginnt
+   direkt mit den Kacheln. Unten bleibt .section-y. */
+.kontakt-oben { padding-top: 24px; }
+@media (min-width: 735px) { .kontakt-oben { padding-top: 32px; } }
 
 /* Portraitkreise wie im Schaubild "team" auf der Startseite: Foto im
    weissen Ring (Ring = 1,15 x Fotoradius, also rund 6,5 % des
@@ -2216,13 +2228,17 @@ html:has(.lightbox[open]) { overflow: hidden; }
   }
 }
 
-/* Registrierung fuer Handwerker (kontakt.html, dunkle Kachel): Felder
-   untereinander, Beschriftung ueber dem Feld. */
-.registrierung { display: grid; gap: 16px; }
-.registrierung label { display: grid; gap: 6px; font-size: 15px; font-weight: 500; color: #fff; }
+/* Registrierung fuer Handwerker (kontakt.html, dunkle Kachel): Beschriftung
+   ueber dem Feld; ist die Kachel breit genug, zwei Felder nebeneinander. */
+.registrierung { display: grid; gap: 12px 16px; }
+@container (min-width: 360px) {
+  .registrierung { grid-template-columns: 1fr 1fr; }
+  .registrierung > button { grid-column: 1 / -1; }
+}
+.registrierung label { display: grid; gap: 4px; font-size: 15px; font-weight: 500; color: #fff; }
 .registrierung input {
   width: 100%;
-  padding: 11px 14px;
+  padding: 9px 14px;
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: var(--radius-card);
   background: rgba(255, 255, 255, 0.08);

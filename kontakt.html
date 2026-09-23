@@ -53,10 +53,10 @@
     </header>
     <main id="inhalt">
       <h1 class="sr-only">Kontakt</h1>
-      <!-- Zwei Kacheln: links hell fuer Kunden (2/3), rechts dunkel fuer
-           Handwerker (1/3). Auf dem Handy untereinander. -->
+      <!-- Zwei Kacheln: links hell fuer Kunden (3/5), rechts dunkel fuer
+           Handwerker (2/5). Auf dem Handy untereinander. -->
       <div class="bg-white">
-        <div class="container-breit section-y">
+        <div class="container-breit section-y kontakt-oben">
           <div class="kontakt-teilung">
             <section id="kunden" class="kontakt-flaeche kachel-verlauf-1 mit-korn" aria-labelledby="kunden-titel">
               <div class="flex flex-wrap items-center gap-x-6 gap-y-4">
@@ -101,21 +101,21 @@
                   <p class="mt-1 t-body-tight">Für Handwerker und Partnerbetriebe</p>
                 </div>
               </div>
-              <p class="mt-10 t-eyebrow text-white/75 lg:mt-12">Für Handwerker</p>
+              <p class="mt-8 t-eyebrow text-white/75">Für Handwerker</p>
               <h2 id="techniker-titel" class="mt-4 text-balance hyphens-auto break-words t-h3 text-white">Übernehmen Sie Tasks in Ihrer Region.</h2>
-              <p class="mt-6 t-body">Über 20.000 Handwerker sind schon über taskrunner erreichbar. Registrieren Sie sich kostenlos: Sagen Sie uns, wo Sie arbeiten und welche Gewerke Sie abdecken. Fragen zu einem laufenden Task beantworten wir unter dieser Adresse:</p>
+              <p class="mt-4 t-body">Über 20.000 Handwerker sind schon über taskrunner erreichbar. Registrieren Sie sich kostenlos: Sagen Sie uns, wo Sie arbeiten und welche Gewerke Sie abdecken. Fragen zu einem laufenden Task beantworten wir unter dieser Adresse:</p>
               <p class="mt-4">
                 <a href="mailto:operations@taskrunner.de" class="kontakt-link group inline-flex items-center gap-2 t-body font-bold">operations@taskrunner.de<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="transition-transform group-hover:translate-x-1"><path d="M9 6l6 6-6 6"></path></svg></a>
               </p>
               <!-- Kein Server: das Formular oeffnet das Mailprogramm mit fertiger
                Mail an operations@. Dafuer steht mailto: in _headers unter
                form-action. -->
-              <form class="registrierung mt-10" action="mailto:operations@taskrunner.de?subject=Registrierung%20Handwerker" method="post" enctype="text/plain"><label>Name<input type="text" name="Name" autocomplete="name" placeholder="z. B. Max Mustermann" required></label><label>Firma<input type="text" name="Firma" autocomplete="organization" placeholder="z. B. Mustermann Elektro GmbH"></label><label>Telefon<input type="tel" name="Telefon" autocomplete="tel" placeholder="z. B. 0201 1234567" required></label><!-- Vorschlag im Feld: ab dem ersten Buchstaben ergaenzt
+              <form class="registrierung mt-8" action="mailto:operations@taskrunner.de?subject=Registrierung%20Handwerker" method="post" enctype="text/plain"><label>Name<input type="text" name="Name" autocomplete="name" placeholder="z. B. Max Mustermann" required></label><label>Firma<input type="text" name="Firma" autocomplete="organization" placeholder="z. B. Muster GmbH"></label><label>Telefon<input type="tel" name="Telefon" autocomplete="tel" placeholder="z. B. 0201 1234567" required></label><!-- Vorschlag im Feld: ab dem ersten Buchstaben ergaenzt
                  assets/app.js den Rest markiert ([data-vorschlag]). Orte:
                  alle Gemeinden in DE und AT aus assets/orte.js (Bauergebnis
                  von werkzeuge/orte.py), geladen erst beim Klick ins Feld.
                  Gewerke: die Liste #gewerke darunter, mehrere durch Komma.
-                 Freie Eingaben gehen in beiden Feldern trotzdem. --><label>Standort (Ort)<input type="text" name="Standort" data-vorschlag="assets/orte.js" autocomplete="off" placeholder="z. B. Essen" required></label><label>Gewerke<input type="text" name="Gewerke" data-vorschlag="gewerke" data-mehrfach autocomplete="off" placeholder="z. B. Elektriker, Sanitär" required></label><!-- Gewerke nach der Gewerks- und Preisuebersicht, dazu
+                 Freie Eingaben gehen in beiden Feldern trotzdem. --><label>Standort (Ort)<input type="text" name="Standort" data-vorschlag="assets/orte.js" autocomplete="off" placeholder="z. B. Essen" required></label><label>Gewerke<input type="text" name="Gewerke" data-vorschlag="gewerke" data-mehrfach autocomplete="off" placeholder="z. B. Maler, Sanitär" required></label><!-- Gewerke nach der Gewerks- und Preisuebersicht, dazu
                  Winterdienst, gaengige andere Bezeichnungen (Klempner,
                  Spengler, Anstreicher ...) und englische Begriffe mit der
                  deutschen Entsprechung in Klammern - nicht jeder Handwerker

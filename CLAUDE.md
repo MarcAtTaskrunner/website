@@ -43,7 +43,7 @@ mit im Git.
 | Stellenangebote (Jobs) | Nur die Liste steht auf der Website, jeder Eintrag verlinkt zu Personio. Titel **in Personio** pflegen. `werkzeuge/stellen.py` holt sie nach `quellen/bausteine/stellen.html` (Bauergebnis, nicht von Hand ändern); Rahmen der Seite: `quellen/karriere.html`; Aussehen: `.stelle` in `tailwind/input.css` |
 | Bildergalerie im Blogbeitrag (Laufband, Lightbox) | Aussehen: `.laufband`/`.lightbox` in `tailwind/input.css`; Ziehen, Pfeiltasten, Mitlaufen, Lightbox: `assets/app.js` (`[data-laufband]`, `[data-lightbox]`) |
 | Förder-Check (Förderungen): Fragen | `quellen/foerderungen.html` |
-| Kontaktseite (Vertrieb links hell, Techniker rechts dunkel) | Texte, Telefon, Adressen: `quellen/kontakt.html`; Aufteilung 2/3 zu 1/3: `.kontakt-teilung`/`.kontakt-flaeche` in `tailwind/input.css` |
+| Kontaktseite (Vertrieb links hell, Handwerker rechts dunkel) | Texte, Telefon, Adressen: `quellen/kontakt.html`; Aufteilung 3/5 zu 2/5: `.kontakt-teilung`/`.kontakt-flaeche` in `tailwind/input.css` |
 | Handwerker-Formular (Kontakt): Vorschläge im Feld | Verhalten: `[data-vorschlag]` in `assets/app.js`; Gewerke-Liste: `<datalist id="gewerke">` in `quellen/kontakt.html`; Orte: `assets/orte.js` ist Bauergebnis von `werkzeuge/orte.py` (alle Gemeinden DE/AT, Quellen und Aufruf im Kopf des Skripts) |
 | Förder-Check: Quoten, Obergrenzen, Ergebnistexte | `assets/foerdercheck.js` (keine Quelle, direkt bearbeiten). Dieselben Werte stehen als Text in `quellen/foerderungen.html` unter „Die Programme im Einzelnen“ – bei neuen Richtlinien **beide** anpassen |
 
