@@ -682,23 +682,34 @@
   /* ---------------------------------------------------------------- *
    *  Kachel weiten (kontakt.html, [data-weiten])
    *  Nach Schritt 1 des Handwerker-Formulars waechst die dunkle Kachel
-   *  nach links ueber die ganze Breite, die helle Kundenkachel
-   *  verschwindet; zurueck zu Schritt 1 geht es umgekehrt. Ablauf:
-   *  Inhalt ausblenden (.blendet) -> Spalten verschieben (.ist-weit,
-   *  Kunden aus dem Fluss: .kunden-weg) -> Inhalt im neuen Aufbau
-   *  einblenden. Nur ab 1024 px (darunter stehen die Kacheln
-   *  untereinander); bei "Bewegung reduzieren" ohne Animation.
+   *  nach links ueber die ganze Breite, waehrend die helle Kundenkachel
+   *  langsam ausblendet; zurueck zu Schritt 1 geht es umgekehrt.
+   *  Ablauf: Inhalt der dunklen Kachel aus (.blendet) -> Spalten
+   *  gleiten, Kunden blenden aus (.ist-weit) -> nur das Formular blendet
+   *  links wieder ein. Die dunkle Kachel behaelt dabei ihre Hoehe, der
+   *  Kundeninhalt seine Breite (beides hier festgesetzt, siehe CSS).
+   *  Nur ab 1024 px; bei "Bewegung reduzieren" ohne Animation.
    * ---------------------------------------------------------------- */
   (function () {
     var teilung = document.querySelector("[data-weiten]");
     if (!teilung) return;
     var form = teilung.querySelector("[data-schritte]");
     var kunden = teilung.querySelector("#kunden");
-    if (!form || !kunden) return;
+    var kundenInnen = teilung.querySelector(".kunden-innen");
+    var handwerker = teilung.querySelector("#techniker");
+    if (!form || !kunden || !kundenInnen || !handwerker) return;
     var breit = window.matchMedia("(min-width: 64rem)");
     var ruhig = window.matchMedia("(prefers-reduced-motion: reduce)");
-    var AUS = 250, SCHIEBEN = 750;
+    var AUS = 250, GLEITEN = 750;
 
+    var festsetzen = function () {
+      handwerker.style.height = handwerker.offsetHeight + "px";
+      kundenInnen.style.width = kundenInnen.offsetWidth + "px";
+    };
+    var loesen = function () {
+      handwerker.style.height = "";
+      kundenInnen.style.width = "";
+    };
     var setze = function (weit) {
       teilung.classList.toggle("ist-weit", weit);
       kunden.inert = weit;
@@ -708,22 +719,24 @@
       var weit = nach >= 1;
       if (!breit.matches || weit === teilung.classList.contains("ist-weit")) return false;
       if (ruhig.matches) {
+        if (weit) festsetzen();
         teilung.classList.toggle("kunden-weg", weit);
         setze(weit);
+        if (!weit) loesen();
         dann();
         return true;
       }
+      if (weit) festsetzen();
       teilung.classList.add("blendet");
       window.setTimeout(function () {
-        if (weit) teilung.classList.add("kunden-weg");
+        if (!weit) teilung.classList.remove("kunden-weg");
         setze(weit);
         dann();
         window.setTimeout(function () {
-          if (!weit) teilung.classList.remove("kunden-weg");
-          /* ein Bild spaeter einblenden, damit die Kunden-Kachel erst
-             wieder im Fluss steht und dann sichtbar wird */
-          window.requestAnimationFrame(function () { teilung.classList.remove("blendet"); });
-        }, SCHIEBEN);
+          if (weit) teilung.classList.add("kunden-weg");
+          else loesen();
+          teilung.classList.remove("blendet");
+        }, GLEITEN);
       }, AUS);
       return true;
     };
@@ -733,6 +746,7 @@
       if (!breit.matches) {
         teilung.classList.remove("blendet", "kunden-weg");
         setze(false);
+        loesen();
       }
     });
   })();

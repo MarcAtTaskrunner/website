@@ -1991,34 +1991,35 @@ html:has(.lightbox[open]) { overflow: hidden; }
   .kontakt-teilung { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); }
 }
 /* Weiten: nach Schritt 1 des Handwerker-Formulars nimmt die dunkle
-   Kachel die ganze Breite ein (Ablauf in assets/app.js, [data-weiten]).
-   Die Spalten gleiten per Uebergang von 3:2 (bzw. 1:1) auf 0:1; die
-   Kundenkachel ist dabei schon ausgeblendet und aus dem Fluss
-   (.kunden-weg) - sonst wuerde sie beim Schmalerwerden riesig hoch.
-   #techniker sitzt fest in Spalte 2, damit er dort bleibt, wenn die
-   Kundenkachel aus dem Raster faellt. */
+   Kachel die ganze Breite ein (Ablauf in assets/app.js, [data-weiten]):
+   1. Inhalt der dunklen Kachel blendet aus (.blendet).
+   2. Gleichzeitig gleiten die Spalten auf 0:1 und die Kundenkachel
+      blendet langsam aus (.ist-weit). Ihr Inhalt behaelt dabei seine
+      Breite (app.js setzt sie fest) und wird nur abgeschnitten, statt
+      beim Schmalerwerden neu umzubrechen. Die Hoehe der dunklen Kachel
+      setzt app.js ebenfalls fest - sie bleibt gleich hoch.
+   3. In der weiten Kachel erscheint nur das Formular, links (die
+      Einleitung ist ausgeblendet).
+   #techniker sitzt fest in Spalte 2, damit er dort bleibt. */
 @media (min-width: 64rem) {
   .kontakt-teilung {
-    position: relative;
-    transition: grid-template-columns 0.75s cubic-bezier(.65, 0, .35, 1), column-gap 0.75s cubic-bezier(.65, 0, .35, 1);
+    --weiten: 0.75s cubic-bezier(.65, 0, .35, 1);
+    transition: grid-template-columns var(--weiten), column-gap var(--weiten);
   }
-  .kontakt-teilung > #kunden { grid-column: 1; grid-row: 1; transition: opacity 0.25s ease; }
+  .kontakt-teilung > #kunden {
+    grid-column: 1;
+    grid-row: 1;
+    overflow: hidden;
+    transition: opacity var(--weiten), padding var(--weiten);
+  }
   .kontakt-teilung > #techniker { grid-column: 2; grid-row: 1; }
   .handwerker-innen { transition: opacity 0.25s ease; }
-  .kontakt-teilung.blendet > #kunden,
   .kontakt-teilung.blendet .handwerker-innen { opacity: 0; }
   .kontakt-teilung.ist-weit { grid-template-columns: minmax(0, 0fr) minmax(0, 1fr); column-gap: 0; }
-  .kontakt-teilung.kunden-weg > #kunden { position: absolute; top: 0; left: 0; width: 40%; visibility: hidden; }
-}
-/* In der weiten Kachel: links Kopf und Text, rechts das Formular */
-@container (min-width: 760px) {
-  .handwerker-innen {
-    display: grid;
-    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
-    column-gap: 72px;
-    align-items: start;
-  }
-  .handwerker-innen > .registrierung { margin-top: 0; }
+  .kontakt-teilung.ist-weit > #kunden { opacity: 0; padding-inline: 0; }
+  .kontakt-teilung.kunden-weg > #kunden { visibility: hidden; }
+  .kontakt-teilung.ist-weit .handwerker-kopf { display: none; }
+  .kontakt-teilung.ist-weit .registrierung { width: calc(50% - 36px); margin-top: 0; }
 }
 
 /* Unter der Kopfzeile nur ein kurzer Abstand statt der vollen
