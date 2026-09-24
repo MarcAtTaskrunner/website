@@ -2829,3 +2829,9 @@ body:not(.variante-b) > header:not(.menue-offen) {
 @media (max-width: 1023px) {
   .in-schritten [data-schritt]:not(.ist-aktiv) { display: none; }
 }
+
+/* Formularfelder mindestens 16 px: darunter zoomt Safari auf dem
+   iPhone beim Antippen in die Seite hinein und verschiebt sie. */
+.registrierung input,
+.registrierung select,
+.registrierung textarea { font-size: max(16px, 1em); }
