@@ -2907,7 +2907,10 @@ html:has(input:focus, select:focus, textarea:focus) { scroll-behavior: auto; }
   .kontakt-teilung > #techniker.ist-voll {
     display: flex;
     flex-direction: column;
-    padding: calc(var(--header-h) + 28px) var(--rand) calc(20px + env(safe-area-inset-bottom));
+    /* unten: Hoehe der Browserleisten (lvh - svh), die Kachel reicht
+       bis hinter sie, die Rechtslinks sollen darueber stehen */
+    padding: calc(var(--header-h) + 28px) var(--rand) 20px;
+    padding-bottom: calc(20px + 100lvh - 100svh);
   }
   #techniker.ist-voll .handwerker-kopf { display: none; }
   #techniker.ist-voll .handwerker-innen { flex: 1 0 auto; }
@@ -2920,6 +2923,10 @@ html:has(input:focus, select:focus, textarea:focus) { scroll-behavior: auto; }
    dahinter scrollt nicht. :not(.menue-offen) nur fuer das Gewicht
    gegen die Glasregel weiter oben. */
 html.formular-voll { overflow: hidden; }   /* nur html, siehe html.menue-offen */
+/* Seitenhintergrund dunkel: danach faerbt Safari auf dem iPhone die
+   Statusleiste oben (sonst weiss ueber der dunklen Flaeche) */
+html.formular-voll,
+html.formular-voll body { background: #000a3a; }
 html.formular-voll > body > header:not(.menue-offen) {
   background: transparent;
   border-color: transparent;

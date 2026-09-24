@@ -846,6 +846,7 @@
       handwerker.classList.add("ist-voll");
       rahmen(start);
       wurzel.classList.add("formular-voll");
+      thema(true);
       if (sofort) zeigeRecht();
       if (!sofort) {
         void handwerker.offsetWidth;
@@ -854,10 +855,20 @@
       handwerker.classList.add("voll-offen");
       rahmen({ top: 0, left: 0, width: window.innerWidth, height: window.innerHeight });
       handwerker.style.width = "100%";
-      /* dvh: auf dem Handy die sichtbare Hoehe, auch mit Browserleisten */
-      handwerker.style.height = window.CSS && CSS.supports("height", "100dvh") ? "100dvh" : "100%";
+      /* lvh: auf dem Handy bis hinter die Browserleisten, sonst fuellt
+         Safari den Streifen darunter mit einer eigenen Farbe */
+      handwerker.style.height = window.CSS && CSS.supports("height", "100lvh") ? "100lvh" : "100%";
     };
     /* Rechtslinks erst, wenn die Kachel das Fenster ganz fuellt */
+    /* Farbe der Statusleiste auf dem iPhone: Safari 26 nimmt den
+       Seitenhintergrund (html.formular-voll im CSS), aeltere Versionen
+       theme-color. Beides waehrend des Vollbilds dunkel. */
+    var themaMeta = document.querySelector('meta[name="theme-color"]');
+    var themaAlt = themaMeta ? themaMeta.content : null;
+    var thema = function (voll) {
+      if (themaMeta) themaMeta.content = voll ? "#000a3a" : themaAlt;
+    };
+
     var zeigeRecht = function () {
       if (!recht || !start) return;
       recht.hidden = false;
@@ -871,11 +882,13 @@
       handwerker.classList.remove("voll-offen");
       rahmen(start);
       wurzel.classList.remove("formular-voll");
+      thema(false);
     };
     var ende = function () {
       handwerker.classList.remove("ist-voll", "voll-gleitet", "voll-offen", "voll-da");
       handwerker.style.top = handwerker.style.left = handwerker.style.width = "";
       wurzel.classList.remove("formular-voll");
+      thema(false);
       if (recht) recht.hidden = true;
       start = null;
     };
