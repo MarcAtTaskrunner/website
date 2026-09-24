@@ -717,6 +717,8 @@
       if (form.vorWechsel && form.vorWechsel(jetzt, nr, dann)) return;
       dann();
     };
+    /* Fuer den Schliessen-Knopf der bildschirmfuellenden Kachel */
+    form.geheZu = function (nr) { if (nr !== jetzt) gehe(nr); };
 
     var gueltig = function () {
       var felder = schritte[jetzt].querySelectorAll("input");
@@ -807,14 +809,68 @@
     var ruhig = window.matchMedia("(prefers-reduced-motion: reduce)");
     var AUS = 250, GLEITEN = 750;
 
+    var wurzel = document.documentElement;
+    var zu = handwerker.querySelector("[data-voll-zu]");
+    var start = null;
+
     var festsetzen = function () {
       handwerker.style.height = handwerker.offsetHeight + "px";
       kundenInnen.style.width = kundenInnen.offsetWidth + "px";
+      /* Die Kachel verlaesst gleich den Fluss (position: fixed) - die
+         Seite darunter behaelt ihre Hoehe, nichts springt. */
+      teilung.style.minHeight = teilung.offsetHeight + "px";
     };
     var loesen = function () {
       handwerker.style.height = "";
       kundenInnen.style.width = "";
+      teilung.style.minHeight = "";
     };
+
+    /* Bildschirmfuellend: die Kachel wird an ihrer Stelle festgesetzt
+       (fixed, gemessenes Rechteck) und gleitet dann auf das ganze Fenster,
+       hinter die Kopfleiste. Die Kopfleiste wird dabei durchsichtig mit
+       weisser Schrift (html.formular-voll in tailwind/input.css), die
+       Seite dahinter scrollt nicht. Zurueck geht es auf dasselbe Rechteck -
+       die Seite hat sich solange nicht bewegt. */
+    var rahmen = function (r) {
+      handwerker.style.top = r.top + "px";
+      handwerker.style.left = r.left + "px";
+      handwerker.style.width = r.width + "px";
+      handwerker.style.height = r.height + "px";
+    };
+    var aufziehen = function (sofort) {
+      var r = handwerker.getBoundingClientRect();
+      start = { top: r.top, left: r.left, width: r.width, height: r.height };
+      handwerker.classList.add("ist-voll");
+      rahmen(start);
+      wurzel.classList.add("formular-voll");
+      if (zu) zu.hidden = false;
+      if (!sofort) {
+        void handwerker.offsetWidth;
+        handwerker.classList.add("voll-gleitet");
+      }
+      handwerker.classList.add("voll-offen");
+      rahmen({ top: 0, left: 0, width: window.innerWidth, height: window.innerHeight });
+      handwerker.style.width = "100%";
+      handwerker.style.height = "100%";
+    };
+    var zuziehen = function () {
+      if (!start) return;
+      handwerker.classList.remove("voll-offen");
+      rahmen(start);
+      wurzel.classList.remove("formular-voll");
+    };
+    var ende = function () {
+      handwerker.classList.remove("ist-voll", "voll-gleitet", "voll-offen");
+      handwerker.style.top = handwerker.style.left = handwerker.style.width = "";
+      wurzel.classList.remove("formular-voll");
+      if (zu) zu.hidden = true;
+      start = null;
+    };
+    if (zu) zu.addEventListener("click", function () { form.geheZu(0); });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && start) form.geheZu(0);
+    });
     var setze = function (weit) {
       teilung.classList.toggle("ist-weit", weit);
       kunden.inert = weit;
@@ -824,10 +880,10 @@
       var weit = nach >= 1;
       if (!breit.matches || weit === teilung.classList.contains("ist-weit")) return false;
       if (ruhig.matches) {
-        if (weit) festsetzen();
+        if (weit) { festsetzen(); aufziehen(true); }
         teilung.classList.toggle("kunden-weg", weit);
         setze(weit);
-        if (!weit) loesen();
+        if (!weit) { ende(); loesen(); }
         dann();
         return true;
       }
@@ -835,11 +891,12 @@
       teilung.classList.add("blendet");
       window.setTimeout(function () {
         if (!weit) teilung.classList.remove("kunden-weg");
+        if (weit) aufziehen(); else zuziehen();
         setze(weit);
         dann();
         window.setTimeout(function () {
           if (weit) teilung.classList.add("kunden-weg");
-          else loesen();
+          else { ende(); loesen(); }
           teilung.classList.remove("blendet");
         }, GLEITEN);
       }, AUS);
@@ -851,6 +908,7 @@
       if (!breit.matches) {
         teilung.classList.remove("blendet", "kunden-weg");
         setze(false);
+        ende();
         loesen();
       }
     });

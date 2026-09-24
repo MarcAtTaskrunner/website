@@ -2566,8 +2566,10 @@ header.menue-offen,
           backdrop-filter: none;
   border-color: transparent;
 }
-html.menue-offen,
-html.menue-offen body { overflow: hidden; }
+/* Nur html, nicht body: sonst wird body selbst zum Scrollbereich und
+   die sticky Kopfleiste (Blog, Kontakt) rutscht um die gescrollte
+   Strecke nach oben aus dem Bild. */
+html.menue-offen { overflow: hidden; }
 #mobile-nav li {
   opacity: 0;
   translate: 0 -6px;
@@ -2819,6 +2821,8 @@ body:not(.variante-b) > header:not(.menue-offen) {
 
 @media (max-width: 734px) {
   .kontakt-flaeche { padding: 28px 20px 32px; }
+  /* Symbole auf dem Handy frei, ohne Kreis */
+  .kontakt-symbol { width: 28px; height: auto; background: none; box-shadow: none; }
   /* Portrait neben dem Text statt darueber */
   .kontakt-koepfe { --kopf: 64px; }
 }
@@ -2857,3 +2861,63 @@ html:has(input:focus, select:focus, textarea:focus) { scroll-behavior: auto; }
   font-weight: 500;
 }
 .vorschlag-liste button:active { background: rgba(255, 255, 255, 0.22); }
+
+/* ------------------------------------------------------------------ *
+ *  Handwerker-Formular bildschirmfuellend (ab 1024 px, ab Schritt 2)
+ *  Ablauf in assets/app.js ([data-weiten]): die Kachel gleitet aus
+ *  ihrer Lage auf das ganze Fenster, hinter die Kopfleiste.
+ * ------------------------------------------------------------------ */
+@media (min-width: 64rem) {
+  .kontakt-teilung > #techniker.ist-voll {
+    position: fixed;
+    z-index: 40;
+    margin: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: calc(var(--header-h) + 24px) 56px 56px;
+  }
+  #techniker.voll-gleitet {
+    transition: top var(--weiten), left var(--weiten), width var(--weiten),
+                height var(--weiten), border-radius var(--weiten);
+  }
+  #techniker.ist-voll.voll-offen { border-radius: 0; }
+  #techniker.ist-voll .handwerker-karte { top: calc(var(--header-h) + 40px); }
+
+  .voll-zu {
+    position: absolute;
+    top: calc(var(--header-h) + 20px);
+    right: 24px;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    transition: background-color .2s ease;
+  }
+  .voll-zu:hover { background: rgba(255, 255, 255, 0.2); }
+  .voll-zu:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+}
+.voll-zu[hidden] { display: none; }
+
+/* Kopfleiste ueber der dunklen Vollflaeche: durchsichtig, weisse
+   Schrift und weisses Logo wie ganz oben auf der Startseite. Die Seite
+   dahinter scrollt nicht. :not(.menue-offen) nur fuer das Gewicht
+   gegen die Glasregel weiter oben. */
+html.formular-voll { overflow: hidden; }   /* nur html, siehe html.menue-offen */
+html.formular-voll > body > header:not(.menue-offen) {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+          backdrop-filter: none;
+}
+body > header { transition: background-color .4s var(--kurve), border-color .4s var(--kurve); }
+body > header .logo-dunkel,
+body > header .logo-hell { transition: opacity .4s var(--kurve); }
+html.formular-voll header .logo-dunkel { opacity: 0; }
+html.formular-voll header .logo-hell   { opacity: 1; }
+html.formular-voll header > div a:not(.btn),
+html.formular-voll header > div #nav-toggle { color: #fff; }
+html.formular-voll header > div .btn-primary { background: #fff; color: var(--color-navy); }
