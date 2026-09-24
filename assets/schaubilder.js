@@ -432,7 +432,8 @@
        Standorte ueber die ganze Flaeche verteilen, sonst stehen kleine
        Symbole verloren in der Mitte. */
     var schmal = this.b < 500;
-    this.iko = schmal ? this.h * 0.36 : mass * 0.18;
+    this.schmal = schmal;
+    this.iko = schmal ? this.h * 0.27 : mass * 0.18;
     this.rMin = this.b * 0.155;
     this.rMax = this.b * 0.95;
     this.wellen = 6;
@@ -506,6 +507,17 @@
     vv.addColorStop(1.00, "rgba(0,0,0,1)");
     g.fillStyle = vv;
     g.fillRect(0, 0, this.b, this.h);
+    /* Auf dem Handy laufen die Wellen auch zum linken und rechten Rand
+       hin aus, sonst schneidet die Kachelkante sie hart ab. */
+    if (this.schmal) {
+      var vh = g.createLinearGradient(0, 0, this.b, 0);
+      vh.addColorStop(0.00, "rgba(0,0,0,1)");
+      vh.addColorStop(0.30, "rgba(0,0,0,0)");
+      vh.addColorStop(0.70, "rgba(0,0,0,0)");
+      vh.addColorStop(1.00, "rgba(0,0,0,1)");
+      g.fillStyle = vh;
+      g.fillRect(0, 0, this.b, this.h);
+    }
     g.globalCompositeOperation = "source-over";
 
     /* Standorte nach dem Radierer, damit sie nicht mit ausgeblendet

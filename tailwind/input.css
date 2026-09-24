@@ -324,9 +324,9 @@ header .logo-hell { opacity: 0; }
 
 /* Gescrollt: weisser Grund, dunkle Schrift, feine Kante */
 .variante-b header.gescrollt {
-  background: rgba(255, 255, 255, .95);
-  -webkit-backdrop-filter: blur(12px);
-          backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, .72);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+          backdrop-filter: saturate(180%) blur(20px);
   border-color: transparent;
   box-shadow: 0 1px 0 rgba(0, 1, 107, .06), 0 6px 18px -10px rgba(0, 1, 107, .26);
 }
@@ -2550,8 +2550,8 @@ body .vertriebsteam p.vertriebsteam-text { color: color-mix(in oklab, var(--colo
   transition: height .32s var(--menu-kurve);
 }
 #mobile-nav.ist-offen {
-  height: calc(100vh - 64px);
-  height: calc(100dvh - 64px);
+  height: calc(100vh - var(--header-h) + 1px);
+  height: calc(100dvh - var(--header-h) + 1px);
   overflow-y: auto;
   overscroll-behavior: contain;
 }
@@ -2748,4 +2748,35 @@ html.menue-offen body { overflow: hidden; }
   isolation: isolate;
   -webkit-clip-path: inset(0 round var(--radius-tile));
           clip-path: inset(0 round var(--radius-tile));
+}
+
+/* ------------------------------------------------------------------ *
+ *  Kopfleiste: Glas wie bei apple.com, auf dem Handy flacher, beim
+ *  Scrollen nur noch die Bildmarke
+ * ------------------------------------------------------------------ */
+/* Seiten ohne Kopfband (Blog, Kontakt): dieselbe Glasflaeche wie die
+   gescrollte Leiste der uebrigen Seiten. Schlaegt bg-white/95 und
+   backdrop-blur aus Tailwind, weil es ausserhalb der Lagen steht. */
+body:not(.variante-b) > header:not(.menue-offen) {
+  background: rgba(255, 255, 255, .72);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+          backdrop-filter: saturate(180%) blur(20px);
+}
+
+@media (max-width: 1023px) {
+  /* Leiste 52 statt 64 px (plus 1 px Kante) */
+  :root { --header-h: 53px; }
+
+  /* Die Bildmarke nimmt die linken 23 % des Logos ein (456 von 2000
+     Einheiten), danach kommt ab 550 die Schrift. Beim Scrollen wischt
+     clip-path die Schrift von rechts nach links weg. Der Rand von
+     -6 px laesst Platz fuer den Fokusring. */
+  .kopf-logo {
+    clip-path: inset(-6px -6px -6px -6px);
+    transition: clip-path .45s var(--menu-kurve);
+  }
+  header.klein .kopf-logo { clip-path: inset(-6px 75% -6px -6px); }
+}
+@media (max-width: 1023px) and (prefers-reduced-motion: reduce) {
+  .kopf-logo { transition: none; }
 }
