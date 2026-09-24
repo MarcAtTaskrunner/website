@@ -427,7 +427,12 @@
     this.cy = this.h * 0.5;
 
     var mass = Math.min(this.b, this.h * 1.9);
-    this.iko = mass * 0.18;
+    /* Auf dem Handy ist die Flaeche fast quadratisch statt breit und
+       flach. Dort Tablet und Standorte nach der Hoehe bemessen und die
+       Standorte ueber die ganze Flaeche verteilen, sonst stehen kleine
+       Symbole verloren in der Mitte. */
+    var schmal = this.b < 500;
+    this.iko = schmal ? this.h * 0.36 : mass * 0.18;
     this.rMin = this.b * 0.155;
     this.rMax = this.b * 0.95;
     this.wellen = 6;
@@ -450,7 +455,10 @@
        Wuerfel hat eine feste Saat, damit das Bild bei jedem Aufruf
        gleich aussteht. */
     var w = wuerfelAb(20261114), i;
-    var lage = [
+    var lage = schmal ? [
+      [0.13, 0.20], [0.35, 0.13], [0.10, 0.60], [0.30, 0.85],
+      [0.70, 0.15], [0.90, 0.44], [0.75, 0.83]
+    ] : [
       [0.139, 0.204], [0.315, 0.345], [0.127, 0.697],
       [0.820, 0.322], [0.917, 0.500], [0.721, 0.704]
     ];
@@ -461,7 +469,7 @@
         y: this.h * (lage[i][1] + (w() - 0.5) * 0.055)
       });
     }
-    this.ortHoehe = mass * 0.088;
+    this.ortHoehe = schmal ? this.h * 0.15 : mass * 0.088;
 
     this.ort = new Image();
     this.ort.decoding = "async";

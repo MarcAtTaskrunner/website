@@ -2644,6 +2644,11 @@ html.menue-offen body { overflow: hidden; }
   }
   .laufband-kachel > canvas,
   .laufband-kachel > img { height: 220px; margin-top: 24px; }
+  /* Schaubilder fuellen den Rest der Kachel: alle Kacheln sind so hoch
+     wie die hoechste, sonst bliebe unten ein leerer Streifen. height 0
+     plus flex-grow, damit die Pixelgroesse des Canvas nicht selbst die
+     Hoehe bestimmt (die setzt kern.js nach jeder Messung neu). */
+  .laufband-kachel > canvas { height: 0; flex-grow: 1; min-height: 220px; }
 
   /* Startbild ueber die ganze Bildschirmhoehe, auch hinter die
      schwebende Leiste von Safari (lvh statt dvh). Der Text steht
@@ -2662,6 +2667,11 @@ html.menue-offen body { overflow: hidden; }
   /* Raster "Netzwerk": Kacheln nur so hoch wie ihr Inhalt, unten
      etwas mehr Luft als oben. Steht der Fussblock allein in der Kachel
      ("Vereinbart ist vereinbart"), faellt sein Abstand nach oben weg. */
+  /* Randlose Schaubilder in den Kacheln (-mx-10) gleichen die 40 px
+     Polster aus; auf dem Handy sind es 24, sonst ragten sie ungleich
+     weit in den Rand und das Motiv saesse nicht mehr in der Mitte. */
+  .kachel-polster > canvas.-mx-10 { margin-inline: -24px; width: calc(100% + 48px); }
+
   .raster-kachel { min-height: 0; }
   .raster-kachel.kachel-polster { padding: 28px 24px 32px; }
   .raster-fuss:first-child { padding-top: 0; }
@@ -2693,4 +2703,15 @@ html.menue-offen body { overflow: hidden; }
     width: 1px;
     background: rgba(255, 255, 255, 0.25);
   }
+}
+
+/* Kacheln im Laufband: abgerundet auch beim Ueberblenden der Fotos
+   ("Nachvollziehbar abgerechnet"). Safari legt die Kachel waehrend
+   einer opacity-Animation auf eine eigene Ebene und vergisst dabei
+   overflow: hidden mit border-radius - die Kachel war fuer einen
+   Moment eckig. clip-path schneidet unabhaengig davon. */
+.laufband-kachel {
+  isolation: isolate;
+  -webkit-clip-path: inset(0 round var(--radius-tile));
+          clip-path: inset(0 round var(--radius-tile));
 }
