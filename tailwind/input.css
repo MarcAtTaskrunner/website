@@ -2799,30 +2799,23 @@ body:not(.variante-b) > header:not(.menue-offen) {
 /* ------------------------------------------------------------------ *
  *  Kontaktseite kompakt (24.09.2026)
  * ------------------------------------------------------------------ */
-/* Kontaktwege "Anrufen" / "Schreiben": eine Zeile je Weg, Symbol in
-   einem hellen Kreis links. */
-.kontakt-symbol {
-  display: grid;
-  flex: none;
-  place-items: center;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: #fff;
-  color: var(--color-blue-600);
-  box-shadow: 0 4px 14px -6px rgba(0, 0, 49, 0.25);
-}
-.kontakt-symbol svg { height: 24px; width: auto; }
-/* Die Kundenkachel ist nur so hoch wie ihr Inhalt, nicht so hoch wie
-   die Handwerker-Kachel mit dem Formular daneben. */
-@media (min-width: 64rem) {
-  .kontakt-teilung > #kunden { align-self: start; }
-}
-
 @media (max-width: 734px) {
   .kontakt-flaeche { padding: 28px 20px 32px; }
-  /* Symbole auf dem Handy frei, ohne Kreis */
-  .kontakt-symbol { width: 28px; height: auto; background: none; box-shadow: none; }
+  /* Kontaktwege "Anrufen" / "Schreiben" auf dem Handy kompakt: eine
+     Zeile je Weg, Symbol links, "Anrufen" als kleine Zeile ueber der
+     Nummer, ohne Beschreibungssatz. Ab 735 px wie gehabt mit grossem
+     Symbol, Ueberschrift und Satz. */
+  .kontakt-wege > li {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    column-gap: 16px;
+    align-items: center;
+  }
+  .kontakt-wege > li > span { grid-row: 1 / 3; height: auto; justify-content: center; }
+  .kontakt-wege > li > span svg { height: 26px; width: auto; }
+  .kontakt-wege > li > h3 { margin: 0; font-size: 14px; line-height: 1.3; letter-spacing: 0.01em; color: color-mix(in oklab, var(--color-ink) 75%, transparent); }
+  .kontakt-wege > li > p:not(:last-child) { display: none; }
+  .kontakt-wege > li > p:last-child { margin: 2px 0 0; padding: 0; }
   /* Portrait neben dem Text statt darueber */
   .kontakt-koepfe { --kopf: 64px; }
 }
