@@ -13,15 +13,15 @@
 //   mit der das Resend-Konto angelegt ist - fuer den Test reicht das.
 
 const FELDER = ["Gewerke", "PLZ", "Ort", "Einsatzradius", "Name", "Firma", "Telefon"];
-const VORWAHLEN = ["+49", "+43", "+41"];
-
 // Telefonnummer international: "0201 1234567" mit +49 -> "+49 201 1234567".
-// Beginnt die Eingabe schon mit + oder 00, bleibt sie, wie sie ist.
+// Beginnt die Eingabe schon mit + oder 00, bleibt sie, wie sie ist. Ohne
+// Vorwahl ("Andere" im Formular, aber kein + getippt) bleibt die Nummer
+// unveraendert - lieber so als mit einer geratenen Vorwahl.
 function telefon(nummer, vorwahl) {
   const n = nummer.trim();
   if (/^(\+|00)/.test(n)) return n.replace(/^00/, "+");
-  const v = VORWAHLEN.includes(vorwahl) ? vorwahl : "+49";
-  return `${v} ${n.replace(/^0+/, "")}`;
+  if (!/^\+\d{1,4}$/.test(vorwahl)) return n;
+  return `${vorwahl} ${n.replace(/^0+/, "")}`;
 }
 const PFLICHT = ["Gewerke", "PLZ", "Name", "Telefon"];
 
