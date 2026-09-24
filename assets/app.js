@@ -1257,6 +1257,11 @@
 
     var datalist = document.getElementById(quelle);
     if (!datalist) return;
+    /* Nur mit Maus und Tastatur. Auf dem Handy setzt Safari nach dem
+       Umschreiben des Werts die Markierung neu in Sicht und sprang dabei
+       an den Seitenanfang; dort zeigt die Leiste ueber der Tastatur die
+       Eintraege der datalist ohnehin selbst an. */
+    if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
     eintraege = Array.prototype.map.call(datalist.options, function (o) { return o.value; });
 
     feld.addEventListener("input", function (e) {
