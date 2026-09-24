@@ -1257,11 +1257,59 @@
 
     var datalist = document.getElementById(quelle);
     if (!datalist) return;
-    /* Nur mit Maus und Tastatur. Auf dem Handy setzt Safari nach dem
-       Umschreiben des Werts die Markierung neu in Sicht und sprang dabei
-       an den Seitenanfang; dort zeigt die Leiste ueber der Tastatur die
-       Eintraege der datalist ohnehin selbst an. */
-    if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+    /* Auf Touch-Geraeten kein Umschreiben waehrend des Tippens: Safari
+       setzte nach dem neuen Wert die Markierung in Sicht und sprang dabei
+       an den Seitenanfang. Dort stehen stattdessen bis zu fuenf passende
+       Eintraege als Knoepfe unter dem Feld (.vorschlag-liste); ein Tipp
+       setzt den Eintrag ein, der Fokus bleibt im Feld. */
+    if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+      var liste = document.createElement("div");
+      liste.className = "vorschlag-liste";
+      liste.hidden = true;
+      (feld.closest("label") || feld).insertAdjacentElement("afterend", liste);
+      eintraege = Array.prototype.map.call(datalist.options, function (o) { return o.value; });
+      var einfachT = eintraege.map(vereinfache);
+
+      var stueck = function () {
+        var wert = feld.value;
+        var anfang = mehrfach ? wert.lastIndexOf(",") + 1 : 0;
+        return { anfang: anfang, text: vereinfache(wert.slice(anfang).trim()) };
+      };
+      var fuellen = function () {
+        var st = stueck();
+        liste.textContent = "";
+        if (!st.text) { liste.hidden = true; return; }
+        var schon = mehrfach ? feld.value.slice(0, st.anfang).split(",").map(function (t) { return vereinfache(t.trim()); }) : [];
+        var vorn = [], mitten = [];
+        einfachT.forEach(function (e, i) {
+          if (schon.indexOf(e) >= 0 || e === st.text) return;
+          if (e.indexOf(st.text) === 0) vorn.push(i);
+          else if (st.text.length > 1 && e.indexOf(st.text) > 0) mitten.push(i);
+        });
+        vorn.concat(mitten).slice(0, 5).forEach(function (i) {
+          var k = document.createElement("button");
+          k.type = "button";
+          k.textContent = eintraege[i];
+          liste.appendChild(k);
+        });
+        liste.hidden = !liste.children.length;
+      };
+      /* pointerdown statt click abfangen: so verliert das Feld den Fokus
+         nicht und die Tastatur bleibt offen. */
+      liste.addEventListener("pointerdown", function (e) { if (e.target.closest("button")) e.preventDefault(); });
+      liste.addEventListener("click", function (e) {
+        var k = e.target.closest("button");
+        if (!k) return;
+        var st = stueck();
+        var davor = feld.value.slice(0, st.anfang);
+        feld.value = (davor ? davor.replace(/\s*$/, " ") : "") + k.textContent + (mehrfach ? ", " : "");
+        liste.hidden = true;
+        feld.dispatchEvent(new Event("change", { bubbles: true }));
+      });
+      feld.addEventListener("input", fuellen);
+      feld.addEventListener("blur", function () { setTimeout(function () { liste.hidden = true; }, 150); });
+      return;
+    }
     eintraege = Array.prototype.map.call(datalist.options, function (o) { return o.value; });
 
     feld.addEventListener("input", function (e) {
