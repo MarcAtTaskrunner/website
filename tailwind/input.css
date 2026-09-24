@@ -2793,3 +2793,39 @@ body:not(.variante-b) > header:not(.menue-offen) {
 @media (prefers-reduced-motion: reduce) {
   .kunden-baender .logo-spur { animation: none; }
 }
+
+/* ------------------------------------------------------------------ *
+ *  Kontaktseite kompakt (24.09.2026)
+ * ------------------------------------------------------------------ */
+/* Kontaktwege "Anrufen" / "Schreiben": eine Zeile je Weg, Symbol in
+   einem hellen Kreis links. */
+.kontakt-symbol {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--color-blue-600);
+  box-shadow: 0 4px 14px -6px rgba(0, 0, 49, 0.25);
+}
+.kontakt-symbol svg { height: 24px; width: auto; }
+/* Die Kundenkachel ist nur so hoch wie ihr Inhalt, nicht so hoch wie
+   die Handwerker-Kachel mit dem Formular daneben. */
+@media (min-width: 64rem) {
+  .kontakt-teilung > #kunden { align-self: start; }
+}
+
+@media (max-width: 734px) {
+  .kontakt-flaeche { padding: 28px 20px 32px; }
+  /* Portrait neben dem Text statt darueber */
+  .kontakt-koepfe { --kopf: 64px; }
+}
+
+/* Handwerker-Formular bis 1023 px: nur der aktive Schritt nimmt Platz
+   ein. Uebereinander gestapelt (wie ab 1024) waere die Kachel so hoch
+   wie der laengste Schritt, vor "Weiter" klaffte eine Luecke. */
+@media (max-width: 1023px) {
+  .in-schritten [data-schritt]:not(.ist-aktiv) { display: none; }
+}
