@@ -717,7 +717,7 @@
       if (form.vorWechsel && form.vorWechsel(jetzt, nr, dann)) return;
       dann();
     };
-    /* Fuer den Schliessen-Knopf der bildschirmfuellenden Kachel */
+    /* Fuer Escape in der bildschirmfuellenden Kachel (zurueck zu Schritt 1) */
     form.geheZu = function (nr) { if (nr !== jetzt) gehe(nr); };
 
     var gueltig = function () {
@@ -810,7 +810,7 @@
     var AUS = 250, GLEITEN = 750;
 
     var wurzel = document.documentElement;
-    var zu = handwerker.querySelector("[data-voll-zu]");
+    var recht = handwerker.querySelector("[data-voll-recht]");
     var start = null;
 
     var festsetzen = function () {
@@ -844,7 +844,7 @@
       handwerker.classList.add("ist-voll");
       rahmen(start);
       wurzel.classList.add("formular-voll");
-      if (zu) zu.hidden = false;
+      if (recht) recht.hidden = false;
       if (!sofort) {
         void handwerker.offsetWidth;
         handwerker.classList.add("voll-gleitet");
@@ -864,10 +864,9 @@
       handwerker.classList.remove("ist-voll", "voll-gleitet", "voll-offen");
       handwerker.style.top = handwerker.style.left = handwerker.style.width = "";
       wurzel.classList.remove("formular-voll");
-      if (zu) zu.hidden = true;
+      if (recht) recht.hidden = true;
       start = null;
     };
-    if (zu) zu.addEventListener("click", function () { form.geheZu(0); });
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape" && start) form.geheZu(0);
     });

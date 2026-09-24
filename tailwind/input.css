@@ -2876,23 +2876,23 @@ html:has(input:focus, select:focus, textarea:focus) { scroll-behavior: auto; }
   #techniker.ist-voll.voll-offen { border-radius: 0; }
   #techniker.ist-voll .handwerker-karte { top: calc(var(--header-h) + 40px); }
 
-  .voll-zu {
+  /* Rechtslinks am unteren Rand der Vollflaeche */
+  .voll-recht {
     position: absolute;
-    top: calc(var(--header-h) + 20px);
-    right: 24px;
-    display: grid;
-    place-items: center;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
-    transition: background-color .2s ease;
+    left: 56px;
+    right: 56px;
+    bottom: 24px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 24px;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.6);
   }
-  .voll-zu:hover { background: rgba(255, 255, 255, 0.2); }
-  .voll-zu:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+  .voll-recht a { color: rgba(255, 255, 255, 0.75); transition: color .2s ease; }
+  .voll-recht a:hover { color: #fff; }
+  .voll-recht a:focus-visible { outline: 2px solid #fff; outline-offset: 3px; border-radius: 4px; }
 }
-.voll-zu[hidden] { display: none; }
+.voll-recht[hidden] { display: none; }
 
 /* Kopfleiste ueber der dunklen Vollflaeche: durchsichtig, weisse
    Schrift und weisses Logo wie ganz oben auf der Startseite. Die Seite
