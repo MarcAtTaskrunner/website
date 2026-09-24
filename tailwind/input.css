@@ -803,15 +803,6 @@ header .logo-hell { opacity: 0; }
 }
 .text-white .raster-marke { background: rgba(255, 255, 255, 0.14); }
 
-.raster-link {
-  display: inline-block;
-  text-decoration: underline;
-  text-underline-offset: 6px;
-  text-decoration-color: rgba(255, 255, 255, 0.4);
-  transition: text-decoration-color var(--dauer-kurz, .18s) var(--kurve, ease);
-}
-.raster-link:hover { text-decoration-color: currentColor; }
-.raster-link:focus-visible { outline: 2px solid #fff; outline-offset: 4px; border-radius: 4px; }
 
 /* Bildflaechen. Ist das Foto da, kommt ein <img> hinein und die Klasse
    bild-platzhalter samt Hinweistext faellt weg. */
@@ -2666,5 +2657,40 @@ html.menue-offen body { overflow: hidden; }
   .variante-b .hero-voll [data-hero-text] {
     padding-bottom: 32px;
     padding-bottom: calc(100lvh - 100svh + 32px);
+  }
+
+  /* Raster "Netzwerk": Kacheln nur so hoch wie ihr Inhalt, unten
+     etwas mehr Luft als oben. Steht der Fussblock allein in der Kachel
+     ("Vereinbart ist vereinbart"), faellt sein Abstand nach oben weg. */
+  .raster-kachel { min-height: 0; }
+  .raster-kachel.kachel-polster { padding: 28px 24px 32px; }
+  .raster-fuss:first-child { padding-top: 0; }
+}
+
+/* "So funktioniert ein Task" auf dem Handy: senkrechter Zeitstrahl
+   von Schritt 1 bis 4. Je Schritt ein Ring auf der Hoehe der Zeile
+   "Schritt n", dazwischen eine feine Linie bis zum naechsten Ring
+   (Abstand der Schritte: gap-y-12 = 48 px). Ab 768 px zwei Spalten
+   mit Linie oben, ab 1024 die durchgehende Linie (weiter oben). */
+@media (max-width: 767px) {
+  .schritte > li { position: relative; padding-left: 36px; }
+  .schritte > li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 2px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255, 255, 255, 0.8);
+  }
+  .schritte > li:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    left: 5.5px;
+    top: 20px;
+    bottom: -44px;
+    width: 1px;
+    background: rgba(255, 255, 255, 0.25);
   }
 }
