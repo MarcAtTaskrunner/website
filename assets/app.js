@@ -939,6 +939,7 @@
         if (weit === !!start) return false;
         if (ruhig.matches) {
           if (weit) { festsetzen(); aufziehen(true); } else { ende(); loesen(); }
+          setze(weit);
           dann();
           return true;
         }
@@ -946,6 +947,10 @@
         teilung.classList.add("blendet");
         window.setTimeout(function () {
           if (weit) aufziehen(); else zuziehen();
+          /* ist-weit auch hier: daran haengt das Laden der Karte, die
+             auf dem Handy unter dem Formular steht (Spalten gibt es erst
+             ab 1024 px, dort wirkt die Klasse sonst nicht) */
+          setze(weit);
           dann();
           window.setTimeout(function () {
             if (weit) zeigeRecht(); else { ende(); loesen(); }
