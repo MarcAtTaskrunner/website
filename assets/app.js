@@ -27,9 +27,15 @@
         menu.classList.add("ist-offen");
       } else {
         menu.classList.remove("ist-offen");
-        menuZeit = setTimeout(function () { menu.hidden = true; grund(false); }, ruhig.matches ? 0 : 320);
+        menuZeit = setTimeout(function () { menu.hidden = true; grund(false); flaeche(false); }, ruhig.matches ? 0 : 320);
       }
-      if (offen) grund(true);
+      if (offen) { grund(true); flaeche(true); }
+    };
+
+    /* Leiste deckend, Seite dahinter festgehalten (input.css, .menue-offen) */
+    var flaeche = function (offen) {
+      if (kopf) kopf.classList.toggle("menue-offen", offen);
+      document.documentElement.classList.toggle("menue-offen", offen);
     };
 
     /* Die Kopfleiste ist ganz oben durchsichtig. Waehrend die Klappe

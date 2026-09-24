@@ -2552,16 +2552,34 @@ body .vertriebsteam p.vertriebsteam-text { color: color-mix(in oklab, var(--colo
 #nav-toggle[aria-expanded="true"] .nav-linien > span:first-child { translate: 0 3.25px;  rotate: 45deg; }
 #nav-toggle[aria-expanded="true"] .nav-linien > span:last-child  { translate: 0 -3.25px; rotate: -45deg; }
 
-/* Klappe: die Hoehe waechst von 0 auf den Inhalt (0fr -> 1fr), die
-   Punkte blenden nacheinander von leicht oben ein. app.js nimmt erst
-   hidden weg und setzt dann .ist-offen; beim Schliessen umgekehrt. */
+/* Klappe: faehrt wie bei Apple bis zum unteren Bildschirmrand auf
+   (Fenster minus 64 px Leiste), die Punkte blenden nacheinander von
+   leicht oben ein. app.js nimmt erst hidden weg und setzt dann
+   .ist-offen; beim Schliessen umgekehrt. */
 #mobile-nav {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows .32s var(--menu-kurve);
+  height: 0;
+  overflow: hidden;
+  transition: height .32s var(--menu-kurve);
 }
-#mobile-nav.ist-offen { grid-template-rows: 1fr; }
-#mobile-nav .mobil-innen { min-height: 0; overflow: hidden; }
+#mobile-nav.ist-offen {
+  height: calc(100vh - 64px);
+  height: calc(100dvh - 64px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* Solange das Menue offen ist (auch waehrend es zuklappt): Leiste
+   deckend weiss und ohne Kante, damit sie mit der Klappe eine Flaeche
+   bildet; die Seite dahinter scrollt nicht mit. */
+header.menue-offen,
+.variante-b header.menue-offen {
+  background: #fff;
+  -webkit-backdrop-filter: none;
+          backdrop-filter: none;
+  border-color: transparent;
+}
+html.menue-offen,
+html.menue-offen body { overflow: hidden; }
 #mobile-nav li {
   opacity: 0;
   translate: 0 -6px;
