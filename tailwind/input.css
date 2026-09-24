@@ -2694,50 +2694,49 @@ html.menue-offen body { overflow: hidden; }
 }
 
 /* "So funktioniert ein Task" auf dem Handy: senkrechter Zeitstrahl
-   von Schritt 1 bis 4. Je Schritt ein Ring auf der Hoehe der Zeile
-   "Schritt n", dazwischen eine feine Linie bis zum naechsten Ring
-   (Abstand der Schritte: gap-y-12 = 48 px). Ab 768 px zwei Spalten
-   mit Linie oben, ab 1024 die durchgehende Linie (weiter oben). */
+   von Schritt 1 bis 4 als eine durchgehende Linie. Grundlinie blass,
+   darueber eine helle, die beim Scrollen mitwaechst (app.js setzt
+   --zug von 0 bis 1 sowie Anfang und Laenge der Linie). Erreicht sie
+   einen Schritt, leuchtet dessen Punkt auf (.erreicht). Ab 768 px zwei
+   Spalten mit Linie oben, ab 1024 die durchgehende Linie (weiter oben). */
 @media (max-width: 767px) {
   .schritte > li { position: relative; padding-left: 36px; }
-  .schritte > li::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 2px;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    border: 1.5px solid rgba(255, 255, 255, 0.8);
-  }
-  .schritte > li:not(:last-child)::after {
+  .schritte::before,
+  .schritte::after {
     content: "";
     position: absolute;
     left: 5.5px;
-    top: 20px;
-    bottom: -44px;
+    top: var(--linie-oben, 7px);
+    height: var(--linie-hoehe, 0px);
     width: 1px;
-    background: rgba(255, 255, 255, 0.25);
   }
-  /* Einblenden: statt dass jeder Schritt fuer sich auftaucht, zieht
-     sich die Linie von Ring zu Ring. Das Stueck unter Schritt n waechst,
-     sobald Schritt n+1 da ist; der Ring waechst mit dem Schritt auf. */
-  html.js-auf .variante-b .schritte > li::before {
-    scale: 0;
-    transition: scale .5s var(--kurve) .15s;
-  }
-  html.js-auf .variante-b .schritte > li.da::before { scale: none; }
-  html.js-auf .variante-b .schritte > li:not(:last-child)::after {
-    transform: scaleY(0);
+  .schritte::before { background: rgba(255, 255, 255, 0.18); }
+  .schritte::after {
+    background: rgba(255, 255, 255, 0.9);
+    transform: scaleY(var(--zug, 1));
     transform-origin: top;
-    transition: transform 1.1s cubic-bezier(.45, 0, .25, 1);
   }
-  html.js-auf .variante-b .schritte > li.da:has(+ li.da)::after { transform: none; }
+  /* Punkte liegen ueber der Linie und verdecken sie */
+  .schritte > li::before {
+    content: "";
+    position: absolute;
+    z-index: 1;
+    left: 1px;
+    top: 2px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #2b3f86;
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+    transition: background-color .4s var(--kurve), box-shadow .4s var(--kurve);
+  }
+  .schritte > li.erreicht::before {
+    background: #fff;
+    box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.14);
+  }
 }
-@media (max-width: 767px) and (prefers-reduced-motion: reduce) {
-  html.js-auf .variante-b .schritte > li::before,
-  html.js-auf .variante-b .schritte > li::after { scale: none; transform: none; transition: none; }
-}
+
+
 
 /* Kacheln im Laufband: abgerundet auch beim Ueberblenden der Fotos
    ("Nachvollziehbar abgerechnet"). Safari legt die Kachel waehrend
@@ -2768,4 +2767,29 @@ body:not(.variante-b) > header:not(.menue-offen) {
   /* Leiste 52 statt 64 px (plus 1 px Kante) */
   :root { --header-h: 53px; }
 
+}
+
+/* ------------------------------------------------------------------ *
+ *  Kachel "Kunden" (Startseite): drei Laufbaender mit Logos, von links
+ *  nach rechts. Die Schleife (.logo-spur, @keyframes logo-lauf) steht
+ *  weiter oben; hier Abstaende, Randauslauf und Lage in der Kachel.
+ *  Die Baender reichen bis an die Kachelkanten (minus Polster).
+ * ------------------------------------------------------------------ */
+.kunden-baender .logo-band {
+  margin-inline: -40px;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 14%, #000 86%, transparent);
+          mask-image: linear-gradient(to right, transparent, #000 14%, #000 86%, transparent);
+}
+.kunden-baender .logo-band + .logo-band { margin-top: 22px; }
+.kunden-baender .logo-spur { align-items: center; }
+/* Abstand als margin am Logo statt gap: so sind beide Haelften der
+   Spur exakt gleich breit und die Schleife springt nicht. */
+.kunden-baender .logo-spur img { flex: none; width: auto; margin-right: 44px; }
+@media (max-width: 734px) {
+  .kunden-baender .logo-band { margin-inline: -24px; }
+  .kunden-baender .logo-spur img { margin-right: 36px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .kunden-baender .logo-spur { animation: none; }
 }

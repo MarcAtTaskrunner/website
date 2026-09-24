@@ -243,16 +243,60 @@
                 <!-- Kundenzahl (bisher 53) ausgeblendet, bis sie zur
                      Vertriebspraesentation passt. -->
                 <h3 class="mt-6 t-h3 text-blue-600">Unternehmen, die mit taskrunner arbeiten.</h3>
-                <div class="raster-fuss flex flex-wrap items-center gap-x-8 gap-y-6">
-                  <img src="images/kundenlogos/amplifon-blau.svg" alt="Amplifon" loading="lazy" decoding="async" width="112" height="27" class="h-[var(--h)] w-auto shrink-0 object-contain sm:h-[var(--h-sm)]" style="--h:20px;--h-sm:24px">
-                  <img src="images/kundenlogos/dm-blau.svg" alt="dm-drogerie markt" loading="lazy" decoding="async" width="57" height="38" class="h-[var(--h)] w-auto shrink-0 object-contain sm:h-[var(--h-sm)]" style="--h:28px;--h-sm:34px">
-                  <img src="images/kundenlogos/globus-blau.svg" alt="Globus" loading="lazy" decoding="async" width="51" height="41" class="h-[var(--h)] w-auto shrink-0 object-contain sm:h-[var(--h-sm)]" style="--h:30px;--h-sm:35px">
-                  <img src="images/kundenlogos/rossmann-blau.svg" alt="Rossmann" loading="lazy" decoding="async" width="186" height="26" class="h-[var(--h)] w-auto shrink-0 object-contain sm:h-[var(--h-sm)]" style="--h:19px;--h-sm:23px">
-                  <img src="images/kundenlogos/bonita-blau.svg" alt="Bonita" loading="lazy" decoding="async" width="141" height="26" class="h-[var(--h)] w-auto shrink-0 object-contain sm:h-[var(--h-sm)]" style="--h:19px;--h-sm:23px">
-                  <img src="images/kundenlogos/obi-blau.svg" alt="OBI" loading="lazy" decoding="async" width="114" height="27" class="h-[var(--h)] w-auto shrink-0 object-contain sm:h-[var(--h-sm)]" style="--h:20px;--h-sm:24px">
-                  <img src="images/kundenlogos/avis-blau.svg" alt="Avis" loading="lazy" decoding="async" width="95" height="29" class="h-[var(--h)] w-auto shrink-0 object-contain sm:h-[var(--h-sm)]" style="--h:22px;--h-sm:26px">
-                  <img src="images/kundenlogos/flink-blau.svg" alt="Flink" loading="lazy" decoding="async" width="105" height="27" class="h-[var(--h)] w-auto shrink-0 object-contain sm:h-[var(--h-sm)]" style="--h:20px;--h-sm:24px">
-                  <p class="w-full t-caption text-ink/75">Eine kleine Auswahl. Dazu kommen viele weitere Unternehmen.</p>
+                <!-- Drei Laufbaender mit Kundenlogos, je Reihe zweimal dieselben
+                     Logos hintereinander (die zweite Folge fuer das Publikum
+                     unsichtbar), damit die Schleife nahtlos laeuft.
+                     Aussehen: .kunden-baender in tailwind/input.css. -->
+                <div class="raster-fuss kunden-baender">
+                  <div class="logo-band">
+                    <div class="logo-spur" style="--dauer:40s;--dauer-sm:40s;--dauer-lg:40s;--verzug:-6s">
+                      <img src="images/kundenlogos/dm-blau.svg" alt="dm-drogerie markt" loading="lazy" decoding="async" width="423" height="280" style="--h:28px;--h-sm:34px;--h-lg:34px">
+                      <img src="images/kundenlogos/amplifon-blau.svg" alt="Amplifon" loading="lazy" decoding="async" width="830" height="200" style="--h:20px;--h-sm:24px;--h-lg:24px">
+                      <img src="images/kundenlogos/lush-blau.svg" alt="Lush" loading="lazy" decoding="async" width="817" height="210" style="--h:21px;--h-sm:25px;--h-lg:25px">
+                      <img src="images/kundenlogos/globus-blau.svg" alt="Globus" loading="lazy" decoding="async" width="371" height="300" style="--h:30px;--h-sm:36px;--h-lg:36px">
+                      <img src="images/kundenlogos/nordsee-blau.svg" alt="Nordsee" loading="lazy" decoding="async" width="1009" height="160" style="--h:16px;--h-sm:19px;--h-lg:19px">
+                      <img src="images/kundenlogos/obi-blau.svg" alt="OBI" loading="lazy" decoding="async" width="843" height="200" style="--h:20px;--h-sm:24px;--h-lg:24px">
+                      <img src="images/kundenlogos/dm-blau.svg" alt="" aria-hidden="true" loading="lazy" decoding="async" width="423" height="280" style="--h:28px;--h-sm:34px;--h-lg:34px">
+                      <img src="images/kundenlogos/amplifon-blau.svg" alt="" aria-hidden="true" loading="lazy" decoding="async" width="830" height="200" style="--h:20px;--h-sm:24px;--h-lg:24px">
+                      <img src="images/kundenlogos/lush-blau.svg" alt="" aria-hidden="true" loading="lazy" decoding="async" width="817" height="210" style="--h:21px;--h-sm:25px;--h-lg:25px">
+                      <img src="images/kundenlogos/globus-blau.svg" alt="" aria-hidden="true" loading="lazy" decoding="async" width="371" height="300" style="--h:30px;--h-sm:36px;--h-lg:36px">
+                      <img src="images/kundenlogos/nordsee-blau.svg" alt="" aria-hidden="true" loading="lazy" decoding="async" width="1009" height="160" style="--h:16px;--h-sm:19px;--h-lg:19px">
+                      <img src="images/kundenlogos/obi-blau.svg" alt="" aria-hidden="true" loading="lazy" decoding="async" width="843" height="200" style="--h:20px;--h-sm:24px;--h-lg:24px">
+                    </div>
+                  </div>
+                  <div class="logo-band">
+                    <div class="logo-spur" style="--dauer:46s;--dauer-sm:46s;--dauer-lg:46s;--verzug:-21s">
+                      <img src="images/kundenlogos/rossmann-blau.svg" alt="Rossmann" loading="lazy" decoding="async" width="1357" height="190" style="--h:19px;--h-sm:23px;--h-lg:23px">
+                      <img src="images/kundenlogos/kamps-blau.svg" alt="Kamps" loading="lazy" decoding="async" width="829" height="200" style="--h:20px;--h-sm:24px;--h-lg:24px">
+                      <img src="images/kundenlogos/netto-blau.svg" alt="Netto" loading="lazy" decoding="async" width="611" height="270" style="--h:27px;--h-sm:32px;--h-lg:32px">
+                      <img src="images/kundenlogos/flink-blau.svg" alt="Flink" loading="lazy" decoding="async" width="778" height="200" style="--h:20px;--h-sm:24px;--h-lg:24px">
+                      <img src="images/kundenlogos/apleona-blau.svg" alt="Apleona" loading="lazy" decoding="async" width="1116" height="160" style="--h:16px;--h-sm:19px;--h-lg:19px">
+                      <img src="images/kundenlogos/schwarz-gruppe-blau.svg" alt="Schwarz Gruppe" loading="lazy" decoding="async" width="628" height="260" style="--h:26px;--h-sm:31px;--h-lg:31px">
+                      <img src="images/kundenlogos/rossmann-blau.svg" alt="" aria-hidden="true" loading="lazy" decoding="async" width="1357" height="190" style="--h:19px;--h-sm:23px;--h-lg:23px">
+                      <img src="images/kundenlogos/kamps-blau.svg" alt="" aria-hidden="true" loading="lazy" decoding="async" width="829" height="200" style="--h:20px;--h-sm:24px;--h-lg:24px">
+                      <img src="images/kundenlogos/netto-blau.svg" alt="" aria-hidden="true" loading="lazy" decoding="async" width="611" height="270" style="--h:27px;--h-sm:32px;--h-lg:32px">
+                      <img src="images/kundenlogos/flink-blau.svg" alt="" aria-hidden="true" loading="lazy" decoding="async" width="778" height="200" style="--h:20px;--h-sm:24px;--h-lg:24px">
+                      <img src="images/kundenlogos/apleona-blau.svg" alt="" aria-hidden="true" loading="lazy" decoding="async" width="1116" height="160" style="--h:16px;--h-sm:19px;--h-lg:19px">
+                      <img src="images/kundenlogos/schwarz-gruppe-blau.svg" alt="" aria-hidden="true" loading="lazy" decoding="async" width="628" height="260" style="--h:26px;--h-sm:31px;--h-lg:31px">
+                    </div>
+                  </div>
+                  <div class="logo-band">
+                    <div class="logo-spur" style="--dauer:43s;--dauer-sm:43s;--dauer-lg:43s;--verzug:-13s">
+                      <img src="images/kundenlogos/bonita-blau.svg" alt="Bonita" loading="lazy" decoding="async" width="1034" height="190" style="--h:19px;--h-sm:23px;--h-lg:23px">
+                      <img src="images/kundenlogos/fressnapf-blau.svg" alt="Fressnapf" loading="lazy" decoding="async" width="1001" height="160" style="--h:16px;--h-sm:19px;--h-lg:19px">
+                      <img src="images/kundenlogos/avis-blau.svg" alt="Avis" loading="lazy" decoding="async" width="720" height="220" style="--h:22px;--h-sm:26px;--h-lg:26px">
+                      <img src="images/kundenlogos/easyapotheke-blau.svg" alt="easyApotheke" loading="lazy" decoding="async" width="911" height="190" style="--h:19px;--h-sm:23px;--h-lg:23px">
+                      <img src="images/kundenlogos/groupe-seb-blau.svg" alt="Groupe SEB" loading="lazy" decoding="async" width="134" height="300" style="--h:30px;--h-sm:36px;--h-lg:36px">
+                      <img src="images/kundenlogos/flaschenpost-blau.svg" alt="flaschenpost" loading="lazy" decoding="async" width="893" height="190" style="--h:19px;--h-sm:23px;--h-lg:23px">
+                      <img src="images/kundenlogos/bonita-blau.svg" alt="" aria-hidden="true" loading="lazy" decoding="async" width="1034" height="190" style="--h:19px;--h-sm:23px;--h-lg:23px">
+                      <img src="images/kundenlogos/fressnapf-blau.svg" alt="" aria-hidden="true" loading="lazy" decoding="async" width="1001" height="160" style="--h:16px;--h-sm:19px;--h-lg:19px">
+                      <img src="images/kundenlogos/avis-blau.svg" alt="" aria-hidden="true" loading="lazy" decoding="async" width="720" height="220" style="--h:22px;--h-sm:26px;--h-lg:26px">
+                      <img src="images/kundenlogos/easyapotheke-blau.svg" alt="" aria-hidden="true" loading="lazy" decoding="async" width="911" height="190" style="--h:19px;--h-sm:23px;--h-lg:23px">
+                      <img src="images/kundenlogos/groupe-seb-blau.svg" alt="" aria-hidden="true" loading="lazy" decoding="async" width="134" height="300" style="--h:30px;--h-sm:36px;--h-lg:36px">
+                      <img src="images/kundenlogos/flaschenpost-blau.svg" alt="" aria-hidden="true" loading="lazy" decoding="async" width="893" height="190" style="--h:19px;--h-sm:23px;--h-lg:23px">
+                    </div>
+                  </div>
+                  <p class="mt-6 t-caption text-ink/75">Eine kleine Auswahl. Dazu kommen viele weitere Unternehmen.</p>
                 </div>
               </div>
               <div data-auf class="raster-bild bild-breit nur-breit">

@@ -369,6 +369,45 @@
 
 
   /* ---------------------------------------------------------------- *
+   *  Zeitstrahl "So funktioniert ein Task" (.schritte), nur Handy
+   *  Die helle Linie waechst mit dem Scrollen: ihre Spitze folgt einer
+   *  gedachten Linie bei 60 % der Fensterhoehe. Anfang und Laenge
+   *  gehen vom Punkt des ersten bis zum Punkt des letzten Schritts.
+   * ---------------------------------------------------------------- */
+  (function () {
+    var ol = document.querySelector(".schritte");
+    if (!ol || !ol.children.length) return;
+    var schmal = window.matchMedia("(max-width: 767px)");
+    var ruhig = window.matchMedia("(prefers-reduced-motion: reduce)");
+    var schritte = ol.children;
+    var MITTE = 7;                      /* Punktmitte unter Schrittoberkante */
+    var offen = false;
+
+    var pruefe = function () {
+      offen = false;
+      if (!schmal.matches) return;
+      var a = schritte[0].offsetTop + MITTE;
+      var h = schritte[schritte.length - 1].offsetTop + MITTE - a;
+      ol.style.setProperty("--linie-oben", a + "px");
+      ol.style.setProperty("--linie-hoehe", h + "px");
+      var spitze = window.innerHeight * 0.6 - ol.getBoundingClientRect().top;
+      var zug = ruhig.matches ? 1 : Math.max(0, Math.min(1, (spitze - a) / h));
+      ol.style.setProperty("--zug", zug.toFixed(4));
+      Array.prototype.forEach.call(schritte, function (li) {
+        li.classList.toggle("erreicht", a + zug * h >= li.offsetTop + MITTE - 1);
+      });
+    };
+    var anstossen = function () {
+      if (offen) return;
+      offen = true;
+      requestAnimationFrame(pruefe);
+    };
+    window.addEventListener("scroll", anstossen, { passive: true });
+    window.addEventListener("resize", anstossen);
+    pruefe();
+  })();
+
+  /* ---------------------------------------------------------------- *
    *  Laufband (Bildergalerie im Blogbeitrag, [data-laufband])
    *  Ein seitlicher Scrollbereich nach Uncode: er laeuft beim Scrollen
    *  der Seite nach links mit, laesst sich mit der Maus ziehen und
