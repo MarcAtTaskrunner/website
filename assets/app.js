@@ -772,6 +772,8 @@
         meldung.className = "registrierung-meldung ist-ok";
         meldung.innerHTML = "<strong>Danke, Ihre Registrierung ist angekommen.</strong> Wir melden uns in den nächsten Tagen telefonisch bei Ihnen.";
         meldung.hidden = false;
+        var raus = form.querySelector("[data-voll-verlassen]");
+        if (raus && form.vollZu && document.documentElement.classList.contains("formular-voll")) raus.hidden = false;
         form.dispatchEvent(new CustomEvent("gesendet"));
       }).catch(function () {
         senden.disabled = false;
@@ -844,7 +846,7 @@
       handwerker.classList.add("ist-voll");
       rahmen(start);
       wurzel.classList.add("formular-voll");
-      if (recht) recht.hidden = false;
+      if (sofort) zeigeRecht();
       if (!sofort) {
         void handwerker.offsetWidth;
         handwerker.classList.add("voll-gleitet");
@@ -854,21 +856,62 @@
       handwerker.style.width = "100%";
       handwerker.style.height = "100%";
     };
+    /* Rechtslinks erst, wenn die Kachel das Fenster ganz fuellt */
+    var zeigeRecht = function () {
+      if (!recht || !start) return;
+      recht.hidden = false;
+      void recht.offsetWidth;
+      handwerker.classList.add("voll-da");
+    };
     var zuziehen = function () {
       if (!start) return;
+      handwerker.classList.remove("voll-da");
+      if (recht) recht.hidden = true;
       handwerker.classList.remove("voll-offen");
       rahmen(start);
       wurzel.classList.remove("formular-voll");
     };
     var ende = function () {
-      handwerker.classList.remove("ist-voll", "voll-gleitet", "voll-offen");
+      handwerker.classList.remove("ist-voll", "voll-gleitet", "voll-offen", "voll-da");
       handwerker.style.top = handwerker.style.left = handwerker.style.width = "";
       wurzel.classList.remove("formular-voll");
       if (recht) recht.hidden = true;
       start = null;
     };
     document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape" && start) form.geheZu(0);
+      if (e.key === "Escape" && start && !form.classList.contains("ist-gesendet")) form.geheZu(0);
+    });
+
+    /* Nach dem Absenden: zurueck auf die Kontaktseite, ohne Schrittwechsel.
+       Die Kachel gleitet an ihren Platz, die Dankesmeldung bleibt darin. */
+    form.vollZu = function () {
+      if (!start) return;
+      if (ruhig.matches) {
+        teilung.classList.remove("kunden-weg");
+        setze(false);
+        ende();
+        loesen();
+        return;
+      }
+      teilung.classList.add("blendet");
+      window.setTimeout(function () {
+        teilung.classList.remove("kunden-weg");
+        zuziehen();
+        setze(false);
+        window.setTimeout(function () {
+          ende();
+          loesen();
+          teilung.classList.remove("blendet");
+        }, GLEITEN);
+      }, AUS);
+    };
+    var raus = form.querySelector("[data-voll-verlassen]");
+    if (raus) raus.addEventListener("click", function () {
+      raus.hidden = true;
+      form.vollZu();
+    });
+    if (raus) document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && start && form.classList.contains("ist-gesendet")) { raus.hidden = true; form.vollZu(); }
     });
     var setze = function (weit) {
       teilung.classList.toggle("ist-weit", weit);
@@ -894,7 +937,7 @@
         setze(weit);
         dann();
         window.setTimeout(function () {
-          if (weit) teilung.classList.add("kunden-weg");
+          if (weit) { teilung.classList.add("kunden-weg"); zeigeRecht(); }
           else { ende(); loesen(); }
           teilung.classList.remove("blendet");
         }, GLEITEN);

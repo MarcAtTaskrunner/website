@@ -2888,6 +2888,8 @@ html:has(input:focus, select:focus, textarea:focus) { scroll-behavior: auto; }
     font-size: 14px;
     color: rgba(255, 255, 255, 0.6);
   }
+  .voll-recht { opacity: 0; transition: opacity .35s ease; }
+  #techniker.voll-da .voll-recht { opacity: 1; }
   .voll-recht a { color: rgba(255, 255, 255, 0.75); transition: color .2s ease; }
   .voll-recht a:hover { color: #fff; }
   .voll-recht a:focus-visible { outline: 2px solid #fff; outline-offset: 3px; border-radius: 4px; }
