@@ -21,7 +21,10 @@
     var mass = Math.min(this.b, this.h * 1.9);
     this.cx = this.b * 0.5;
     this.cy = this.h * 0.5;
-    this.kreuz = mass * 0.33;               /* Kantenlaenge des Kreuzes */
+    /* Kantenlaenge des Kreuzes. Auf dem Handy ist die Flaeche fast
+       quadratisch, dort nach der kleineren Seite bemessen - sonst
+       bleibt es klein in der Mitte stehen. */
+    this.kreuz = this.b < 500 ? Math.min(this.b, this.h) * 0.5 : mass * 0.33;
     /* Weiter darf der Schein nicht reichen: sonst schneidet ihn die
        Canvas-Kante gerade ab, und er steht als Rechteck im Bild. */
     this.scheinMax = Math.min(this.cx, this.cy);
