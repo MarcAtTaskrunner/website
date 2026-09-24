@@ -854,7 +854,8 @@
       handwerker.classList.add("voll-offen");
       rahmen({ top: 0, left: 0, width: window.innerWidth, height: window.innerHeight });
       handwerker.style.width = "100%";
-      handwerker.style.height = "100%";
+      /* dvh: auf dem Handy die sichtbare Hoehe, auch mit Browserleisten */
+      handwerker.style.height = window.CSS && CSS.supports("height", "100dvh") ? "100dvh" : "100%";
     };
     /* Rechtslinks erst, wenn die Kachel das Fenster ganz fuellt */
     var zeigeRecht = function () {
@@ -920,7 +921,27 @@
 
     form.vorWechsel = function (von, nach, dann) {
       var weit = nach >= 1;
-      if (!breit.matches || weit === teilung.classList.contains("ist-weit")) return false;
+      /* Unter 1024 px nur das Vollbild, ohne Spalten und Karte */
+      if (!breit.matches) {
+        if (weit === !!start) return false;
+        if (ruhig.matches) {
+          if (weit) { festsetzen(); aufziehen(true); } else { ende(); loesen(); }
+          dann();
+          return true;
+        }
+        if (weit) festsetzen();
+        teilung.classList.add("blendet");
+        window.setTimeout(function () {
+          if (weit) aufziehen(); else zuziehen();
+          dann();
+          window.setTimeout(function () {
+            if (weit) zeigeRecht(); else { ende(); loesen(); }
+            teilung.classList.remove("blendet");
+          }, GLEITEN);
+        }, AUS);
+        return true;
+      }
+      if (weit === teilung.classList.contains("ist-weit")) return false;
       if (ruhig.matches) {
         if (weit) { festsetzen(); aufziehen(true); }
         teilung.classList.toggle("kunden-weg", weit);
@@ -945,14 +966,13 @@
       return true;
     };
 
-    /* Fenster unter 1024 px gezogen: zurueck zum normalen Aufbau */
+    /* Fenster ueber die 1024-px-Grenze gezogen: zurueck zum normalen
+       Aufbau (die Kachel liegt dann auf dem richtigen Platz neu) */
     breit.addEventListener("change", function () {
-      if (!breit.matches) {
-        teilung.classList.remove("blendet", "kunden-weg");
-        setze(false);
-        ende();
-        loesen();
-      }
+      teilung.classList.remove("blendet", "kunden-weg");
+      setze(false);
+      ende();
+      loesen();
     });
   })();
 

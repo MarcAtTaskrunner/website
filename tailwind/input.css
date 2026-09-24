@@ -2860,41 +2860,60 @@ html:has(input:focus, select:focus, textarea:focus) { scroll-behavior: auto; }
  *  Ablauf in assets/app.js ([data-weiten]): die Kachel gleitet aus
  *  ihrer Lage auf das ganze Fenster, hinter die Kopfleiste.
  * ------------------------------------------------------------------ */
-@media (min-width: 64rem) {
-  .kontakt-teilung > #techniker.ist-voll {
-    position: fixed;
-    z-index: 40;
-    margin: 0;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    padding: calc(var(--header-h) + 24px) 56px 56px;
-  }
-  #techniker.voll-gleitet {
-    transition: top var(--weiten), left var(--weiten), width var(--weiten),
-                height var(--weiten), border-radius var(--weiten);
-  }
-  #techniker.ist-voll.voll-offen { border-radius: 0; }
-  #techniker.ist-voll .handwerker-karte { top: calc(var(--header-h) + 40px); }
-
-  /* Rechtslinks am unteren Rand der Vollflaeche */
-  .voll-recht {
-    position: absolute;
-    left: 56px;
-    right: 56px;
-    bottom: 24px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px 24px;
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.6);
-  }
-  .voll-recht { opacity: 0; transition: opacity .35s ease; }
-  #techniker.voll-da .voll-recht { opacity: 1; }
-  .voll-recht a { color: rgba(255, 255, 255, 0.75); transition: color .2s ease; }
-  .voll-recht a:hover { color: #fff; }
-  .voll-recht a:focus-visible { outline: 2px solid #fff; outline-offset: 3px; border-radius: 4px; }
+/* Fuer alle Breiten: fixiert, ueber allem ausser der Kopfleiste */
+.kontakt-teilung > #techniker.ist-voll {
+  position: fixed;
+  z-index: 40;
+  margin: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
+#techniker.voll-gleitet {
+  --weiten: 0.75s cubic-bezier(.65, 0, .35, 1);
+  transition: top var(--weiten), left var(--weiten), width var(--weiten),
+              height var(--weiten), border-radius var(--weiten);
+}
+#techniker.ist-voll.voll-offen { border-radius: 0; }
+/* Inhalt blendet aus, waehrend die Kachel waechst (auch auf dem Handy) */
+.handwerker-innen { transition: opacity 0.25s ease; }
+.kontakt-teilung.blendet .handwerker-innen { opacity: 0; }
+
+/* Rechtslinks am unteren Rand der Vollflaeche, erst bei voller Groesse */
+.voll-recht {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 24px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.6);
+  opacity: 0;
+  transition: opacity .35s ease;
+}
+#techniker.voll-da .voll-recht { opacity: 1; }
+.voll-recht a { color: rgba(255, 255, 255, 0.75); transition: color .2s ease; }
+.voll-recht a:hover { color: #fff; }
+.voll-recht a:focus-visible { outline: 2px solid #fff; outline-offset: 3px; border-radius: 4px; }
 .voll-recht[hidden] { display: none; }
+
+@media (min-width: 64rem) {
+  .kontakt-teilung > #techniker.ist-voll { padding: calc(var(--header-h) + 24px) 56px 56px; }
+  #techniker.ist-voll .handwerker-karte { top: calc(var(--header-h) + 40px); }
+  .voll-recht { position: absolute; left: 56px; right: 56px; bottom: 24px; }
+}
+
+/* Handy und Tablet: Formular oben, Einleitung weg, Rechtslinks am
+   Ende des Flusses (die Kachel scrollt, wenn ein Schritt laenger ist
+   als der Bildschirm). */
+@media (max-width: 1023px) {
+  .kontakt-teilung > #techniker.ist-voll {
+    display: flex;
+    flex-direction: column;
+    padding: calc(var(--header-h) + 28px) var(--rand) calc(20px + env(safe-area-inset-bottom));
+  }
+  #techniker.ist-voll .handwerker-kopf { display: none; }
+  #techniker.ist-voll .handwerker-innen { flex: 1 0 auto; }
+  #techniker.ist-voll .registrierung { margin-top: 0; }
+  .voll-recht { margin-top: 40px; gap: 4px 16px; font-size: 13px; }
+}
 
 /* Kopfleiste ueber der dunklen Vollflaeche: durchsichtig, weisse
    Schrift und weisses Logo wie ganz oben auf der Startseite. Die Seite
