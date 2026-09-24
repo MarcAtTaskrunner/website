@@ -2653,4 +2653,18 @@ html.menue-offen body { overflow: hidden; }
   }
   .laufband-kachel > canvas,
   .laufband-kachel > img { height: 220px; margin-top: 24px; }
+
+  /* Startbild ueber die ganze Bildschirmhoehe, auch hinter die
+     schwebende Leiste von Safari (lvh statt dvh). Der Text steht
+     trotzdem darueber: sein Abstand nach unten ist genau die Hoehe der
+     Browserleisten (lvh - svh) plus 32 px. Beides aendert sich beim
+     Scrollen nicht, es springt also nichts. */
+  .variante-b .hero-voll {
+    height: calc(100vh + var(--hero-ueberstand));
+    height: calc(100lvh + var(--hero-ueberstand));
+  }
+  .variante-b .hero-voll [data-hero-text] {
+    padding-bottom: 32px;
+    padding-bottom: calc(100lvh - 100svh + 32px);
+  }
 }

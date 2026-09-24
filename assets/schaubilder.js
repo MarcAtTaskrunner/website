@@ -1241,7 +1241,8 @@
        geoeffneten Punkte sitzen darauf und ragen um ihren eigenen
        Radius hinaus, daher der Faktor 1.16. */
     var AUSSEN = 1.16;
-    var wunsch = Math.min(this.b * 0.30, (frei * 0.5 - 1) / AUSSEN, frei * anteil);
+    /* Auf dem Handy darf das Rad fast die ganze Breite nehmen. */
+    var wunsch = Math.min(this.b * (schmal ? 0.38 : 0.30), (frei * 0.5 - 1) / AUSSEN, frei * anteil);
     var lage = { cx: this.b * 0.5, cy: oben + frei * 0.5, radius: wunsch };
 
     if (kasten && this.radSchneidet(lage.cx, lage.cy, wunsch * AUSSEN + LUECKE, kasten)) {
@@ -1260,7 +1261,8 @@
     this.cy = lage.cy;
     this.radius = Math.max(1, lage.radius);
 
-    this.prand = Math.max(3, this.radius * 0.020);
+    /* Auf dem Handy groessere Randpunkte: bei 40 statt 96 ist Platz. */
+    this.prand = Math.max(3, this.radius * (schmal ? 0.032 : 0.020));
     this.pgross = this.radius * (schmal ? 0.2 : 0.155);   /* Radius des geoeffneten Punktes */
 
     /* Ring aus feinen Punkten. Die Lage wird ueber den Winkel gefuehrt,
@@ -1389,7 +1391,7 @@
        Hand. Antippen des Rings setzt ihn dorthin (setzeRadZeiger). */
     this.rundgang = !(window.matchMedia &&
       window.matchMedia("(hover: hover) and (pointer: fine)").matches);
-    this.naechsterWechsel = 3;
+    this.naechsterWechsel = 4;
 
     this.ruht = this.radRuht;
     /* Drei Sekunden wach: so lange brauchen die Saiten, bis sie in der
@@ -1430,7 +1432,7 @@
     this.zeigerRuhe = { x: x, y: y };
     this.zeiger = this.zeigerRuhe;
     this.wachBis = this.t + 3;
-    this.naechsterWechsel = this.t + 3.2;
+    this.naechsterWechsel = this.t + 5.5;   /* Takt des Rundgangs */
   };
 
   Schaubild.prototype.zeichnenRad = function () {
