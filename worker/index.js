@@ -13,6 +13,16 @@
 //   mit der das Resend-Konto angelegt ist - fuer den Test reicht das.
 
 const FELDER = ["Gewerke", "PLZ", "Ort", "Einsatzradius", "Name", "Firma", "Telefon"];
+const VORWAHLEN = ["+49", "+43", "+41"];
+
+// Telefonnummer international: "0201 1234567" mit +49 -> "+49 201 1234567".
+// Beginnt die Eingabe schon mit + oder 00, bleibt sie, wie sie ist.
+function telefon(nummer, vorwahl) {
+  const n = nummer.trim();
+  if (/^(\+|00)/.test(n)) return n.replace(/^00/, "+");
+  const v = VORWAHLEN.includes(vorwahl) ? vorwahl : "+49";
+  return `${v} ${n.replace(/^0+/, "")}`;
+}
 const PFLICHT = ["Gewerke", "PLZ", "Name", "Telefon"];
 
 function antwort(status, daten) {
@@ -44,6 +54,7 @@ async function registrierung(request, env) {
     if (!daten[feld]) return antwort(400, { ok: false, fehler: `${feld} fehlt` });
   }
   if (!/^\d{4,5}$/.test(daten.PLZ)) return antwort(400, { ok: false, fehler: "PLZ ungueltig" });
+  daten.Telefon = telefon(daten.Telefon, String(eingang.Vorwahl ?? ""));
 
   const text = [
     "Neue Registrierung über das Handwerker-Formular auf der Kontaktseite",

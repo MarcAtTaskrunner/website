@@ -284,7 +284,17 @@ beschreibung: Als Kunde sprechen Sie direkt mit dem Vertrieb, als Handwerker ode
                 <label>Name<input type="text" name="Name" autocomplete="name" placeholder="Max Mustermann" required></label>
                 <label>Firma (optional)<input type="text" name="Firma" autocomplete="organization" placeholder="Muster GmbH"></label>
               </div>
-              <label>Telefon<input type="tel" name="Telefon" autocomplete="tel" placeholder="0201 1234567" required></label>
+              <!-- Vorwahl stellt sich nach dem Land der PLZ ein (assets/app.js,
+                   [data-vorwahl]); der Worker setzt sie vor die Nummer und
+                   laesst dabei die fuehrende 0 weg. -->
+              <div class="telefon-feld">
+                <label class="telefon-vorwahl">Land<select name="Vorwahl" data-vorwahl autocomplete="tel-country-code">
+                  <option value="+49">DE +49</option>
+                  <option value="+43">AT +43</option>
+                  <option value="+41">CH +41</option>
+                </select></label>
+                <label>Telefon<input type="tel" name="Telefon" autocomplete="tel-national" placeholder="0201 1234567" required></label>
+              </div>
             </fieldset>
             </div>
             <div class="schritt-knoepfe">

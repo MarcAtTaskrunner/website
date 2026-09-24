@@ -826,28 +826,39 @@
 
     /* Nach jeder Aenderung meldet das Feld "plzwechsel" mit der PLZ,
        wenn sie bekannt ist, sonst mit null - darauf hoert die Karte. */
-    /* Anfaenge deutscher PLZ (erste vier Ziffern), einmal aus der Liste */
-    var deAnfaenge = null;
-    var istDeAnfang = function (vier) {
-      if (!deAnfaenge) {
-        deAnfaenge = {};
+    /* Alle Anfaenge deutscher (5 Stellen) und oesterreichischer (4 Stellen)
+       PLZ, einmal aus der Liste: "43" gibt es nur in Oesterreich, "0" nur
+       in Deutschland. */
+    var anfaenge = null;
+    var anfang = function (land, wert) {
+      if (!anfaenge) {
+        anfaenge = { DE: {}, AT: {} };
         Object.keys(window.taskrunnerPlz).forEach(function (k) {
-          if (k.length === 5) deAnfaenge[k.slice(0, 4)] = true;
+          var ziel = k.length === 5 ? anfaenge.DE : anfaenge.AT;
+          for (var n = 1; n <= k.length; n++) ziel[k.slice(0, n)] = true;
         });
       }
-      return !!deAnfaenge[vier];
+      return !!anfaenge[land][wert];
     };
+    var istDeAnfang = function (wert) { return anfang("DE", wert); };
 
-    /* Vier Ziffern, die eine oesterreichische PLZ sind und mit denen keine
-       deutsche anfaengt: die PLZ ist fertig, der fuenfte Kasten verschwindet
-       und das Feld nimmt keine fuenfte Ziffer mehr an. */
+    /* Land, sobald es feststeht: passt das Getippte nur zu oesterreichischen
+       PLZ, fallen schon ab der zweiten Ziffer der fuenfte Kasten und die
+       fuenfte Stelle weg; passt es nur zu deutschen, ist es Deutschland.
+       Das Land meldet das Feld als "landwechsel" (fuer die Vorwahl). */
+    var land = null;
     var kastenFuenf = function () {
       var plz = feld.value;
-      var nurVier = plz.length === 4 && !!window.taskrunnerPlz &&
-        !!window.taskrunnerPlz[plz] && !istDeAnfang(plz);
+      var de = plz && anfang("DE", plz), at = plz && anfang("AT", plz);
+      var nurAt = !!at && !de;
       var huelle = feld.closest(".plz-kaesten");
-      if (huelle) huelle.classList.toggle("ist-vier", nurVier);
-      feld.maxLength = nurVier ? 4 : 5;
+      if (huelle) huelle.classList.toggle("ist-vier", nurAt);
+      feld.maxLength = nurAt ? 4 : 5;
+      var neu = nurAt ? "AT" : (de && !at) || plz.length === 5 ? "DE" : null;
+      if (neu && neu !== land) {
+        land = neu;
+        feld.dispatchEvent(new CustomEvent("landwechsel", { bubbles: true, detail: { land: land } }));
+      }
     };
 
     var zeige = function () {
@@ -970,6 +981,22 @@
           ? "Die Ortung ist im Browser nicht erlaubt. Bitte tippen Sie die Postleitzahl ein."
           : "Ihr Standort war nicht zu ermitteln. Bitte tippen Sie die Postleitzahl ein.");
       }, { enableHighAccuracy: false, timeout: 15000, maximumAge: 600000 });
+    });
+  });
+
+  /* ---------------------------------------------------------------- *
+   *  Ländervorwahl (kontakt.html, [data-vorwahl])
+   *  Stellt sich nach dem Land der PLZ ein (+49 / +43), solange niemand
+   *  sie selbst geaendert hat. Zusammengesetzt wird die Nummer erst im
+   *  Worker (worker/index.js).
+   * ---------------------------------------------------------------- */
+  Array.prototype.forEach.call(document.querySelectorAll("[data-vorwahl]"), function (auswahl) {
+    var form = auswahl.form;
+    var vonHand = false;
+    auswahl.addEventListener("change", function () { vonHand = true; });
+    form.addEventListener("landwechsel", function (e) {
+      if (vonHand) return;
+      auswahl.value = e.detail.land === "AT" ? "+43" : "+49";
     });
   });
 
