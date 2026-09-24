@@ -496,7 +496,9 @@ header .logo-hell { opacity: 0; }
   h3, .t-h3 { font-size: 28px; line-height: 1.14286; letter-spacing:  0.007em; }
   h4, .t-h4 { font-size: 21px; line-height: 1.19048; letter-spacing:  0.011em; }
 
-  .t-intro   { font-size: 21px; line-height: 1.381002381; letter-spacing:  0.011em; font-weight: 400; }
+  /* Auf dem Handy 19 px wie Apples .typography-intro (nachgemessen
+     24.09.2026 auf apple.com/de/business bei 375 px); ab 735 px 21. */
+  .t-intro   { font-size: 19px; line-height: 1.42; letter-spacing:  0.012em; font-weight: 400; }
   .t-body    { font-size: 17px; line-height: 1.47059; letter-spacing: -0.022em; font-weight: 500; }
   .t-caption { font-size: 14px; line-height: 1.42857; letter-spacing: -0.016em; font-weight: 500; }
 
@@ -511,7 +513,7 @@ header .logo-hell { opacity: 0; }
     h2, .t-h2 { font-size: 48px; line-height: 1.08349; letter-spacing: -0.003em; }
     h3, .t-h3 { font-size: 32px; line-height: 1.125;   letter-spacing:  0.004em; }
     h4, .t-h4 { font-size: 24px; line-height: 1.16667; letter-spacing:  0.009em; }
-    .t-intro  { font-size: 21px; }
+    .t-intro  { font-size: 21px; line-height: 1.381002381; letter-spacing: 0.011em; }
   }
 
   /* --- ab 1069 px: die vorgegebenen Zielgroessen --- */
@@ -2580,4 +2582,22 @@ body .vertriebsteam p.vertriebsteam-text { color: color-mix(in oklab, var(--colo
   .nav-linien > span,
   #mobile-nav,
   #mobile-nav li { transition: none !important; }
+}
+
+/* ------------------------------------------------------------------ *
+ *  Buttons auf dem Handy (bis 734 px), Vorbild: apple.com
+ *  Apple setzt die Pillen dort in 14 px mit 11/21 px Polster, gut
+ *  40 px hoch (nachgemessen 24.09.2026 auf apple.com/de/iphone bei
+ *  375 px). Nur Links: Formularknoepfe (Weiter, Senden) bleiben wie
+ *  bei Apple in 17 px. Steht am Dateiende, damit es gegen
+ *  .variante-b .btn gewinnt.
+ * ------------------------------------------------------------------ */
+@media (max-width: 734px) {
+  a.btn,
+  .variante-b a.btn {
+    font-size: 14px;
+    line-height: 1.29;
+    letter-spacing: -0.016em;
+    padding: 11px 21px;
+  }
 }

@@ -31,7 +31,7 @@ Größe px / Zeilenhöhe / Laufweite.
 | `.t-h2` | 32 / 1.125 / +0.004em | 48 / 1.083 / −0.003em | **56** / 1.071 / −0.016em¹ | 500 |
 | `.t-h3` | 28 / 1.143 / +0.007em | 32 / 1.125 / +0.004em | **40** / 1.1 / −0.012em¹ | 500 |
 | `.t-h4` | 21 / 1.190 / +0.011em | 24 / 1.167 / +0.009em | **28** / 1.143 / −0.014em¹ | 500 |
-| `.t-intro` | 21 / 1.381 / +0.011em | gleich | gleich | 400 |
+| `.t-intro` | 19 / 1.42 / +0.012em | 21 / 1.381 / +0.011em | gleich | 400 |
 | `.t-body` | 17 / 1.471 / −0.022em | gleich | gleich | 500 |
 | `.t-caption` | 14 / 1.429 / −0.016em | gleich | gleich | 500 |
 | `.t-body-tight` | 17 / 1.235 / −0.022em | gleich | gleich | 500 |
@@ -46,7 +46,9 @@ DIN Pro sie verträgt, ist offen (Vergleich vom 14.09.2026).
 `.t-intro` steht an mehrzeiligen Einleitungsabsätzen, deshalb gilt die
 lockere Zeilenhöhe von Apples Einleitungstexten (1.381) statt der engen
 Überschriften-Zeilenhöhe 1.19, die hier bis September 2026 stand. Wie
-Apples Einleitungstexte in Regular (400), auf allen Breiten 21 px.
+Apples Einleitungstexte in Regular (400), 21 px; auf dem Handy seit
+September 2026 19 px / 1.42 wie Apples `.typography-intro` (nachgemessen
+24.09.2026 auf apple.com/de/business bei 375 px).
 `.t-h2` ist auf dem Handy seit September 2026 32 statt 40 px, wie Apples
 Abschnittsüberschriften (28–32 px).
 
@@ -75,7 +77,7 @@ gesetzt.
 | Fließtext in Karten | `p` | `.t-body-tight` — 17 px, lh 1.235 |
 | Fließtext sonst | `p`, `li` | `.t-body` — 17 px, lh 1.471 |
 | Navigation, Copyright | `a`, `p` | `.t-caption` — 14 px |
-| Buttons | `a` | 17 px, Medium |
+| Buttons | `a` | 17 px, Medium; bis 734 px 14 px mit 11/21 px Polster (gut 40 px hoch) wie bei Apple. Formularknöpfe bleiben 17 px |
 
 ### Warum drei Stellen eine Stufe tiefer gesetzt sind
 
