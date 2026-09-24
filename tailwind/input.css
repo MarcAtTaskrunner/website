@@ -2688,6 +2688,9 @@ html.menue-offen body { overflow: hidden; }
   .raster-kachel { min-height: 0; }
   .raster-kachel.kachel-polster { padding: 28px 24px 32px; }
   .raster-fuss:first-child { padding-top: 0; }
+  /* Die Kacheln im Raster stehen auf dem Handy sofort da. Untereinander
+     gestapelt blendete sonst jede einzeln beim Scrollen ein. */
+  html.js-auf .variante-b .raster [data-auf] { opacity: 1; translate: none; transition: none; }
 }
 
 /* "So funktioniert ein Task" auf dem Handy: senkrechter Zeitstrahl
