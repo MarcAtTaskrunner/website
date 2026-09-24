@@ -24,7 +24,7 @@
   <body>
     <a href="#inhalt" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-navy focus:px-5 focus:py-3 focus:text-white">Zum Inhalt springen</a>
     <header class="sticky top-0 z-50 border-b border-black/5 bg-white/95 backdrop-blur">
-      <div class="grid h-[64px] w-full grid-cols-[auto_1fr_auto] items-center gap-6 rand-seite min-[1100px]:grid-cols-[1fr_auto_1fr]">
+      <div class="grid h-[64px] w-full grid-cols-[auto_1fr] items-center gap-6 rand-seite lg:grid-cols-[auto_1fr_auto] min-[1100px]:grid-cols-[1fr_auto_1fr]">
         <a href="index.html" class="relative block shrink-0 justify-self-start" aria-label="taskrunner Startseite"><img src="images/logo.svg" alt="taskrunner" width="2000" height="456" class="logo-dunkel block w-auto h-7"><img src="images/logo-white.svg" alt="" aria-hidden="true" width="2000" height="456" class="logo-hell absolute left-0 top-0 block w-auto h-7"></a>
         <!-- Desktop-Navigation -->
         <nav class="hidden justify-self-center lg:block" aria-label="Hauptnavigation">
@@ -36,17 +36,19 @@
           </ul>
         </nav>
         <div class="hidden items-center gap-5 justify-self-end lg:flex"><a href="kontakt.html#kunden" class="btn btn-primary !py-2.5 !px-5">Kostenlos Testen</a><a href="https://fm.taskrunner.de" class="t-body text-blue-600 transition-colors">Login</a></div>
-        <!-- Mobile-Toggle --><button type="button" id="nav-toggle" class="justify-self-end lg:hidden inline-flex h-11 w-11 items-center justify-center rounded-full text-blue-600" aria-expanded="false" aria-controls="mobile-nav"><span class="sr-only">Menü öffnen</span><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg></button>
+        <!-- Mobile-Toggle --><button type="button" id="nav-toggle" class="justify-self-end lg:hidden inline-flex h-11 w-11 items-center justify-center rounded-full text-blue-600" aria-expanded="false" aria-controls="mobile-nav"><span class="sr-only">Menü öffnen</span><span class="nav-linien" aria-hidden="true"><span></span><span></span></span></button>
       </div>
       <!-- Mobile-Navigation -->
       <nav id="mobile-nav" hidden class="border-t border-black/5 bg-white lg:hidden" aria-label="Hauptnavigation mobil">
-        <ul class="container-wide flex flex-col gap-1 py-4">
-          <li><a href="dienstleistungen.html" class="block rounded-xl px-3 py-3 t-body font-medium text-blue-600 hover:bg-ice">Dienstleistungen</a></li>
-          <li><a href="foerderungen.html" class="block rounded-xl px-3 py-3 t-body font-medium text-blue-600 hover:bg-ice">Förderungen</a></li>
-          <li><a href="blog.html" class="block rounded-xl px-3 py-3 t-body font-medium text-blue-600 hover:bg-ice">Blog</a></li>
-          <li><a href="kontakt.html" aria-current="page" class="block rounded-xl px-3 py-3 t-body font-medium text-blue-600 hover:bg-ice">Kontakt</a></li>
-          <li class="mt-3 flex flex-col gap-3"><a href="kontakt.html#kunden" class="btn btn-primary w-full">Kostenlos Testen</a><a href="https://fm.taskrunner.de" class="btn w-full border border-navy/15 text-blue-600">Login</a></li>
-        </ul>
+        <div class="mobil-innen">
+          <ul class="container-wide flex flex-col gap-1 py-4">
+            <li><a href="dienstleistungen.html" class="block rounded-xl px-3 py-3 t-body font-medium text-blue-600 hover:bg-ice">Dienstleistungen</a></li>
+            <li><a href="foerderungen.html" class="block rounded-xl px-3 py-3 t-body font-medium text-blue-600 hover:bg-ice">Förderungen</a></li>
+            <li><a href="blog.html" class="block rounded-xl px-3 py-3 t-body font-medium text-blue-600 hover:bg-ice">Blog</a></li>
+            <li><a href="kontakt.html" aria-current="page" class="block rounded-xl px-3 py-3 t-body font-medium text-blue-600 hover:bg-ice">Kontakt</a></li>
+            <li class="mt-3 flex flex-col gap-3"><a href="kontakt.html#kunden" class="btn btn-primary w-full">Kostenlos Testen</a><a href="https://fm.taskrunner.de" class="btn w-full border border-navy/15 text-blue-600">Login</a></li>
+          </ul>
+        </div>
       </nav>
     </header>
     <main id="inhalt">

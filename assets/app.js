@@ -11,24 +11,44 @@
 
   if (toggle && menu) {
     var kopf = document.querySelector("header");
+    var menuZeit = 0;
+    var ruhig = window.matchMedia("(prefers-reduced-motion: reduce)");
 
     var setzeMenue = function (offen) {
       toggle.setAttribute("aria-expanded", String(offen));
       toggle.querySelector(".sr-only").textContent = offen ? "Menü schließen" : "Menü öffnen";
-      menu.hidden = !offen;
-      /* Die Kopfleiste ist ganz oben durchsichtig. Waehrend die Klappe
-         offen ist, braucht sie festen Grund - sonst steht die weisse
-         Schrift der Leiste ueber dem weissen Feld der Klappe. */
+      /* Oeffnen: erst sichtbar machen, im naechsten Bild aufklappen,
+         sonst springt die Klappe ohne Uebergang auf. Schliessen: erst
+         zuklappen, nach dem Uebergang verstecken. */
+      clearTimeout(menuZeit);
+      if (offen) {
+        menu.hidden = false;
+        void menu.offsetHeight;
+        menu.classList.add("ist-offen");
+      } else {
+        menu.classList.remove("ist-offen");
+        menuZeit = setTimeout(function () { menu.hidden = true; grund(false); }, ruhig.matches ? 0 : 320);
+      }
+      if (offen) grund(true);
+    };
+
+    /* Die Kopfleiste ist ganz oben durchsichtig. Waehrend die Klappe
+       offen ist (auch waehrend sie zuklappt), braucht sie festen Grund -
+       sonst steht die weisse Schrift der Leiste ueber dem weissen Feld
+       der Klappe. */
+    var grund = function (offen) {
       if (kopf) kopf.classList.toggle("gescrollt", offen || window.scrollY > 8 || document.documentElement.classList.contains("kontakt-offen"));
     };
 
+    var istOffen = function () { return menu.classList.contains("ist-offen"); };
+
     var schliesse = function (fokusZurueck) {
-      if (menu.hidden) return;
+      if (!istOffen()) return;
       setzeMenue(false);
       if (fokusZurueck) toggle.focus();
     };
 
-    toggle.addEventListener("click", function () { setzeMenue(menu.hidden); });
+    toggle.addEventListener("click", function () { setzeMenue(!istOffen()); });
 
     /* Escape schliesst und gibt den Fokus zurueck */
     document.addEventListener("keydown", function (e) {
@@ -329,7 +349,8 @@
     var offen = false;
     var pruefe = function () {
       offen = false;
-      var soll = window.scrollY > 8 || document.documentElement.classList.contains("kontakt-offen");
+      var menu = document.getElementById("mobile-nav");
+      var soll = window.scrollY > 8 || document.documentElement.classList.contains("kontakt-offen") || !!(menu && !menu.hidden);
       if (soll !== kopf.classList.contains("gescrollt")) kopf.classList.toggle("gescrollt", soll);
     };
     window.addEventListener("scroll", function () {
