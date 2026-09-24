@@ -2751,8 +2751,9 @@ html.menue-offen body { overflow: hidden; }
 }
 
 /* ------------------------------------------------------------------ *
- *  Kopfleiste: Glas wie bei apple.com, auf dem Handy flacher, beim
- *  Scrollen nur noch die Bildmarke
+ *  Kopfleiste: Glas wie bei apple.com, auf dem Handy flacher.
+ *  Das Logo bleibt beim Scrollen ganz (nur Bildmarke war ausprobiert
+ *  und verworfen: git show e461c97 -- tailwind/input.css)
  * ------------------------------------------------------------------ */
 /* Seiten ohne Kopfband (Blog, Kontakt): dieselbe Glasflaeche wie die
    gescrollte Leiste der uebrigen Seiten. Schlaegt bg-white/95 und
@@ -2767,16 +2768,4 @@ body:not(.variante-b) > header:not(.menue-offen) {
   /* Leiste 52 statt 64 px (plus 1 px Kante) */
   :root { --header-h: 53px; }
 
-  /* Die Bildmarke nimmt die linken 23 % des Logos ein (456 von 2000
-     Einheiten), danach kommt ab 550 die Schrift. Beim Scrollen wischt
-     clip-path die Schrift von rechts nach links weg. Der Rand von
-     -6 px laesst Platz fuer den Fokusring. */
-  .kopf-logo {
-    clip-path: inset(-6px -6px -6px -6px);
-    transition: clip-path .45s var(--menu-kurve);
-  }
-  header.klein .kopf-logo { clip-path: inset(-6px 75% -6px -6px); }
-}
-@media (max-width: 1023px) and (prefers-reduced-motion: reduce) {
-  .kopf-logo { transition: none; }
 }

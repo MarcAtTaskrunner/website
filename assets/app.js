@@ -358,10 +358,6 @@
       var menu = document.getElementById("mobile-nav");
       var soll = window.scrollY > 8 || document.documentElement.classList.contains("kontakt-offen") || !!(menu && !menu.hidden);
       if (soll !== kopf.classList.contains("gescrollt")) kopf.classList.toggle("gescrollt", soll);
-      /* Nur echtes Scrollen, nicht das offene Menue: dann bleibt vom
-         Logo nur die Bildmarke (input.css, header.klein) */
-      var klein = window.scrollY > 8;
-      if (klein !== kopf.classList.contains("klein")) kopf.classList.toggle("klein", klein);
     };
     window.addEventListener("scroll", function () {
       if (offen) return;
