@@ -37,7 +37,8 @@ async function registrierung(request, env) {
 
   const daten = {};
   for (const feld of FELDER) {
-    daten[feld] = String(eingang[feld] ?? "").trim().slice(0, 300);
+    // Zeilenumbrueche raus: nichts soll in den Betreff der Mail rutschen
+    daten[feld] = String(eingang[feld] ?? "").replace(/[\r\n]+/g, " ").trim().slice(0, 300);
   }
   for (const feld of PFLICHT) {
     if (!daten[feld]) return antwort(400, { ok: false, fehler: `${feld} fehlt` });
