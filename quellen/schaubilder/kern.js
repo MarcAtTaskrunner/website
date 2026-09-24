@@ -121,6 +121,21 @@
       }, { passive: true });
     }
 
+    /* Rad ohne Maus: Antippen des Rings oeffnet den Punkt dort. Nur
+       Tipps nahe am Ring zaehlen, sonst oeffnete jeder Tipp auf die
+       Ueberschrift oder die Schaltflaechen einen Punkt. */
+    if (this.motiv === "rad" && !fein.matches) {
+      (this.flaeche.closest("section") || this.flaeche).addEventListener("click", function (e) {
+        if (!s.rundgang || e.target.closest("a, button")) return;
+        var r = s.flaeche.getBoundingClientRect();
+        var x = e.clientX - r.left, y = e.clientY - r.top;
+        var ab = Math.sqrt((x - s.cx) * (x - s.cx) + (y - s.cy) * (y - s.cy));
+        if (Math.abs(ab - s.radius) > Math.max(36, s.radius * 0.25)) return;
+        var w = Math.atan2(y - s.cy, x - s.cx);
+        s.setzeRadZeiger(s.cx + Math.cos(w) * s.radius, s.cy + Math.sin(w) * s.radius);
+      });
+    }
+
     var wirt = this.flaeche.closest("li");
     if (wirt && fein.matches) {
       wirt.addEventListener("pointerenter", function () { s.zielTempo = 2.1; }, { passive: true });
@@ -327,9 +342,23 @@
     var rechts = akt.x >= this.cx;
     if (rechts && akt.x + luft + bb > this.b - 12) rechts = false;
     else if (!rechts && akt.x - luft - bb < 12) rechts = true;
+    var passt = rechts ? akt.x + luft + bb <= this.b - 12 : akt.x - luft - bb >= 12;
 
-    el.style.left = Math.round(rechts ? akt.x + luft : akt.x - luft - bb) + "px";
-    el.style.top = Math.round(akt.y - bh / 2) + "px";
+    if (passt) {
+      el.style.left = Math.round(rechts ? akt.x + luft : akt.x - luft - bb) + "px";
+      el.style.top = Math.round(akt.y - bh / 2) + "px";
+    } else {
+      /* Auf dem Handy ist neben dem Rad kein Platz: dann ueber dem
+         Punkt (unter dem Rad steht die Ueberschrift). Nur wenn das
+         Schild dort unter die Kopfleiste geriete, darunter. */
+      var kopf = document.querySelector("header");
+      var decke = (kopf ? kopf.offsetHeight : 0) + 8;
+      var y = akt.y - luft - bh;
+      if (y < decke) y = akt.y + luft;
+      var x = Math.max(12, Math.min(this.b - 12 - bb, akt.x - bb / 2));
+      el.style.left = Math.round(x) + "px";
+      el.style.top = Math.round(y) + "px";
+    }
     el.style.opacity = Math.min(1, (akt.gr - 0.2) / 0.45);
   };
 

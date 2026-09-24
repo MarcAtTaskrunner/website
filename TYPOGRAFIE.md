@@ -27,11 +27,11 @@ Größe px / Zeilenhöhe / Laufweite.
 
 | Klasse | ≤734 | 735–1068 | ≥1069 | Gewicht |
 |---|---|---|---|---|
-| `.t-h1` | 48 / 1.083 / −0.003em | 64 / 1.063 / −0.009em | **80** / 1.05 / −0.015em | 500 |
-| `.t-h2` | 32 / 1.125 / +0.004em | 48 / 1.083 / −0.003em | **56** / 1.071 / −0.016em¹ | 500 |
-| `.t-h3` | 28 / 1.143 / +0.007em | 32 / 1.125 / +0.004em | **40** / 1.1 / −0.012em¹ | 500 |
-| `.t-h4` | 21 / 1.190 / +0.011em | 24 / 1.167 / +0.009em | **28** / 1.143 / −0.014em¹ | 500 |
-| `.t-intro` | 19 / 1.42 / +0.012em | 21 / 1.381 / +0.011em | gleich | 400 |
+| `.t-h1` | 40 / 1.1 / −0.01em² | 64 / 1.063 / −0.009em | **80** / 1.05 / −0.015em | 500 |
+| `.t-h2` | 32 / 1.1 / −0.005em² | 48 / 1.083 / −0.003em | **56** / 1.071 / −0.016em¹ | 500 |
+| `.t-h3` | 28 / 1.12 / −0.005em² | 32 / 1.125 / +0.004em | **40** / 1.1 / −0.012em¹ | 500 |
+| `.t-h4` | 21 / 1.190 / 0² | 24 / 1.167 / +0.009em | **28** / 1.143 / −0.014em¹ | 500 |
+| `.t-intro` | 19 / 1.42 / 0² | 21 / 1.381 / +0.011em | gleich | 400 |
 | `.t-body` | 17 / 1.471 / −0.022em | gleich | gleich | 500 |
 | `.t-caption` | 14 / 1.429 / −0.016em | gleich | gleich | 500 |
 | `.t-body-tight` | 17 / 1.235 / −0.022em | gleich | gleich | 500 |
@@ -42,6 +42,11 @@ Die fett gesetzten Werte sind die von dir vorgegebenen Größen.
 ¹ Auf dem Desktop ist die Laufweite von h2–h4 enger als bei Apple
 (dort −0.005 / 0 / +0.007em). Apples Werte sind auf SF Pro abgestimmt; ob
 DIN Pro sie verträgt, ist offen (Vergleich vom 14.09.2026).
+
+² Auf dem Handy seit 24.09.2026 bewusst enger als Apple: DIN Pro läuft
+breiter als SF Pro, mit Apples positiver Laufweite wirkten die Überschriften
+gesperrt. Die Hauptüberschrift ist dort 40 statt 48 px. Steht im Block
+„Handy (bis 734 px)“ am Ende von `tailwind/input.css`.
 
 `.t-intro` steht an mehrzeiligen Einleitungsabsätzen, deshalb gilt die
 lockere Zeilenhöhe von Apples Einleitungstexten (1.381) statt der engen

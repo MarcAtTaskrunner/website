@@ -92,7 +92,13 @@
 
   Schaubild.prototype.saeenRad = function () {
     var w = wuerfelAb(20261002), i;
-    var nSaiten = parseInt(this.flaeche.dataset.punkte, 10) || 76;
+    /* Auf schmalen Fenstern (Handy) deutlich weniger Saiten und Punkte,
+       sonst stehen sie bei dem kleinen Rad dicht an dicht und die
+       Portraits werden winzig. Ueber data-punkte-schmal einstellbar. */
+    var schmal = this.b < 700;
+    var nSaiten = schmal
+      ? (parseInt(this.flaeche.dataset.punkteSchmal, 10) || 40)
+      : (parseInt(this.flaeche.dataset.punkte, 10) || 76);
     /* Weniger, dafuer groessere Randpunkte. Ueber data-randpunkte am
        Canvas einstellbar. */
     var nRand = parseInt(this.flaeche.dataset.randpunkte, 10) || Math.round(nSaiten * 0.95);
@@ -146,7 +152,7 @@
     this.radius = Math.max(1, lage.radius);
 
     this.prand = Math.max(3, this.radius * 0.020);
-    this.pgross = this.radius * 0.155;        /* Radius des geoeffneten Punktes */
+    this.pgross = this.radius * (schmal ? 0.2 : 0.155);   /* Radius des geoeffneten Punktes */
 
     /* Ring aus feinen Punkten. Die Lage wird ueber den Winkel gefuehrt,
        nicht ueber x/y - nur so lassen sich die Nachbarn sauber auf dem
@@ -251,25 +257,30 @@
        man schon einmal hingezeigt. Der Winkel ist ueber data-ruhewinkel
        einstellbar: 0 Grad ist rechts, 90 unten, 225 oben links. Dort
        steht das Namensschild frei neben dem Rad, ueber der Ueberschrift.
-       Auf schmalen Fenstern bleibt es aus - da ist neben dem Rad kein
-       Platz fuer das Schild. */
+       Auf schmalen Fenstern steht das Schild ueber oder unter dem Punkt
+       (siehe beschriften in kern.js). */
     var ruheWinkel = parseFloat(this.flaeche.dataset.ruhewinkel);
     if (isNaN(ruheWinkel)) ruheWinkel = 225;
-    this.zeigerRuhe = null;
-    if (this.b >= 700) {
-      var rw = ruheWinkel * Math.PI / 180;
-      this.zeigerRuhe = {
-        x: this.cx + Math.cos(rw) * this.radius,
-        y: this.cy + Math.sin(rw) * this.radius
-      };
-      /* Der getroffene Punkt ist gleich offen statt aufzugehen: sonst
-         zeigte das erste Bild einen halb gewachsenen Punkt, und bei
-         abgeschalteter Bewegung bliebe es dabei. */
-      var jn = Math.round(((rw + 1.5708) / 6.283) * nRand);
-      this.aktiv = ((jn % nRand) + nRand) % nRand;
-      this.rand[this.aktiv].gr = 1;
-    }
+    var rw = ruheWinkel * Math.PI / 180;
+    this.zeigerRuhe = {
+      x: this.cx + Math.cos(rw) * this.radius,
+      y: this.cy + Math.sin(rw) * this.radius
+    };
+    /* Der getroffene Punkt ist gleich offen statt aufzugehen: sonst
+       zeigte das erste Bild einen halb gewachsenen Punkt, und bei
+       abgeschalteter Bewegung bliebe es dabei. */
+    var jn = Math.round(((rw + 1.5708) / 6.283) * nRand);
+    this.aktiv = ((jn % nRand) + nRand) % nRand;
+    this.rand[this.aktiv].gr = 1;
     this.zeiger = this.zeigerRuhe;
+
+    /* Ohne Maus (Handy, Tablet) zeigt niemand auf das Rad. Dann geht es
+       selbst reihum: alle paar Sekunden wandert der gedachte Zeiger zu
+       einem anderen Punkt, die Saiten schwingen dabei wie unter der
+       Hand. Antippen des Rings setzt ihn dorthin (setzeRadZeiger). */
+    this.rundgang = !(window.matchMedia &&
+      window.matchMedia("(hover: hover) and (pointer: fine)").matches);
+    this.naechsterWechsel = 3;
 
     this.ruht = this.radRuht;
     /* Drei Sekunden wach: so lange brauchen die Saiten, bis sie in der
@@ -287,7 +298,30 @@
       this.wachBis = this.t + 2.2;
       return false;
     }
+    if (this.rundgang && this.t >= this.naechsterWechsel) {
+      /* Rund ein Drittel des Rings weiter, damit es nicht nur zum
+         Nachbarn rueckt; die Schrittweite ist teilerfremd zur Anzahl,
+         so kommt mit der Zeit jeder Punkt einmal dran. */
+      var n = this.rand.length;
+      var schritt = Math.round(n * 0.37);
+      while (n % schritt === 0 || gcd(n, schritt) !== 1) schritt++;
+      var ziel = this.rand[((this.aktiv < 0 ? 0 : this.aktiv) + schritt) % n];
+      this.setzeRadZeiger(this.cx + Math.cos(ziel.w0) * this.radius,
+                          this.cy + Math.sin(ziel.w0) * this.radius);
+      return false;
+    }
     return this.t > this.wachBis;
+  };
+
+  function gcd(a, b) { return b ? gcd(b, a % b) : a; }
+
+  /* Setzt die Ruhelage des Zeigers neu - vom Rundgang oder von einem
+     Finger, der auf den Ring tippt. */
+  Schaubild.prototype.setzeRadZeiger = function (x, y) {
+    this.zeigerRuhe = { x: x, y: y };
+    this.zeiger = this.zeigerRuhe;
+    this.wachBis = this.t + 3;
+    this.naechsterWechsel = this.t + 3.2;
   };
 
   Schaubild.prototype.zeichnenRad = function () {

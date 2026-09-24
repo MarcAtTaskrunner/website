@@ -395,9 +395,9 @@ header .logo-hell { opacity: 0; }
    1280-Regel. */
 @utility container-breit {
   width: 100%;
-  max-width: calc(1600px + 2 * max(24px, calc(var(--rand) / 2)));
+  max-width: calc(1600px + 2 * max(min(24px, var(--rand)), calc(var(--rand) / 2)));
   margin-inline: auto;
-  padding-inline: max(24px, calc(var(--rand) / 2));
+  padding-inline: max(min(24px, var(--rand)), calc(var(--rand) / 2));
 }
 
 @layer base {
@@ -1905,13 +1905,10 @@ html:has(.lightbox[open]) { overflow: hidden; }
   .programm::details-content, .programm-pfeil { transition: none; }
 }
 
-/* Kundenlogos in der Kachel "Kunden": die Vorlagen sind weiss, brightness(0)
-   macht sie schwarz, der Rest faerbt Schwarz auf #1155cc (--color-blue-medium,
-   wie das Etikett "Kunden"). Gerechnet, nicht geschaetzt: das Ergebnis liegt
-   bei rgb(15,86,207). */
-.logo-blau {
-  filter: brightness(0) invert(21%) sepia(100%) saturate(1824%) hue-rotate(208deg);
-}
+/* Kundenlogos in der Kachel "Kunden": eigene Fassungen in #1155cc
+   (images/kundenlogos/*-blau.svg). Bis September 2026 faerbte ein
+   CSS-Filter die weissen Vorlagen um; Safari rechnet solche Filter
+   anders als Chrome, auf dem iPhone wurden die Logos violett. */
 
 /* "So funktioniert ein Task": ab lg eine durchgehende Linie ueber allen
    vier Schritten statt je einer pro Schritt. Sie beginnt am linken
@@ -2618,4 +2615,42 @@ html.menue-offen body { overflow: hidden; }
     letter-spacing: -0.016em;
     padding: 11px 21px;
   }
+}
+
+/* ------------------------------------------------------------------ *
+ *  Handy (bis 734 px), Runde vom 24.09.2026
+ * ------------------------------------------------------------------ */
+@media (max-width: 734px) {
+  /* Seitenrand 16 statt 24 px, Innenabstand der Kacheln 24 statt 40:
+     Apple laesst dem Inhalt auf dem Handy mehr Breite. */
+  :root { --rand: 16px; }
+  .kachel-polster { padding: 24px; }
+
+  /* Hauptueberschrift 40 statt 48 px. DIN Pro laeuft breiter als
+     Apples SF Pro; mit Apples positiver Laufweite wirkten die
+     Ueberschriften auf dem Handy gesperrt. Deshalb hier leicht enger
+     und die Zeilen etwas dichter. */
+  h1, .t-h1 { font-size: 40px; line-height: 1.1;  letter-spacing: -0.01em; }
+  h2, .t-h2 { line-height: 1.1;  letter-spacing: -0.005em; }
+  h3, .t-h3 { line-height: 1.12; letter-spacing: -0.005em; }
+  h4, .t-h4 { letter-spacing: 0; }
+  .t-intro  { letter-spacing: 0; }
+
+  /* Zwei Fotos im Raster "Netzwerk" nur ab Tablet-Breite */
+  .nur-breit { display: none; }
+
+  /* Kachel-Laufband: rastet je Kachel ein, ein Wisch = eine Kachel.
+     Niedrigere Schaubilder, damit die Kachel nicht hoeher als der
+     Bildschirm wirkt. */
+  .laufband:has(.laufband-kachel) {
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--rand);
+  }
+  .laufband-kachel {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    min-height: 0;
+  }
+  .laufband-kachel > canvas,
+  .laufband-kachel > img { height: 220px; margin-top: 24px; }
 }
