@@ -2445,8 +2445,39 @@ body .vertriebsteam p.vertriebsteam-text { color: color-mix(in oklab, var(--colo
 .schritt-knoepfe button:disabled { opacity: 0.7; cursor: progress; }
 
 /* Telefon mit Laendervorwahl davor */
-.telefon-feld { display: grid; gap: 12px; }
-@container (min-width: 400px) { .telefon-feld { grid-template-columns: 190px minmax(0, 1fr); } }
+/* Telefon: Flagge + Vorwahl und Nummer in einem Feld. Das <select> liegt
+   unsichtbar ueber der Anzeige links (Aufbau in quellen/kontakt.html). */
+.telefon-feld { display: grid; gap: 4px; }
+.telefon-feld > label { font-size: 15px; font-weight: 500; color: #fff; }
+.telefon-box {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--radius-card);
+  background: rgba(255, 255, 255, 0.08);
+}
+.telefon-box:focus-within { outline: 2px solid #fff; outline-offset: 2px; border-color: transparent; }
+.telefon-land { position: relative; flex: none; display: flex; border-right: 1px solid rgba(255, 255, 255, 0.25); }
+.telefon-anzeige { display: flex; align-items: center; gap: 6px; padding: 0 10px 0 14px; color: #fff; font-variant-numeric: tabular-nums; }
+.telefon-anzeige [data-vorwahl-flagge] { font-size: 20px; line-height: 1; }
+.telefon-anzeige svg { width: 16px; height: 16px; opacity: 0.7; }
+.registrierung .telefon-land select {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.registrierung .telefon-box input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  border-radius: 0 var(--radius-card) var(--radius-card) 0;
+  background: transparent;
+}
+.registrierung .telefon-box input:focus-visible { outline: none; }
 
 /* Einsatzradius als Auswahlknoepfe statt Tippen */
 .feld-titel { font-size: 15px; font-weight: 500; color: #fff; margin-bottom: -6px; }

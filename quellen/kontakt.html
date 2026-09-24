@@ -284,58 +284,71 @@ beschreibung: Als Kunde sprechen Sie direkt mit dem Vertrieb, als Handwerker ode
                 <label>Name<input type="text" name="Name" autocomplete="name" placeholder="Max Mustermann" required></label>
                 <label>Firma (optional)<input type="text" name="Firma" autocomplete="organization" placeholder="Muster GmbH"></label>
               </div>
-              <!-- Vorwahl stellt sich nach dem Land der PLZ ein (assets/app.js,
-                   [data-vorwahl]), laesst sich aber frei aendern - Handwerker
-                   aus Polen, Tschechien usw. sollen nicht aussen vor bleiben.
-                   Der Worker setzt sie vor die Nummer und laesst dabei die
-                   fuehrende 0 weg; "Andere": Vorwahl mit + selbst eintippen. -->
+              <!-- Telefon mit Laendervorwahl in einem Feld: links Flagge und
+                   Vorwahl, rechts die Nummer. Die Vorwahl ist ein echtes
+                   <select>, unsichtbar ueber Flagge/Vorwahl gelegt - ein Klick
+                   oeffnet die normale Auswahlliste (auch auf dem Handy), die
+                   Anzeige daneben stellt assets/app.js ([data-vorwahl]) ein.
+                   Voreinstellung nach dem Land der PLZ (+49 / +43), frei
+                   aenderbar - Handwerker aus Polen, Tschechien usw. sollen
+                   nicht aussen vor bleiben. Der Worker setzt Vorwahl und
+                   Nummer zusammen und laesst die fuehrende 0 weg; "Andere":
+                   Vorwahl mit + selbst eintippen. Flaggen sind Emoji - wo das
+                   System keine Flaggen-Emoji hat (Windows), stehen dort die
+                   Laenderbuchstaben. -->
               <div class="telefon-feld">
-                <label class="telefon-vorwahl">Land<select name="Vorwahl" data-vorwahl autocomplete="tel-country-code">
-                  <optgroup label="Häufig">
-                    <option value="+49">Deutschland +49</option>
-                    <option value="+43">Österreich +43</option>
-                    <option value="+41">Schweiz +41</option>
-                    <option value="+48">Polen +48</option>
-                    <option value="+420">Tschechien +420</option>
-                  </optgroup>
-                  <optgroup label="Weitere Länder">
-                    <option value="+355">Albanien +355</option>
-                    <option value="+32">Belgien +32</option>
-                    <option value="+387">Bosnien und Herzegowina +387</option>
-                    <option value="+359">Bulgarien +359</option>
-                    <option value="+45">Dänemark +45</option>
-                    <option value="+372">Estland +372</option>
-                    <option value="+358">Finnland +358</option>
-                    <option value="+33">Frankreich +33</option>
-                    <option value="+30">Griechenland +30</option>
-                    <option value="+353">Irland +353</option>
-                    <option value="+39">Italien +39</option>
-                    <option value="+383">Kosovo +383</option>
-                    <option value="+385">Kroatien +385</option>
-                    <option value="+371">Lettland +371</option>
-                    <option value="+423">Liechtenstein +423</option>
-                    <option value="+370">Litauen +370</option>
-                    <option value="+352">Luxemburg +352</option>
-                    <option value="+373">Moldau +373</option>
-                    <option value="+382">Montenegro +382</option>
-                    <option value="+31">Niederlande +31</option>
-                    <option value="+389">Nordmazedonien +389</option>
-                    <option value="+47">Norwegen +47</option>
-                    <option value="+351">Portugal +351</option>
-                    <option value="+40">Rumänien +40</option>
-                    <option value="+46">Schweden +46</option>
-                    <option value="+381">Serbien +381</option>
-                    <option value="+421">Slowakei +421</option>
-                    <option value="+386">Slowenien +386</option>
-                    <option value="+34">Spanien +34</option>
-                    <option value="+90">Türkei +90</option>
-                    <option value="+380">Ukraine +380</option>
-                    <option value="+36">Ungarn +36</option>
-                    <option value="+44">Vereinigtes Königreich +44</option>
-                  </optgroup>
-                  <option value="">Andere – Vorwahl mit + in die Nummer schreiben</option>
-                </select></label>
-                <label>Telefon<input type="tel" name="Telefon" autocomplete="tel-national" placeholder="0201 1234567" required></label>
+                <label for="telefon-nummer">Telefon</label>
+                <div class="telefon-box">
+                  <span class="telefon-land">
+                    <span class="telefon-anzeige" aria-hidden="true"><span data-vorwahl-flagge>🇩🇪</span><span data-vorwahl-code>+49</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+                    <select name="Vorwahl" data-vorwahl autocomplete="tel-country-code" aria-label="Ländervorwahl">
+                      <optgroup label="Häufig">
+                      <option value="+49" data-flagge="🇩🇪" data-beispiel="201 1234567">🇩🇪 Deutschland (+49)</option>
+                      <option value="+43" data-flagge="🇦🇹" data-beispiel="316 123456">🇦🇹 Österreich (+43)</option>
+                      <option value="+41" data-flagge="🇨🇭">🇨🇭 Schweiz (+41)</option>
+                      <option value="+48" data-flagge="🇵🇱">🇵🇱 Polen (+48)</option>
+                      <option value="+420" data-flagge="🇨🇿">🇨🇿 Tschechien (+420)</option>
+                      </optgroup>
+                      <optgroup label="Weitere Länder">
+                      <option value="+355" data-flagge="🇦🇱">🇦🇱 Albanien (+355)</option>
+                      <option value="+32" data-flagge="🇧🇪">🇧🇪 Belgien (+32)</option>
+                      <option value="+387" data-flagge="🇧🇦">🇧🇦 Bosnien und Herzegowina (+387)</option>
+                      <option value="+359" data-flagge="🇧🇬">🇧🇬 Bulgarien (+359)</option>
+                      <option value="+45" data-flagge="🇩🇰">🇩🇰 Dänemark (+45)</option>
+                      <option value="+372" data-flagge="🇪🇪">🇪🇪 Estland (+372)</option>
+                      <option value="+358" data-flagge="🇫🇮">🇫🇮 Finnland (+358)</option>
+                      <option value="+33" data-flagge="🇫🇷">🇫🇷 Frankreich (+33)</option>
+                      <option value="+30" data-flagge="🇬🇷">🇬🇷 Griechenland (+30)</option>
+                      <option value="+353" data-flagge="🇮🇪">🇮🇪 Irland (+353)</option>
+                      <option value="+39" data-flagge="🇮🇹">🇮🇹 Italien (+39)</option>
+                      <option value="+383" data-flagge="🇽🇰">🇽🇰 Kosovo (+383)</option>
+                      <option value="+385" data-flagge="🇭🇷">🇭🇷 Kroatien (+385)</option>
+                      <option value="+371" data-flagge="🇱🇻">🇱🇻 Lettland (+371)</option>
+                      <option value="+423" data-flagge="🇱🇮">🇱🇮 Liechtenstein (+423)</option>
+                      <option value="+370" data-flagge="🇱🇹">🇱🇹 Litauen (+370)</option>
+                      <option value="+352" data-flagge="🇱🇺">🇱🇺 Luxemburg (+352)</option>
+                      <option value="+373" data-flagge="🇲🇩">🇲🇩 Moldau (+373)</option>
+                      <option value="+382" data-flagge="🇲🇪">🇲🇪 Montenegro (+382)</option>
+                      <option value="+31" data-flagge="🇳🇱">🇳🇱 Niederlande (+31)</option>
+                      <option value="+389" data-flagge="🇲🇰">🇲🇰 Nordmazedonien (+389)</option>
+                      <option value="+47" data-flagge="🇳🇴">🇳🇴 Norwegen (+47)</option>
+                      <option value="+351" data-flagge="🇵🇹">🇵🇹 Portugal (+351)</option>
+                      <option value="+40" data-flagge="🇷🇴">🇷🇴 Rumänien (+40)</option>
+                      <option value="+46" data-flagge="🇸🇪">🇸🇪 Schweden (+46)</option>
+                      <option value="+381" data-flagge="🇷🇸">🇷🇸 Serbien (+381)</option>
+                      <option value="+421" data-flagge="🇸🇰">🇸🇰 Slowakei (+421)</option>
+                      <option value="+386" data-flagge="🇸🇮">🇸🇮 Slowenien (+386)</option>
+                      <option value="+34" data-flagge="🇪🇸">🇪🇸 Spanien (+34)</option>
+                      <option value="+90" data-flagge="🇹🇷">🇹🇷 Türkei (+90)</option>
+                      <option value="+380" data-flagge="🇺🇦">🇺🇦 Ukraine (+380)</option>
+                      <option value="+36" data-flagge="🇭🇺">🇭🇺 Ungarn (+36)</option>
+                      <option value="+44" data-flagge="🇬🇧">🇬🇧 Vereinigtes Königreich (+44)</option>
+                      </optgroup>
+                      <option value="" data-flagge="🌐">🌐 Andere – Vorwahl mit + in die Nummer</option>
+                    </select>
+                  </span>
+                  <input id="telefon-nummer" type="tel" name="Telefon" autocomplete="tel-national" placeholder="201 1234567" required>
+                </div>
               </div>
             </fieldset>
             </div>

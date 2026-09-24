@@ -992,12 +992,29 @@
    * ---------------------------------------------------------------- */
   Array.prototype.forEach.call(document.querySelectorAll("[data-vorwahl]"), function (auswahl) {
     var form = auswahl.form;
+    var box = auswahl.closest(".telefon-box");
+    var flagge = box && box.querySelector("[data-vorwahl-flagge]");
+    var code = box && box.querySelector("[data-vorwahl-code]");
+    var nummer = box && box.querySelector('input[type="tel"]');
     var vonHand = false;
-    auswahl.addEventListener("change", function () { vonHand = true; });
+
+    /* Anzeige links im Feld: Flagge und Vorwahl der gewaehlten Option,
+       dazu ein passendes Beispiel als Platzhalter der Nummer */
+    var anzeigen = function () {
+      var o = auswahl.options[auswahl.selectedIndex];
+      if (!o || !flagge) return;
+      flagge.textContent = o.getAttribute("data-flagge") || "";
+      code.textContent = o.value || "+";
+      if (nummer) nummer.placeholder = o.getAttribute("data-beispiel") || (o.value ? "123 456 789" : "+48 123 456 789");
+    };
+
+    auswahl.addEventListener("change", function () { vonHand = true; anzeigen(); });
     form.addEventListener("landwechsel", function (e) {
       if (vonHand) return;
       auswahl.value = e.detail.land === "AT" ? "+43" : "+49";
+      anzeigen();
     });
+    anzeigen();
   });
 
   /* ---------------------------------------------------------------- *
