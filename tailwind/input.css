@@ -3026,3 +3026,28 @@ html.formular-voll header:not(.menue-offen) > div .btn-primary { background: #ff
     box-shadow: 0 0 0 5px rgba(66, 133, 244, 0.16);
   }
 }
+
+/* Foerder-Check auf dem Handy (bis 734 px): in Schritten, je eine Frage,
+   zuletzt das Ergebnis (assets/foerdercheck.js, .check-schritte). Die
+   Antwortknoepfe kleiner - in voller Groesse fuellten sie den Bildschirm. */
+@media (max-width: 734px) {
+  .foerdercheck { scroll-margin-top: calc(var(--header-h) + 16px); }
+  .check-schritte { gap: 24px; }
+  .check-schritte .check-frage:not(.ist-aktiv),
+  .check-schritte > div:not(.ist-aktiv):not(.check-knoepfe),
+  .check-schritte.im-ergebnis > form { display: none; }
+  .check-schritte .check-frage.ist-aktiv:not([data-zusatz]) { margin-top: 0; }
+  .check-schritte .ist-aktiv:focus { outline: none; }
+  .check-schritte .check-frage.ist-aktiv:not([data-zusatz]) { animation: schritt-ein 0.35s cubic-bezier(.22, .61, .36, 1); }
+  .check-schritt-anzeige { margin-bottom: -8px; }
+  .check-knoepfe { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 20px; }
+  .check-knoepfe [hidden] { display: none; }
+  .check-knoepfe [data-check-weiter] { margin-left: auto; }
+  .check-knoepfe button:disabled { opacity: .45; cursor: default; }
+  .check-wahl { gap: 8px; margin-top: 14px; }
+  .wahl > span { padding: 7px 14px; font-size: 15px; line-height: 1.35; }
+  .wahl > input:checked + span::before { width: 9px; height: 5px; }
+}
+@media (max-width: 734px) and (prefers-reduced-motion: reduce) {
+  .check-schritte .check-frage.ist-aktiv:not([data-zusatz]) { animation: none; }
+}

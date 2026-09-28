@@ -311,6 +311,98 @@
   zeichnen();
 
   /* ---------------------------------------------------------------- *
+   *  Auf dem Handy in Schritten: je eine Frage, zuletzt das Ergebnis.
+   *  Untereinander waere der Check dort mehrere Bildschirme lang. Die
+   *  Einzelfragen gehen nach der Wahl von selbst weiter. Ab 735 px
+   *  bleibt alles wie gehabt nebeneinander bzw. untereinander sichtbar.
+   *  Aussehen: .check-schritte in tailwind/input.css.
+   * ---------------------------------------------------------------- */
+  var handy = window.matchMedia("(max-width: 734px)");
+  var fragen = formular.querySelectorAll(".check-frage");
+  var spalte = ergebnis.parentNode;           /* rechte Spalte: Ergebnis und Hinweise */
+  /* Schritt je Teil: die drei Fragen, Zusatzfelder zur dritten, dann das Ergebnis */
+  var teile = [];
+  Array.prototype.forEach.call(fragen, function (el) {
+    var nr = el.hasAttribute("data-zusatz") ? 2 : teile.filter(function (t) { return !t.el.hasAttribute("data-zusatz"); }).length;
+    teile.push({ el: el, nr: nr });
+  });
+  teile.push({ el: spalte, nr: 3 });
+  var LETZTE_FRAGE = 2, ANZAHL = 3;
+
+  var anzeige = document.createElement("p");
+  anzeige.className = "schritt-anzeige t-caption check-schritt-anzeige";
+  anzeige.setAttribute("aria-live", "polite");
+  var knoepfe = document.createElement("div");
+  knoepfe.className = "check-knoepfe";
+  knoepfe.innerHTML = '<button type="button" class="schritt-zurueck" data-check-zurueck>Zurück</button>' +
+    '<button type="button" class="btn btn-white" data-check-weiter>Weiter</button>';
+  var zurueck = knoepfe.querySelector("[data-check-zurueck]");
+  var weiter = knoepfe.querySelector("[data-check-weiter]");
+  var jetzt = 0;
+
+  /* Weiter erst mit Antwort: Frage 1 und 2 eine Wahl, Frage 3 mindestens ein Vorhaben */
+  var beantwortet = function (nr) {
+    if (nr === 0) return !!gewaehlt("wer").length;
+    if (nr === 1) return !!gewaehlt("gebaeude").length;
+    if (nr === 2) return !!gewaehlt("vorhaben").length;
+    return true;
+  };
+  var auffrischen = function () {
+    weiter.hidden = jetzt > LETZTE_FRAGE;
+    weiter.disabled = !beantwortet(jetzt);
+    weiter.textContent = jetzt === LETZTE_FRAGE ? "Ergebnis zeigen" : "Weiter";
+    zurueck.hidden = jetzt === 0;
+    zurueck.textContent = jetzt > LETZTE_FRAGE ? "Auswahl ändern" : "Zurück";
+  };
+
+  var zeige = function (nr, bewegen) {
+    jetzt = nr;
+    teile.forEach(function (t) { t.el.classList.toggle("ist-aktiv", t.nr === nr); });
+    flaeche.classList.toggle("im-ergebnis", nr > LETZTE_FRAGE);
+    anzeige.innerHTML = nr > LETZTE_FRAGE ? "<b>Ihr Ergebnis</b>" : "<b>Frage " + (nr + 1) + "</b> von " + ANZAHL;
+    auffrischen();
+    if (!bewegen) return;
+    /* Anfang des Checks in Sicht, falls er nach oben weggerutscht ist */
+    if (flaeche.getBoundingClientRect().top < 0) flaeche.scrollIntoView({ block: "start" });
+    /* Fokus auf die neue Frage (nicht auf ein Feld: keine Tastatur) */
+    var ziel = nr > LETZTE_FRAGE ? spalte : teile.filter(function (t) { return t.nr === nr; })[0].el;
+    ziel.tabIndex = -1;
+    ziel.focus({ preventScroll: true });
+  };
+
+  weiter.addEventListener("click", function () { if (beantwortet(jetzt)) zeige(jetzt + 1, true); });
+  zurueck.addEventListener("click", function () { zeige(jetzt > LETZTE_FRAGE ? LETZTE_FRAGE : jetzt - 1, true); });
+  /* Einzelwahl (Frage 1 und 2) geht nach einem Augenblick von selbst weiter */
+  var auto = 0;
+  formular.addEventListener("change", function (e) {
+    if (!flaeche.classList.contains("check-schritte")) return;
+    auffrischen();
+    if (e.target.type === "radio" && jetzt < LETZTE_FRAGE) {
+      clearTimeout(auto);
+      var von = jetzt;
+      auto = setTimeout(function () { if (jetzt === von) zeige(von + 1, true); }, 350);
+    }
+  });
+
+  var modus = function () {
+    var an = handy.matches;
+    flaeche.classList.toggle("check-schritte", an);
+    if (an) {
+      flaeche.insertBefore(anzeige, flaeche.firstChild);
+      flaeche.appendChild(knoepfe);
+      zeige(jetzt, false);
+    } else {
+      if (anzeige.parentNode) anzeige.parentNode.removeChild(anzeige);
+      if (knoepfe.parentNode) knoepfe.parentNode.removeChild(knoepfe);
+      teile.forEach(function (t) { t.el.classList.remove("ist-aktiv"); });
+      flaeche.classList.remove("im-ergebnis");
+    }
+  };
+  if (handy.addEventListener) handy.addEventListener("change", modus);
+  else if (handy.addListener) handy.addListener(modus);
+  modus();
+
+  /* ---------------------------------------------------------------- *
    *  Links auf ein Programm klappen es auf - aus dem Ergebnis, aus dem
    *  Kopfband oder als Adresse mit #heizung von einer anderen Seite.
    * ---------------------------------------------------------------- */
