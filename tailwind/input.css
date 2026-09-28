@@ -3054,3 +3054,13 @@ html.formular-voll header:not(.menue-offen) > div .btn-primary { background: #ff
 
 /* PLZ-Kaesten voll (app.js, .ist-komplett): kein Cursor hinter dem letzten Kasten */
 .registrierung .plz-kaesten input.ist-komplett { caret-color: transparent; }
+
+/* Handwerker-Formular auf Handy und Tablet: dunkle Tastatur. iOS nimmt
+   sonst die helle, deren Glas samt Leiste darueber (Pfeile, Haken) die
+   dunkle Kachel milchig aufhellt. color-scheme sagt Safari, dass die
+   Felder auf dunklem Grund stehen. Auswahllisten (Android) passend
+   dunkel, sonst stuende dunkle Schrift auf dunklem Grund. */
+@media (max-width: 1023px) {
+  .registrierung { color-scheme: dark; }
+  .registrierung select option { color: #fff; background: #000a3a; }
+}
