@@ -890,15 +890,23 @@
       recht.hidden = false;
       void recht.offsetWidth;
       handwerker.classList.add("voll-da");
+      /* Aufgezogen: ohne Uebergang, damit das Nachfuehren bei offener
+         Tastatur (nachfuehren) sofort sitzt statt nachzugleiten */
+      handwerker.classList.remove("voll-gleitet");
     };
     var zuziehen = function () {
       if (!start) return;
       handwerker.classList.remove("voll-da");
       if (recht) recht.hidden = true;
+      if (!ruhig.matches && !handwerker.classList.contains("voll-gleitet")) {
+        handwerker.classList.add("voll-gleitet");
+        void handwerker.offsetWidth;
+      }
       handwerker.classList.remove("voll-offen");
       rahmen(start);
       wurzel.classList.remove("formular-voll");
       thema(false);
+      nachfuehren();
     };
     var ende = function () {
       handwerker.classList.remove("ist-voll", "voll-gleitet", "voll-offen", "voll-da");
@@ -907,7 +915,31 @@
       thema(false);
       if (recht) recht.hidden = true;
       start = null;
+      nachfuehren();
     };
+
+    /* iPhone mit offener Tastatur: Safari verschiebt dann den sichtbaren
+       Ausschnitt (visualViewport.offsetTop) gegen die Seite. Die fest
+       stehende Kachel und die Kopfleiste blieben zurueck - oben war die
+       Kopfleiste weg, unten schien die weisse Seite hell durch Tastatur
+       und Leisten. Beide ruecken hier um genau diesen Versatz nach. */
+    var kopf = document.querySelector("body > header");
+    var vv = window.visualViewport;
+    var nachfuehren = function () {
+      var y = vv && handwerker.classList.contains("voll-offen") ? Math.max(0, Math.round(vv.offsetTop)) : 0;
+      if (handwerker.classList.contains("voll-offen")) handwerker.style.top = y + "px";
+      if (kopf) kopf.style.transform = y ? "translateY(" + y + "px)" : "";
+    };
+    if (vv) {
+      var nachOffen = false;
+      var anstossen = function () {
+        if (nachOffen) return;
+        nachOffen = true;
+        requestAnimationFrame(function () { nachOffen = false; nachfuehren(); });
+      };
+      vv.addEventListener("resize", anstossen);
+      vv.addEventListener("scroll", anstossen);
+    }
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape" && start && !form.classList.contains("ist-gesendet")) form.geheZu(0);
     });
@@ -1184,6 +1216,9 @@
         var anzahl = feld.maxLength === 4 ? 4 : kaesten.length;
         k.classList.toggle("ist-aktiv", fokus && i === Math.min(n, anzahl - 1));
       });
+      /* Voll: Cursor aus. Safari zeichnet ihn sonst hinter dem letzten
+         Kasten, ausserhalb des Rahmens (overflow: clip gilt nicht fuer ihn). */
+      feld.classList.toggle("ist-komplett", n >= feld.maxLength);
     };
     ["input", "focus", "blur"].forEach(function (typ) { feld.addEventListener(typ, kaestenAuffrischen); });
 

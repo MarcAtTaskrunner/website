@@ -3051,3 +3051,6 @@ html.formular-voll header:not(.menue-offen) > div .btn-primary { background: #ff
 @media (max-width: 734px) and (prefers-reduced-motion: reduce) {
   .check-schritte .check-frage.ist-aktiv:not([data-zusatz]) { animation: none; }
 }
+
+/* PLZ-Kaesten voll (app.js, .ist-komplett): kein Cursor hinter dem letzten Kasten */
+.registrierung .plz-kaesten input.ist-komplett { caret-color: transparent; }
