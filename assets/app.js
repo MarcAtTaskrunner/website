@@ -374,14 +374,14 @@
 
 
   /* ---------------------------------------------------------------- *
-   *  Zeitstrahl "So funktioniert ein Task" (.schritte), nur Handy
+   *  Zeitstrahl auf dem Handy: "So funktioniert ein Task" (.schritte,
+   *  Startseite) und die Klimaziele (.klimaziele, Foerderungen).
    *  Die helle Linie waechst mit dem Scrollen: ihre Spitze folgt einer
    *  gedachten Linie bei 60 % der Fensterhoehe. Anfang und Laenge
    *  gehen vom Punkt des ersten bis zum Punkt des letzten Schritts.
    * ---------------------------------------------------------------- */
-  (function () {
-    var ol = document.querySelector(".schritte");
-    if (!ol || !ol.children.length) return;
+  Array.prototype.forEach.call(document.querySelectorAll(".schritte, .klimaziele"), function (ol) {
+    if (!ol.children.length) return;
     var schmal = window.matchMedia("(max-width: 767px)");
     var ruhig = window.matchMedia("(prefers-reduced-motion: reduce)");
     var schritte = ol.children;
@@ -410,7 +410,7 @@
     window.addEventListener("scroll", anstossen, { passive: true });
     window.addEventListener("resize", anstossen);
     pruefe();
-  })();
+  });
 
   /* ---------------------------------------------------------------- *
    *  Laufband (Bildergalerie im Blogbeitrag, [data-laufband])
