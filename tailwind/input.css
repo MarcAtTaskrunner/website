@@ -2964,3 +2964,8 @@ html.formular-voll header:not(.menue-offen) .logo-hell   { opacity: 1; }
 html.formular-voll header:not(.menue-offen) > div a:not(.btn),
 html.formular-voll header:not(.menue-offen) > div #nav-toggle { color: #fff; }
 html.formular-voll header:not(.menue-offen) > div .btn-primary { background: #fff; color: var(--color-navy); }
+
+/* Programmatischer Fokus (assets/app.js): der Schritt auf Touch-Geraeten,
+   die Meldung nach dem Absenden. Nur fuer den Screenreader, kein Rahmen. */
+.registrierung fieldset:focus,
+.registrierung-meldung:focus { outline: none; }

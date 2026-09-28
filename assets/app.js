@@ -685,6 +685,7 @@
     var zurueck = form.querySelector("[data-schritt-zurueck]");
     var weiter = form.querySelector("[data-schritt-weiter]");
     var senden = form.querySelector("[data-schritt-senden]");
+    var fein = window.matchMedia("(hover: hover) and (pointer: fine)");
     var jetzt = 0;
 
     var zeige = function (nr, fokus) {
@@ -703,7 +704,13 @@
       anzeige.hidden = false;
       anzeige.innerHTML = "<b>Schritt " + (nr + 1) + "</b> von " + schritte.length;
       form.dispatchEvent(new CustomEvent("schrittwechsel", { detail: { nr: nr } }));
-      if (fokus) {
+      /* Auf Touch-Geraeten den Schritt selbst fokussieren statt des
+         ersten Felds: sonst klappt ungefragt die Tastatur auf. Der
+         Screenreader liest trotzdem die Frage (legend) vor. */
+      if (fokus && !fein.matches) {
+        schritte[nr].tabIndex = -1;
+        schritte[nr].focus({ preventScroll: true });
+      } else if (fokus) {
         var erstes = schritte[nr].querySelector("input:not([type=radio]), input:checked");
         if (erstes) erstes.focus();
       }
@@ -755,7 +762,8 @@
       e.preventDefault();
       if (!gueltig()) return;
       var daten = {};
-      new FormData(form).forEach(function (wert, name) { daten[name] = String(wert); });
+      /* trim und ohne Komma am Ende: ein Vorschlagsknopf haengt ", " an */
+      new FormData(form).forEach(function (wert, name) { daten[name] = String(wert).trim().replace(/\s*,$/, ""); });
       senden.disabled = true;
       senden.textContent = "Wird gesendet …";
       meldung.hidden = true;
@@ -772,6 +780,9 @@
         meldung.className = "registrierung-meldung ist-ok";
         meldung.innerHTML = "<strong>Danke, Ihre Registrierung ist angekommen.</strong> Wir melden uns in den nächsten Tagen telefonisch bei Ihnen.";
         meldung.hidden = false;
+        /* Fokus auf die Meldung: Knoepfe und Felder sind jetzt weg */
+        meldung.tabIndex = -1;
+        meldung.focus({ preventScroll: true });
         var raus = form.querySelector("[data-voll-verlassen]");
         if (raus && form.vollZu && document.documentElement.classList.contains("formular-voll")) raus.hidden = false;
         form.dispatchEvent(new CustomEvent("gesendet"));
@@ -898,8 +909,25 @@
 
     /* Nach dem Absenden: zurueck auf die Kontaktseite, ohne Schrittwechsel.
        Die Kachel gleitet an ihren Platz, die Dankesmeldung bleibt darin. */
+    /* Solange eine Animation laeuft (AUS + GLEITEN), nimmt die Kachel
+       keinen neuen Wechsel an: schnelles Zurueck-Weiter liess sie sonst
+       halb im Vollbild stehen. */
+    var laeuft = false;
+    var animiere = function (mitte, schluss) {
+      laeuft = true;
+      teilung.classList.add("blendet");
+      window.setTimeout(function () {
+        mitte();
+        window.setTimeout(function () {
+          schluss();
+          teilung.classList.remove("blendet");
+          laeuft = false;
+        }, GLEITEN);
+      }, AUS);
+    };
+
     form.vollZu = function () {
-      if (!start) return;
+      if (!start || laeuft) return;
       if (ruhig.matches) {
         teilung.classList.remove("kunden-weg");
         setze(false);
@@ -907,17 +935,14 @@
         loesen();
         return;
       }
-      teilung.classList.add("blendet");
-      window.setTimeout(function () {
+      animiere(function () {
         teilung.classList.remove("kunden-weg");
         zuziehen();
         setze(false);
-        window.setTimeout(function () {
-          ende();
-          loesen();
-          teilung.classList.remove("blendet");
-        }, GLEITEN);
-      }, AUS);
+      }, function () {
+        ende();
+        loesen();
+      });
     };
     var raus = form.querySelector("[data-voll-verlassen]");
     if (raus) raus.addEventListener("click", function () {
@@ -933,6 +958,8 @@
     };
 
     form.vorWechsel = function (von, nach, dann) {
+      /* true ohne dann(): der Wechsel faellt aus, die Animation laeuft */
+      if (laeuft) return true;
       var weit = nach >= 1;
       /* Unter 1024 px nur das Vollbild, ohne Spalten und Karte */
       if (!breit.matches) {
@@ -944,19 +971,16 @@
           return true;
         }
         if (weit) festsetzen();
-        teilung.classList.add("blendet");
-        window.setTimeout(function () {
+        animiere(function () {
           if (weit) aufziehen(); else zuziehen();
           /* ist-weit auch hier: daran haengt das Laden der Karte, die
              auf dem Handy unter dem Formular steht (Spalten gibt es erst
              ab 1024 px, dort wirkt die Klasse sonst nicht) */
           setze(weit);
           dann();
-          window.setTimeout(function () {
-            if (weit) zeigeRecht(); else { ende(); loesen(); }
-            teilung.classList.remove("blendet");
-          }, GLEITEN);
-        }, AUS);
+        }, function () {
+          if (weit) zeigeRecht(); else { ende(); loesen(); }
+        });
         return true;
       }
       if (weit === teilung.classList.contains("ist-weit")) return false;
@@ -969,28 +993,48 @@
         return true;
       }
       if (weit) festsetzen();
-      teilung.classList.add("blendet");
-      window.setTimeout(function () {
+      animiere(function () {
         if (!weit) teilung.classList.remove("kunden-weg");
         if (weit) aufziehen(); else zuziehen();
         setze(weit);
         dann();
-        window.setTimeout(function () {
-          if (weit) { teilung.classList.add("kunden-weg"); zeigeRecht(); }
-          else { ende(); loesen(); }
-          teilung.classList.remove("blendet");
-        }, GLEITEN);
-      }, AUS);
+      }, function () {
+        if (weit) { teilung.classList.add("kunden-weg"); zeigeRecht(); }
+        else { ende(); loesen(); }
+      });
       return true;
     };
 
-    /* Fenster ueber die 1024-px-Grenze gezogen: zurueck zum normalen
-       Aufbau (die Kachel liegt dann auf dem richtigen Platz neu) */
-    breit.addEventListener("change", function () {
+    /* Neue Fensterbreite (Handy oder iPad gedreht, Fenster ueber die
+       1024-px-Grenze gezogen): Kachel an ihren Platz in der neuen
+       Aufteilung und - war sie im Vollbild - ohne Animation gleich
+       wieder auf. So stimmt auch das Rechteck, auf das sie beim
+       Zurueck gleitet. Laeuft gerade eine Animation, erst danach. */
+    var neuAufbauen = function () {
+      if (laeuft) { window.setTimeout(neuAufbauen, 100); return; }
+      var warVoll = !!start;
       teilung.classList.remove("blendet", "kunden-weg");
       setze(false);
       ende();
       loesen();
+      if (!warVoll) return;
+      festsetzen();
+      aufziehen(true);
+      if (breit.matches) teilung.classList.add("kunden-weg");
+      setze(true);
+    };
+    var alteBreite = window.innerWidth, breiteOffen = false;
+    /* Nur bei neuer Breite: die Hoehe aendert sich auf dem Handy schon,
+       wenn die Tastatur oder die Browserleiste auf- und zugeht. */
+    window.addEventListener("resize", function () {
+      if (breiteOffen) return;
+      breiteOffen = true;
+      requestAnimationFrame(function () {
+        breiteOffen = false;
+        if (window.innerWidth === alteBreite) return;
+        alteBreite = window.innerWidth;
+        neuAufbauen();
+      });
     });
   })();
 
@@ -1084,10 +1128,15 @@
          Anfang einer deutschen - erst bei fuenf ist es sicher deutsch. */
       if (!orte) {
         /* Fehler bei fuenf Ziffern - oder schon bei vier, wenn weder eine
-           oesterreichische PLZ noch der Anfang einer deutschen passt */
+           oesterreichische PLZ noch der Anfang einer deutschen passt.
+           setCustomValidity haelt "Weiter" auf; vier Ziffern als Anfang
+           einer deutschen PLZ sind noch nicht fertig. */
         if (plz.length === 5 || !istDeAnfang(plz)) {
           ausgabe.textContent = "Diese Postleitzahl kennen wir nicht. Bitte prüfen.";
           ausgabe.className = "plz-ort ist-fehler";
+          feld.setCustomValidity("Diese Postleitzahl kennen wir nicht. Bitte prüfen.");
+        } else {
+          feld.setCustomValidity("Bitte geben Sie die vollständige Postleitzahl ein.");
         }
         return;
       }
@@ -1211,6 +1260,16 @@
       code.textContent = o.value || "+";
       if (nummer) nummer.placeholder = o.getAttribute("data-beispiel") || (o.value ? "123 456 789" : "+48 123 456 789");
     };
+
+    /* Nummer pruefen: nur Ziffern, Leerzeichen und + - / ( ), mindestens
+       sechs Ziffern. Dieselbe Regel steht im Worker (worker/index.js). */
+    var pruefeNummer = function () {
+      var n = nummer.value.trim();
+      var ziffern = n.replace(/\D/g, "").length;
+      nummer.setCustomValidity(!n || (/^[0-9 +()\/-]+$/.test(n) && ziffern >= 6)
+        ? "" : "Bitte eine gültige Telefonnummer eingeben, nur Ziffern.");
+    };
+    if (nummer) nummer.addEventListener("input", pruefeNummer);
 
     auswahl.addEventListener("change", function () { vonHand = true; anzeigen(); });
     form.addEventListener("landwechsel", function (e) {

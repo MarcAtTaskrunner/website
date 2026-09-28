@@ -43,7 +43,8 @@ async function registrierung(request, env) {
     return antwort(400, { ok: false, fehler: "Ungueltige Daten" });
   }
   // Falle fuer Bots: ein Feld, das Menschen nicht sehen und nicht fuellen
-  if (eingang.Webseite) return antwort(200, { ok: true });
+  // (feld_x7 in quellen/kontakt.html; "Webseite" war der alte Name)
+  if (eingang.feld_x7 || eingang.Webseite) return antwort(200, { ok: true });
 
   const daten = {};
   for (const feld of FELDER) {
@@ -54,6 +55,11 @@ async function registrierung(request, env) {
     if (!daten[feld]) return antwort(400, { ok: false, fehler: `${feld} fehlt` });
   }
   if (!/^\d{4,5}$/.test(daten.PLZ)) return antwort(400, { ok: false, fehler: "PLZ ungueltig" });
+  // Wie im Formular (assets/app.js, [data-vorwahl]): nur Ziffern, Leerzeichen
+  // und + - / ( ), mindestens sechs Ziffern
+  if (!/^[0-9 +()\/-]+$/.test(daten.Telefon) || daten.Telefon.replace(/\D/g, "").length < 6) {
+    return antwort(400, { ok: false, fehler: "Telefon ungueltig" });
+  }
   daten.Telefon = telefon(daten.Telefon, String(eingang.Vorwahl ?? ""));
 
   const text = [
