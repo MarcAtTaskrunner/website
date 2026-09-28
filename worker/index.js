@@ -11,6 +11,14 @@
 //   Absender: ABSENDER aus "vars". Ohne eigene, bei Resend bestaetigte
 //   Domain geht nur onboarding@resend.dev, und das nur an die Adresse,
 //   mit der das Resend-Konto angelegt ist - fuer den Test reicht das.
+//
+//   Zusaetzlich landet jede Registrierung als Zeile in einer Google-
+//   Tabelle: ueber ein Apps-Script an der Tabelle (Code und Einrichtung in
+//   werkzeuge/google-tabelle.gs). Dafuer zwei Secrets im Dashboard:
+//   SHEET_URL (Adresse der Web-App) und SHEET_GEHEIMNIS (dasselbe Wort
+//   wie im Script). Fehlen sie, entfaellt nur die Tabelle, die Mail geht
+//   trotzdem. Die Tabelle wird im Hintergrund beschrieben (waitUntil) -
+//   hakt Google, merkt das niemand im Formular, es steht nur im Log.
 
 const FELDER = ["Gewerke", "PLZ", "Ort", "Einsatzradius", "Name", "Firma", "Telefon"];
 // Telefonnummer international: "0201 1234567" mit +49 -> "+49 201 1234567".
@@ -32,7 +40,23 @@ function antwort(status, daten) {
   });
 }
 
-async function registrierung(request, env) {
+// Eine Zeile in die Google-Tabelle (werkzeuge/google-tabelle.gs)
+async function inTabelle(env, daten, zeit) {
+  if (!env.SHEET_URL || !env.SHEET_GEHEIMNIS) return;
+  try {
+    const antwort = await fetch(env.SHEET_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ geheimnis: env.SHEET_GEHEIMNIS, Eingang: zeit, ...daten }),
+    });
+    const text = await antwort.text();
+    if (!antwort.ok || !text.includes('"ok":true')) console.log("Tabelle-Fehler", antwort.status, text.slice(0, 300));
+  } catch (fehler) {
+    console.log("Tabelle-Fehler", String(fehler));
+  }
+}
+
+async function registrierung(request, env, ctx) {
   if (request.method !== "POST") return antwort(405, { ok: false, fehler: "Nur POST" });
   if (!env.RESEND_API_KEY) return antwort(503, { ok: false, fehler: "Versand nicht eingerichtet" });
 
@@ -62,12 +86,14 @@ async function registrierung(request, env) {
   }
   daten.Telefon = telefon(daten.Telefon, String(eingang.Vorwahl ?? ""));
 
+  const zeit = new Date().toLocaleString("de-DE", { timeZone: "Europe/Berlin" });
+
   const text = [
     "Neue Registrierung über das Handwerker-Formular auf der Kontaktseite",
     "",
     ...FELDER.map((f) => `${f.padEnd(14)} ${daten[f] || "-"}`),
     "",
-    `Eingang: ${new Date().toLocaleString("de-DE", { timeZone: "Europe/Berlin" })}`,
+    `Eingang: ${zeit}`,
   ].join("\n");
 
   const versand = await fetch("https://api.resend.com/emails", {
@@ -84,13 +110,16 @@ async function registrierung(request, env) {
     console.log("Resend-Fehler", versand.status, await versand.text());
     return antwort(502, { ok: false, fehler: "Versand fehlgeschlagen" });
   }
+  // Erst nach der Mail: schlaegt sie fehl, schickt der Handwerker nochmal
+  // ab - sonst stuende er doppelt in der Tabelle
+  ctx.waitUntil(inTabelle(env, daten, zeit));
   return antwort(200, { ok: true });
 }
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
-    if (url.pathname === "/api/registrierung") return registrierung(request, env);
+    if (url.pathname === "/api/registrierung") return registrierung(request, env, ctx);
     return env.ASSETS.fetch(request);
   },
 };
