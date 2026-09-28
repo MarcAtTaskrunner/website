@@ -55,8 +55,51 @@
         <div class="kopf-foto-bild" aria-hidden="true"></div>
         <div class="rand-seite relative w-full pb-[60px] pt-[calc(var(--header-h)+72px)] lg:pb-[76px]">
           <h1 class="max-w-[620px] text-balance hyphens-auto break-words t-h1 text-white">Förderungen</h1>
-          <p class="mt-6 max-w-[520px] text-pretty t-intro text-white">Heizung, Gebäudehülle und Anlagentechnik: wo der Bund Ihre Sanierung bezuschusst und welche Voraussetzungen gelten.</p>
+          <p class="mt-6 max-w-[520px] text-pretty t-intro text-white">Welche Förderung zu Ihrem Vorhaben passen könnte, zeigt Ihnen der Förder-Check. Er gibt Hinweise, den Antrag stellen Sie selbst.</p>
           <p class="mt-8 flex flex-wrap items-center gap-4"><a href="#foerder-check" class="btn btn-white">Förder-Check starten</a><a href="#programme" class="btn btn-ghost">Alle Programme</a></p>
+        </div>
+      </section>
+      <!-- Der Foerder-Check steht bewusst gleich unter dem Kopf: er ist der
+           Kern der Seite. Alles darunter ist Hintergrund. -->
+      <section id="foerder-check" class="bg-white section-y scroll-mt-[calc(var(--header-h)+24px)]">
+        <div class="container-wide">
+          <p class="t-eyebrow text-ink/80">Förder-Check</p>
+          <h2 class="mt-4 max-w-[900px] text-balance hyphens-auto break-words t-h2 text-blue-600">Welche Förderung passt zu Ihrem Vorhaben?</h2>
+          <p class="mt-6 max-w-[680px] t-body text-ink/85">Drei Angaben genügen für eine erste Einschätzung: welche Programme infrage kommen, wie hoch der Zuschuss ausfällt und worauf Sie achten müssen.</p>
+          <p class="mt-4 max-w-[680px] t-body text-ink/85"><strong class="font-bold text-ink">Bitte beachten:</strong> taskrunner beantragt keine Förderungen und begleitet keine Anträge. Der Check gibt Hinweise und Empfehlungen. Ob und wie viel Sie bekommen, entscheiden BAFA, KfW oder der jeweilige Förder&shy;geber.</p>
+          <p class="mt-4 max-w-[680px] t-body text-ink/85" data-ohne-js>Alle Programme mit ihren Bedingungen finden Sie <a href="#programme" class="font-bold text-blue-600 underline">weiter unten</a>.</p>
+          <div class="foerdercheck verlauf-nacht mit-korn mt-12 rounded-[var(--radius-tile)] text-white lg:mt-16" data-foerdercheck-flaeche hidden>
+            <form data-foerdercheck>
+              <fieldset class="check-frage">
+                <legend class="t-intro font-bold">1. Wer beantragt die Förderung?</legend>
+                <div class="check-wahl"><label class="wahl"><input type="radio" name="wer" value="unternehmen"><span class="t-body">Unternehmen</span></label><label class="wahl"><input type="radio" name="wer" value="vermieter"><span class="t-body">Vermieter</span></label><label class="wahl"><input type="radio" name="wer" value="privat"><span class="t-body">Privatperson, selbst nutzend</span></label><label class="wahl"><input type="radio" name="wer" value="weg"><span class="t-body">Eigentümer&shy;gemeinschaft</span></label><label class="wahl"><input type="radio" name="wer" value="kommune"><span class="t-body">Kommune oder gemeinnützig</span></label></div>
+              </fieldset>
+              <fieldset class="check-frage">
+                <legend class="t-intro font-bold">2. Um welches Gebäude geht es?</legend>
+                <div class="check-wahl"><label class="wahl"><input type="radio" name="gebaeude" value="wohn"><span class="t-body">Wohngebäude</span></label><label class="wahl"><input type="radio" name="gebaeude" value="nichtwohn"><span class="t-body">Nichtwohngebäude</span></label></div>
+              </fieldset>
+              <fieldset class="check-frage">
+                <legend class="t-intro font-bold">3. Was haben Sie vor? <span class="mt-1 block t-caption font-medium text-white/75">Mehrere Antworten möglich</span></legend>
+                <div class="check-wahl"><label class="wahl"><input type="checkbox" name="vorhaben" value="heizung"><span class="t-body">Heizung tauschen</span></label><label class="wahl"><input type="checkbox" name="vorhaben" value="optimierung"><span class="t-body">Heizung optimieren</span></label><label class="wahl"><input type="checkbox" name="vorhaben" value="huelle"><span class="t-body">Dämmung, Fenster, Türen</span></label><label class="wahl"><input type="checkbox" name="vorhaben" value="anlagen"><span class="t-body">Lüftung, Kälte, Gebäude&shy;automation</span></label><label class="wahl"><input type="checkbox" name="vorhaben" value="beleuchtung"><span class="t-body">Beleuchtung</span></label><label class="wahl"><input type="checkbox" name="vorhaben" value="querschnitt"><span class="t-body">Pumpen, Motoren, Druckluft, Abwärme</span></label><label class="wahl"><input type="checkbox" name="vorhaben" value="solar"><span class="t-body">Photovoltaik und Speicher</span></label><label class="wahl"><input type="checkbox" name="vorhaben" value="beratung"><span class="t-body">Energie&shy;beratung oder Energieaudit</span></label></div>
+              </fieldset>
+              <div class="check-frage" data-zusatz="flaeche" hidden><label for="check-flaeche" class="t-body font-bold">Nettoraumfläche <span class="font-medium text-white/75">(optional, für den Betrag)</span></label><span class="check-zahl"><input id="check-flaeche" name="flaeche" type="number" min="1" step="1" inputmode="numeric" placeholder="z. B. 800"><span class="t-body">m²</span></span></div>
+              <div class="check-frage" data-zusatz="einheiten" hidden><label for="check-einheiten" class="t-body font-bold">Anzahl Wohneinheiten <span class="font-medium text-white/75">(optional, für den Betrag)</span></label><span class="check-zahl"><input id="check-einheiten" name="einheiten" type="number" min="1" step="1" inputmode="numeric" placeholder="z. B. 6"></span></div>
+            </form>
+            <div>
+              <p class="sr-only" role="status" data-check-status></p>
+              <div data-check-ergebnis>
+                <div class="ergebnis-leer">
+                  <p class="t-intro font-bold">Ihr Ergebnis</p>
+                  <p class="mt-3 t-body-tight">Sobald Sie ein Vorhaben auswählen, steht hier, welche Förderung infrage kommt.</p>
+                </div>
+              </div>
+              <div class="mt-8">
+                <p class="t-body-tight">Für alle Programme gilt: erst der Antrag, dann der Auftrag. Bei Heizung, Gebäudehülle und Anlagentechnik erstellt zudem ein Energieeffizienz-Experte die technische Projekt&shy;beschreibung.</p>
+                <p class="mt-6"><a href="#programme" class="btn btn-white">Alle Programme im Einzelnen</a></p>
+                <p class="mt-5 t-caption"><span class="text-white/75">Unverbindlicher Hinweis, keine Förderberatung. Stand September 2026, ohne Gewähr.</span></p>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
       <section class="bg-white section-y">
@@ -81,80 +124,17 @@
           </ol>
           <div class="mt-12 grid max-w-[1000px] gap-5 md:grid-cols-2 md:gap-x-12 lg:mt-16">
             <p class="t-body text-ink/85">Für den Weg dorthin bezuschusst der Bund energieeffiziente Sanierungen über die Bundes&shy;förderung für effiziente Gebäude – den Tausch der Heizungsanlage, Maßnahmen an der Gebäudehülle und Anlagentechnik wie Lüftung, Kältetechnik und Gebäude&shy;automation. Die Konditionen wurden zuletzt zum 21. Juli 2026 neu gefasst.</p>
-            <p class="t-body text-ink/85">Nachhaltigkeit betrifft dabei alle Bereiche im Unternehmen, von Energie&shy;einsparungen über die Digitalisierung bis zum Heizungsumbau. Der Förder-Check weiter unten gibt Ihnen dazu eine erste Orientierung.</p>
-          </div>
-          <h3 class="sr-only">Neue gesetzliche Vorgaben</h3>
-          <ul class="mt-16 grid gap-5 sm:grid-cols-2 lg:mt-20">
-            <li class="rounded-[var(--radius-tile)] kachel-verlauf-1 mit-korn kachel-polster">
-              <p class="datumsmarke t-eyebrow">Pflicht seit 2025</p>
-              <h4 class="mt-4 hyphens-auto break-words t-h4 text-blue-600">Smart Meter</h4>
-              <ul class="mt-5 space-y-2.5">
-                <li class="t-body-tight text-ink/85">Pflichteinbau bei mehr als 6.000 kWh Jahresverbrauch je Zählpunkt</li>
-                <li class="t-body-tight text-ink/85">Der Rollout soll bis 2032 abgeschlossen sein</li>
-                <li class="t-body-tight text-ink/85">Zuständig ist der grundzuständige Messstellen&shy;betreiber, sofern Sie keinen wettbewerblichen wählen</li>
-                <li class="t-body-tight text-ink/85">Für 6.000 bis 100.000 kWh gelten gestaffelte Kostenobergrenzen von 40 bis 140 € pro Jahr</li>
-              </ul>
-            </li>
-            <li class="rounded-[var(--radius-tile)] kachel-verlauf-3 mit-korn kachel-polster">
-              <p class="datumsmarke t-eyebrow">In Kraft seit 29.07.2026</p>
-              <h4 class="mt-4 hyphens-auto break-words t-h4 text-blue-600">Gebäude&shy;modernisierungs&shy;gesetz</h4>
-              <ul class="mt-5 space-y-2.5">
-                <li class="t-body-tight text-ink/85">Löst das Gebäude&shy;energie&shy;gesetz ab, in Kraft seit dem 29. Juli 2026</li>
-                <li class="t-body-tight text-ink/85">Die 65-Prozent-Regel für neue Heizungen ist entfallen</li>
-                <li class="t-body-tight text-ink/85">Neue fossile Heizungen brauchen ab 2029 einen steigenden Anteil klimaneutraler Brennstoffe: 10 % ab 2029, 15 % ab 2030, 30 % ab 2035, 60 % ab 2040</li>
-                <li class="t-body-tight text-ink/85">Ab 2028 tragen Vermieter bei fossilen Anlagen die Hälfte der CO₂-Kosten und Netzentgelte</li>
-              </ul>
-            </li>
-          </ul>
-        </div>
-      </section>
-      <section id="foerder-check" class="bg-white section-y scroll-mt-[calc(var(--header-h)+24px)]">
-        <div class="container-wide">
-          <p class="t-eyebrow text-ink/80">Förder-Check</p>
-          <h2 class="mt-4 max-w-[900px] text-balance hyphens-auto break-words t-h2 text-blue-600">Welche Förderung passt zu Ihrem Vorhaben?</h2>
-          <p class="mt-6 max-w-[680px] t-body text-ink/85">Drei Angaben genügen für eine erste Einschätzung: welche Programme infrage kommen, wie hoch der Zuschuss ausfällt und worauf Sie achten müssen. Das Ergebnis ist ein Denkanstoß, keine Förderberatung.</p>
-          <p class="mt-4 max-w-[680px] t-body text-ink/85" data-ohne-js>Alle Programme mit ihren Bedingungen finden Sie <a href="#programme" class="font-bold text-blue-600 underline">weiter unten</a>.</p>
-          <div class="foerdercheck verlauf-nacht mit-korn mt-12 rounded-[var(--radius-tile)] text-white lg:mt-16" data-foerdercheck-flaeche hidden>
-            <form data-foerdercheck>
-              <fieldset class="check-frage">
-                <legend class="t-intro font-bold">1. Wer beantragt die Förderung?</legend>
-                <div class="check-wahl"><label class="wahl"><input type="radio" name="wer" value="unternehmen"><span class="t-body">Unternehmen</span></label><label class="wahl"><input type="radio" name="wer" value="vermieter"><span class="t-body">Vermieter</span></label><label class="wahl"><input type="radio" name="wer" value="privat"><span class="t-body">Privatperson, selbst nutzend</span></label><label class="wahl"><input type="radio" name="wer" value="weg"><span class="t-body">Eigentümer&shy;gemeinschaft</span></label><label class="wahl"><input type="radio" name="wer" value="kommune"><span class="t-body">Kommune oder gemeinnützig</span></label></div>
-              </fieldset>
-              <fieldset class="check-frage">
-                <legend class="t-intro font-bold">2. Um welches Gebäude geht es?</legend>
-                <div class="check-wahl"><label class="wahl"><input type="radio" name="gebaeude" value="wohn"><span class="t-body">Wohngebäude</span></label><label class="wahl"><input type="radio" name="gebaeude" value="nichtwohn"><span class="t-body">Nichtwohngebäude</span></label></div>
-              </fieldset>
-              <fieldset class="check-frage">
-                <legend class="t-intro font-bold">3. Was haben Sie vor? <span class="mt-1 block t-caption font-medium text-white/75">Mehrere Antworten möglich</span></legend>
-                <div class="check-wahl"><label class="wahl"><input type="checkbox" name="vorhaben" value="heizung"><span class="t-body">Heizung tauschen</span></label><label class="wahl"><input type="checkbox" name="vorhaben" value="optimierung"><span class="t-body">Heizung optimieren</span></label><label class="wahl"><input type="checkbox" name="vorhaben" value="huelle"><span class="t-body">Dämmung, Fenster, Türen</span></label><label class="wahl"><input type="checkbox" name="vorhaben" value="anlagen"><span class="t-body">Lüftung, Kälte, Gebäude&shy;automation</span></label><label class="wahl"><input type="checkbox" name="vorhaben" value="beleuchtung"><span class="t-body">Beleuchtung</span></label></div>
-              </fieldset>
-              <div class="check-frage" data-zusatz="flaeche" hidden><label for="check-flaeche" class="t-body font-bold">Nettoraumfläche <span class="font-medium text-white/75">(optional, für den Betrag)</span></label><span class="check-zahl"><input id="check-flaeche" name="flaeche" type="number" min="1" step="1" inputmode="numeric" placeholder="z. B. 800"><span class="t-body">m²</span></span></div>
-              <div class="check-frage" data-zusatz="einheiten" hidden><label for="check-einheiten" class="t-body font-bold">Anzahl Wohneinheiten <span class="font-medium text-white/75">(optional, für den Betrag)</span></label><span class="check-zahl"><input id="check-einheiten" name="einheiten" type="number" min="1" step="1" inputmode="numeric" placeholder="z. B. 6"></span></div>
-            </form>
-            <div>
-              <p class="sr-only" role="status" data-check-status></p>
-              <div data-check-ergebnis>
-                <div class="ergebnis-leer">
-                  <p class="t-intro font-bold">Ihr Ergebnis</p>
-                  <p class="mt-3 t-body-tight">Sobald Sie ein Vorhaben auswählen, steht hier, welche Förderung infrage kommt.</p>
-                </div>
-              </div>
-              <div class="mt-8">
-                <p class="t-body-tight">Für alle Programme gilt: Der Antrag ist vor Vorhabenbeginn zu stellen, und die technische Projekt&shy;beschreibung erstellt ein Energieeffizienz-Experte.</p>
-                <p class="mt-6"><a href="#programme" class="btn btn-white">Alle Programme im Einzelnen</a></p>
-                <p class="mt-5 t-caption"><span class="text-white/75">Unverbindliche Ersteinschätzung, Stand September 2026, ohne Gewähr.</span></p>
-              </div>
-            </div>
+            <p class="t-body text-ink/85">Nachhaltigkeit betrifft dabei alle Bereiche im Unternehmen, von Energie&shy;einsparungen über die Digitalisierung bis zum Heizungsumbau. Der Förder-Check oben gibt Ihnen dazu eine erste Orientierung.</p>
           </div>
         </div>
       </section>
       <section id="programme" class="bg-white section-y scroll-mt-[calc(var(--header-h)+24px)]">
         <div class="container-wide">
           <h2 class="max-w-[900px] text-balance hyphens-auto break-words t-h2 text-blue-600">Die Programme im Einzelnen</h2>
-          <p class="mt-6 max-w-[680px] t-body text-ink/85">Was für alle Programme gilt und was sich im Juli 2026 geändert hat, steht hier einmal vorweg. Die Einzelheiten finden Sie im jeweiligen Programm.</p>
+          <p class="mt-6 max-w-[680px] t-body text-ink/85">Was für die Bundesförderung für effiziente Gebäude gilt und was sich dort im Juli 2026 geändert hat, steht hier einmal vorweg. Die Einzelheiten finden Sie im jeweiligen Programm.</p>
           <div class="mt-8 grid gap-5 md:grid-cols-2 lg:mt-14">
             <div class="rounded-[var(--radius-tile)] kachel-verlauf-2 mit-korn kachel-polster">
-              <p class="datumsmarke t-eyebrow">Gilt für alle Programme</p>
+              <p class="datumsmarke t-eyebrow">Heizung, Hülle, Anlagentechnik</p>
               <h3 class="mt-4 hyphens-auto break-words t-h4 text-blue-600">Voraussetzungen</h3>
               <ul class="mt-5 space-y-2.5">
                 <li class="t-body-tight text-ink/85">Der Antrag ist vor Vorhabenbeginn zu stellen</li>
@@ -274,15 +254,161 @@
                 </div>
               </div>
             </details>
+            <!-- Ab hier Programme ausserhalb der BEG (Stand September 2026,
+                 geprueft auf bafa.de, kfw.de, klimaschutz.de). Dieselben
+                 Werte stehen in assets/foerdercheck.js - beide anpassen. -->
+            <details id="energieberatung" class="programm scroll-mt-[calc(var(--header-h)+24px)]">
+              <summary>
+                <span class="block t-eyebrow text-ink/80">Beantragt über das BAFA</span>
+                <h3 class="mt-3 hyphens-auto break-words t-h3 text-blue-600">Energie&shy;beratung</h3>
+                <span class="mt-3 block t-body-tight text-ink/85">50&nbsp;% des Beratungshonorars</span><span class="programm-pfeil" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg></span>
+              </summary>
+              <div class="programm-inhalt">
+                <p class="max-w-[680px] t-body text-ink/85">Bevor Sie investieren, lohnt ein Blick von außen: Wo geht im Gebäude und im Betrieb die meiste Energie verloren? Für Nichtwohngebäude, Anlagen und Systeme bezuschusst der Bund die Beratung dazu.</p>
+                <div class="mt-10 grid gap-x-5 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+                  <div class="border-t border-ink/20 pt-8">
+                    <h4 class="hyphens-auto break-words t-h4 text-blue-600">Für wen</h4>
+                    <ul class="mt-5 space-y-2.5">
+                      <li class="t-body-tight text-ink/85">Kleine und mittlere Unternehmen</li>
+                      <li class="t-body-tight text-ink/85">Große Unternehmen mit höchstens 500.000 kWh Energieverbrauch im Jahr</li>
+                      <li class="t-body-tight text-ink/85">Kommunen und gemeinnützige Organisationen</li>
+                    </ul>
+                  </div>
+                  <div class="border-t border-ink/20 pt-8">
+                    <h4 class="hyphens-auto break-words t-h4 text-blue-600">Förderhöhe</h4>
+                    <ul class="mt-5 space-y-2.5">
+                      <li class="t-body-tight text-ink/85">Energieberatung nach DIN V 18599: 50 %, höchstens 850 € (unter 200 m²), 2.500 € (bis 500 m²) oder 4.000 € (über 500 m²)</li>
+                      <li class="t-body-tight text-ink/85">Energieaudit nach DIN EN 16247: 50 %, höchstens 3.000 €, bei Energiekosten bis 10.000 € im Jahr höchstens 600 €</li>
+                    </ul>
+                  </div>
+                  <div class="border-t border-ink/20 pt-8">
+                    <h4 class="hyphens-auto break-words t-h4 text-blue-600">Worauf achten</h4>
+                    <ul class="mt-5 space-y-2.5">
+                      <li class="t-body-tight text-ink/85">Den Beratungsauftrag erst nach der Bewilligung vergeben</li>
+                      <li class="t-body-tight text-ink/85">Das Honorar zahlen Sie zunächst voll, der Zuschuss kommt danach</li>
+                      <li class="t-body-tight text-ink/85">Für Wohngebäude gibt es ein eigenes Programm mit individuellem Sanierungsfahrplan</li>
+                    </ul>
+                  </div>
+                </div>
+                <p class="mt-10">
+                  <a href="https://www.bafa.de/DE/Energie/Energieberatung/Nichtwohngebaeude_Anlagen_Systeme/nichtwohngebaeude_anlagen_systeme_node.html" class="group inline-flex items-center gap-2 t-body font-bold text-blue-600 transition-colors hover:text-ink" rel="noopener">Zum Programm beim BAFA<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="transition-transform group-hover:translate-x-1"><path d="M9 6l6 6-6 6"></path></svg></a>
+                </p>
+              </div>
+            </details>
+            <details id="querschnitt" class="programm scroll-mt-[calc(var(--header-h)+24px)]">
+              <summary>
+                <span class="block t-eyebrow text-ink/80">Beantragt über das BAFA</span>
+                <h3 class="mt-3 hyphens-auto break-words t-h3 text-blue-600">Pumpen, Motoren, Druckluft</h3>
+                <span class="mt-3 block t-body-tight text-ink/85">20 bis 25&nbsp;% Zuschuss, nur für kleine und mittlere Unternehmen</span><span class="programm-pfeil" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg></span>
+              </summary>
+              <div class="programm-inhalt">
+                <p class="max-w-[680px] t-body text-ink/85">In Technikräumen laufen Pumpen, Ventilatoren und Kompressoren oft jahrzehntelang durch. Ihr Austausch gegen hocheffiziente Geräte wird über die Bundes&shy;förderung für Energie- und Ressourcen&shy;effizienz in der Wirtschaft bezuschusst (Modul 1, Querschnitts&shy;technologien).</p>
+                <div class="mt-10 grid gap-x-5 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+                  <div class="border-t border-ink/20 pt-8">
+                    <h4 class="hyphens-auto break-words t-h4 text-blue-600">Was gefördert wird</h4>
+                    <ul class="mt-5 space-y-2.5">
+                      <li class="t-body-tight text-ink/85">Hocheffiziente Elektromotoren, Pumpen, Ventilatoren und Drucklufterzeuger</li>
+                      <li class="t-body-tight text-ink/85">Frequenzumrichter zum Nachrüsten vorhandener Antriebe</li>
+                      <li class="t-body-tight text-ink/85">Wärmeübertrager, die Abwärme bestehender Anlagen nutzen</li>
+                      <li class="t-body-tight text-ink/85">Dämmung bestehender Anlagen</li>
+                    </ul>
+                  </div>
+                  <div class="border-t border-ink/20 pt-8">
+                    <h4 class="hyphens-auto break-words t-h4 text-blue-600">Förderhöhe</h4>
+                    <ul class="mt-5 space-y-2.5">
+                      <li class="t-body-tight text-ink/85">Kleine Unternehmen: 25 %</li>
+                      <li class="t-body-tight text-ink/85">Mittlere Unternehmen: 20 %</li>
+                      <li class="t-body-tight text-ink/85">Mindestens 2.000 € Investition, höchstens 200.000 € Zuschuss</li>
+                    </ul>
+                  </div>
+                  <div class="border-t border-ink/20 pt-8">
+                    <h4 class="hyphens-auto break-words t-h4 text-blue-600">Für wen</h4>
+                    <ul class="mt-5 space-y-2.5">
+                      <li class="t-body-tight text-ink/85">Nur kleine und mittlere Unternehmen</li>
+                      <li class="t-body-tight text-ink/85">Große Unternehmen, Privatpersonen und Kommunen sind in diesem Modul nicht antragsberechtigt</li>
+                    </ul>
+                  </div>
+                </div>
+                <p class="mt-10">
+                  <a href="https://www.bafa.de/DE/Energie/Energieeffizienz/Energieeffizienz_und_Prozesswaerme/Modul1_Querschnittstechnologien/modul1_querschnittstechnologien_node.html" class="group inline-flex items-center gap-2 t-body font-bold text-blue-600 transition-colors hover:text-ink" rel="noopener">Zum Programm beim BAFA<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="transition-transform group-hover:translate-x-1"><path d="M9 6l6 6-6 6"></path></svg></a>
+                </p>
+              </div>
+            </details>
+            <details id="photovoltaik" class="programm scroll-mt-[calc(var(--header-h)+24px)]">
+              <summary>
+                <span class="block t-eyebrow text-ink/80">Kredit über die Hausbank (KfW)</span>
+                <h3 class="mt-3 hyphens-auto break-words t-h3 text-blue-600">Photovoltaik und Speicher</h3>
+                <span class="mt-3 block t-body-tight text-ink/85">Zinsgünstiger Kredit, kein Bundeszuschuss</span><span class="programm-pfeil" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg></span>
+              </summary>
+              <div class="programm-inhalt">
+                <p class="max-w-[680px] t-body text-ink/85">Für Solaranlagen auf dem eigenen Dach gibt es vom Bund keinen Zuschuss, aber einen günstigen Kredit der KfW (Erneuerbare Energien – Standard, Programm 270). Zuschüsse bieten teils Länder und Kommunen.</p>
+                <div class="mt-10 grid gap-x-5 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+                  <div class="border-t border-ink/20 pt-8">
+                    <h4 class="hyphens-auto break-words t-h4 text-blue-600">Was gefördert wird</h4>
+                    <ul class="mt-5 space-y-2.5">
+                      <li class="t-body-tight text-ink/85">Photovoltaikanlagen samt Planung und Installation</li>
+                      <li class="t-body-tight text-ink/85">Batteriespeicher und weitere Anlagen für erneuerbaren Strom</li>
+                      <li class="t-body-tight text-ink/85">Auch gebrauchte Anlagen, nicht aber Balkonkraftwerke</li>
+                    </ul>
+                  </div>
+                  <div class="border-t border-ink/20 pt-8">
+                    <h4 class="hyphens-auto break-words t-h4 text-blue-600">Konditionen</h4>
+                    <ul class="mt-5 space-y-2.5">
+                      <li class="t-body-tight text-ink/85">Kredit bis 100 % der förderfähigen Kosten</li>
+                      <li class="t-body-tight text-ink/85">Beantragt wird bei Ihrer Hausbank, bevor Sie einen Vertrag unterschreiben</li>
+                    </ul>
+                  </div>
+                </div>
+                <p class="mt-10">
+                  <a href="https://www.kfw.de/inlandsfoerderung/Unternehmen/Energie-Umwelt/F%C3%B6rderprodukte/Erneuerbare-Energien-Standard-(270)/" class="group inline-flex items-center gap-2 t-body font-bold text-blue-600 transition-colors hover:text-ink" rel="noopener">Zum Programm bei der KfW<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="transition-transform group-hover:translate-x-1"><path d="M9 6l6 6-6 6"></path></svg></a>
+                </p>
+              </div>
+            </details>
+            <details id="kommunal-beleuchtung" class="programm scroll-mt-[calc(var(--header-h)+24px)]">
+              <summary>
+                <span class="block t-eyebrow text-ink/80">Beantragt über die ZUG</span>
+                <h3 class="mt-3 hyphens-auto break-words t-h3 text-blue-600">Beleuchtung für Kommunen</h3>
+                <span class="mt-3 block t-body-tight text-ink/85">25&nbsp;% Zuschuss, für finanzschwache Kommunen 40&nbsp;%</span><span class="programm-pfeil" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg></span>
+              </summary>
+              <div class="programm-inhalt">
+                <p class="max-w-[680px] t-body text-ink/85">Seit die BEG keine Innenbeleuchtung mehr fördert, bleibt für Kommunen und gemeinnützige Träger die Kommunal&shy;richtlinie der Nationalen Klimaschutz&shy;initiative. Sie bezuschusst den Umstieg auf LED mit bedarfsgerechter Steuerung.</p>
+                <div class="mt-10 grid gap-x-5 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+                  <div class="border-t border-ink/20 pt-8">
+                    <h4 class="hyphens-auto break-words t-h4 text-blue-600">Was gefördert wird</h4>
+                    <ul class="mt-5 space-y-2.5">
+                      <li class="t-body-tight text-ink/85">Innen- und Hallenbeleuchtung</li>
+                      <li class="t-body-tight text-ink/85">Außen- und Straßenbeleuchtung</li>
+                    </ul>
+                  </div>
+                  <div class="border-t border-ink/20 pt-8">
+                    <h4 class="hyphens-auto break-words t-h4 text-blue-600">Förderhöhe</h4>
+                    <ul class="mt-5 space-y-2.5">
+                      <li class="t-body-tight text-ink/85">25 % der zuwendungsfähigen Ausgaben</li>
+                      <li class="t-body-tight text-ink/85">40 % für finanzschwache Kommunen und Antragsteller aus Braunkohlerevieren</li>
+                    </ul>
+                  </div>
+                  <div class="border-t border-ink/20 pt-8">
+                    <h4 class="hyphens-auto break-words t-h4 text-blue-600">Für wen</h4>
+                    <ul class="mt-5 space-y-2.5">
+                      <li class="t-body-tight text-ink/85">Kommunen und kommunale Unternehmen</li>
+                      <li class="t-body-tight text-ink/85">Vereine, Bildungseinrichtungen und weitere gemeinnützige Träger</li>
+                    </ul>
+                  </div>
+                </div>
+                <p class="mt-10">
+                  <a href="https://www.klimaschutz.de/de/foerderung-der-nki/foerderprogramme/kommunalrichtlinie/sanierung-von-innen-und-hallenbeleuchtung" class="group inline-flex items-center gap-2 t-body font-bold text-blue-600 transition-colors hover:text-ink" rel="noopener">Zur Kommunalrichtlinie<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="transition-transform group-hover:translate-x-1"><path d="M9 6l6 6-6 6"></path></svg></a>
+                </p>
+              </div>
+            </details>
           </div>
         </div>
       </section>
       <section class="bg-white section-y">
         <div class="container-wide">
           <h2 class="mx-auto max-w-[820px] text-balance hyphens-auto break-words t-h2 text-blue-600 text-center">Wo Sie den Antrag stellen</h2>
-          <p class="mx-auto mt-5 max-w-[680px] text-balance t-intro text-ink/80 text-center">Beantragt wird direkt beim BAFA oder bei der KfW, immer vor Beginn des Vorhabens. Die technische Projekt&shy;beschreibung erstellt ein Energieeffizienz-Experte.</p>
-          <p class="mt-10 flex flex-wrap justify-center gap-4"><a href="https://www.bafa.de" class="btn btn-primary" rel="noopener">BAFA</a><a href="https://www.kfw.de" class="btn btn-primary" rel="noopener">KfW</a></p>
-          <p class="mx-auto mt-14 max-w-[680px] t-caption text-ink/75 text-center">Stand: September 2026. Angaben ohne Gewähr – maßgeblich sind die jeweils gültigen Richtlinien und Merkblätter von BAFA und KfW.</p>
+          <p class="mx-auto mt-5 max-w-[680px] text-balance t-intro text-ink/80 text-center">Den Antrag stellen Sie selbst, immer vor Beginn des Vorhabens: beim BAFA, bei der KfW (Kredite über Ihre Hausbank) oder, für die Kommunal&shy;richtlinie, bei der ZUG. Die technische Projekt&shy;beschreibung erstellt ein Energieeffizienz-Experte.</p>
+          <p class="mt-10 flex flex-wrap justify-center gap-4"><a href="https://www.bafa.de" class="btn btn-primary" rel="noopener">BAFA</a><a href="https://www.kfw.de" class="btn btn-primary" rel="noopener">KfW</a><a href="https://www.klimaschutz.de/de/foerderung-der-nki/foerderprogramme/kommunalrichtlinie" class="btn btn-primary" rel="noopener">Kommunal&shy;richtlinie</a></p>
+          <p class="mx-auto mt-14 max-w-[680px] t-caption text-ink/75 text-center">Stand: September 2026. Angaben ohne Gewähr – maßgeblich sind die jeweils gültigen Richtlinien und Merkblätter der Förder&shy;geber. taskrunner beantragt keine Förderungen und berät nicht verbindlich dazu.</p>
         </div>
       </section>
     </main>

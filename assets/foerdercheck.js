@@ -73,7 +73,7 @@
     } else {
       k.posten.push(["30&nbsp;%", "Grundförderung auf die förderfähigen Kosten"]);
       if (!wer) k.hinweise.push("Selbst nutzende Privatpersonen erhalten mit Boni bis zu 70&nbsp;%.");
-      else if (wer === "weg") k.hinweise.push("Die Boni gelten nur für selbst nutzende Privatpersonen – was davon bei Ihrer Eigentümer&shy;gemeinschaft greift, prüfen wir.");
+      else if (wer === "weg") k.hinweise.push("Die Boni gelten nur für selbst nutzende Privatpersonen – was davon bei Ihrer Eigentümer&shy;gemeinschaft greift, klären Sie am besten mit Ihrem Energieeffizienz-Experten.");
       else k.hinweise.push("Die Boni gelten nur für selbst nutzende Privatpersonen, deshalb bleibt es bei 30&nbsp;%.");
     }
     if (m2) {
@@ -129,7 +129,18 @@
     return k;
   };
 
-  var beleuchtung = function () {
+  var beleuchtung = function (wer) {
+    /* Kommunen und Gemeinnuetzige: Kommunalrichtlinie (NKI) */
+    if (wer === "kommune") {
+      return {
+        stelle: "Beantragt über die ZUG",
+        titel: "Beleuchtung für Kommunen",
+        name: "Kommunalrichtlinie Beleuchtung",
+        ziel: "#kommunal-beleuchtung",
+        posten: [["25&nbsp;%", "LED für Innen-, Hallen-, Außen- und Straßen&shy;beleuchtung"], ["40&nbsp;%", "für finanzschwache Kommunen und Braunkohle&shy;reviere"]],
+        hinweise: ["Die BEG fördert Innen&shy;beleuchtung seit dem 21. Juli 2026 nicht mehr, die Kommunal&shy;richtlinie schon."]
+      };
+    }
     return {
       entfallen: true,
       stelle: "Förderung entfallen",
@@ -138,8 +149,65 @@
       ziel: "#anlagentechnik",
       posten: [],
       text: "Energieeffiziente Innen&shy;beleuchtung in Nichtwohngebäuden wird seit dem 21. Juli 2026 nicht mehr über die BEG gefördert.",
-      hinweise: ["Infrage kommen die Nationale Klimaschutz&shy;initiative, KfW-Kredite, Landesprogramme oder Contracting."]
+      hinweise: ["Infrage kommen die Nationale Klimaschutz&shy;initiative (für Kommunen und Gemeinnützige), KfW-Kredite, Landesprogramme oder Contracting."]
     };
+  };
+
+  /* ---------------------------------------------------------------- *
+   *  Programme ausserhalb der BEG (bafa.de, kfw.de, Stand September
+   *  2026). Text dazu in quellen/foerderungen.html ab #energieberatung.
+   * ---------------------------------------------------------------- */
+  var querschnitt = function (wer) {
+    var k = {
+      stelle: "Beantragt über das BAFA",
+      titel: "Pumpen, Motoren, Druckluft",
+      name: "Querschnittstechnologien",
+      ziel: "#querschnitt",
+      posten: [],
+      hinweise: []
+    };
+    if (wer && wer !== "unternehmen") {
+      k.entfallen = true;
+      k.stelle = "Nicht antragsberechtigt";
+      k.text = "Diese Förderung gibt es nur für kleine und mittlere Unternehmen.";
+      return k;
+    }
+    k.posten.push(["25&nbsp;%", "für kleine Unternehmen: effiziente Motoren, Pumpen, Ventilatoren, Druckluft, Abwärme&shy;nutzung"]);
+    k.posten.push(["20&nbsp;%", "für mittlere Unternehmen"]);
+    k.hinweise.push("Nur kleine und mittlere Unternehmen, große sind ausgeschlossen. Mindestens 2.000&nbsp;€ Investition, höchstens 200.000&nbsp;€ Zuschuss.");
+    return k;
+  };
+
+  var solar = function () {
+    return {
+      stelle: "Kredit über die Hausbank (KfW)",
+      titel: "Photovoltaik und Speicher",
+      name: "Photovoltaik",
+      ziel: "#photovoltaik",
+      posten: [["bis 100&nbsp;%", "der förderfähigen Kosten als zinsgünstiger Kredit"]],
+      hinweise: ["Einen Bundeszuschuss gibt es nicht, Zuschüsse bieten teils Länder und Kommunen."]
+    };
+  };
+
+  var beratung = function (wer, gebaeude) {
+    var k = {
+      stelle: "Beantragt über das BAFA",
+      titel: "Energie&shy;beratung",
+      name: "Energieberatung",
+      ziel: "#energieberatung",
+      posten: [],
+      hinweise: []
+    };
+    var wohnen = gebaeude === "wohn" || (!gebaeude && (wer === "privat" || wer === "weg"));
+    if (wohnen) {
+      k.text = "Für Wohngebäude fördert das BAFA die Energie&shy;beratung mit individuellem Sanierungs&shy;fahrplan. Der Fahrplan bringt zusätzlich 5&nbsp;% bei der Gebäude&shy;hülle.";
+      return k;
+    }
+    k.posten.push(["50&nbsp;%", "Energie&shy;beratung für Nichtwohngebäude, höchstens 850 bis 4.000&nbsp;€ je nach Fläche"]);
+    k.posten.push(["50&nbsp;%", "Energieaudit nach DIN EN 16247, höchstens 3.000&nbsp;€"]);
+    if (wer === "unternehmen" || !wer) k.hinweise.push("Große Unternehmen nur mit höchstens 500.000&nbsp;kWh Energieverbrauch im Jahr.");
+    k.hinweise.push("Den Beratungsauftrag erst nach der Bewilligung vergeben.");
+    return k;
   };
 
   var PFEIL = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="transition-transform group-hover:translate-x-1"><path d="M9 6l6 6-6 6"></path></svg>';
@@ -184,7 +252,7 @@
     return zeigen ? ganzeZahl(name) : 0;
   };
 
-  var ZAHLWORT = ["", "Ein", "Zwei", "Drei"];
+  var ZAHLWORT = ["", "Ein", "Zwei", "Drei", "Vier", "Fünf", "Sechs", "Sieben"];
   var letzterStatus = "";
   var letztesHtml = leer;
 
@@ -201,13 +269,16 @@
     if (hat("heizung")) karten.push(heizung(wer, m2));
     if (hat("huelle")) karten.push(huelle(gebaeude, einheiten));
     if (hat("anlagen") || hat("optimierung")) karten.push(anlagen(hat("anlagen"), hat("optimierung")));
-    if (hat("beleuchtung")) karten.push(beleuchtung());
+    if (hat("beleuchtung")) karten.push(beleuchtung(wer));
+    if (hat("querschnitt")) karten.push(querschnitt(wer));
+    if (hat("solar")) karten.push(solar());
+    if (hat("beratung")) karten.push(beratung(wer, gebaeude));
 
     var programme = karten.filter(function (k) { return !k.entfallen; });
     var n = programme.length;
     var kopf = n
       ? ZAHLWORT[n] + (n === 1 ? " Programm kommt" : " Programme kommen") + " infrage"
-      : "Für Beleuchtung gibt es derzeit keine Bundesförderung";
+      : "Für Ihre Auswahl gibt es derzeit keine passende Bundesförderung";
 
     /* Nur neu schreiben, wenn sich etwas geaendert hat. Verlaesst man
        ein Zahlenfeld mit einem Klick auf "Details", feuert vorher noch
