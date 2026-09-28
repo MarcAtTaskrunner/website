@@ -1205,6 +1205,14 @@
 
     feld.addEventListener("focus", lade);
     feld.addEventListener("input", zeige);
+    /* Auf Touch-Geraeten: PLZ vollstaendig und bekannt - Tastatur zu,
+       damit Ort, Weiter und Karte frei im Blick sind. Unbekannte PLZ
+       lassen sie offen zum Korrigieren. */
+    if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+      feld.addEventListener("input", function () {
+        if (feld.value.length === feld.maxLength && window.taskrunnerPlz && window.taskrunnerPlz[feld.value]) feld.blur();
+      });
+    }
 
     /* Kaesten hinter dem Feld: gefuellte und der naechste freie markieren */
     var kaesten = form.querySelectorAll(".plz-raster > span");
