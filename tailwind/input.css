@@ -2911,10 +2911,11 @@ html:has(input:focus, select:focus, textarea:focus) { scroll-behavior: auto; }
        bis hinter sie, die Rechtslinks sollen darueber stehen */
     padding: calc(var(--header-h) + 28px) var(--rand) 20px;
     padding-bottom: calc(20px + 100lvh - 100svh);
-    /* hoechstens 72 px: auf dem iPhone mit schwebender Leiste ist
-       lvh - svh deutlich groesser als die Leiste selbst, die Rechtslinks
-       standen dann weit ueber ihr und nahmen der Karte den Platz */
-    padding-bottom: min(calc(20px + 100lvh - 100svh), 72px);
+    /* hoechstens 36 px: auf dem iPhone ist lvh - svh deutlich groesser
+       als das Stueck, das die Leiste wirklich verdeckt (gemessen am
+       Screenshot vom 28.09.2026: rund 15 px) - die Rechtslinks standen
+       sonst weit ueber ihr und nahmen der Karte den Platz */
+    padding-bottom: min(calc(20px + 100lvh - 100svh), 36px);
   }
   #techniker.ist-voll .handwerker-kopf { display: none; }
   /* Oberkante in der Farbe der Statusleiste (#000a3a, app.js thema),
