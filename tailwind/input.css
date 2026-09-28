@@ -2969,3 +2969,17 @@ html.formular-voll header:not(.menue-offen) > div .btn-primary { background: #ff
    die Meldung nach dem Absenden. Nur fuer den Screenreader, kein Rahmen. */
 .registrierung fieldset:focus,
 .registrierung-meldung:focus { outline: none; }
+
+/* Startseite auf flachen Bildschirmen (Handy quer, erstes iPhone SE):
+   die Mindesthoehe von 640 px schob Ueberschrift und Knoepfe unter den
+   Bildschirm. Hier waechst der Hero mit seinem Inhalt und ist mindestens
+   so hoch wie der kleinste sichtbare Bereich (svh, springt nicht beim
+   Scrollen). Das Rad sucht sich seinen Platz neben oder ueber dem Text
+   selbst (rad.js). */
+@media (max-height: 600px) {
+  .variante-b .hero-voll {
+    height: auto;
+    min-height: calc(100vh + var(--hero-ueberstand));
+    min-height: calc(100svh + var(--hero-ueberstand));
+  }
+}

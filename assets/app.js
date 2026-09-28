@@ -36,6 +36,11 @@
     var flaeche = function (offen) {
       if (kopf) kopf.classList.toggle("menue-offen", offen);
       document.documentElement.classList.toggle("menue-offen", offen);
+      /* Seite hinter der Klappe fuer Screenreader sperren (VoiceOver
+         wischte sonst auf verdeckte Inhalte) - aber nicht entsperren,
+         solange das Kontaktfenster sie gesperrt haelt. */
+      if (!offen && document.documentElement.classList.contains("kontakt-offen")) return;
+      Array.prototype.forEach.call(document.querySelectorAll("main, footer"), function (el) { el.inert = offen; });
     };
 
     /* Die Kopfleiste ist ganz oben durchsichtig. Waehrend die Klappe
