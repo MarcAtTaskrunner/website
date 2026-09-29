@@ -855,11 +855,17 @@ html.js-auf .variante-b .da .fortschritt-wert { stroke-dashoffset: 0; }
 }
 
 /* Runde Portraets, leicht ueberlappend. */
-.portraet-reihe { display: flex; margin-top: 24px; padding-left: 12px; }
+/* Team-Kachel (Startseite): die Koepfe stehen direkt unter der
+   Ueberschrift, nicht am Fuss der Kachel, und sind groesser als frueher
+   (56 px). Die Ueberlappung waechst mit, damit die Reihe gleich dicht
+   wirkt. Hoechstens 76 px; wird die Kachel schmaler, schrumpfen alle
+   Koepfe gleichmaessig und bleiben rund (aspect-ratio statt Hoehe). */
+.portraet-reihe { display: flex; margin-top: 32px; padding-left: 16px; }
 .portraet-reihe > li {
-  width: 56px;
-  height: 56px;
-  margin-left: -12px;
+  flex: 0 1 76px;
+  min-width: 0;
+  aspect-ratio: 1;
+  margin-left: -16px;
   overflow: hidden;
   border-radius: 50%;
   border: 3px solid #f7f8fa;
