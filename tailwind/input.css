@@ -1194,8 +1194,14 @@ footer h3 {
  * ------------------------------------------------------------------ */
 .projekt-zeile { border-top: 1px solid rgba(255,255,255,0.2); }
 .projekt-zeile:last-child { border-bottom: 1px solid rgba(255,255,255,0.2); }
-.projekt-symbol { flex: none; color: #8ab4f8; }
-.projekt-symbol svg { display: block; width: 32px; height: 32px; }
+/* Wie die Icons unter "Lieber kurz durchsprechen?" (Startseite): ein
+   42 px hohes Feld, jedes Icon mit etwa derselben Flaeche (rund
+   1.230 px2) statt im selben Quadrat - sonst wirken hohe und breite
+   Formen verschieden gross. Die Masse stehen je Icon als width/height
+   im Markup. Das Feld ist 42 px breit, damit die Ueberschriften
+   daneben buendig beginnen. */
+.projekt-symbol { flex: none; display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; color: #8ab4f8; }
+.projekt-symbol svg { display: block; }
 /* Im Projektabschnitt steht aller Text in vollem Weiss statt der 75 %
    von .verlauf-nacht p - die ID schlaegt die Klassenregel. */
 #projekte p { color: #fff; }
@@ -3064,4 +3070,65 @@ html.formular-voll header:not(.menue-offen) > div .btn-primary { background: #ff
    Ebene bekommt - die ganze Flaeche wurde dann grau und heller. */
 @media (max-width: 1023px) {
   #techniker.ist-voll.mit-korn::before { display: none; }
+}
+
+/* ------------------------------------------------------------------ *
+ *  Papier und Pappe: Schatten
+ *
+ *  Mit dem Korn wirken die Flaechen wie Karton und Papier. Die Schatten
+ *  betonen das: Kacheln und Fotos liegen auf der Seite, dunkle Baender
+ *  liegen unter der weissen Seite, die einen Schatten auf sie wirft.
+ *  Licht kommt von oben. Die Schatten sind nachtblau statt schwarz,
+ *  sonst wirken sie schmutzig. Kopfband und Hero bekommen bewusst
+ *  keinen Schatten - ausprobiert, ohne gefiel es besser.
+ * ------------------------------------------------------------------ */
+:root {
+  /* Pappe: enger Kontaktschatten an der Kante, darunter ein weiter,
+     weicher. Innen oben eine Lichtkante, unten die Dicke der Pappe. */
+  --schatten-pappe:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 -2px 0 rgba(0, 0, 20, 0.28),
+    0 1px 1px rgba(0, 1, 40, 0.20),
+    0 3px 6px -2px rgba(0, 1, 40, 0.18),
+    0 14px 28px -12px rgba(0, 1, 60, 0.38),
+    0 34px 64px -28px rgba(0, 1, 80, 0.34);
+  /* Papier: dieselbe Machart, leiser - helle Flaechen und Fotos */
+  --schatten-papier:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 1px 1px rgba(0, 1, 60, 0.06),
+    0 3px 6px -3px rgba(0, 1, 60, 0.10),
+    0 14px 28px -14px rgba(0, 1, 80, 0.20),
+    0 32px 60px -30px rgba(0, 1, 80, 0.18);
+  /* Weisses Papier auf dunkler Pappe: der Schatten faellt auf dunklen
+     Grund und braucht dort mehr Deckung, um ueberhaupt zu wirken */
+  --schatten-auf-pappe:
+    0 1px 1px rgba(0, 0, 20, 0.30),
+    0 4px 8px -3px rgba(0, 0, 20, 0.35),
+    0 18px 32px -14px rgba(0, 0, 20, 0.55);
+}
+
+.kachel-verlauf-nacht,
+.raster-kachel.bg-blue-600,
+.foerdercheck,
+.kontakt-flaeche.verlauf-nacht { box-shadow: var(--schatten-pappe); }
+
+[class*="kachel-verlauf-"]:not(.kachel-verlauf-nacht),
+.raster-bild,
+.laufband-karte { box-shadow: var(--schatten-papier); }
+
+.ergebnis-karte { box-shadow: var(--schatten-auf-pappe); }
+
+/* Das Laufband scrollt seitlich und schneidet dabei auch oben und
+   unten ab - Platz fuer den Schatten, ohne dass der Abstand waechst */
+.laufband { padding-bottom: 48px; margin-bottom: -48px; }
+
+/* Baender ueber die volle Breite: die weisse Seite liegt darueber und
+   wirft oben einen Schatten auf das Band, unten einen schwaecheren */
+section.verlauf-nacht:not(.seitenkopf) {
+  box-shadow:
+    inset 0 22px 26px -20px rgba(0, 0, 16, 0.60),
+    inset 0 -14px 20px -16px rgba(0, 0, 16, 0.40);
+}
+.fuss-verlauf {
+  box-shadow: inset 0 22px 26px -20px rgba(0, 0, 16, 0.60);
 }
