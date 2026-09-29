@@ -3167,3 +3167,13 @@ section.verlauf-nacht:not(.seitenkopf) {
 @media (max-width: 734px) {
   .mit-papier.mit-korn::before { background-image: url("../images/textur-papier-1200.jpg"); }
 }
+
+/* Pfeil hinter Textlinks (sales@…, Telefon, "Jetzt Kontakt aufnehmen"):
+   items-center setzt ihn auf die Mitte der Zeilenhoehe, das Auge sucht
+   ihn aber auf der Mitte der Kleinbuchstaben - die liegt in DIN Pro gut
+   0,1 em tiefer (gemessen: 2 px bei 17 px). Telefonnummern bestehen aus
+   Ziffern, deren Mitte auf der Zeilenmitte liegt: dort bleibt er. top
+   statt transform, weil transform den Hover (group-hover:translate-x-1)
+   traegt. */
+a.group.inline-flex > svg:last-child { position: relative; top: 0.1em; }
+a.group.inline-flex[href^="tel:"] > svg:last-child { top: 0; }
