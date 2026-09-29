@@ -12,7 +12,7 @@
 //   Die Tabelle ist das einzige Ziel: hakt Google, bekommt das Formular
 //   einen Fehler und der Handwerker kann es noch einmal abschicken.
 
-const FELDER = ["Gewerke", "PLZ", "Ort", "Einsatzradius", "Name", "Firma", "Telefon"];
+const FELDER = ["Gewerke", "PLZ", "Ort", "Einsatzradius", "Name", "Firma", "Telefon", "E-Mail"];
 // Telefonnummer international: "0201 1234567" mit +49 -> "+49 201 1234567".
 // Beginnt die Eingabe schon mit + oder 00, bleibt sie, wie sie ist. Ohne
 // Vorwahl ("Andere" im Formular, aber kein + getippt) bleibt die Nummer
@@ -23,7 +23,7 @@ function telefon(nummer, vorwahl) {
   if (!/^\+\d{1,4}$/.test(vorwahl)) return n;
   return `${vorwahl} ${n.replace(/^0+/, "")}`;
 }
-const PFLICHT = ["Gewerke", "PLZ", "Name", "Telefon"];
+const PFLICHT = ["Gewerke", "PLZ", "Name", "Telefon", "E-Mail"];
 
 function antwort(status, daten) {
   return new Response(JSON.stringify(daten), {
@@ -77,6 +77,10 @@ async function registrierung(request, env) {
   // und + - / ( ), mindestens sechs Ziffern
   if (!/^[0-9 +()\/-]+$/.test(daten.Telefon) || daten.Telefon.replace(/\D/g, "").length < 6) {
     return antwort(400, { ok: false, fehler: "Telefon ungueltig" });
+  }
+  // Grob wie type="email" im Formular: etwas@etwas.etwas, ohne Leerzeichen
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(daten["E-Mail"])) {
+    return antwort(400, { ok: false, fehler: "E-Mail ungueltig" });
   }
   daten.Telefon = telefon(daten.Telefon, String(eingang.Vorwahl ?? ""));
 

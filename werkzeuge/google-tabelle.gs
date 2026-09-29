@@ -28,7 +28,9 @@
  * verwalten eine neue Version anlegen; die URL bleibt dabei gleich.
  */
 
-var SPALTEN = ["Eingang", "Gewerke", "PLZ", "Ort", "Einsatzradius", "Name", "Firma", "Telefon"];
+/* Neue Spalten nur hinten anhaengen: die Kopfzeile schreibt das Script nur
+   in eine leere Tabelle, in einer bestehenden also von Hand ergaenzen */
+var SPALTEN = ["Eingang", "Gewerke", "PLZ", "Ort", "Einsatzradius", "Name", "Firma", "Telefon", "E-Mail"];
 
 function doPost(e) {
   var daten;
