@@ -1184,10 +1184,21 @@
       u = Math.max(u, rechteck.bottom);
     }
 
+    /* Nur in Bloecke hinabsteigen. Eine Ueberschrift mit eingebetteten
+       Woertern (<span>, <br>) wird als Ganzes gemessen - sonst zaehlte
+       nur das hervorgehobene Wort und das Rad rueckte in den Text. */
+    function nurTextinhalt(k) {
+      for (var j = 0; j < k.children.length; j++) {
+        if ((getComputedStyle(k.children[j]).display || "").indexOf("inline") !== 0) return false;
+      }
+      return getComputedStyle(k).display.indexOf("inline") !== 0;
+    }
+
     (function durchgehen(knoten) {
       for (var i = 0; i < knoten.children.length; i++) {
         var kind = knoten.children[i];
-        if (kind.hidden || kind.children.length) durchgehen(kind);
+        if (kind.hidden) continue;
+        if (kind.children.length && !nurTextinhalt(kind)) durchgehen(kind);
         else messen(kind);
       }
     })(el);
