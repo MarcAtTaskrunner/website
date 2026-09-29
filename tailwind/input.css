@@ -760,9 +760,9 @@ header .logo-hell { opacity: 0; }
 .raster-spalte { display: contents; }
 
 @media (min-width: 768px) {
+  /* Sechs Lagen, also drei volle Zeilen. Bei ungerader Zahl die letzte
+     Lage mit grid-column: 1 / -1 ueber beide Spalten ziehen. */
   .raster { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  /* Sieben Lagen auf zwei Spalten: die letzte bekommt die ganze Breite. */
-  .raster-spalte:last-child > :last-child { grid-column: 1 / -1; }
 }
 
 /* Zweispaltig steht jedes Bild neben einer Kachel: dort fuellt es die
@@ -779,7 +779,6 @@ header .logo-hell { opacity: 0; }
   .raster { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .raster-spalte { display: flex; flex-direction: column; gap: 20px; }
   .raster-spalte > :last-child { flex-grow: 1; }
-  .raster-spalte:last-child > :last-child { grid-column: auto; }
 }
 
 .raster-kachel {
