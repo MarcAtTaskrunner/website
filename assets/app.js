@@ -793,7 +793,7 @@
         form.dispatchEvent(new CustomEvent("gesendet"));
       }).catch(function () {
         senden.disabled = false;
-        senden.textContent = "Kostenlos registrieren";
+        senden.textContent = "Kostenlos Registrieren";
         meldung.className = "registrierung-meldung ist-fehler";
         meldung.innerHTML = 'Das hat leider nicht geklappt. Bitte versuchen Sie es noch einmal oder schreiben Sie uns an <a href="mailto:operations@taskrunner.de">operations@taskrunner.de</a>.';
         meldung.hidden = false;
