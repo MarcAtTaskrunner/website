@@ -756,8 +756,8 @@
       }
     });
 
-    /* Absenden: direkt an den Worker (worker/index.js), der die Mail
-       verschickt. Klappt das nicht, bleibt das Formular stehen und die
+    /* Absenden: direkt an den Worker (worker/index.js), der die Anmeldung
+       in die Google-Tabelle schreibt. Klappt das nicht, bleibt das Formular stehen und die
        Meldung nennt die Mailadresse als Ausweg. */
     var meldung = form.querySelector("[data-senden-meldung]");
     var ziel = form.getAttribute("data-senden");
@@ -1081,7 +1081,7 @@
    *  window.taskrunnerPlz) nachgeladen. Ist die PLZ vollstaendig - DE
    *  fuenf, AT vier Stellen -, steht darunter der Ort zur Bestaetigung;
    *  gehoeren mehrere Orte dazu, eine Auswahl. Der Ort geht als Feld
-   *  "Ort" mit in die Mail. Ohne JavaScript bleibt ein freies Ortsfeld.
+   *  "Ort" mit in die Tabelle. Ohne JavaScript bleibt ein freies Ortsfeld.
    *  "Standort verwenden" ([data-plz-orten]) fragt den Browser nach dem
    *  Standort und setzt die PLZ mit dem naechsten Mittelpunkt aus
    *  assets/plz-lage.js ein. Der Standort verlaesst den Browser nicht.

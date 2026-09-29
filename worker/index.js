@@ -4,21 +4,13 @@
 //
 // POST /api/registrierung
 //   Nimmt das Handwerker-Formular von kontakt.html als JSON an und
-//   schickt es als Mail an EMPFAENGER (wrangler.jsonc, "vars").
-//   Versand ueber Resend (resend.com), Schluessel als Secret
-//   RESEND_API_KEY im Cloudflare-Dashboard (Worker -> Settings ->
-//   Variables and Secrets) - nie ins Repo.
-//   Absender: ABSENDER aus "vars". Ohne eigene, bei Resend bestaetigte
-//   Domain geht nur onboarding@resend.dev, und das nur an die Adresse,
-//   mit der das Resend-Konto angelegt ist - fuer den Test reicht das.
-//
-//   Zusaetzlich landet jede Registrierung als Zeile in einer Google-
-//   Tabelle: ueber ein Apps-Script an der Tabelle (Code und Einrichtung in
-//   werkzeuge/google-tabelle.gs). Dafuer zwei Secrets im Dashboard:
-//   SHEET_URL (Adresse der Web-App) und SHEET_GEHEIMNIS (dasselbe Wort
-//   wie im Script). Fehlen sie, entfaellt nur die Tabelle, die Mail geht
-//   trotzdem. Die Tabelle wird im Hintergrund beschrieben (waitUntil) -
-//   hakt Google, merkt das niemand im Formular, es steht nur im Log.
+//   schreibt es als Zeile in eine Google-Tabelle: ueber ein Apps-Script
+//   an der Tabelle (Code und Einrichtung in werkzeuge/google-tabelle.gs).
+//   Dafuer zwei Secrets im Cloudflare-Dashboard (Worker -> Settings ->
+//   Variables and Secrets): SHEET_URL (Adresse der Web-App) und
+//   SHEET_GEHEIMNIS (dasselbe Wort wie im Script) - nie ins Repo.
+//   Die Tabelle ist das einzige Ziel: hakt Google, bekommt das Formular
+//   einen Fehler und der Handwerker kann es noch einmal abschicken.
 
 const FELDER = ["Gewerke", "PLZ", "Ort", "Einsatzradius", "Name", "Firma", "Telefon"];
 // Telefonnummer international: "0201 1234567" mit +49 -> "+49 201 1234567".
@@ -40,9 +32,9 @@ function antwort(status, daten) {
   });
 }
 
-// Eine Zeile in die Google-Tabelle (werkzeuge/google-tabelle.gs)
+// Eine Zeile in die Google-Tabelle (werkzeuge/google-tabelle.gs);
+// true, wenn sie angekommen ist
 async function inTabelle(env, daten, zeit) {
-  if (!env.SHEET_URL || !env.SHEET_GEHEIMNIS) return;
   try {
     const antwort = await fetch(env.SHEET_URL, {
       method: "POST",
@@ -50,15 +42,17 @@ async function inTabelle(env, daten, zeit) {
       body: JSON.stringify({ geheimnis: env.SHEET_GEHEIMNIS, Eingang: zeit, ...daten }),
     });
     const text = await antwort.text();
-    if (!antwort.ok || !text.includes('"ok":true')) console.log("Tabelle-Fehler", antwort.status, text.slice(0, 300));
+    if (antwort.ok && text.includes('"ok":true')) return true;
+    console.log("Tabelle-Fehler", antwort.status, text.slice(0, 300));
   } catch (fehler) {
     console.log("Tabelle-Fehler", String(fehler));
   }
+  return false;
 }
 
-async function registrierung(request, env, ctx) {
+async function registrierung(request, env) {
   if (request.method !== "POST") return antwort(405, { ok: false, fehler: "Nur POST" });
-  if (!env.RESEND_API_KEY) return antwort(503, { ok: false, fehler: "Versand nicht eingerichtet" });
+  if (!env.SHEET_URL || !env.SHEET_GEHEIMNIS) return antwort(503, { ok: false, fehler: "Versand nicht eingerichtet" });
 
   let eingang;
   try {
@@ -72,7 +66,7 @@ async function registrierung(request, env, ctx) {
 
   const daten = {};
   for (const feld of FELDER) {
-    // Zeilenumbrueche raus: nichts soll in den Betreff der Mail rutschen
+    // Zeilenumbrueche raus: eine Anmeldung, eine Zeile
     daten[feld] = String(eingang[feld] ?? "").replace(/[\r\n]+/g, " ").trim().slice(0, 300);
   }
   for (const feld of PFLICHT) {
@@ -88,38 +82,16 @@ async function registrierung(request, env, ctx) {
 
   const zeit = new Date().toLocaleString("de-DE", { timeZone: "Europe/Berlin" });
 
-  const text = [
-    "Neue Registrierung über das Handwerker-Formular auf der Kontaktseite",
-    "",
-    ...FELDER.map((f) => `${f.padEnd(14)} ${daten[f] || "-"}`),
-    "",
-    `Eingang: ${zeit}`,
-  ].join("\n");
-
-  const versand = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, "Content-Type": "application/json" },
-    body: JSON.stringify({
-      from: env.ABSENDER,
-      to: [env.EMPFAENGER],
-      subject: `Registrierung Handwerker: ${daten.Name}, ${daten.PLZ} ${daten.Ort}`.trim(),
-      text,
-    }),
-  });
-  if (!versand.ok) {
-    console.log("Resend-Fehler", versand.status, await versand.text());
-    return antwort(502, { ok: false, fehler: "Versand fehlgeschlagen" });
+  if (!(await inTabelle(env, daten, zeit))) {
+    return antwort(502, { ok: false, fehler: "Speichern fehlgeschlagen" });
   }
-  // Erst nach der Mail: schlaegt sie fehl, schickt der Handwerker nochmal
-  // ab - sonst stuende er doppelt in der Tabelle
-  ctx.waitUntil(inTabelle(env, daten, zeit));
   return antwort(200, { ok: true });
 }
 
 export default {
-  async fetch(request, env, ctx) {
+  async fetch(request, env) {
     const url = new URL(request.url);
-    if (url.pathname === "/api/registrierung") return registrierung(request, env, ctx);
+    if (url.pathname === "/api/registrierung") return registrierung(request, env);
     return env.ASSETS.fetch(request);
   },
 };
