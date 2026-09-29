@@ -783,7 +783,7 @@
       }).then(function () {
         form.classList.add("ist-gesendet");
         meldung.className = "registrierung-meldung ist-ok";
-        meldung.innerHTML = "<strong>Danke, Ihre Registrierung ist angekommen.</strong> Wir melden uns in den nächsten Tagen telefonisch bei Ihnen.";
+        meldung.innerHTML = "<strong>Danke, Ihre Daten sind angekommen.</strong> Wir melden uns, sobald wir einen passenden Task in Ihrer Region für Sie haben.";
         meldung.hidden = false;
         /* Fokus auf die Meldung: Knoepfe und Felder sind jetzt weg */
         meldung.tabIndex = -1;

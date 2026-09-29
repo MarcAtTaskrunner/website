@@ -3132,3 +3132,32 @@ section.verlauf-nacht:not(.seitenkopf) {
 .fuss-verlauf {
   box-shadow: inset 0 22px 26px -20px rgba(0, 0, 16, 0.60);
 }
+
+/* ------------------------------------------------------------------ *
+ *  Papiertextur im Kopf
+ *
+ *  ALTERNATIVE, nicht in Gebrauch. Wer zusaetzlich zu .mit-korn die
+ *  Klasse .mit-papier traegt (gedacht fuer Kopfband und Hero), bekommt
+ *  statt des gerechneten Korns ein echtes Papierfoto: Texturelabs
+ *  Paper 346L. Erzeugt mit werkzeuge/textur.mjs (dort die Schritte);
+ *  das Original liegt nicht im Repo, nur die beiden Fassungen fuer die
+ *  Website (1600 und 1200 px). Nicht kachelbar, deshalb einmal ueber
+ *  die ganze Flaeche gezogen.
+ *
+ *  Deckung 0.2 nach Auge. Gemessen entspraeche erst 0.35 dem alten
+ *  Korn, wirkt aber viel staerker: Fasern sind Formen, die das Auge
+ *  sieht, feines Korn mittelt es weg.
+ *  Verworfen: Grunge 340L (fleckig), Paper 381L (helle Fasern stachen
+ *  heraus), Paper 234L (gleichmaessig, aber weniger Charakter), ein
+ *  eingerechnetes Zusatzkorn (zu stark).
+ *  Vergleich mit anderen Varianten: werkzeuge/korn-vergleich.html.
+ * ------------------------------------------------------------------ */
+.mit-papier.mit-korn::before {
+  background-image: url("../images/textur-papier.jpg");
+  background-size: cover;
+  background-position: center;
+  opacity: 0.2;
+}
+@media (max-width: 734px) {
+  .mit-papier.mit-korn::before { background-image: url("../images/textur-papier-1200.jpg"); }
+}
