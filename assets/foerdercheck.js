@@ -249,6 +249,7 @@
   var ZAHLWORT = ["", "Ein", "Zwei", "Drei", "Vier", "Fünf", "Sechs", "Sieben"];
   var letzterStatus = "";
   var letztesHtml = leer;
+  var gemeldet = false;                       /* Besucherstatistik: je Seitenaufruf einmal */
 
   var zeichnen = function () {
     var wer = gewaehlt("wer")[0] || "";
@@ -270,6 +271,13 @@
 
     var programme = karten.filter(function (k) { return !k.entfallen; });
     var n = programme.length;
+
+    /* Fuer die Besucherstatistik (assets/statistik.js): alle drei Fragen
+       beantwortet, das erste Ergebnis steht da. */
+    if (!gemeldet && wer && gebaeude && karten.length) {
+      gemeldet = true;
+      document.dispatchEvent(new CustomEvent("statistik", { detail: { kategorie: "Förder-Check", aktion: "abgeschlossen", name: n ? "mit Programm" : "ohne Programm" } }));
+    }
     var kopf = n
       ? ZAHLWORT[n] + (n === 1 ? " Programm kommt" : " Programme kommen") + " infrage"
       : "Für Ihre Auswahl gibt es derzeit keine passende Bundesförderung";
