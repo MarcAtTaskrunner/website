@@ -1638,7 +1638,12 @@
 
 /* == team.js ============================================================= */
 /* taskrunner - Schaubild "team": Drei ueberlappende Portraitkreise.
-   Einbau:  <canvas data-schaubild="team"></canvas>                                                */
+   Einbau:  <canvas data-schaubild="team" data-bild="..."></canvas>
+   data-bild nennt bis zu drei Portraits, durch Komma getrennt, von links
+   nach rechts (Muster: quellen/index.html). Sind es weniger, wiederholen
+   sie sich. Quadratische Bilder, etwa 500 px Kantenlaenge. Beispielpfade
+   stehen hier bewusst nicht: build.mjs haelt jeden ausgeschriebenen
+   Bildpfad fuer ein Bild, das mit ausgeliefert werden soll.                                        */
 (function () {
   "use strict";
 
@@ -1674,10 +1679,17 @@
       });
     }
 
-    this.bild = new Image();
-    this.bild.decoding = "async";
-    this.bild.onload = function () { s.zeichnen(); };
-    this.bild.src = this.flaeche.dataset.bild || "images/ansprechperson-portrait.webp";
+    /* Je Kreis ein Portrait; die Liste aus data-bild wiederholt sich,
+       wenn sie kuerzer ist als die Zahl der Kreise. */
+    var pfade = (this.flaeche.dataset.bild || "images/ansprechperson-portrait.webp")
+      .split(",").map(function (p) { return p.trim(); }).filter(Boolean);
+    this.bilder = pfade.map(function (pfad) {
+      var bild = new Image();
+      bild.decoding = "async";
+      bild.onload = function () { s.zeichnen(); };
+      bild.src = pfad;
+      return bild;
+    });
   };
 
   /* Nichts bewegt sich - nach dem ersten Bild ist Schluss. */
@@ -1715,15 +1727,16 @@
       g.arc(k.x, k.y, this.rRing, 0, 6.283);
       g.fill();
 
-      if (this.bild.complete && this.bild.naturalWidth) {
+      var bild = this.bilder[i % this.bilder.length];
+      if (bild.complete && bild.naturalWidth) {
         g.save();
         g.beginPath();
         g.arc(k.x, k.y, this.rFoto, 0, 6.283);
         g.clip();
-        var sk = Math.max((this.rFoto * 2) / this.bild.naturalWidth,
-                          (this.rFoto * 2) / this.bild.naturalHeight);
-        var bw = this.bild.naturalWidth * sk, bh = this.bild.naturalHeight * sk;
-        g.drawImage(this.bild, k.x - bw / 2, k.y - bh / 2, bw, bh);
+        var sk = Math.max((this.rFoto * 2) / bild.naturalWidth,
+                          (this.rFoto * 2) / bild.naturalHeight);
+        var bw = bild.naturalWidth * sk, bh = bild.naturalHeight * sk;
+        g.drawImage(bild, k.x - bw / 2, k.y - bh / 2, bw, bh);
         g.restore();
       }
     }
