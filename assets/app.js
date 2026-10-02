@@ -756,6 +756,46 @@
       }
     });
 
+    /* Bot-Schutz mit Cloudflare Turnstile. Der Sitekey steht am Formular
+       (data-turnstile); ist er leer, passiert hier nichts. Geladen wird
+       von Cloudflare erst ab dem zweiten Schritt - wer das Formular nicht
+       ausfuellt, hat keinen Kontakt dorthin (deshalb kein Cookie-Banner,
+       siehe Datenschutzerklaerung). Turnstile legt sein Token als
+       verstecktes Feld cf-turnstile-response ins Formular; es geht mit
+       den uebrigen Angaben an den Server, der es prueft. */
+    var sitekey = form.getAttribute("data-turnstile");
+    var tsFeld = form.querySelector("[data-turnstile-feld]");
+    var tsHinweis = form.querySelector("[data-turnstile-hinweis]");
+    var tsId = null, tsAngefragt = false;
+    var turnstileLaden = function () {
+      if (!sitekey || !tsFeld || tsAngefragt) return;
+      tsAngefragt = true;
+      if (tsHinweis) tsHinweis.hidden = false;
+      window.taskrunnerTurnstileBereit = function () {
+        tsId = window.turnstile.render(tsFeld, {
+          sitekey: sitekey,
+          language: "de",
+          theme: "dark",
+          size: "flexible",
+          /* nur sichtbar, wenn Cloudflare wirklich einen Klick braucht */
+          appearance: "interaction-only"
+        });
+      };
+      var skript = document.createElement("script");
+      skript.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=taskrunnerTurnstileBereit";
+      skript.async = true;
+      /* Geblockt oder offline: beim naechsten Schrittwechsel noch einmal */
+      skript.onerror = function () { tsAngefragt = false; };
+      document.head.appendChild(skript);
+    };
+    var turnstileToken = function () {
+      var feld = form.querySelector('[name="cf-turnstile-response"]');
+      return feld ? feld.value : "";
+    };
+    form.addEventListener("schrittwechsel", function (e) {
+      if (e.detail.nr > 0) turnstileLaden();
+    });
+
     /* Absenden: direkt an den Worker (worker/index.js), der die Anmeldung
        in die Google-Tabelle schreibt. Klappt das nicht, bleibt das Formular stehen und die
        Meldung nennt die Mailadresse als Ausweg. */
@@ -766,6 +806,14 @@
       if (!ziel || !window.fetch) return; /* ohne fetch: Mailprogramm wie bisher */
       e.preventDefault();
       if (!gueltig()) return;
+      /* Mit Bot-Schutz erst senden, wenn das Token da ist */
+      if (sitekey && !turnstileToken()) {
+        turnstileLaden();
+        meldung.className = "registrierung-meldung ist-fehler";
+        meldung.innerHTML = 'Die Sicherheitsprüfung ist noch nicht abgeschlossen. Bitte versuchen Sie es in ein paar Sekunden noch einmal oder schreiben Sie uns an <a href="mailto:operations@taskrunner.de">operations@taskrunner.de</a>.';
+        meldung.hidden = false;
+        return;
+      }
       var daten = {};
       /* trim und ohne Komma am Ende: ein Vorschlagsknopf haengt ", " an */
       new FormData(form).forEach(function (wert, name) { daten[name] = String(wert).trim().replace(/\s*,$/, ""); });
@@ -792,6 +840,8 @@
         if (raus && form.vollZu && document.documentElement.classList.contains("formular-voll")) raus.hidden = false;
         form.dispatchEvent(new CustomEvent("gesendet"));
       }).catch(function () {
+        /* Ein Turnstile-Token gilt nur einmal: fuer den naechsten Versuch ein neues */
+        if (tsId !== null && window.turnstile) window.turnstile.reset(tsId);
         senden.disabled = false;
         senden.textContent = "Kostenlos Registrieren";
         meldung.className = "registrierung-meldung ist-fehler";

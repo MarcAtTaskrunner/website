@@ -16,7 +16,9 @@
   },
   // SHEET_URL und SHEET_GEHEIMNIS fuer die Google-Tabelle sind Secrets im
   // Dashboard und stehen bewusst nicht hier (Einrichtung in
-  // werkzeuge/google-tabelle.gs).
+  // werkzeuge/google-tabelle.gs). Ebenso TURNSTILE_GEHEIMNIS, der Secret Key
+  // des Turnstile-Widgets fuer den Bot-Schutz im Formular (optional: fehlt
+  // er, wird nicht geprueft).
   // Logs im Dashboard (Workers -> taskrunner -> Observability): zeigen
   // z. B. "Tabelle-Fehler" aus worker/index.js.
   // Hier eingetragen, damit ein Deploy den Schalter nicht zuruecksetzt.

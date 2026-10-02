@@ -11,6 +11,13 @@
 //   SHEET_GEHEIMNIS (dasselbe Wort wie im Script) - nie ins Repo.
 //   Die Tabelle ist das einzige Ziel: hakt Google, bekommt das Formular
 //   einen Fehler und der Handwerker kann es noch einmal abschicken.
+//
+//   Bot-Schutz: Ist das Secret TURNSTILE_GEHEIMNIS gesetzt (Secret Key des
+//   Turnstile-Widgets), muss das Formular ein gueltiges Turnstile-Token
+//   mitschicken (Feld cf-turnstile-response, legt assets/app.js an). Ohne
+//   das Secret wird nicht geprueft. Reihenfolge beim Einschalten: erst den
+//   Sitekey in quellen/kontakt.html (data-turnstile) veroeffentlichen, dann
+//   das Secret setzen - sonst lehnt der Server jede Anmeldung ab.
 
 const FELDER = ["Gewerke", "PLZ", "Ort", "Einsatzradius", "Name", "Firma", "Telefon", "E-Mail"];
 // Telefonnummer international: "0201 1234567" mit +49 -> "+49 201 1234567".
@@ -50,6 +57,25 @@ async function inTabelle(env, daten, zeit) {
   return false;
 }
 
+// Fragt Cloudflare, ob das Turnstile-Token echt und unverbraucht ist
+async function menschGeprueft(env, token, ip) {
+  try {
+    const frage = { secret: env.TURNSTILE_GEHEIMNIS, response: token };
+    if (ip) frage.remoteip = ip;
+    const antwort = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(frage),
+    });
+    const ergebnis = await antwort.json();
+    if (ergebnis.success) return true;
+    console.log("Turnstile abgelehnt", JSON.stringify(ergebnis["error-codes"] || []));
+  } catch (fehler) {
+    console.log("Turnstile-Fehler", String(fehler));
+  }
+  return false;
+}
+
 async function registrierung(request, env) {
   if (request.method !== "POST") return antwort(405, { ok: false, fehler: "Nur POST" });
   if (!env.SHEET_URL || !env.SHEET_GEHEIMNIS) return antwort(503, { ok: false, fehler: "Versand nicht eingerichtet" });
@@ -83,6 +109,14 @@ async function registrierung(request, env) {
     return antwort(400, { ok: false, fehler: "E-Mail ungueltig" });
   }
   daten.Telefon = telefon(daten.Telefon, String(eingang.Vorwahl ?? ""));
+
+  // Erst nach der Feldpruefung: ein Token gilt nur einmal
+  if (env.TURNSTILE_GEHEIMNIS) {
+    const token = String(eingang["cf-turnstile-response"] ?? "").slice(0, 4096);
+    if (!token || !(await menschGeprueft(env, token, request.headers.get("CF-Connecting-IP")))) {
+      return antwort(403, { ok: false, fehler: "Sicherheitspruefung fehlgeschlagen" });
+    }
+  }
 
   const zeit = new Date().toLocaleString("de-DE", { timeZone: "Europe/Berlin" });
 
