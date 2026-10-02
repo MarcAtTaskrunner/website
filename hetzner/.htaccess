@@ -120,7 +120,9 @@ RewriteRule ^([^/.]+)$ $1.html [L]
 # nachziehen.
 # ---------------------------------------------------------------------
 <IfModule mod_headers.c>
-Header always set Strict-Transport-Security "max-age=31536000" "expr=%{HTTPS} == 'on'"
+# Hetzner nimmt https an einem vorgeschalteten Server an: Apache selbst sieht
+# die Anfrage als http und erkennt https nur am Kopf X-Forwarded-Proto.
+Header always set Strict-Transport-Security "max-age=31536000" "expr=%{HTTPS} == 'on' || %{req:X-Forwarded-Proto} == 'https'"
 Header always set X-Content-Type-Options "nosniff"
 Header always set X-Frame-Options "SAMEORIGIN"
 Header always set Referrer-Policy "strict-origin-when-cross-origin"
