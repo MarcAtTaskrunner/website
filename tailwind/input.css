@@ -1664,12 +1664,18 @@ img.kopf-foto-bild {
 .lightbox[open] { display: grid; place-items: center; }
 .lightbox::backdrop { background: rgba(0, 7, 36, 0.94); }
 html:has(.lightbox[open]) { overflow: hidden; }
+/* Das Bild fuellt den Platz zwischen den Knoepfen, auch wenn die Datei
+   kleiner ist als das Fenster (width: auto wuerde bei der Dateigroesse
+   aufhoeren). --verh = Breite / Hoehe setzt app.js je Bild; die Breite
+   ist das kleinere von "so breit wie moeglich" und "so hoch wie
+   moeglich, umgerechnet in Breite". Raender: seitlich die Pfeile
+   (24 + 48 + 12), oben und unten je 48 px fuer Schliessen und Zaehler. */
 .lightbox-bild {
   display: block;
-  width: auto;
+  width: min(calc(100vw - 168px), calc((100dvh - 96px) * var(--verh, 1.5)));
   height: auto;
-  max-width: calc(100vw - 176px);
-  max-height: calc(100dvh - 128px);
+  aspect-ratio: var(--verh, 1.5);
+  object-fit: contain;
   border-radius: var(--radius-tile);
 }
 .lightbox-knopf {
@@ -1691,7 +1697,7 @@ html:has(.lightbox[open]) { overflow: hidden; }
 .lightbox-vor     { right: 24px; top: 50%; translate: 0 -50%; }
 .lightbox-zahl {
   position: absolute;
-  bottom: 24px;
+  bottom: 14px;
   left: 50%;
   translate: -50% 0;
   color: rgba(255, 255, 255, 0.8);
@@ -1700,7 +1706,7 @@ html:has(.lightbox[open]) { overflow: hidden; }
 }
 /* Handy: Bild fast randlos, die Pfeile unten neben der Zahl */
 @media (max-width: 734px) {
-  .lightbox-bild { max-width: calc(100vw - 24px); max-height: calc(100dvh - 176px); }
+  .lightbox-bild { width: min(calc(100vw - 24px), calc((100dvh - 176px) * var(--verh, 1.5))); }
   .lightbox-zurueck, .lightbox-vor { top: auto; bottom: 12px; translate: none; }
   .lightbox-zurueck { left: 12px; }
   .lightbox-vor     { right: 12px; }

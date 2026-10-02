@@ -616,12 +616,25 @@
     document.body.appendChild(box);
 
     var bild = box.querySelector(".lightbox-bild");
+    /* Ohne Groessenangabe am kleinen Bild: Verhaeltnis der geladenen Datei */
+    bild.addEventListener("load", function () {
+      if (!bild.style.getPropertyValue("--verh") && bild.naturalHeight) {
+        bild.style.setProperty("--verh", String(bild.naturalWidth / bild.naturalHeight));
+      }
+    });
     var zahl = box.querySelector(".lightbox-zahl");
     var links = [], nr = 0;
 
     var zeige = function (i) {
       nr = (i + links.length) % links.length;
       var klein = links[nr].querySelector("img");
+      /* Seitenverhaeltnis aus dem kleinen Bild (width/height stehen im
+         HTML): damit rechnet .lightbox-bild seine Groesse, schon bevor
+         die grosse Datei geladen ist. */
+      var b = klein ? Number(klein.getAttribute("width")) : 0;
+      var h = klein ? Number(klein.getAttribute("height")) : 0;
+      if (b > 0 && h > 0) bild.style.setProperty("--verh", String(b / h));
+      else bild.style.removeProperty("--verh");
       bild.src = links[nr].href;
       bild.alt = klein ? klein.alt : "";
       zahl.textContent = (nr + 1) + " / " + links.length;
