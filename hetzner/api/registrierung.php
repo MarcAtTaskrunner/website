@@ -13,6 +13,14 @@
 //   Die Tabelle ist das einzige Ziel: hakt Google, bekommt das Formular
 //   einen Fehler und der Handwerker kann es noch einmal abschicken.
 //
+//   Bot-Schutz: Steht in geheim.php zusaetzlich TURNSTILE_GEHEIMNIS (Secret
+//   Key des Turnstile-Widgets, GitHub-Secret gleichen Namens), muss das
+//   Formular ein gueltiges Turnstile-Token mitschicken (Feld
+//   cf-turnstile-response, legt assets/app.js an). Ohne den Wert wird
+//   nicht geprueft. Reihenfolge beim Einschalten: erst den Sitekey in
+//   quellen/kontakt.html (data-turnstile) veroeffentlichen, dann das
+//   Secret eintragen - sonst lehnt der Server jede Anmeldung ab.
+//
 // Bewusst schlicht geschrieben (laeuft ab PHP 7.2), weil auf dem
 // Webhosting die PHP-Version in konsoleH eingestellt wird.
 
@@ -93,6 +101,38 @@ function in_tabelle($geheim, $daten, $zeit) {
     return false;
 }
 
+// Fragt Cloudflare, ob das Turnstile-Token echt und unverbraucht ist.
+// Fehler landen im PHP-Fehlerprotokoll unter "Turnstile".
+function mensch_geprueft($secret, $token, $ip) {
+    if (!function_exists('curl_init')) {
+        error_log('Turnstile-Fehler: PHP-Erweiterung curl fehlt');
+        return false;
+    }
+    $frage = array('secret' => $secret, 'response' => $token);
+    if ($ip !== '') $frage['remoteip'] = $ip;
+    $c = curl_init('https://challenges.cloudflare.com/turnstile/v0/siteverify');
+    curl_setopt_array($c, array(
+        CURLOPT_POST           => true,
+        CURLOPT_POSTFIELDS     => json_encode($frage),
+        CURLOPT_HTTPHEADER     => array('Content-Type: application/json'),
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_CONNECTTIMEOUT => 10,
+        CURLOPT_TIMEOUT        => 15,
+    ));
+    $text   = curl_exec($c);
+    $fehler = curl_error($c);
+    curl_close($c);
+    if ($text === false) {
+        error_log('Turnstile-Fehler: ' . $fehler);
+        return false;
+    }
+    $ergebnis = json_decode($text, true);
+    if (is_array($ergebnis) && !empty($ergebnis['success'])) return true;
+    $codes = (is_array($ergebnis) && isset($ergebnis['error-codes'])) ? json_encode($ergebnis['error-codes']) : substr($text, 0, 200);
+    error_log('Turnstile abgelehnt ' . $codes);
+    return false;
+}
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') antwort(405, array('ok' => false, 'fehler' => 'Nur POST'));
 
 $geheim = @include __DIR__ . '/geheim.php';
@@ -129,6 +169,17 @@ if (!preg_match('/^[^\s@]+@[^\s@]+\.[^\s@]+\z/', $daten['E-Mail'])) {
     antwort(400, array('ok' => false, 'fehler' => 'E-Mail ungueltig'));
 }
 $daten['Telefon'] = telefon($daten['Telefon'], isset($eingang['Vorwahl']) ? als_text($eingang['Vorwahl']) : '');
+
+if (!empty($geheim['TURNSTILE_GEHEIMNIS'])) {
+    $token = substr(als_text(isset($eingang['cf-turnstile-response']) ? $eingang['cf-turnstile-response'] : null), 0, 4096);
+    // Hinter dem Hetzner-Frontend steht die Adresse des Besuchers in X-Forwarded-For
+    $ip = isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? trim(explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'])[0])
+        : (isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '');
+    if (!filter_var($ip, FILTER_VALIDATE_IP)) $ip = '';
+    if ($token === '' || !mensch_geprueft($geheim['TURNSTILE_GEHEIMNIS'], $token, $ip)) {
+        antwort(403, array('ok' => false, 'fehler' => 'Sicherheitspruefung fehlgeschlagen'));
+    }
+}
 
 $jetzt = new DateTime('now', new DateTimeZone('Europe/Berlin'));
 $zeit  = $jetzt->format('j.n.Y, H:i:s'); // wie toLocaleString("de-DE") im Worker

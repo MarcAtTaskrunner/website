@@ -16,6 +16,10 @@
 #   SHEET_URL             Web-App-URL des Apps-Scripts an der Google-Tabelle
 #   SHEET_GEHEIMNIS       Script-Property GEHEIMNIS desselben Scripts
 #                         (beides: werkzeuge/google-tabelle.gs)
+#   TURNSTILE_GEHEIMNIS   optional: Secret Key des Turnstile-Widgets (Cloudflare).
+#                         Ist er gesetzt, verlangt das Formular ein gueltiges
+#                         Turnstile-Token. Erst eintragen, wenn der Sitekey in
+#                         quellen/kontakt.html (data-turnstile) live ist.
 #
 # Solange die drei HETZNER-Secrets fehlen, tut der Workflow nichts und
 # meldet das nur. Live geht die Seite mit dem ersten Lauf, bei dem sie
@@ -101,14 +105,19 @@ jobs:
         env:
           SHEET_URL: ${{ secrets.SHEET_URL }}
           SHEET_GEHEIMNIS: ${{ secrets.SHEET_GEHEIMNIS }}
+          TURNSTILE_GEHEIMNIS: ${{ secrets.TURNSTILE_GEHEIMNIS }}
         run: |
           python3 - <<'PY'
           import os
           def php(text):
               return "'" + text.replace("\\", "\\\\").replace("'", "\\'") + "'"
+          werte = ['SHEET_URL', 'SHEET_GEHEIMNIS']
+          # optional: ohne das Secret prueft registrierung.php kein Turnstile-Token
+          if os.environ.get('TURNSTILE_GEHEIMNIS', '').strip():
+              werte.append('TURNSTILE_GEHEIMNIS')
           with open('dist/api/geheim.php', 'w', encoding='utf-8') as d:
-              d.write("<?php return ['SHEET_URL' => %s, 'SHEET_GEHEIMNIS' => %s];\n"
-                      % (php(os.environ['SHEET_URL'].strip()), php(os.environ['SHEET_GEHEIMNIS'].strip())))
+              d.write("<?php return [%s];\n"
+                      % ", ".join("'%s' => %s" % (w, php(os.environ[w].strip())) for w in werte))
           PY
 
       # Der Upload ueberschreibt die .htaccess des alten WordPress. Sie wird

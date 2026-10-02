@@ -69,6 +69,12 @@ GitHub → Repo → Settings → Secrets and variables → Actions, fünf Secret
 | `SHEET_URL` | Web-App-URL des Apps-Scripts an der Google-Tabelle |
 | `SHEET_GEHEIMNIS` | Script-Property `GEHEIMNIS` desselben Scripts (`werkzeuge/google-tabelle.gs`) |
 
+Optional ein sechstes für den Bot-Schutz im Handwerker-Formular:
+
+| Secret | Wert |
+|---|---|
+| `TURNSTILE_GEHEIMNIS` | Secret Key des Turnstile-Widgets (Cloudflare-Dashboard → Turnstile). Erst eintragen, wenn der Sitekey in `quellen/kontakt.html` (`data-turnstile`) live ist – sonst lehnt der Server jede Anmeldung ab. Wirkt ab dem nächsten Deploy. Ohne das Secret wird nicht geprüft. |
+
 Solange die drei HETZNER-Secrets fehlen, lädt der Workflow nichts hoch. Live
 geht die Seite mit dem ersten Lauf, bei dem sie eingetragen sind: entweder
 beim nächsten Push auf `hetzner-version` oder über GitHub → Actions → letzter Lauf →
