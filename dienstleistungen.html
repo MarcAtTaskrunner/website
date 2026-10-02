@@ -178,6 +178,27 @@
       </section>
       <section class="bg-white section-y">
         <div class="container-wide">
+          <div class="mb-10 flex justify-center text-left">
+            <!-- Vertriebsteam: Portraits im Kreis und zwei Zeilen Text. Einbauen mit
+     einem einbau-Kommentar fuer vertriebsteam.html (Syntax in CLAUDE.md),
+     auf jeder Seite gleich. Abstand nach
+     oben/unten setzt die Seite drumherum. Fuer helle Flaechen gemacht
+     (blaue Schrift). Aussehen und Wachsen beim Hovern: .kontakt-koepfe /
+     .kontakt-kopf in tailwind/input.css.
+     Die Namen stehen in der Reihenfolge der Bilder, von links nach rechts.
+     Neue Person: eine <img>-Zeile mehr (Bild 1000 x 1000 nach
+     images/mitarbeiter/) und den Namen in der fetten Zeile ergaenzen. -->
+            <div class="vertriebsteam flex items-center gap-x-5 sm:gap-x-6">
+              <div class="kontakt-koepfe">
+                <img src="images/mitarbeiter/bernd.webp" alt="" title="Bernd Vasen" width="200" height="200" class="kontakt-kopf" decoding="async">
+                <img src="images/mitarbeiter/eric.webp" alt="" title="Eric Uerkwitz" width="200" height="200" class="kontakt-kopf" decoding="async">
+              </div>
+              <div>
+                <p class="vertriebsteam-name t-body font-bold text-blue-600">Bernd&nbsp;Vasen und Eric&nbsp;Uerkwitz</p>
+                <p class="vertriebsteam-text mt-1 t-body-tight text-ink/85">Ihre Ansprechpersonen im Vertrieb</p>
+              </div>
+            </div>
+          </div>
           <h2 class="mx-auto max-w-[820px] text-balance hyphens-auto break-words t-h2 text-blue-600 text-center">Fehlt Ihnen ein Gewerk?</h2>
           <p class="mx-auto mt-5 max-w-[680px] text-balance t-intro text-ink/80 text-center">Sagen Sie uns, was Sie benötigen. Wenn das passende Gewerk nicht dabei ist, klären wir gemeinsam, was möglich ist.</p>
           <p class="mt-10 text-center">
