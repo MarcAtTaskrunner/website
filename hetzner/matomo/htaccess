@@ -2,20 +2,25 @@
 # Matomo (Besucherstatistik) unter https://stats.taskrunner.de
 #
 # Liegt auf dem Server in public_html/stats/ - konsoleH laesst Ziele fuer
-# Subdomains nur unterhalb von public_html zu. Deshalb gilt hier auch die
-# .htaccess der Website eine Ebene hoeher (PHP gesperrt, strenge CSP,
-# index.html als Startdatei); diese Datei nimmt genau das fuer Matomo
-# zurueck. Im Repo: hetzner/matomo/htaccess, eingespielt vom Workflow
-# "Matomo auf Hetzner" (.github/workflows/matomo-hetzner.yml).
+# Subdomains nur unterhalb von public_html zu. Im Repo:
+# hetzner/matomo/htaccess, eingespielt vom Workflow "Matomo auf Hetzner"
+# (.github/workflows/matomo-hetzner.yml).
 #
-# Matomo legt in seinen Unterordnern (config, tmp, core, plugins ...)
-# eigene .htaccess-Dateien an, die dort wieder sperren.
+# Diese Datei muss fuer sich allein stehen: Unter stats.taskrunner.de
+# gilt die .htaccess der Website (eine Ebene hoeher) auf Hetzner NICHT
+# mit - die Subdomain hat ihren eigenen Web-Root. Nur beim Aufruf als
+# www.taskrunner.de/stats/ gelten beide, und der wird unten abgewiesen.
 # =====================================================================
 
+Options -Indexes
 DirectoryIndex index.php
 
-# PHP: nur die Einstiege von Matomo (Oberflaeche, Zaehlpunkt). Alles
-# andere bleibt durch die Website-.htaccess gesperrt.
+# PHP: gesperrt bis auf die Einstiege von Matomo (Oberflaeche,
+# Zaehlpunkt). Die zweite Regel gewinnt fuer die Dateien, auf die sie
+# passt. Matomo braucht von aussen keine andere PHP-Datei.
+<FilesMatch "\.(php[0-9]?|phtml|phar)$">
+    Require all denied
+</FilesMatch>
 <FilesMatch "^(index|matomo|piwik)\.php$">
     Require all granted
 </FilesMatch>
@@ -45,8 +50,10 @@ RewriteRule \.(sql|bak|log|ini|sh|inc|orig|old|zip)(\.gz)?$ - [F,L,NC]
 </IfModule>
 
 <IfModule mod_headers.c>
-# Die CSP der Website passt nicht zur Matomo-Oberflaeche; Matomo schickt
-# seine eigene.
+Header always set Strict-Transport-Security "max-age=31536000" "expr=%{HTTPS} == 'on' || %{req:X-Forwarded-Proto} == 'https'"
+Header always set X-Content-Type-Options "nosniff"
+# Falls doch die .htaccess der Website mitgilt: ihre CSP passt nicht zur
+# Matomo-Oberflaeche; Matomo schickt seine eigene.
 Header always unset Content-Security-Policy
 # Das Zaehlskript laden alle Seiten der Website; einen Tag im Browser
 # halten statt bei jedem Seitenaufruf nachzufragen.

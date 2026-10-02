@@ -14,8 +14,9 @@
 # geloescht, einen Weg zurueck gibt es nicht mehr.
 #
 # Im Unterordner stats/ laeuft Matomo (https://stats.taskrunner.de). Der
-# Ordner hat eine eigene .htaccess (hetzner/matomo/htaccess), die fuer
-# Matomo zuruecknimmt, was hier gesperrt wird.
+# Ordner hat eine eigene .htaccess (hetzner/matomo/htaccess). Unter der
+# Subdomain gilt diese Datei hier nicht mit; als www.taskrunner.de/stats/
+# weist die dortige .htaccess jeden Aufruf ab.
 #
 # Zwei Dinge kommen aus main und werden beim Bau eingesetzt, damit hier
 # nichts von Hand nachgezogen werden muss:

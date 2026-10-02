@@ -105,7 +105,7 @@ den Ordner nicht an.
 | Datei | Zweck |
 |---|---|
 | `hetzner/matomo/VERSION` | Matomo-Version für die Erstinstallation |
-| `hetzner/matomo/htaccess` | wird zu `stats/.htaccess`: nimmt für Matomo zurück, was die Website-`.htaccess` sperrt (PHP, CSP), und sperrt Matomos Interna |
+| `hetzner/matomo/htaccess` | wird zu `stats/.htaccess`: nimmt für Matomo zurück, was die Website-`.htaccess` sperrt (PHP, CSP), und sperrt Matomos Interna. Steht für sich allein: unter `stats.taskrunner.de` gilt die Website-`.htaccess` auf Hetzner nicht mit |
 | `hetzner/matomo/entpacken.php` | entpackt das Archiv auf dem Server, nur bei der Erstinstallation, löscht sich danach selbst |
 | `.github/workflows/matomo-hetzner.yml` | läuft, wenn sich eine dieser Dateien im Zweig `hetzner-version` ändert |
 
