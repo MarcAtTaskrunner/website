@@ -16,6 +16,7 @@
 // Geaendert wird nur dist/. Keine Datei aus main wird angefasst, deshalb
 // laesst sich main jederzeit ohne Konflikte in diesen Zweig uebernehmen.
 import { readdir, readFile, writeFile, mkdir, rm } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 import path from 'node:path';
 
 const AUS = 'dist';
@@ -101,3 +102,6 @@ await writeFile(path.join(AUS, 'robots.txt'),
 
 console.log(`dist/ fuer Hetzner fertig: Adresse ${ursprung} (${neben} leitet dorthin), ` +
   `${api.length} Dateien in api/, sitemap.xml mit ${adressen.length} Adressen, robots.txt.`);
+
+// Generalprobe (siehe hetzner/probe.mjs): nur solange hetzner/PROBE existiert
+if (existsSync(path.join(VON, 'PROBE'))) await import('./probe.mjs');

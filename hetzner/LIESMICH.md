@@ -48,6 +48,15 @@ Lokal bauen (im Ordner `website-hetzner/`, braucht dort einmal `npm install`):
 
     npm run build && node hetzner/fertig.mjs
 
+## Generalprobe ohne Risiko
+
+Liegt die Datei `hetzner/PROBE` im Zweig, lädt der Deploy die Seite nicht in
+den Web-Root, sondern nur in den Unterordner `/_probe/` (siehe
+`hetzner/probe.mjs`). So lässt sich auf dem echten Server prüfen, ob die
+`.htaccess` angenommen wird, PHP läuft und das Formular die Google-Tabelle
+erreicht. `hetzner/PROBE` löschen und pushen schaltet auf den Web-Root um;
+`_probe/` räumt der Deploy dabei von selbst ab.
+
 ## Einmalig einrichten
 
 GitHub → Repo → Settings → Secrets and variables → Actions, fünf Secrets:
