@@ -1,0 +1,158 @@
+# Baut die Website und laedt sie per FTPS auf das Hetzner-Webhosting
+# (taskrunner.de). Gibt es nur im Zweig "hetzner-version" und laeuft bei jedem Push
+# auf diesen Zweig - main und Cloudflare bleiben davon unberuehrt.
+# Den Zweig auf den Stand von main bringen und pushen: hetzner/aktualisieren.sh
+#
+# Noch einmal laufen lassen, ohne etwas zu aendern: GitHub -> Actions ->
+# letzter Lauf von "Deploy auf Hetzner" -> Re-run all jobs. (Den Knopf
+# "Run workflow" zeigt GitHub nur fuer Workflows, die auf main liegen.)
+#
+# Secrets (GitHub -> Repo -> Settings -> Secrets and variables -> Actions):
+#   HETZNER_FTP_HOST      z. B. wwwNNN.your-server.de (konsoleH -> Zugangsdaten).
+#                         Nicht taskrunner.de: das TLS-Zertifikat des
+#                         FTP-Servers gilt nur fuer den your-server.de-Namen.
+#   HETZNER_FTP_USER      FTP-Benutzer aus konsoleH
+#   HETZNER_FTP_PASSWORD  FTP-Passwort aus konsoleH
+#   SHEET_URL             Web-App-URL des Apps-Scripts an der Google-Tabelle
+#   SHEET_GEHEIMNIS       Script-Property GEHEIMNIS desselben Scripts
+#                         (beides: werkzeuge/google-tabelle.gs)
+#
+# Solange die drei HETZNER-Secrets fehlen, tut der Workflow nichts und
+# meldet das nur. Live geht die Seite mit dem ersten Lauf, bei dem sie
+# eingetragen sind.
+#
+# Optional, als Variable (nicht Secret): HETZNER_FTP_DIR, der Web-Root aus
+# Sicht des FTP-Benutzers, mit Schraegstrich am Ende. Vorgabe public_html/.
+#
+# Hochgeladen wird nur, was sich geaendert hat. Dateien, die nicht aus
+# diesem Repo stammen (das alte WordPress), bleiben auf dem Server liegen;
+# hetzner/.htaccess legt sie still. Zurueck zum alten Stand: hetzner/LIESMICH.md.
+name: Deploy auf Hetzner
+
+on:
+  push:
+    branches: [hetzner-version]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-hetzner
+  cancel-in-progress: false
+
+jobs:
+  pruefen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    outputs:
+      bereit: ${{ steps.secrets.outputs.bereit }}
+    steps:
+      - name: Zugangsdaten vorhanden?
+        id: secrets
+        env:
+          FTP_HOST: ${{ secrets.HETZNER_FTP_HOST }}
+          FTP_USER: ${{ secrets.HETZNER_FTP_USER }}
+          FTP_PASS: ${{ secrets.HETZNER_FTP_PASSWORD }}
+          SHEET_URL: ${{ secrets.SHEET_URL }}
+          SHEET_GEHEIMNIS: ${{ secrets.SHEET_GEHEIMNIS }}
+        run: |
+          if [ -z "$FTP_HOST" ] || [ -z "$FTP_USER" ] || [ -z "$FTP_PASS" ]; then
+            echo "::notice::Hetzner-Zugangsdaten sind noch nicht als Secrets eingetragen - es wird nichts hochgeladen."
+            echo "bereit=nein" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          # Ohne diese beiden ginge die Seite mit einem Handwerker-Formular
+          # live, das nur Fehler meldet.
+          if [ -z "$SHEET_URL" ] || [ -z "$SHEET_GEHEIMNIS" ]; then
+            echo "::error::SHEET_URL und SHEET_GEHEIMNIS fehlen als Secrets (siehe werkzeuge/google-tabelle.gs)."
+            exit 1
+          fi
+          echo "bereit=ja" >> "$GITHUB_OUTPUT"
+
+  deploy:
+    needs: pruefen
+    if: needs.pruefen.outputs.bereit == 'ja'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      FTP_HOST: ${{ secrets.HETZNER_FTP_HOST }}
+      FTP_USER: ${{ secrets.HETZNER_FTP_USER }}
+      FTP_PASS: ${{ secrets.HETZNER_FTP_PASSWORD }}
+      FTP_DIR: ${{ vars.HETZNER_FTP_DIR || 'public_html/' }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Bauen
+        run: |
+          npm ci
+          npm run build
+          node hetzner/fertig.mjs
+
+      # api/geheim.php: die Zugangswerte fuer die Google-Tabelle. Von aussen
+      # nicht abrufbar (PHP ist bis auf registrierung.php gesperrt) und gibt
+      # selbst nichts aus.
+      - name: Zugang zur Google-Tabelle schreiben
+        env:
+          SHEET_URL: ${{ secrets.SHEET_URL }}
+          SHEET_GEHEIMNIS: ${{ secrets.SHEET_GEHEIMNIS }}
+        run: |
+          python3 - <<'PY'
+          import os
+          def php(text):
+              return "'" + text.replace("\\", "\\\\").replace("'", "\\'") + "'"
+          with open('dist/api/geheim.php', 'w', encoding='utf-8') as d:
+              d.write("<?php return ['SHEET_URL' => %s, 'SHEET_GEHEIMNIS' => %s];\n"
+                      % (php(os.environ['SHEET_URL'].strip()), php(os.environ['SHEET_GEHEIMNIS'].strip())))
+          PY
+
+      # Der Upload ueberschreibt die .htaccess des alten WordPress. Sie wird
+      # vorher einmalig als .htaccess-wordpress danebengelegt - das ist der
+      # Rueckweg. Bricht ab, wenn der Zielordner nicht erreichbar ist, statt
+      # in einen falschen Ordner hochzuladen.
+      - name: Alte .htaccess sichern
+        run: |
+          basis="ftp://$FTP_HOST/$FTP_DIR"
+          ftp() { curl -sS --ssl-reqd --connect-timeout 30 --user "$FTP_USER:$FTP_PASS" "$@"; }
+          # 0 = Datei geholt, 1 = gibt es nicht, alles andere bricht ab
+          holen() {
+            local rc=0
+            ftp "$1" -o "$2" 2>fehler.txt || rc=$?
+            if [ "$rc" = 0 ]; then return 0; fi
+            if [ "$rc" = 78 ]; then return 1; fi
+            echo "::error::FTP-Fehler $rc beim Lesen im Zielordner '$FTP_DIR': $(cat fehler.txt)"
+            exit 1
+          }
+          if ! ftp "$basis" -l -o /dev/null 2>fehler.txt; then
+            echo "::error::Zielordner '$FTP_DIR' auf dem FTP-Server nicht erreichbar: $(cat fehler.txt)"
+            exit 1
+          fi
+          if holen "$basis.htaccess-wordpress" /dev/null; then
+            echo "Sicherung .htaccess-wordpress liegt schon auf dem Server."
+          elif holen "$basis.htaccess" alt.htaccess; then
+            if grep -q "taskrunner.de auf Hetzner" alt.htaccess; then
+              echo "Auf dem Server liegt schon die neue .htaccess - nichts zu sichern."
+            else
+              ftp -T alt.htaccess "$basis.htaccess-wordpress"
+              echo "Alte .htaccess als .htaccess-wordpress gesichert."
+            fi
+          else
+            echo "Keine .htaccess auf dem Server - nichts zu sichern."
+          fi
+          rm -f alt.htaccess fehler.txt
+
+      - name: Hochladen
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
+        with:
+          server: ${{ secrets.HETZNER_FTP_HOST }}
+          username: ${{ secrets.HETZNER_FTP_USER }}
+          password: ${{ secrets.HETZNER_FTP_PASSWORD }}
+          protocol: ftps
+          port: 21
+          local-dir: ./dist/
+          server-dir: ${{ vars.HETZNER_FTP_DIR || 'public_html/' }}

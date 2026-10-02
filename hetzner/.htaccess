@@ -1,0 +1,154 @@
+# =====================================================================
+# taskrunner.de auf Hetzner Webhosting (Apache 2.4)
+#
+# Nur im Zweig "hetzner-version" - main bleibt die Cloudflare-Fassung.
+#
+# Diese Datei erledigt auf Hetzner, was bei Cloudflare _headers,
+# _redirects und die automatische Adressbehandlung tun. hetzner/fertig.mjs
+# legt sie nach dist/ und setzt dabei die markierten Stellen ein; der
+# Deploy laedt sie in den Web-Root (public_html).
+#
+# Im Web-Root liegt ausserdem noch das alte WordPress. Es wird hier
+# stillgelegt (kein PHP, kein Login), die Dateien bleiben aber liegen:
+#   - alte Bildadressen unter /wp-content/uploads/ funktionieren weiter
+#   - ZURUECK ZUM ALTEN STAND: auf dem Server .htaccess-wordpress nach
+#     .htaccess kopieren und index.html umbenennen. Der Deploy sichert
+#     die WordPress-.htaccess beim ersten Lauf unter diesem Namen.
+#
+# Zwei Dinge kommen aus main und werden beim Bau eingesetzt, damit hier
+# nichts von Hand nachgezogen werden muss:
+#   die Adresse (Abschnitt HAUPTADRESSE) - aus DOMAIN in
+#     werkzeuge/bauen.py, genauer: aus dem Canonical der Startseite
+#   die Content-Security-Policy - aus _headers
+# =====================================================================
+
+Options -Indexes -MultiViews
+DirectoryIndex index.html
+AddDefaultCharset UTF-8
+
+AddType font/woff2 .woff2
+AddType image/webp .webp
+AddType image/avif .avif
+AddType image/svg+xml .svg
+AddType video/mp4 .mp4
+AddType video/webm .webm
+
+# ---------------------------------------------------------------------
+# PHP: ueberall gesperrt. Damit ist das alte WordPress tot (wp-login,
+# xmlrpc, Plugins). Die eine Ausnahme - das Handwerker-Formular - gibt
+# api/.htaccess frei.
+# ---------------------------------------------------------------------
+<FilesMatch "\.(php[0-9]?|phtml|phar)$">
+    Require all denied
+</FilesMatch>
+
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase /
+
+# --- HAUPTADRESSE -----------------------------------------------------
+# Eine Adresse fuer alles: mit oder ohne www, so wie die Seiten sie im
+# Canonical nennen. Greift nur fuer diese beiden Namen; andere, die auf
+# dasselbe Hosting zeigen (jobs.taskrunner.de), bleiben unberuehrt.
+RewriteCond %{HTTP_HOST} ^@@NEBEN_MUSTER@@(:[0-9]+)?$ [NC]
+RewriteRule ^ https://@@HAUPT@@%{REQUEST_URI} [R=301,L]
+
+RewriteCond %{HTTPS} !=on
+RewriteCond %{HTTP:X-Forwarded-Proto} !=https
+RewriteCond %{HTTP_HOST} ^@@HAUPT_MUSTER@@(:[0-9]+)?$ [NC]
+RewriteRule ^ https://@@HAUPT@@%{REQUEST_URI} [R=301,L]
+
+# --- Nichts Internes ausliefern ---------------------------------------
+# Versteckte Dateien (.htaccess-wordpress, .ftp-deploy-sync-state.json,
+# .git ...); .well-known bleibt frei (Let's Encrypt).
+RewriteRule (^|/)\.(?!well-known/) - [F,L]
+# Sicherungen, Datenbank-Exporte, Protokolle
+RewriteRule \.(sql|bak|log|ini|sh|inc|orig|old)(\.gz)?$ - [F,L,NC]
+# WordPress-Reste: nur Medien unter /wp-content/uploads/ bleiben
+# erreichbar, damit alte Bildlinks (Google, LinkedIn, Presse, Mail-
+# Signaturen) nicht brechen.
+RewriteRule ^(wp-admin|wp-includes)(/|$) - [F,L]
+RewriteRule ^wp-content/(?!uploads/) - [F,L]
+RewriteCond %{REQUEST_URI} !\.(jpe?g|png|gif|webp|avif|svg|ico|pdf|mp4|webm)$ [NC]
+RewriteRule ^wp-content/uploads/ - [F,L]
+RewriteRule ^(readme\.html|license\.txt|liesmich\.html)$ - [F,L,NC]
+
+# --- Handwerker-Formular ----------------------------------------------
+# kontakt.html schickt an /api/registrierung (bei Cloudflare: der Worker)
+RewriteRule ^api/registrierung/?$ api/registrierung.php [L]
+
+# --- Adressen des alten WordPress, die es nicht mehr gibt -------------
+RewriteRule ^(team|uber-uns)/?$ / [R=301,L]
+RewriteRule ^funktion-vorteile/?$ /dienstleistungen [R=301,L]
+RewriteRule ^(author|category|tag)/ /blog [R=301,L]
+RewriteRule ^(.+/)?feed/?$ /blog [R=301,L]
+RewriteRule ^(sitemap_index|[a-z_-]+-sitemap[0-9]*)\.xml$ /sitemap.xml [R=301,L]
+# Aus _redirects: die fruehere Variante B ist jetzt die Startseite
+RewriteRule ^startseite-b(\.html)?$ / [R=301,L]
+# Jahres-/Monats-/Tagesarchive: die Ordner gibt es (Blogbeitraege),
+# aber ohne eigene Seite
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteCond %{REQUEST_FILENAME}/index.html !-f
+RewriteRule ^20[0-9][0-9](/[0-9][0-9]){0,2}/?$ /blog [R=301,L]
+
+# --- Saubere Adressen, wie Cloudflare sie ausliefert ------------------
+# build.mjs schreibt die Links in dist/ schon ohne .html.
+# /index.html und /ordner/index.html -> / und /ordner/
+RewriteCond %{THE_REQUEST} \s/+([^?\s]*/)?index\.html[?\s] [NC]
+RewriteRule ^ /%1 [R=301,L]
+# /kontakt.html -> /kontakt
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteCond %{THE_REQUEST} \s/+([^/?\s]+)\.html[?\s] [NC]
+RewriteRule ^ /%1 [R=301,L]
+# /kontakt/ -> /kontakt (so hiessen die Seiten im alten WordPress;
+# mit Schraegstrich wuerden ausserdem die relativen Pfade nicht stimmen)
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.html -f
+RewriteRule ^([^/.]+)/$ /$1 [R=301,L]
+# /kontakt -> liefert kontakt.html aus, Adresse bleibt
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.html -f
+RewriteRule ^([^/.]+)$ $1.html [L]
+</IfModule>
+
+# ---------------------------------------------------------------------
+# Header (bei Cloudflare: _headers). HSTS bewusst ohne includeSubDomains:
+# fm., app. und jobs.taskrunner.de sind nicht Teil dieser Website.
+# Die Content-Security-Policy wird nicht hier gepflegt, sondern in
+# _headers - fertig.mjs uebernimmt sie von dort. Die uebrigen Header
+# stehen in beiden Dateien; aendert sich in _headers einer davon, hier
+# nachziehen.
+# ---------------------------------------------------------------------
+<IfModule mod_headers.c>
+Header always set Strict-Transport-Security "max-age=31536000" "expr=%{HTTPS} == 'on'"
+Header always set X-Content-Type-Options "nosniff"
+Header always set X-Frame-Options "SAMEORIGIN"
+Header always set Referrer-Policy "strict-origin-when-cross-origin"
+Header always set Content-Security-Policy "@@CSP@@"
+
+# Seiten, CSS und Skripte: immer nachfragen, damit ein Deploy sofort
+# sichtbar ist (so hat es Cloudflare auch gehalten)
+<FilesMatch "\.(html|css|js|xml|txt)$">
+    Header set Cache-Control "public, max-age=0, must-revalidate"
+</FilesMatch>
+<If "%{REQUEST_URI} =~ m#^/images/#">
+    Header set Cache-Control "public, max-age=3600"
+</If>
+<If "%{REQUEST_URI} =~ m#^/assets/fonts/#">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+</If>
+
+# Interne Werkbank: nicht in Suchmaschinen (zusaetzlich zum Meta-Tag)
+<Files "entwuerfe.html">
+    Header set X-Robots-Tag "noindex, nofollow"
+</Files>
+</IfModule>
+
+# ---------------------------------------------------------------------
+# Komprimieren (assets/plz.js allein hat 320 KB)
+# ---------------------------------------------------------------------
+<IfModule mod_deflate.c>
+<IfModule mod_filter.c>
+AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml application/xml application/javascript text/javascript application/json image/svg+xml
+</IfModule>
+</IfModule>

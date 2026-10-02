@@ -1,0 +1,4 @@
+# Die eine PHP-Datei, die laufen darf (alles andere sperrt ../.htaccess).
+<Files "registrierung.php">
+    Require all granted
+</Files>

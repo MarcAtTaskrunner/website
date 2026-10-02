@@ -1,0 +1,93 @@
+# Hetzner-Fassung
+
+Diesen Ordner und `.github/workflows/deploy-hetzner.yml` gibt es nur im Zweig
+`hetzner-version`. `main` ist und bleibt die Cloudflare-Fassung; hier kommt nur dazu,
+was das Hetzner-Webhosting (taskrunner.de) zusätzlich braucht. Der Zweig
+ändert keine Datei aus `main`, er fügt nur welche hinzu – deshalb lässt sich
+`main` jederzeit ohne Konflikte übernehmen.
+
+Auf dem Mac liegt der Zweig in einem eigenen Ordner neben `website/`:
+`website-hetzner/` (ein zweiter Arbeitsordner desselben Repositorys). In
+`website/` wird wie bisher gearbeitet.
+
+## Hetzner auf den neuesten Stand bringen
+
+Erst `main` wie gewohnt pushen (`website/hochladen.sh`), dann:
+
+    ~/Desktop/"Website Taskrunner"/website-hetzner/hetzner/aktualisieren.sh
+
+Das übernimmt `main` von GitHub in diesen Zweig und pusht ihn. Der Push
+startet auf GitHub „Deploy auf Hetzner“: bauen, per FTPS in den Web-Root
+(`public_html/`) laden. Hochgeladen wird nur, was sich geändert hat.
+
+Von allein kommt nichts nach Hetzner: Auch die Stellen, die GitHub stündlich
+aus Personio nach `main` holt, erscheinen dort erst nach dem nächsten
+`aktualisieren.sh`.
+
+## Was hier liegt
+
+| Datei | Wofür |
+|---|---|
+| `.htaccess` | Adressen ohne `.html`, Weiterleitungen (auch die Adressen des alten WordPress), Header, Sperren – das, was bei Cloudflare `_headers`, `_redirects` und die Plattform selbst erledigen |
+| `api/registrierung.php` | Handwerker-Formular; gleiche Logik wie `worker/index.js` |
+| `fertig.mjs` | macht nach `npm run build` aus `dist/` die Hetzner-Fassung: legt `.htaccess` und `api/` hinein, schreibt `sitemap.xml` und `robots.txt`, trägt den Search-Console-Nachweis in die Seiten ein |
+| `aktualisieren.sh` | siehe oben |
+
+Zwei Dinge holt `fertig.mjs` beim Bau aus `main`, sie werden hier nicht
+gepflegt: die **Adresse** (aus `DOMAIN` in `werkzeuge/bauen.py`, derzeit
+`https://www.taskrunner.de`; die Variante ohne www leitet dorthin) und die
+**Content-Security-Policy** (aus `_headers`).
+
+Was bei Änderungen auf `main` von Hand nachzuziehen ist:
+
+- Logik in `worker/index.js` geändert → `api/registrierung.php`
+- neue Zeile in `_redirects` oder ein anderer Header als die CSP in `_headers`
+  → `.htaccess`
+
+Lokal bauen (im Ordner `website-hetzner/`, braucht dort einmal `npm install`):
+
+    npm run build && node hetzner/fertig.mjs
+
+## Einmalig einrichten
+
+GitHub → Repo → Settings → Secrets and variables → Actions, fünf Secrets:
+
+| Secret | Wert |
+|---|---|
+| `HETZNER_FTP_HOST` | `wwwNNN.your-server.de` (konsoleH → Zugangsdaten), nicht `taskrunner.de` |
+| `HETZNER_FTP_USER` | FTP-Benutzer |
+| `HETZNER_FTP_PASSWORD` | FTP-Passwort |
+| `SHEET_URL` | Web-App-URL des Apps-Scripts an der Google-Tabelle |
+| `SHEET_GEHEIMNIS` | Script-Property `GEHEIMNIS` desselben Scripts (`werkzeuge/google-tabelle.gs`) |
+
+Solange die drei HETZNER-Secrets fehlen, lädt der Workflow nichts hoch. Live
+geht die Seite mit dem ersten Lauf, bei dem sie eingetragen sind: entweder
+beim nächsten Push auf `hetzner-version` oder über GitHub → Actions → letzter Lauf →
+„Re-run all jobs“.
+
+Liegt der Web-Root für den FTP-Benutzer nicht unter `public_html/`: unter
+Variables (nicht Secrets) `HETZNER_FTP_DIR` anlegen, mit Schrägstrich am Ende.
+
+## Das alte WordPress
+
+Liegt weiter im selben Web-Root, wird aber von der `.htaccess` stillgelegt:
+kein PHP, kein Login. Erreichbar bleiben nur die Medien unter
+`/wp-content/uploads/`, damit alte Bildlinks nicht brechen. Die Datenbank
+bleibt unberührt.
+
+### Zurück zum alten WordPress
+
+Der Deploy legt die `.htaccess` des WordPress beim ersten Lauf als
+`.htaccess-wordpress` daneben.
+
+1. Nichts mehr auf `hetzner-version` pushen (sonst stellt der nächste Lauf die neue
+   Seite wieder her)
+2. Per FTP im Web-Root: `.htaccess` löschen, `.htaccess-wordpress` in
+   `.htaccess` umbenennen, `index.html` umbenennen (z. B. `index-neu.html`)
+
+## Wenn taskrunner.de zu Cloudflare umzieht
+
+Dann wird dieser Zweig nicht mehr gebraucht: Ordner `website-hetzner/`
+entfernen (`git worktree remove ../website-hetzner` im Ordner `website/`),
+Zweig `hetzner-version` und die fünf Secrets auf GitHub löschen. An `main` ist nichts
+zurückzubauen.
