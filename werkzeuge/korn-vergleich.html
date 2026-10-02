@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Korn-Vergleich – intern</title>
+<!-- Werkbank, geht nicht live (build.mjs nimmt nur Seiten aus dem
+     Wurzelverzeichnis). Aufruf ueber den lokalen Server:
+     http://localhost:8765/werkzeuge/korn-vergleich.html
+     Jede Kachel: derselbe Verlauf wie Kopfband/Hero (dunkel links unten,
+     hell rechts oben), darueber eine Korn-Variante in ::before wie bei
+     .mit-korn in tailwind/input.css. Massstab 1:1, nicht zoomen. -->
+<style>
+  @font-face { font-family: "DIN Pro"; src: url("../assets/fonts/dinpro-bold.woff2") format("woff2"); font-weight: 700; }
+  @font-face { font-family: "DIN Pro"; src: url("../assets/fonts/dinpro-regular.woff2") format("woff2"); font-weight: 400; }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 40px 32px 80px; background: #fff; color: #0b1433; font-family: "DIN Pro", system-ui, sans-serif; }
+  h1 { margin: 0 0 6px; font-size: 32px; color: #1155cc; }
+  .vorspann { margin: 0 0 32px; max-width: 760px; font-size: 16px; line-height: 1.5; color: #4a5570; }
+  .raster { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 28px; }
+  .fläche {
+    position: relative; isolation: isolate; height: 300px; border-radius: 20px; overflow: hidden;
+    display: flex; align-items: flex-end; padding: 28px; color: #fff;
+    background:
+      radial-gradient(60% 90% at 88% 12%, rgba(0, 177, 255, 0.55) 0%, rgba(0, 177, 255, 0) 70%),
+      radial-gradient(70% 110% at 80% 0%, rgba(2, 76, 255, 0.9) 0%, rgba(2, 76, 255, 0) 75%),
+      linear-gradient(124deg, #000724 0%, #001a7d 50%, #0024bc 100%);
+  }
+  .fläche::before, .fläche::after {
+    content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    mix-blend-mode: hard-light;
+  }
+  .fläche strong { font-size: 30px; line-height: 1.1; letter-spacing: -0.01em; }
+  .text { margin: 12px 4px 0; font-size: 15px; line-height: 1.5; color: #4a5570; }
+  .text b { color: #1155cc; }
+  .text .werte { display: block; margin-top: 4px; font-size: 13px; color: #8390a8; }
+</style>
+</head>
+<body>
+<h1>Korn und Textur im Vergleich</h1>
+<p class="vorspann">Jede Fläche zeigt denselben Verlauf wie der dunkle Kopf, von Nachtblau bis hellem Blau. Darüber liegt jeweils eine andere Oberfläche. A ist der Stand der Website. Maßstab 1:1 – nicht zoomen, sonst verändert sich das Korn.</p>
+<div class="raster" id="raster"></div>
+
+<script>
+// Gerechnetes Korn wie in input.css (.mit-korn): feTurbulence als SVG.
+//   frequenz  Korngroesse (hoeher = feiner)
+//   oktaven   Korngroessen uebereinander (mehr = organischer)
+//   farbig    ohne Entsaettigung: buntes Korn wie bei Film
+//   schwelle  nur die hellsten Punkte bleiben: Sprenkel statt Rauschen
+function korn({ frequenz = 0.85, oktaven = 4, farbig = false, schwelle = false, groesse = 200 }) {
+  const satt = farbig ? "" : "<feColorMatrix type='saturate' values='0'/>";
+  const alpha = "<feFuncA type='discrete' tableValues='1'/>";
+  const hell = schwelle
+    ? "<feFuncR type='discrete' tableValues='.5 .5 .5 .5 .5 .5 .5 1'/><feFuncG type='discrete' tableValues='.5 .5 .5 .5 .5 .5 .5 1'/><feFuncB type='discrete' tableValues='.5 .5 .5 .5 .5 .5 .5 1'/>"
+    : "";
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='${groesse}' height='${groesse}'><filter id='k' color-interpolation-filters='sRGB'><feTurbulence type='fractalNoise' baseFrequency='${frequenz}' numOctaves='${oktaven}' stitchTiles='stitch'/>${satt}<feComponentTransfer>${alpha}${hell}</feComponentTransfer></filter><rect width='${groesse}' height='${groesse}' filter='url(%23k)'/></svg>`;
+  return `url("data:image/svg+xml,${svg.replace(/"/g, "'").replace(/</g, "%3C").replace(/>/g, "%3E").replace(/ /g, "%20")}") 0 0 / ${groesse}px ${groesse}px`;
+}
+const papier = (datei) => `url("korn/${datei}") center / cover`;
+
+const varianten = [
+  { id: "A", name: "Filmkorn (aktuell)", text: "Der Stand der Website. Feines, gleichmäßiges Korn, das Auge mittelt es zu einer ruhigen Fläche mit etwas Tiefe.",
+    werte: "Frequenz 0.85 · 4 Oktaven · 28 % · hard-light", vor: { bg: korn({}), deckung: 0.28 } },
+  { id: "B", name: "Feiner, wie Druck", text: "Noch kleineres Korn, fast wie ein gutes Druckraster. Sehr gleichmäßig, wirkt edel, aber weniger analog.",
+    werte: "Frequenz 1.4 · 2 Oktaven · 26 %", vor: { bg: korn({ frequenz: 1.4, oktaven: 2 }), deckung: 0.26 } },
+  { id: "C", name: "Gröber, wie Film", text: "Größeres Korn wie bei analogem Film mit hoher Empfindlichkeit. Deutlich spürbar, mehr Charakter.",
+    werte: "Frequenz 0.5 · 3 Oktaven · 24 %", vor: { bg: korn({ frequenz: 0.5, oktaven: 3 }), deckung: 0.24 } },
+  { id: "D", name: "Farbkorn", text: "Wie A, aber nicht entsättigt: einzelne Körner tragen einen Hauch Farbe. Wirkt wie ein echtes Foto, ohne lauter zu sein.",
+    werte: "Frequenz 0.85 · 4 Oktaven · farbig · 22 %", vor: { bg: korn({ farbig: true }), deckung: 0.22 } },
+  { id: "E", name: "Weich (soft-light)", text: "Dasselbe Korn wie A, aber sanfter gemischt: sitzt vor allem in den Mitteltönen, das tiefe Dunkel bleibt sauber.",
+    werte: "wie A · 55 % · soft-light", vor: { bg: korn({}), deckung: 0.55, mischung: "soft-light" } },
+  { id: "F", name: "Papier 346L", text: "Deine Lieblingstextur: echtes Papier mit feinen Fasern. Organisch, einzelne Fasern sind als Formen zu sehen.",
+    werte: "Foto, aufbereitet · 20 %", vor: { bg: papier("papier-346.jpg"), deckung: 0.2 } },
+  { id: "G", name: "Papier 234L", text: "Gleichmäßig gekörntes Aquarellpapier, keine Fasern. Liegt zwischen A und F.",
+    werte: "Foto, aufbereitet · 25 %", vor: { bg: papier("papier-234.jpg"), deckung: 0.25 } },
+  { id: "H", name: "Korn + Papier", text: "A und F übereinander, beide leiser: das gleichmäßige Korn trägt die Fläche, das Papier gibt ihr darunter Faser.",
+    werte: "Korn 18 % + Papier 346L 12 %", vor: { bg: korn({}), deckung: 0.18 }, nach: { bg: papier("papier-346.jpg"), deckung: 0.12 } },
+  { id: "I", name: "Sprenkel (Riso)", text: "Feines Korn plus vereinzelte helle Sprenkel, wie beim Risografie-Druck. Verspielter, eher für einzelne Flächen.",
+    werte: "Korn 18 % + Sprenkel 30 %", vor: { bg: korn({}), deckung: 0.18 }, nach: { bg: korn({ frequenz: 0.7, oktaven: 2, schwelle: true, groesse: 240 }), deckung: 0.3 } },
+];
+
+const css = [];
+const raster = document.getElementById("raster");
+for (const v of varianten) {
+  const lage = (sel, l) => l && css.push(`#v${v.id}::${sel}{background:${l.bg};opacity:${l.deckung};${l.mischung ? `mix-blend-mode:${l.mischung};` : ""}}`);
+  lage("before", v.vor);
+  lage("after", v.nach);
+  const div = document.createElement("div");
+  div.innerHTML = `<div class="fläche" id="v${v.id}"><strong>${v.id} · ${v.name}</strong></div>
+    <p class="text"><b>${v.id}</b> – ${v.text}<span class="werte">${v.werte}</span></p>`;
+  raster.append(div);
+}
+const style = document.createElement("style");
+style.textContent = css.join("\n");
+document.head.append(style);
+</script>
+</body>
+</html>
