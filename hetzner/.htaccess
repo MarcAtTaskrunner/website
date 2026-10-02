@@ -8,12 +8,14 @@
 # legt sie nach dist/ und setzt dabei die markierten Stellen ein; der
 # Deploy laedt sie in den Web-Root (public_html).
 #
-# Im Web-Root liegt ausserdem noch das alte WordPress. Es wird hier
-# stillgelegt (kein PHP, kein Login), die Dateien bleiben aber liegen:
-#   - alte Bildadressen unter /wp-content/uploads/ funktionieren weiter
-#   - ZURUECK ZUM ALTEN STAND: auf dem Server .htaccess-wordpress nach
-#     .htaccess kopieren und index.html umbenennen. Der Deploy sichert
-#     die WordPress-.htaccess beim ersten Lauf unter diesem Namen.
+# Im Web-Root liegen ausserdem noch die Dateien des alten WordPress. Es
+# wird hier stillgelegt (kein PHP, kein Login); alte Bildadressen unter
+# /wp-content/uploads/ funktionieren weiter. Seine Datenbank ist
+# geloescht, einen Weg zurueck gibt es nicht mehr.
+#
+# Im Unterordner stats/ laeuft Matomo (https://stats.taskrunner.de). Der
+# Ordner hat eine eigene .htaccess (hetzner/matomo/htaccess), die fuer
+# Matomo zuruecknimmt, was hier gesperrt wird.
 #
 # Zwei Dinge kommen aus main und werden beim Bau eingesetzt, damit hier
 # nichts von Hand nachgezogen werden muss:

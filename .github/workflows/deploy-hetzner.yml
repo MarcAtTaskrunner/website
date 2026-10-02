@@ -36,6 +36,10 @@ name: Deploy auf Hetzner
 on:
   push:
     branches: [hetzner-version]
+    # Matomo hat seinen eigenen Workflow (matomo-hetzner.yml)
+    paths-ignore:
+      - 'hetzner/matomo/**'
+      - '.github/workflows/matomo-hetzner.yml'
   workflow_dispatch:
 
 permissions:

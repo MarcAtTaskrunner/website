@@ -85,24 +85,46 @@ Variables (nicht Secrets) `HETZNER_FTP_DIR` anlegen, mit Schrägstrich am Ende.
 
 ## Das alte WordPress
 
-Liegt weiter im selben Web-Root, wird aber von der `.htaccess` stillgelegt:
-kein PHP, kein Login. Erreichbar bleiben nur die Medien unter
-`/wp-content/uploads/`, damit alte Bildlinks nicht brechen. Die Datenbank
-bleibt unberührt.
+Die Dateien liegen weiter im selben Web-Root, werden aber von der
+`.htaccess` stillgelegt: kein PHP, kein Login. Erreichbar bleiben nur die
+Medien unter `/wp-content/uploads/`, damit alte Bildlinks nicht brechen.
 
-### Zurück zum alten WordPress
+Die Datenbank des WordPress wurde am 2. Oktober 2026 gelöscht (das
+Webhosting erlaubt nur eine, sie wird jetzt für Matomo gebraucht). Einen
+Weg zurück zum alten WordPress gibt es damit nicht mehr; die Datei
+`.htaccess-wordpress` im Web-Root ist nur noch ein Überbleibsel. Ein
+SQL-Export der alten Datenbank liegt bei Marc.
 
-Der Deploy legt die `.htaccess` des WordPress beim ersten Lauf als
-`.htaccess-wordpress` daneben.
+## Besucherstatistik (Matomo)
 
-1. Nichts mehr auf `hetzner-version` pushen (sonst stellt der nächste Lauf die neue
-   Seite wieder her)
-2. Per FTP im Web-Root: `.htaccess` löschen, `.htaccess-wordpress` in
-   `.htaccess` umbenennen, `index.html` umbenennen (z. B. `index-neu.html`)
+Matomo läuft auf demselben Webhosting unter `https://stats.taskrunner.de`,
+auf dem Server im Ordner `public_html/stats/` (konsoleH lässt Ziele für
+Subdomains nur unterhalb von `public_html` zu). Der Website-Deploy fasst
+den Ordner nicht an.
+
+| Datei | Zweck |
+|---|---|
+| `hetzner/matomo/VERSION` | Matomo-Version für die Erstinstallation |
+| `hetzner/matomo/htaccess` | wird zu `stats/.htaccess`: nimmt für Matomo zurück, was die Website-`.htaccess` sperrt (PHP, CSP), und sperrt Matomos Interna |
+| `hetzner/matomo/entpacken.php` | entpackt das Archiv auf dem Server, nur bei der Erstinstallation, löscht sich danach selbst |
+| `.github/workflows/matomo-hetzner.yml` | läuft, wenn sich eine dieser Dateien im Zweig `hetzner-version` ändert |
+
+Der Workflow lädt das Archiv von `builds.matomo.org`, prüft die Signatur
+und spielt es ein – aber nur, solange Matomo noch nicht eingerichtet ist
+(`stats/config/config.ini.php` fehlt). Danach lädt er nur noch die
+`.htaccess` hoch.
+
+**Updates** macht Matomo selbst: im Matomo-Admin anmelden, den
+Update-Hinweis oben anklicken. Etwa monatlich nachsehen – Matomo ist eine
+öffentlich erreichbare Anwendung mit Login.
+
+Datenbank: dieselbe Zugangsart wie früher WordPress (konsoleH →
+MariaDB/MySQL), Tabellenpräfix `matomo_`. Die Zugangsdaten stehen nur in
+`stats/config/config.ini.php` auf dem Server.
 
 ## Wenn taskrunner.de zu Cloudflare umzieht
 
 Dann wird dieser Zweig nicht mehr gebraucht: Ordner `website-hetzner/`
 entfernen (`git worktree remove ../website-hetzner` im Ordner `website/`),
-Zweig `hetzner-version` und die fünf Secrets auf GitHub löschen. An `main` ist nichts
+Zweig `hetzner-version` und die Secrets auf GitHub löschen. Matomo müsste dann woanders weiterlaufen oder ersetzt werden. An `main` ist nichts
 zurückzubauen.

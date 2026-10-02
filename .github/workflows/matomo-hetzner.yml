@@ -1,0 +1,125 @@
+# Spielt Matomo (Besucherstatistik) auf das Hetzner-Webhosting, in den
+# Ordner stats/ unter dem Web-Root = https://stats.taskrunner.de.
+# Einzelheiten: hetzner/LIESMICH.md, Abschnitt "Besucherstatistik".
+#
+# Laeuft, wenn sich im Zweig hetzner-version etwas unter hetzner/matomo/
+# aendert. Das Archiv wird nur eingespielt, solange Matomo noch nicht
+# eingerichtet ist; danach laedt der Lauf nur noch die .htaccess hoch.
+# Updates macht Matomo selbst (im Admin anklicken).
+#
+# Secrets: dieselben wie beim Website-Deploy (HETZNER_FTP_HOST, _USER,
+# _PASSWORD), optional die Variable HETZNER_FTP_DIR.
+name: Matomo auf Hetzner
+
+on:
+  push:
+    branches: [hetzner-version]
+    paths:
+      - 'hetzner/matomo/**'
+      - '.github/workflows/matomo-hetzner.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: matomo-hetzner
+  cancel-in-progress: false
+
+jobs:
+  einspielen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      FTP_HOST: ${{ secrets.HETZNER_FTP_HOST }}
+      FTP_USER: ${{ secrets.HETZNER_FTP_USER }}
+      FTP_PASS: ${{ secrets.HETZNER_FTP_PASSWORD }}
+      FTP_DIR: ${{ vars.HETZNER_FTP_DIR || 'public_html/' }}
+      ADRESSE: https://stats.taskrunner.de
+      # Schluessel, mit dem Matomo seine Pakete signiert
+      # (https://builds.matomo.org/signature.asc)
+      SCHLUESSEL: F529A27008477483777FC23D63BB30D0E5D2C749
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Zugangsdaten vorhanden?
+        run: |
+          if [ -z "$FTP_HOST" ] || [ -z "$FTP_USER" ] || [ -z "$FTP_PASS" ]; then
+            echo "::error::Hetzner-Zugangsdaten fehlen als Secrets."
+            exit 1
+          fi
+
+      # Erst die kleinen Dateien: .htaccess (mit Freigabe fuer das
+      # Entpack-Skript) und das Skript selbst, mit einem Token nur fuer
+      # diesen Lauf. Seine erste Antwort sagt, ob Matomo schon steht.
+      - name: Vorbereiten
+        id: vor
+        run: |
+          token=$(openssl rand -hex 24)
+          echo "::add-mask::$token"
+          echo "token=$token" >> "$GITHUB_OUTPUT"
+          mkdir hoch
+          sed 's/(index|matomo|piwik)\\\.php/(index|matomo|piwik|entpacken)\\.php/' hetzner/matomo/htaccess > hoch/htaccess-einspielen
+          grep -q 'piwik|entpacken' hoch/htaccess-einspielen
+          sed "s/@@TOKEN@@/$token/" hetzner/matomo/entpacken.php > hoch/entpacken.php
+          ziel="ftp://$FTP_HOST/${FTP_DIR}stats"
+          ftp() { curl -sS --ssl-reqd --connect-timeout 30 --user "$FTP_USER:$FTP_PASS" "$@"; }
+          ftp --ftp-create-dirs -T hoch/htaccess-einspielen "$ziel/.htaccess"
+          ftp -T hoch/entpacken.php "$ziel/entpacken.php"
+          sleep 3
+          antwort=$(curl -sS --max-time 60 "$ADRESSE/entpacken.php?t=$token&ab=0" || true)
+          echo "Antwort: $antwort"
+          case "$antwort" in
+            *'schon eingerichtet'*) echo "stand=eingerichtet" >> "$GITHUB_OUTPUT" ;;
+            *'matomo.zip fehlt'*)   echo "stand=leer" >> "$GITHUB_OUTPUT" ;;
+            *) echo "::error::Unerwartete Antwort von $ADRESSE/entpacken.php"; exit 1 ;;
+          esac
+
+      - name: Paket laden und Signatur pruefen
+        if: steps.vor.outputs.stand == 'leer'
+        run: |
+          version=$(tr -d ' \n\r' < hetzner/matomo/VERSION)
+          case "$version" in *[!0-9.]*|'') echo "::error::hetzner/matomo/VERSION ist keine Versionsnummer"; exit 1 ;; esac
+          curl -sSfL --retry 3 -o matomo.zip "https://builds.matomo.org/matomo-$version.zip"
+          curl -sSfL --retry 3 -o matomo.zip.asc "https://builds.matomo.org/matomo-$version.zip.asc"
+          curl -sSfL --retry 3 -o signature.asc "https://builds.matomo.org/signature.asc"
+          export GNUPGHOME="$PWD/gnupg"; mkdir -m 700 "$GNUPGHOME"
+          gpg --batch --quiet --import signature.asc
+          # Nur der oben genannte Schluessel zaehlt, nicht irgendeiner aus der Datei
+          gpg --batch --status-fd 1 --verify matomo.zip.asc matomo.zip 2>/dev/null | tee pruefung.txt
+          grep -q "^\[GNUPG:\] VALIDSIG $SCHLUESSEL " pruefung.txt || { echo "::error::Signatur des Matomo-Pakets stimmt nicht."; exit 1; }
+          echo "Matomo $version, Signatur in Ordnung."
+
+      - name: Paket hochladen und entpacken
+        if: steps.vor.outputs.stand == 'leer'
+        env:
+          TOKEN: ${{ steps.vor.outputs.token }}
+        run: |
+          ziel="ftp://$FTP_HOST/${FTP_DIR}stats"
+          curl -sS --ssl-reqd --connect-timeout 30 --user "$FTP_USER:$FTP_PASS" -T matomo.zip "$ziel/matomo.zip"
+          ab=0
+          for runde in $(seq 1 400); do
+            antwort=$(curl -sS --max-time 90 "$ADRESSE/entpacken.php?t=$TOKEN&ab=$ab")
+            case "$antwort" in
+              *'"fertig":true'*) echo "Entpackt nach $runde Aufrufen: $antwort"; exit 0 ;;
+              *'"weiter":'*) ab=$(printf '%s' "$antwort" | grep -o '"weiter":[0-9]*' | cut -d: -f2) ;;
+              *) echo "::error::Entpacken abgebrochen: $antwort"; exit 1 ;;
+            esac
+          done
+          echo "::error::Entpacken nach 400 Aufrufen nicht fertig."; exit 1
+
+      # Immer: die endgueltige .htaccess (ohne Freigabe fuer das Skript)
+      # und aufraeumen, auch wenn vorher etwas schiefging.
+      - name: Abschliessen
+        if: always() && steps.vor.outcome != 'skipped'
+        run: |
+          ziel="ftp://$FTP_HOST/${FTP_DIR}stats"
+          ftp() { curl -sS --ssl-reqd --connect-timeout 30 --user "$FTP_USER:$FTP_PASS" "$@"; }
+          ftp -T hetzner/matomo/htaccess "$ziel/.htaccess"
+          for datei in entpacken.php matomo.zip; do
+            ftp "ftp://$FTP_HOST/" -Q "DELE ${FTP_DIR}stats/$datei" -o /dev/null 2>/dev/null || true
+          done
+          sleep 3
+          code=$(curl -sS -o /dev/null -w '%{http_code}' --max-time 60 "$ADRESSE/entpacken.php" || true)
+          echo "entpacken.php antwortet jetzt mit $code (erwartet: 403 oder 404)."
+          [ "$code" = 403 ] || [ "$code" = 404 ]
+          echo "Matomo: $ADRESSE"

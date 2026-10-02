@@ -1,0 +1,56 @@
+# =====================================================================
+# Matomo (Besucherstatistik) unter https://stats.taskrunner.de
+#
+# Liegt auf dem Server in public_html/stats/ - konsoleH laesst Ziele fuer
+# Subdomains nur unterhalb von public_html zu. Deshalb gilt hier auch die
+# .htaccess der Website eine Ebene hoeher (PHP gesperrt, strenge CSP,
+# index.html als Startdatei); diese Datei nimmt genau das fuer Matomo
+# zurueck. Im Repo: hetzner/matomo/htaccess, eingespielt vom Workflow
+# "Matomo auf Hetzner" (.github/workflows/matomo-hetzner.yml).
+#
+# Matomo legt in seinen Unterordnern (config, tmp, core, plugins ...)
+# eigene .htaccess-Dateien an, die dort wieder sperren.
+# =====================================================================
+
+DirectoryIndex index.php
+
+# PHP: nur die Einstiege von Matomo (Oberflaeche, Zaehlpunkt). Alles
+# andere bleibt durch die Website-.htaccess gesperrt.
+<FilesMatch "^(index|matomo|piwik)\.php$">
+    Require all granted
+</FilesMatch>
+
+<IfModule mod_rewrite.c>
+# Eigene Regeln; damit gelten die der Website hier nicht mehr.
+RewriteEngine On
+
+# Nur unter stats.taskrunner.de erreichbar, nicht als www.taskrunner.de/stats/
+RewriteCond %{HTTP_HOST} !^stats\.taskrunner\.de(:[0-9]+)?$ [NC]
+RewriteRule ^ - [R=404,L]
+
+RewriteCond %{HTTPS} !=on
+RewriteCond %{HTTP:X-Forwarded-Proto} !=https
+RewriteRule ^ https://stats.taskrunner.de%{REQUEST_URI} [R=301,L]
+
+# Interna von Matomo: Einstellungen (Datenbank-Passwort), Sitzungen,
+# Zwischenspeicher, Sprachdateien, Tests und das Konsolen-Skript. Matomo
+# sperrt diese Ordner auch selbst, sobald es eingerichtet ist - hier
+# gilt es vom ersten Moment an.
+RewriteRule ^(config|tmp|lang|tests)(/|$) - [F,L]
+RewriteRule ^console$ - [F,L]
+
+# Versteckte Dateien und Sicherungen nie ausliefern
+RewriteRule (^|/)\.(?!well-known/) - [F,L]
+RewriteRule \.(sql|bak|log|ini|sh|inc|orig|old|zip)(\.gz)?$ - [F,L,NC]
+</IfModule>
+
+<IfModule mod_headers.c>
+# Die CSP der Website passt nicht zur Matomo-Oberflaeche; Matomo schickt
+# seine eigene.
+Header always unset Content-Security-Policy
+# Das Zaehlskript laden alle Seiten der Website; einen Tag im Browser
+# halten statt bei jedem Seitenaufruf nachzufragen.
+<FilesMatch "^(matomo|piwik)\.js$">
+    Header set Cache-Control "public, max-age=86400"
+</FilesMatch>
+</IfModule>
