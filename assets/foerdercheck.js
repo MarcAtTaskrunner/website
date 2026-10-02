@@ -4,9 +4,12 @@
 
    Die Foerderwerte stehen ein zweites Mal als Text in
    quellen/foerderungen.html (Abschnitt "Die Programme im Einzelnen").
-   Aendert sich eine Richtlinie, beide Stellen anpassen. Naechster
-   bekannter Termin: der Klimageschwindigkeitsbonus sinkt ab dem
-   1. Februar 2027 halbjaehrlich.
+   Aendert sich eine Richtlinie, beide Stellen anpassen.
+
+   Selbst nutzende Privatpersonen kommen bewusst nicht vor: taskrunner
+   bedient keine Privathaushalte. Deshalb fehlen hier und im Text deren
+   Boni bei der Heizungsfoerderung (Klimageschwindigkeits- und
+   Einkommensbonus, zusammen bis 70 %).
 
    Die Karten werden hier als HTML geschrieben. Tailwind liest diese
    Datei mit (@source in tailwind/input.css), damit die Klassen darin
@@ -58,7 +61,6 @@
    *  Die vier Ergebniskarten
    * ---------------------------------------------------------------- */
   var heizung = function (wer, m2) {
-    var mitBonus = wer === "privat";
     var k = {
       stelle: "Beantragt über die KfW",
       titel: "Heizungs&shy;förderung",
@@ -67,21 +69,13 @@
       posten: [],
       hinweise: []
     };
-    if (mitBonus) {
-      k.posten.push(["bis 70&nbsp;%", "30&nbsp;% Grundförderung plus Klima&shy;geschwindigkeits- und Einkommens&shy;bonus, in der niedrigsten Einkommens&shy;gruppe bis 80&nbsp;%"]);
-      k.hinweise.push("Der Klima&shy;geschwindigkeits&shy;bonus sinkt ab dem 1. Februar 2027 halbjährlich.");
-    } else {
-      k.posten.push(["30&nbsp;%", "Grundförderung auf die förderfähigen Kosten"]);
-      if (!wer) k.hinweise.push("Selbst nutzende Privatpersonen erhalten mit Boni bis zu 70&nbsp;%.");
-      else if (wer === "weg") k.hinweise.push("Die Boni gelten nur für selbst nutzende Privatpersonen – was davon bei Ihrer Eigentümer&shy;gemeinschaft greift, klären Sie am besten mit Ihrem Energieeffizienz-Experten.");
-      else k.hinweise.push("Die Boni gelten nur für selbst nutzende Privatpersonen, deshalb bleibt es bei 30&nbsp;%.");
-    }
+    k.posten.push(["30&nbsp;%", "Grundförderung auf die förderfähigen Kosten"]);
+    if (wer === "weg") k.hinweise.push("Für selbst nutzende Eigentümer in der Gemeinschaft können Boni hinzukommen – das klären Sie am besten mit Ihrem Energieeffizienz-Experten.");
+    else if (wer) k.hinweise.push("Boni kommen nicht hinzu, es bleibt bei 30&nbsp;%.");
     if (m2) {
       var kosten = heizungKosten(m2);
       k.betrag = "Bei " + zahl(m2) + "&nbsp;m² Nettoraumfläche sind bis zu " + euro(kosten) + " förderfähig. " +
-        (mitBonus || !wer
-          ? "Mit der Grundförderung sind das bis zu <strong>" + euro(kosten * HEIZUNG.quote) + "</strong>" + (mitBonus ? ", mit Boni mehr." : ".")
-          : "Das ergibt bis zu <strong>" + euro(kosten * HEIZUNG.quote) + "</strong> Zuschuss.");
+        "Das ergibt bis zu <strong>" + euro(kosten * HEIZUNG.quote) + "</strong> Zuschuss.";
     }
     return k;
   };
@@ -198,7 +192,7 @@
       posten: [],
       hinweise: []
     };
-    var wohnen = gebaeude === "wohn" || (!gebaeude && (wer === "privat" || wer === "weg"));
+    var wohnen = gebaeude === "wohn" || (!gebaeude && wer === "weg");
     if (wohnen) {
       k.text = "Für Wohngebäude fördert das BAFA die Energie&shy;beratung mit individuellem Sanierungs&shy;fahrplan. Der Fahrplan bringt zusätzlich 5&nbsp;% bei der Gebäude&shy;hülle.";
       return k;
