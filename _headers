@@ -7,12 +7,14 @@
 # challenges.cloudflare.com (script-src, frame-src) ist fuer den Bot-Schutz
 # Cloudflare Turnstile im Handwerker-Formular (kontakt.html). Geladen wird
 # von dort erst, wenn jemand das Formular ausfuellt (assets/app.js).
+# stats.taskrunner.de (script-src, connect-src, img-src) ist die eigene
+# Besucherstatistik mit Matomo (assets/statistik.js).
 /*
   Strict-Transport-Security: max-age=31536000
   X-Content-Type-Options: nosniff
   X-Frame-Options: SAMEORIGIN
   Referrer-Policy: strict-origin-when-cross-origin
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-zQ0LhYqn7/VKhTcM095L9PPNSUmRtn69aJGsJiZwZdk=' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; media-src 'self'; connect-src 'self'; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self' mailto:; frame-ancestors 'self'
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-zQ0LhYqn7/VKhTcM095L9PPNSUmRtn69aJGsJiZwZdk=' https://challenges.cloudflare.com https://stats.taskrunner.de; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://stats.taskrunner.de; font-src 'self'; media-src 'self'; connect-src 'self' https://stats.taskrunner.de; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self' mailto:; frame-ancestors 'self'
 
 # Interne Werkbank: nicht in Suchmaschinen (zusaetzlich zum Meta-Tag).
 /entwuerfe

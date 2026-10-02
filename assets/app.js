@@ -843,6 +843,8 @@
         });
       }).then(function () {
         form.classList.add("ist-gesendet");
+        /* fuer die Besucherstatistik (assets/statistik.js) */
+        document.dispatchEvent(new CustomEvent("statistik", { detail: { kategorie: "Formular", aktion: "abgeschickt", name: "Handwerker-Registrierung" } }));
         meldung.className = "registrierung-meldung ist-ok";
         meldung.innerHTML = "<strong>Danke, Ihre Daten sind angekommen.</strong> Wir melden uns, sobald wir einen passenden Task in Ihrer Region für Sie haben.";
         meldung.hidden = false;
