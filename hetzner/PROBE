@@ -1,2 +1,0 @@
-Solange diese Datei existiert, laedt der Deploy die Seite nur nach _probe/
-(Generalprobe, siehe hetzner/probe.mjs). Loeschen und pushen = Launch.
